@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>design-skills — 70 design languages for AI agents</title>
+<style>
+  :root{
+    --bg:#0a0a0b; --panel:#131316; --panel2:#1a1a1f; --line:#26262c;
+    --ink:#f4f4f5; --muted:#a1a1aa; --faint:#71717a; --accent:#e4e4e7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:1400px;margin:0 auto;padding:0 28px}
+  header.hero{padding:96px 0 40px;text-align:center}
+  .eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--faint);margin-bottom:20px}
+  h1{font-size:clamp(40px,6vw,76px);font-weight:700;letter-spacing:-.03em;line-height:1.02}
+  h1 .thin{font-weight:300;color:var(--muted)}
+  .sub{margin-top:18px;font-size:18px;color:var(--muted);max-width:640px;margin-left:auto;margin-right:auto}
+  .badges{margin-top:26px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .badge{font-size:13px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);
+    padding:8px 16px;border-radius:999px}
+  .badge b{font-weight:600}
+  .toolbar{position:sticky;top:0;z-index:20;background:rgba(10,10,11,.88);backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;margin-top:48px}
+  .toolbar .wrap{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .search{flex:1;min-width:220px;background:var(--panel);border:1px solid var(--line);color:var(--ink);
+    border-radius:10px;padding:11px 16px;font-size:15px;outline:none}
+  .search:focus{border-color:#52525b}
+  .search::placeholder{color:var(--faint)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap}
+  .fbtn{background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:999px;
+    padding:9px 16px;font-size:13.5px;cursor:pointer;transition:all .15s}
+  .fbtn:hover{color:var(--ink);border-color:#52525b}
+  .fbtn.on{background:var(--ink);color:#09090b;border-color:var(--ink);font-weight:600}
+  .count{font-size:13px;color:var(--faint);margin-left:auto;white-space:nowrap}
+  main .wrap{padding-top:36px;padding-bottom:80px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    text-decoration:none;color:inherit;display:block;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+  .card:hover{transform:translateY(-4px);border-color:#3f3f46;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+  .card.hidden{display:none}
+  .shot{position:relative;aspect-ratio:16/10;background:#000;overflow:hidden;border-bottom:1px solid var(--line)}
+  .shot iframe{width:1280px;height:800px;border:0;transform-origin:top left;pointer-events:none;
+    position:absolute;top:0;left:0;background:#fff}
+  .open{position:absolute;right:12px;bottom:12px;background:rgba(9,9,11,.82);color:#fff;font-size:12.5px;
+    padding:7px 13px;border-radius:999px;border:1px solid #3f3f46;opacity:0;transition:opacity .18s;pointer-events:none}
+  .card:hover .open{opacity:1}
+  .meta{padding:18px 20px 20px}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+  .row h3{font-size:17px;font-weight:650;letter-spacing:-.01em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .cat{font-size:11px;font-weight:700;width:24px;height:24px;border-radius:7px;display:inline-flex;
+    align-items:center;justify-content:center;flex:none}
+  .cat-A{background:#1d4ed8;color:#fff}.cat-B{background:#7c3aed;color:#fff}
+  .cat-C{background:#b45309;color:#fff}.cat-D{background:#0f766e;color:#fff}
+  .meta p{font-size:14px;color:var(--muted);margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;
+    -webkit-box-orient:vertical;overflow:hidden;min-height:42px}
+  .kicker{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--faint);font-size:13.5px}
+  footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .noresult{grid-column:1/-1;text-align:center;color:var(--faint);padding:60px 0;font-size:16px;display:none}
+  @media (max-width:640px){.grid{grid-template-columns:1fr}header.hero{padding:64px 0 32px}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Open-source · Agent Skills format</div>
+    <h1>design-skills <span class="thin">— 70 design languages for AI agents</span></h1>
+    <p class="sub">Seventy production-grade design languages as installable agent skills. Each one ships researched tokens, copy-pasteable components, and a live single-file demo.</p>
+    <div class="badges">
+      <span class="badge"><b>Claude Code</b> ready</span>
+      <span class="badge"><b>Codex</b> ready</span>
+      <span class="badge"><b>Cursor</b> ready</span>
+      <span class="badge"><b>Copilot</b> ready</span>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <input class="search" id="q" type="search" placeholder="Search 70 skills… (e.g. bauhaus, glass, fintech)" aria-label="Search skills">
+    <div class="filters" role="group" aria-label="Filter by category">
+      <button class="fbtn on" data-f="ALL">All 70</button>
+      <button class="fbtn" data-f="A">A · Systems</button>
+      <button class="fbtn" data-f="B">B · Brands</button>
+      <button class="fbtn" data-f="C">C · Movements</button>
+      <button class="fbtn" data-f="D">D · Editorial</button>
+    </div>
+    <span class="count" id="count"></span>
+  </div>
+</div>
+
+<main><div class="wrap">
+  <div class="grid" id="grid">
+    <a class="card" href="demos/airbnb.html" target="_blank" rel="noopener"
+       data-name="airbnb airbnb brand and product style — rausch red, warm neutrals, cereal type, photo-led listing cards. use for travel, stays, and hospitality uis." data-cat="B">
+      <div class="shot"><iframe title="airbnb demo preview" loading="lazy" src="demos/airbnb.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>airbnb</h3><span class="cat cat-B">B</span></div>
+        <p>Airbnb brand and product style — Rausch red, warm neutrals, Cereal type, photo-led listing cards. Use for travel, stays, and hospitality UIs.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/ant-design.html" target="_blank" rel="noopener"
+       data-name="ant-design ant design (alibaba/ant group) enterprise design language — dense data uis, certainty-first admin consoles, blue #1677ff primary, tables/forms/steps." data-cat="A">
+      <div class="shot"><iframe title="ant-design demo preview" loading="lazy" src="demos/ant-design.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>ant-design</h3><span class="cat cat-A">A</span></div>
+        <p>Ant Design (Alibaba/Ant Group) enterprise design language — dense data UIs, certainty-first admin consoles, blue #1677ff primary, Tables/Forms/Steps.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/apple-liquid-glass.html" target="_blank" rel="noopener"
+       data-name="apple-liquid-glass apple human interface guidelines in the liquid glass era (ios 26+): the two-layer model (functional vs. content), material rules, the swiftui glasseffect api, semantic colors, sf typography, components, apple.com web style, and spring motion. use when designing app screens, websites, or mockups with the real current apple look." data-cat="A">
+      <div class="shot"><iframe title="apple-liquid-glass demo preview" loading="lazy" src="demos/apple-liquid-glass.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>apple-liquid-glass</h3><span class="cat cat-A">A</span></div>
+        <p>Apple Human Interface Guidelines in the Liquid Glass era (iOS 26+): the two-layer model (functional vs. content), material rules, the SwiftUI glassEffect API, semantic colors, SF typography, components, apple.com web style, and spring motion. Use when designing app screens, websites, or mockups with the real current Apple look.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/apple-marketing.html" target="_blank" rel="noopener"
+       data-name="apple-marketing design marketing pages like apple.com — full-bleed product scenes, huge tightly-tracked sf type, one idea per scroll scene, bento grids, and footnote-dense legal copy." data-cat="B">
+      <div class="shot"><iframe title="apple-marketing demo preview" loading="lazy" src="demos/apple-marketing.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>apple-marketing</h3><span class="cat cat-B">B</span></div>
+        <p>Design marketing pages like apple.com — full-bleed product scenes, huge tightly-tracked SF type, one idea per scroll scene, bento grids, and footnote-dense legal copy.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/arc-browser.html" target="_blank" rel="noopener"
+       data-name="arc-browser arc&#x27;s playful, spatial browser aesthetic — sidebar-first chrome, per-space color themes, a spotlight-style command bar, and warm, witty copy. use for friendly productivity uis and browser-chrome mockups." data-cat="B">
+      <div class="shot"><iframe title="arc-browser demo preview" loading="lazy" src="demos/arc-browser.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>arc-browser</h3><span class="cat cat-B">B</span></div>
+        <p>Arc&#x27;s playful, spatial browser aesthetic — sidebar-first chrome, per-space color themes, a Spotlight-style command bar, and warm, witty copy. Use for friendly productivity UIs and browser-chrome mockups.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/art-deco.html" target="_blank" rel="noopener"
+       data-name="art-deco art deco — 1920s geometric glamour. use for luxury hospitality, jazz clubs, galas, cocktail brands, and gatsby-era marketing: gold on black, sunbursts, chevrons, stepped frames, tall elegant capitals." data-cat="C">
+      <div class="shot"><iframe title="art-deco demo preview" loading="lazy" src="demos/art-deco.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>art-deco</h3><span class="cat cat-C">C</span></div>
+        <p>Art Deco — 1920s geometric glamour. Use for luxury hospitality, jazz clubs, galas, cocktail brands, and Gatsby-era marketing: gold on black, sunbursts, chevrons, stepped frames, tall elegant capitals.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/art-nouveau.html" target="_blank" rel="noopener"
+       data-name="art-nouveau art nouveau in the mucha idiom — whiplash curves, botanical ornament, halos, and muted golds — for posters, packaging, and editorial pages. use when a design should feel like an 1890s parisian lithograph." data-cat="D">
+      <div class="shot"><iframe title="art-nouveau demo preview" loading="lazy" src="demos/art-nouveau.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>art-nouveau</h3><span class="cat cat-D">D</span></div>
+        <p>Art Nouveau in the Mucha idiom — whiplash curves, botanical ornament, halos, and muted golds — for posters, packaging, and editorial pages. Use when a design should feel like an 1890s Parisian lithograph.</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <a class="card" href="demos/atlassian-ds.html" target="_blank" rel="noopener"
+       data-name="atlassian-ds build ui that looks and feels like atlassian products (jira, confluence, trello) — dense teamwork interfaces with status lozenges, avatar stacks, and honest, plain-spoken copy." data-cat="A">
+      <div class="shot"><iframe title="atlassian-ds demo preview" loading="lazy" src="demos/atlassian-ds.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>atlassian-ds</h3><span class="cat cat-A">A</span></div>
+        <p>Build UI that looks and feels like Atlassian products (Jira, Confluence, Trello) — dense teamwork interfaces with status lozenges, avatar stacks, and honest, plain-spoken copy.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/atompunk.html" target="_blank" rel="noopener"
+       data-name="atompunk 1950s atomic-age retro-futurism (googie, pulp sci-fi, fallout-shelter signage): starbursts, tailfins, boomerangs, teal/chrome palettes and exclamatory ad copy for &quot;world of tomorrow&quot; pages." data-cat="D">
+      <div class="shot"><iframe title="atompunk demo preview" loading="lazy" src="demos/atompunk.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>atompunk</h3><span class="cat cat-D">D</span></div>
+        <p>1950s atomic-age retro-futurism (Googie, pulp sci-fi, fallout-shelter signage): starbursts, tailfins, boomerangs, teal/chrome palettes and exclamatory ad copy for &quot;World of Tomorrow&quot; pages.</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <a class="card" href="demos/audi-brand.html" target="_blank" rel="noopener"
+       data-name="audi-brand audi brand digital design language — progressive, precise, reduced; monochrome plus a single red accent, engineered for car model pages and premium tech." data-cat="A">
+      <div class="shot"><iframe title="audi-brand demo preview" loading="lazy" src="demos/audi-brand.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>audi-brand</h3><span class="cat cat-A">A</span></div>
+        <p>Audi brand digital design language — progressive, precise, reduced; monochrome plus a single red accent, engineered for car model pages and premium tech.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/bauhaus.html" target="_blank" rel="noopener"
+       data-name="bauhaus bauhaus design movement (1919–1933) — form follows function, geometric primitives, primary colors, lowercase geometric type. use for posters, exhibition sites, design-school brands, and anything that should look constructed rather than decorated." data-cat="C">
+      <div class="shot"><iframe title="bauhaus demo preview" loading="lazy" src="demos/bauhaus.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>bauhaus</h3><span class="cat cat-C">C</span></div>
+        <p>Bauhaus design movement (1919–1933) — form follows function, geometric primitives, primary colors, lowercase geometric type. Use for posters, exhibition sites, design-school brands, and anything that should look constructed rather than decorated.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/broadsheet.html" target="_blank" rel="noopener"
+       data-name="broadsheet classic newspaper broadsheet design — blackletter nameplate, six-column grid, serif display headlines, kickers, decks, rules and folios. use when a page should read like a printed front page." data-cat="D">
+      <div class="shot"><iframe title="broadsheet demo preview" loading="lazy" src="demos/broadsheet.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>broadsheet</h3><span class="cat cat-D">D</span></div>
+        <p>Classic newspaper broadsheet design — blackletter nameplate, six-column grid, serif display headlines, kickers, decks, rules and folios. Use when a page should read like a printed front page.</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <a class="card" href="demos/brutalism.html" target="_blank" rel="noopener"
+       data-name="brutalism raw web brutalism — system fonts, default blue links, honest unstyled html, no decoration. use for pages that reject corporate polish: zines, hacker blogs, manifestos, raw indexes." data-cat="C">
+      <div class="shot"><iframe title="brutalism demo preview" loading="lazy" src="demos/brutalism.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>brutalism</h3><span class="cat cat-C">C</span></div>
+        <p>Raw web brutalism — system fonts, default blue links, honest unstyled HTML, no decoration. Use for pages that reject corporate polish: zines, hacker blogs, manifestos, raw indexes.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/carbon.html" target="_blank" rel="noopener"
+       data-name="carbon ibm carbon design system aesthetic — gray-layered enterprise ui, ibm plex type, blue-60 actions, data-dense console components." data-cat="A">
+      <div class="shot"><iframe title="carbon demo preview" loading="lazy" src="demos/carbon.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>carbon</h3><span class="cat cat-A">A</span></div>
+        <p>IBM Carbon design system aesthetic — gray-layered enterprise UI, IBM Plex type, blue-60 actions, data-dense console components.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/chakra-ui.html" target="_blank" rel="noopener"
+       data-name="chakra-ui chakra ui component-library style — soft rounded cards, teal/blue accents, subtle alerts and badge pills. use for friendly saas dashboards and admin pages." data-cat="A">
+      <div class="shot"><iframe title="chakra-ui demo preview" loading="lazy" src="demos/chakra-ui.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>chakra-ui</h3><span class="cat cat-A">A</span></div>
+        <p>Chakra UI component-library style — soft rounded cards, teal/blue accents, subtle alerts and badge pills. Use for friendly SaaS dashboards and admin pages.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/claude-anthropic.html" target="_blank" rel="noopener"
+       data-name="claude-anthropic anthropic&#x27;s claude warm-paper editorial aesthetic — cream canvas, ink text, coral accent, serif display — for calm, literary ai product and marketing pages." data-cat="B">
+      <div class="shot"><iframe title="claude-anthropic demo preview" loading="lazy" src="demos/claude-anthropic.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>claude-anthropic</h3><span class="cat cat-B">B</span></div>
+        <p>Anthropic&#x27;s Claude warm-paper editorial aesthetic — cream canvas, ink text, coral accent, serif display — for calm, literary AI product and marketing pages.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/claymorphism.html" target="_blank" rel="noopener"
+       data-name="claymorphism claymorphism — soft puffy 3d ui molded from pastel clay: chunky radii, layered inner/outer shadows, squishy press states. use for playful consumer apps, onboarding flows, kids&#x27; products, anything where warmth beats density." data-cat="C">
+      <div class="shot"><iframe title="claymorphism demo preview" loading="lazy" src="demos/claymorphism.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>claymorphism</h3><span class="cat cat-C">C</span></div>
+        <p>Claymorphism — soft puffy 3D UI molded from pastel clay: chunky radii, layered inner/outer shadows, squishy press states. Use for playful consumer apps, onboarding flows, kids&#x27; products, anything where warmth beats density.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/constructivism.html" target="_blank" rel="noopener"
+       data-name="constructivism russian constructivism (1919–1931) — rodchenko, el lissitzky, klutsis. red/black/cream palette, diagonal compositions, bold grotesque type as structure, photomontage, agitational poster language. use for posters, exhibitions, festivals, and anything that should shout rather than whisper." data-cat="D">
+      <div class="shot"><iframe title="constructivism demo preview" loading="lazy" src="demos/constructivism.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>constructivism</h3><span class="cat cat-D">D</span></div>
+        <p>Russian Constructivism (1919–1931) — Rodchenko, El Lissitzky, Klutsis. Red/black/cream palette, diagonal compositions, bold grotesque type as structure, photomontage, agitational poster language. Use for posters, exhibitions, festivals, and anything that should shout rather than whisper.</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <a class="card" href="demos/corporate-memphis.html" target="_blank" rel="noopener"
+       data-name="corporate-memphis corporate memphis / alegria flat-illustration style — elongated noodle-limbed figures, flat geometric shapes, bright limited palettes. use for friendly saas/landing art, empty states, and cheerful marketing scenes." data-cat="D">
+      <div class="shot"><iframe title="corporate-memphis demo preview" loading="lazy" src="demos/corporate-memphis.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>corporate-memphis</h3><span class="cat cat-D">D</span></div>
+        <p>Corporate Memphis / Alegria flat-illustration style — elongated noodle-limbed figures, flat geometric shapes, bright limited palettes. Use for friendly SaaS/landing art, empty states, and cheerful marketing scenes.</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <a class="card" href="demos/cyberpunk.html" target="_blank" rel="noopener"
+       data-name="cyberpunk cyberpunk neon-dystopia aesthetic — near-black ground, one hot neon accent per screen, glitch rgb-split type, scanlines, corner-bracket panels, terminal motifs. use for dark futuristic interfaces with attitude." data-cat="C">
+      <div class="shot"><iframe title="cyberpunk demo preview" loading="lazy" src="demos/cyberpunk.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>cyberpunk</h3><span class="cat cat-C">C</span></div>
+        <p>Cyberpunk neon-dystopia aesthetic — near-black ground, one hot neon accent per screen, glitch RGB-split type, scanlines, corner-bracket panels, terminal motifs. Use for dark futuristic interfaces with attitude.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/de-stijl.html" target="_blank" rel="noopener"
+       data-name="de-stijl de stijl / mondrian neoplasticism — the primary-only palette, black orthogonal grid, and asymmetric rectangles of the 1917–1931 movement; use for museum, gallery, manifesto, editorial, or print-style pages that need absolute geometric discipline." data-cat="D">
+      <div class="shot"><iframe title="de-stijl demo preview" loading="lazy" src="demos/de-stijl.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>de-stijl</h3><span class="cat cat-D">D</span></div>
+        <p>De Stijl / Mondrian neoplasticism — the primary-only palette, black orthogonal grid, and asymmetric rectangles of the 1917–1931 movement; use for museum, gallery, manifesto, editorial, or print-style pages that need absolute geometric discipline.</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <a class="card" href="demos/discord.html" target="_blank" rel="noopener"
+       data-name="discord discord&#x27;s blurple-and-charcoal gamer aesthetic — three-tone dark shell, server rail, chat-message anatomy — for community, gaming, and chat products." data-cat="B">
+      <div class="shot"><iframe title="discord demo preview" loading="lazy" src="demos/discord.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>discord</h3><span class="cat cat-B">B</span></div>
+        <p>Discord&#x27;s blurple-and-charcoal gamer aesthetic — three-tone dark shell, server rail, chat-message anatomy — for community, gaming, and chat products.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/duolingo.html" target="_blank" rel="noopener"
+       data-name="duolingo duolingo&#x27;s playful chunky gamified style — use for gamified learning uis, kid-friendly products, and anything that should feel like a rewarding game." data-cat="B">
+      <div class="shot"><iframe title="duolingo demo preview" loading="lazy" src="demos/duolingo.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>duolingo</h3><span class="cat cat-B">B</span></div>
+        <p>Duolingo&#x27;s playful chunky gamified style — use for gamified learning UIs, kid-friendly products, and anything that should feel like a rewarding game.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/figma.html" target="_blank" rel="noopener"
+       data-name="figma recreate figma&#x27;s brand language — playful, colorful, vector-first marketing with black-and-white chrome, bold color blocks, named multiplayer cursors, and tight grotesque type. use for collaborative product landing pages that feel fun and design-nerdy." data-cat="B">
+      <div class="shot"><iframe title="figma demo preview" loading="lazy" src="demos/figma.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>figma</h3><span class="cat cat-B">B</span></div>
+        <p>Recreate Figma&#x27;s brand language — playful, colorful, vector-first marketing with black-and-white chrome, bold color blocks, named multiplayer cursors, and tight grotesque type. Use for collaborative product landing pages that feel fun and design-nerdy.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/flat-design.html" target="_blank" rel="noopener"
+       data-name="flat-design flat 2.0 (semi-flat): bold solid-color blocks, crisp geometry and simple iconography, with long shadows and subtle tinted depth only where something is interactive or layered. use for clean, friendly marketing pages, dashboards and mobile-first uis." data-cat="C">
+      <div class="shot"><iframe title="flat-design demo preview" loading="lazy" src="demos/flat-design.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>flat-design</h3><span class="cat cat-C">C</span></div>
+        <p>Flat 2.0 (semi-flat): bold solid-color blocks, crisp geometry and simple iconography, with long shadows and subtle tinted depth only where something is interactive or layered. Use for clean, friendly marketing pages, dashboards and mobile-first UIs.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/fluent-2.html" target="_blank" rel="noopener"
+       data-name="fluent-2 microsoft fluent 2 design system — calm layered depth, segoe type, token-driven light/dark/high-contrast themes for productive software." data-cat="A">
+      <div class="shot"><iframe title="fluent-2 demo preview" loading="lazy" src="demos/fluent-2.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>fluent-2</h3><span class="cat cat-A">A</span></div>
+        <p>Microsoft Fluent 2 design system — calm layered depth, Segoe type, token-driven light/dark/high-contrast themes for productive software.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/frutiger-aero.html" target="_blank" rel="noopener"
+       data-name="frutiger-aero glossy eco-tech 2000s aesthetic (windows vista/7 era) — translucent glass ui, aqua-green palette, water droplets, bubbles and auroras. use for optimistic nature-meets-technology interfaces, splash pages, and eco-brand sites." data-cat="C">
+      <div class="shot"><iframe title="frutiger-aero demo preview" loading="lazy" src="demos/frutiger-aero.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>frutiger-aero</h3><span class="cat cat-C">C</span></div>
+        <p>Glossy eco-tech 2000s aesthetic (Windows Vista/7 era) — translucent glass UI, aqua-green palette, water droplets, bubbles and auroras. Use for optimistic nature-meets-technology interfaces, splash pages, and eco-brand sites.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/geist.html" target="_blank" rel="noopener"
+       data-name="geist vercel&#x27;s geist design language — minimal monochrome ui with hairline borders, geist sans/mono, and restrained color. use for developer tools, dashboards, and docs." data-cat="A">
+      <div class="shot"><iframe title="geist demo preview" loading="lazy" src="demos/geist.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>geist</h3><span class="cat cat-A">A</span></div>
+        <p>Vercel&#x27;s Geist design language — minimal monochrome UI with hairline borders, Geist Sans/Mono, and restrained color. Use for developer tools, dashboards, and docs.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/glassmorphism.html" target="_blank" rel="noopener"
+       data-name="glassmorphism frosted-glass ui aesthetic — translucent panels with backdrop blur and saturate, bright hairline edges and soft shadows floating over vivid, colorful backgrounds. use for dashboards, nav bars, modals, hero panels and overlays that should feel layered and luminous." data-cat="C">
+      <div class="shot"><iframe title="glassmorphism demo preview" loading="lazy" src="demos/glassmorphism.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>glassmorphism</h3><span class="cat cat-C">C</span></div>
+        <p>Frosted-glass UI aesthetic — translucent panels with backdrop blur and saturate, bright hairline edges and soft shadows floating over vivid, colorful backgrounds. Use for dashboards, nav bars, modals, hero panels and overlays that should feel layered and luminous.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/gumroad.html" target="_blank" rel="noopener"
+       data-name="gumroad gumroad&#x27;s lo-fi, neo-brutalist creator commerce style — pink #ff90e8, thick black borders, hard offset shadows. use for creator storefronts, digital-product pages, and playful anti-corporate commerce uis." data-cat="B">
+      <div class="shot"><iframe title="gumroad demo preview" loading="lazy" src="demos/gumroad.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>gumroad</h3><span class="cat cat-B">B</span></div>
+        <p>Gumroad&#x27;s lo-fi, neo-brutalist creator commerce style — pink #FF90E8, thick black borders, hard offset shadows. Use for creator storefronts, digital-product pages, and playful anti-corporate commerce UIs.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/harmonyos.html" target="_blank" rel="noopener"
+       data-name="harmonyos huawei harmonyos design language — &quot;harmonious&quot; aesthetics, service cards, atomic services, vivid-yet-restrained color, rounded card grids." data-cat="A">
+      <div class="shot"><iframe title="harmonyos demo preview" loading="lazy" src="demos/harmonyos.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>harmonyos</h3><span class="cat cat-A">A</span></div>
+        <p>Huawei HarmonyOS design language — &quot;Harmonious&quot; aesthetics, service cards, atomic services, vivid-yet-restrained color, rounded card grids.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/hyperos.html" target="_blank" rel="noopener"
+       data-name="hyperos xiaomi hyperos ui style — vivid wallpaper-forward phone ui, soft light glass translucency, big rounded control-center tiles and fat sliders, misans type. use for xiaomi-flavored phone mockups, control centers, and settings pages." data-cat="A">
+      <div class="shot"><iframe title="hyperos demo preview" loading="lazy" src="demos/hyperos.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>hyperos</h3><span class="cat cat-A">A</span></div>
+        <p>Xiaomi HyperOS UI style — vivid wallpaper-forward phone UI, Soft Light Glass translucency, big rounded control-center tiles and fat sliders, MiSans type. Use for Xiaomi-flavored phone mockups, control centers, and settings pages.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/japandi.html" target="_blank" rel="noopener"
+       data-name="japandi japandi minimalism for the web — wabi-sabi warmth meets scandinavian function; muted earth tones, honest materials, low profiles, generous negative space. use for calm, craft-led product and brand pages." data-cat="C">
+      <div class="shot"><iframe title="japandi demo preview" loading="lazy" src="demos/japandi.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>japandi</h3><span class="cat cat-C">C</span></div>
+        <p>Japandi minimalism for the web — wabi-sabi warmth meets Scandinavian function; muted earth tones, honest materials, low profiles, generous negative space. Use for calm, craft-led product and brand pages.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/lightning.html" target="_blank" rel="noopener"
+       data-name="lightning salesforce lightning design system (slds) — enterprise crm ui language of blue brand buttons, page headers, dense data tables, and neutral grays; use for admin consoles, dashboards, and business apps." data-cat="A">
+      <div class="shot"><iframe title="lightning demo preview" loading="lazy" src="demos/lightning.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>lightning</h3><span class="cat cat-A">A</span></div>
+        <p>Salesforce Lightning Design System (SLDS) — enterprise CRM UI language of blue brand buttons, page headers, dense data tables, and neutral grays; use for admin consoles, dashboards, and business apps.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/linear.html" target="_blank" rel="noopener"
+       data-name="linear linear.app&#x27;s dark, precise product aesthetic — use for sleek developer-tool marketing pages and dense keyboard-driven app uis." data-cat="B">
+      <div class="shot"><iframe title="linear demo preview" loading="lazy" src="demos/linear.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>linear</h3><span class="cat cat-B">B</span></div>
+        <p>Linear.app&#x27;s dark, precise product aesthetic — use for sleek developer-tool marketing pages and dense keyboard-driven app UIs.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/mantine.html" target="_blank" rel="noopener"
+       data-name="mantine mantine&#x27;s clean, feature-rich react ui style — use for admin dashboards, app chrome, and data-dense web apps with blue #228be6 primary." data-cat="A">
+      <div class="shot"><iframe title="mantine demo preview" loading="lazy" src="demos/mantine.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>mantine</h3><span class="cat cat-A">A</span></div>
+        <p>Mantine&#x27;s clean, feature-rich React UI style — use for admin dashboards, app chrome, and data-dense web apps with blue #228be6 primary.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/material-3.html" target="_blank" rel="noopener"
+       data-name="material-3 google material design 3 / material you — tonal color roles, type/shape/elevation tokens, and m3 components. use for android-first products, settings pages, and dynamic-color theming." data-cat="A">
+      <div class="shot"><iframe title="material-3 demo preview" loading="lazy" src="demos/material-3.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>material-3</h3><span class="cat cat-A">A</span></div>
+        <p>Google Material Design 3 / Material You — tonal color roles, type/shape/elevation tokens, and M3 components. Use for Android-first products, settings pages, and dynamic-color theming.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/maximalism.html" target="_blank" rel="noopener"
+       data-name="maximalism maximalism — &quot;more is more&quot; web design: clashing saturated color, mixed css patterns, oversized stacked typography, sticker collages, rotated badges and layered compositions kept readable by a strict grid. use for streetwear drops, music festivals, rave flyers, youth brands, and culture sites where energy beats calm." data-cat="C">
+      <div class="shot"><iframe title="maximalism demo preview" loading="lazy" src="demos/maximalism.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>maximalism</h3><span class="cat cat-C">C</span></div>
+        <p>Maximalism — &quot;more is more&quot; web design: clashing saturated color, mixed CSS patterns, oversized stacked typography, sticker collages, rotated badges and layered compositions kept readable by a strict grid. Use for streetwear drops, music festivals, rave flyers, youth brands, and culture sites where energy beats calm.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/memphis.html" target="_blank" rel="noopener"
+       data-name="memphis memphis group postmodern pattern style — clashing pastels and neons, terrazzo and bacterio squiggle patterns, playful geometric chaos. use for party pages, creative brands, and anything that should feel joyfully loud." data-cat="C">
+      <div class="shot"><iframe title="memphis demo preview" loading="lazy" src="demos/memphis.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>memphis</h3><span class="cat cat-C">C</span></div>
+        <p>Memphis Group postmodern pattern style — clashing pastels and neons, terrazzo and Bacterio squiggle patterns, playful geometric chaos. Use for party pages, creative brands, and anything that should feel joyfully loud.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/mid-century.html" target="_blank" rel="noopener"
+       data-name="mid-century mid-century modern design (1945–1969) — warm woods, mustard/teal/burnt-orange palette, starburst motifs, clean grotesques with script accents. use for optimistic, functionalist, 1950s-flavored pages." data-cat="C">
+      <div class="shot"><iframe title="mid-century demo preview" loading="lazy" src="demos/mid-century.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>mid-century</h3><span class="cat cat-C">C</span></div>
+        <p>Mid-century modern design (1945–1969) — warm woods, mustard/teal/burnt-orange palette, starburst motifs, clean grotesques with script accents. Use for optimistic, functionalist, 1950s-flavored pages.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/minimalism.html" target="_blank" rel="noopener"
+       data-name="minimalism radical minimalism for interfaces — extreme reduction, monochrome palettes, one typeface, vast whitespace, hairline rules; the rams / pawson lineage. use when a product should feel inevitable, quiet, and precise." data-cat="C">
+      <div class="shot"><iframe title="minimalism demo preview" loading="lazy" src="demos/minimalism.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>minimalism</h3><span class="cat cat-C">C</span></div>
+        <p>Radical minimalism for interfaces — extreme reduction, monochrome palettes, one typeface, vast whitespace, hairline rules; the Rams / Pawson lineage. Use when a product should feel inevitable, quiet, and precise.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/neo-brutalism.html" target="_blank" rel="noopener"
+       data-name="neo-brutalism chunky gumroad-style neo-brutalism — thick black borders, hard offset shadows, loud flat colors. use for playful, high-energy landing pages, indie saas, and creator-economy brands that want to be impossible to ignore." data-cat="C">
+      <div class="shot"><iframe title="neo-brutalism demo preview" loading="lazy" src="demos/neo-brutalism.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>neo-brutalism</h3><span class="cat cat-C">C</span></div>
+        <p>Chunky Gumroad-style neo-brutalism — thick black borders, hard offset shadows, loud flat colors. Use for playful, high-energy landing pages, indie SaaS, and creator-economy brands that want to be impossible to ignore.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/netflix.html" target="_blank" rel="noopener"
+       data-name="netflix netflix&#x27;s dark cinematic brand language — full-bleed billboard heroes, horizontal content rails, top 10 rows, and red-accent ctas — for streaming-style entertainment uis." data-cat="B">
+      <div class="shot"><iframe title="netflix demo preview" loading="lazy" src="demos/netflix.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>netflix</h3><span class="cat cat-B">B</span></div>
+        <p>Netflix&#x27;s dark cinematic brand language — full-bleed billboard heroes, horizontal content rails, Top 10 rows, and red-accent CTAs — for streaming-style entertainment UIs.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/neumorphism.html" target="_blank" rel="noopener"
+       data-name="neumorphism neumorphism (soft ui) — extruded and inset surfaces sculpted from a single background color with paired light/dark shadows. use for calm, tactile interfaces: smart-home panels, music players, thermostats, calculators, settings screens." data-cat="C">
+      <div class="shot"><iframe title="neumorphism demo preview" loading="lazy" src="demos/neumorphism.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>neumorphism</h3><span class="cat cat-C">C</span></div>
+        <p>Neumorphism (soft UI) — extruded and inset surfaces sculpted from a single background color with paired light/dark shadows. Use for calm, tactile interfaces: smart-home panels, music players, thermostats, calculators, settings screens.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/nothing-tech.html" target="_blank" rel="noopener"
+       data-name="nothing-tech nothing (nothing.tech) design language — dot-matrix display typography (ndot), transparent-tech hardware aesthetic, strict black-and-white palette with one signal-red accent, and typewriter mono technical labels. use for bold, playful consumer-tech pages that feel engineered, deadpan, and fun." data-cat="B">
+      <div class="shot"><iframe title="nothing-tech demo preview" loading="lazy" src="demos/nothing-tech.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>nothing-tech</h3><span class="cat cat-B">B</span></div>
+        <p>Nothing (nothing.tech) design language — dot-matrix display typography (NDot), transparent-tech hardware aesthetic, strict black-and-white palette with one signal-red accent, and typewriter mono technical labels. Use for bold, playful consumer-tech pages that feel engineered, deadpan, and fun.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/notion.html" target="_blank" rel="noopener"
+       data-name="notion notion&#x27;s minimal document aesthetic — calm block-based pages, warm paper tones, and quiet ui. use for docs, wikis, dashboards, and productivity uis." data-cat="B">
+      <div class="shot"><iframe title="notion demo preview" loading="lazy" src="demos/notion.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>notion</h3><span class="cat cat-B">B</span></div>
+        <p>Notion&#x27;s minimal document aesthetic — calm block-based pages, warm paper tones, and quiet UI. Use for docs, wikis, dashboards, and productivity UIs.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/one-ui.html" target="_blank" rel="noopener"
+       data-name="one-ui samsung one ui design language — viewing/interaction split for one-handed use, giant collapsing titles, dark-first surfaces, samsung blue accent, and big rounded controls. use for samsung-style settings pages, galaxy phone ui, and thumb-reachable mobile apps." data-cat="A">
+      <div class="shot"><iframe title="one-ui demo preview" loading="lazy" src="demos/one-ui.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>one-ui</h3><span class="cat cat-A">A</span></div>
+        <p>Samsung One UI design language — viewing/interaction split for one-handed use, giant collapsing titles, dark-first surfaces, Samsung Blue accent, and big rounded controls. Use for Samsung-style settings pages, Galaxy phone UI, and thumb-reachable mobile apps.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/openai.html" target="_blank" rel="noopener"
+       data-name="openai recreate openai&#x27;s brand style — restrained research-lab calm: white canvas, near-black ink, hairline borders, söhne-style quiet typography, index-style research cards, generous whitespace." data-cat="B">
+      <div class="shot"><iframe title="openai demo preview" loading="lazy" src="demos/openai.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>openai</h3><span class="cat cat-B">B</span></div>
+        <p>Recreate OpenAI&#x27;s brand style — restrained research-lab calm: white canvas, near-black ink, hairline borders, Söhne-style quiet typography, index-style research cards, generous whitespace.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/perplexity.html" target="_blank" rel="noopener"
+       data-name="perplexity perplexity&#x27;s answer-engine aesthetic — off-white minimalism, ink text, one signature teal, inline numbered citations and source chips — for answer-first search and q&amp;a interfaces." data-cat="B">
+      <div class="shot"><iframe title="perplexity demo preview" loading="lazy" src="demos/perplexity.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>perplexity</h3><span class="cat cat-B">B</span></div>
+        <p>Perplexity&#x27;s answer-engine aesthetic — off-white minimalism, ink text, one signature teal, inline numbered citations and source chips — for answer-first search and Q&amp;A interfaces.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/polaris.html" target="_blank" rel="noopener"
+       data-name="polaris shopify polaris — the design system behind the shopify admin: dense, merchant-first uis with token-based surfaces, sentence-case plain-language copy, and data-heavy pages (page, card, resourcelist, filters, banner, emptystate)." data-cat="A">
+      <div class="shot"><iframe title="polaris demo preview" loading="lazy" src="demos/polaris.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>polaris</h3><span class="cat cat-A">A</span></div>
+        <p>Shopify Polaris — the design system behind the Shopify admin: dense, merchant-first UIs with token-based surfaces, sentence-case plain-language copy, and data-heavy pages (Page, Card, ResourceList, Filters, Banner, EmptyState).</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/pop-art.html" target="_blank" rel="noopener"
+       data-name="pop-art pop art design language (lichtenstein / warhol) — ben-day dots, thick black outlines, flat primaries, comic panels, silkscreen repetition, onomatopoeia bursts. use for bold retro-pop marketing pages, posters, and product drops." data-cat="D">
+      <div class="shot"><iframe title="pop-art demo preview" loading="lazy" src="demos/pop-art.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>pop-art</h3><span class="cat cat-D">D</span></div>
+        <p>Pop Art design language (Lichtenstein / Warhol) — Ben-Day dots, thick black outlines, flat primaries, comic panels, silkscreen repetition, onomatopoeia bursts. Use for bold retro-pop marketing pages, posters, and product drops.</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <a class="card" href="demos/primer.html" target="_blank" rel="noopener"
+       data-name="primer github&#x27;s primer design system — functional color tokens, system font stack, underlinenav, labels, blankslates, and dense developer-tool ui that is boring on purpose. use for dashboards, repo pages, admin panels, and anything that should feel like github.com." data-cat="A">
+      <div class="shot"><iframe title="primer demo preview" loading="lazy" src="demos/primer.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>primer</h3><span class="cat cat-A">A</span></div>
+        <p>GitHub&#x27;s Primer design system — functional color tokens, system font stack, UnderlineNav, Labels, Blankslates, and dense developer-tool UI that is boring on purpose. Use for dashboards, repo pages, admin panels, and anything that should feel like github.com.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/raycast.html" target="_blank" rel="noopener"
+       data-name="raycast dark, keyboard-first raycast aesthetic — near-black canvas, one red accent, command-bar ui with macos-native shadows. use for launcher-style product pages, dev-tool marketing, and command-palette interfaces." data-cat="B">
+      <div class="shot"><iframe title="raycast demo preview" loading="lazy" src="demos/raycast.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>raycast</h3><span class="cat cat-B">B</span></div>
+        <p>Dark, keyboard-first Raycast aesthetic — near-black canvas, one red accent, command-bar UI with macOS-native shadows. Use for launcher-style product pages, dev-tool marketing, and command-palette interfaces.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/scandinavian.html" target="_blank" rel="noopener"
+       data-name="scandinavian scandinavian design language — airy functionalism, light woods, white space, muted naturals with one democratic pop accent. use for bright, honest, hygge-warm product and brand pages (not dark/moody — that&#x27;s japandi)." data-cat="D">
+      <div class="shot"><iframe title="scandinavian demo preview" loading="lazy" src="demos/scandinavian.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>scandinavian</h3><span class="cat cat-D">D</span></div>
+        <p>Scandinavian design language — airy functionalism, light woods, white space, muted naturals with one democratic pop accent. Use for bright, honest, hygge-warm product and brand pages (not dark/moody — that&#x27;s japandi).</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <a class="card" href="demos/shadcn-ui.html" target="_blank" rel="noopener"
+       data-name="shadcn-ui the shadcn/ui dashboard aesthetic — semantic css variables, zinc monochrome, minimal borders, radix-accessible components. use for clean admin panels, dashboards, settings pages, and data-heavy saas ui." data-cat="A">
+      <div class="shot"><iframe title="shadcn-ui demo preview" loading="lazy" src="demos/shadcn-ui.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>shadcn-ui</h3><span class="cat cat-A">A</span></div>
+        <p>The shadcn/ui dashboard aesthetic — semantic CSS variables, zinc monochrome, minimal borders, Radix-accessible components. Use for clean admin panels, dashboards, settings pages, and data-heavy SaaS UI.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/skeuomorphism.html" target="_blank" rel="noopener"
+       data-name="skeuomorphism ios 6-era skeuomorphism — leather, linen, wood, green felt, brushed metal, stitched seams, glossy gel buttons and embossed type, as shipped in ios 1–6 (2007–2012)." data-cat="C">
+      <div class="shot"><iframe title="skeuomorphism demo preview" loading="lazy" src="demos/skeuomorphism.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>skeuomorphism</h3><span class="cat cat-C">C</span></div>
+        <p>iOS 6-era skeuomorphism — leather, linen, wood, green felt, brushed metal, stitched seams, glossy gel buttons and embossed type, as shipped in iOS 1–6 (2007–2012).</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/solana.html" target="_blank" rel="noopener"
+       data-name="solana solana&#x27;s gradient green/purple web3 aesthetic — dark canvas, purple→green gradient, stats-heavy developer-marketing pages." data-cat="B">
+      <div class="shot"><iframe title="solana demo preview" loading="lazy" src="demos/solana.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>solana</h3><span class="cat cat-B">B</span></div>
+        <p>Solana&#x27;s gradient green/purple web3 aesthetic — dark canvas, purple→green gradient, stats-heavy developer-marketing pages.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/solarpunk.html" target="_blank" rel="noopener"
+       data-name="solarpunk solarpunk — optimistic eco-futurism. use for green tech, community energy, urban farming, climate-positive products, and anything that should feel sunlit, organic, and hopefully human: golden light, botanical motifs, art-nouveau curves, warm daylight palettes." data-cat="C">
+      <div class="shot"><iframe title="solarpunk demo preview" loading="lazy" src="demos/solarpunk.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>solarpunk</h3><span class="cat cat-C">C</span></div>
+        <p>Solarpunk — optimistic eco-futurism. Use for green tech, community energy, urban farming, climate-positive products, and anything that should feel sunlit, organic, and hopefully human: golden light, botanical motifs, art-nouveau curves, warm daylight palettes.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/spectrum.html" target="_blank" rel="noopener"
+       data-name="spectrum adobe spectrum design system — quiet gray surfaces, blue-600 accents, adobe clean typography and precise creative-tool components. use when a ui should feel like a professional adobe product: calm, accessible, and out of the content&#x27;s way." data-cat="A">
+      <div class="shot"><iframe title="spectrum demo preview" loading="lazy" src="demos/spectrum.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>spectrum</h3><span class="cat cat-A">A</span></div>
+        <p>Adobe Spectrum design system — quiet gray surfaces, blue-600 accents, Adobe Clean typography and precise creative-tool components. Use when a UI should feel like a professional Adobe product: calm, accessible, and out of the content&#x27;s way.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/spotify.html" target="_blank" rel="noopener"
+       data-name="spotify recreate spotify&#x27;s music-product aesthetic — near-black charcoal surfaces, one neon-green accent, pill-and-circle geometry, circular-style grotesque type, card-row grids, and a persistent now-playing bar." data-cat="B">
+      <div class="shot"><iframe title="spotify demo preview" loading="lazy" src="demos/spotify.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>spotify</h3><span class="cat cat-B">B</span></div>
+        <p>Recreate Spotify&#x27;s music-product aesthetic — near-black charcoal surfaces, one neon-green accent, pill-and-circle geometry, Circular-style grotesque type, card-row grids, and a persistent now-playing bar.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/stripe.html" target="_blank" rel="noopener"
+       data-name="stripe recreate stripe.com&#x27;s marketing and dashboard aesthetic — blurple brand, animated gradient-mesh hero, light-weight tight type, diagonal sections, code-first storytelling, blue-tinted shadows." data-cat="B">
+      <div class="shot"><iframe title="stripe demo preview" loading="lazy" src="demos/stripe.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>stripe</h3><span class="cat cat-B">B</span></div>
+        <p>Recreate Stripe.com&#x27;s marketing and dashboard aesthetic — blurple brand, animated gradient-mesh hero, light-weight tight type, diagonal sections, code-first storytelling, blue-tinted shadows.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/swiss-international.html" target="_blank" rel="noopener"
+       data-name="swiss-international swiss / international typographic style (1950s–60s zurich &amp; basel schools) — mathematical grids, grotesque type as image, asymmetric layouts, black/white plus one red accent. use for poster-like pages, editorial layouts, schedules, and anything that must communicate objectively and read at a glance." data-cat="C">
+      <div class="shot"><iframe title="swiss-international demo preview" loading="lazy" src="demos/swiss-international.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>swiss-international</h3><span class="cat cat-C">C</span></div>
+        <p>Swiss / International Typographic Style (1950s–60s Zurich &amp; Basel schools) — mathematical grids, grotesque type as image, asymmetric layouts, black/white plus one red accent. Use for poster-like pages, editorial layouts, schedules, and anything that must communicate objectively and read at a glance.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/tailwind-ui.html" target="_blank" rel="noopener"
+       data-name="tailwind-ui build pages and app uis in the tailwind ui / catalyst style — refined, utility-first interfaces with inter, zinc neutrals, ring-based hairlines, and one restrained accent. use for dev-tool marketing sites and react-style admin/app shells." data-cat="A">
+      <div class="shot"><iframe title="tailwind-ui demo preview" loading="lazy" src="demos/tailwind-ui.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>tailwind-ui</h3><span class="cat cat-A">A</span></div>
+        <p>Build pages and app UIs in the Tailwind UI / Catalyst style — refined, utility-first interfaces with Inter, zinc neutrals, ring-based hairlines, and one restrained accent. Use for dev-tool marketing sites and React-style admin/app shells.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/teenage-engineering.html" target="_blank" rel="noopener"
+       data-name="teenage-engineering teenage engineering industrial minimalism — off-white hardware-catalog pages, thin technical typography, spec-table density, restrained safety-orange accents, and dry lowercase copy. use for pocket-gadget product pages, spec sheets, and manual-style layouts." data-cat="B">
+      <div class="shot"><iframe title="teenage-engineering demo preview" loading="lazy" src="demos/teenage-engineering.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>teenage-engineering</h3><span class="cat cat-B">B</span></div>
+        <p>Teenage Engineering industrial minimalism — off-white hardware-catalog pages, thin technical typography, spec-table density, restrained safety-orange accents, and dry lowercase copy. Use for pocket-gadget product pages, spec sheets, and manual-style layouts.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/twitch.html" target="_blank" rel="noopener"
+       data-name="twitch twitch&#x27;s streamer aesthetic — near-black canvas, twitch purple ctas, red live badges, stream-card grids, and the docked community chat — for live-streaming-style uis." data-cat="B">
+      <div class="shot"><iframe title="twitch demo preview" loading="lazy" src="demos/twitch.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>twitch</h3><span class="cat cat-B">B</span></div>
+        <p>Twitch&#x27;s streamer aesthetic — near-black canvas, Twitch Purple CTAs, red LIVE badges, stream-card grids, and the docked community chat — for live-streaming-style UIs.</p>
+        <span class="kicker">Product & brand</span>
+      </div>
+    </a>
+    <a class="card" href="demos/vanilla-framework.html" target="_blank" rel="noopener"
+       data-name="vanilla-framework canonical&#x27;s vanilla framework style — the ubuntu design system: white pages, ubuntu orange ctas, canonical aubergine strips, ubuntu font. use for clean, accessible, &quot;boring-on-purpose&quot; corporate open-source pages." data-cat="A">
+      <div class="shot"><iframe title="vanilla-framework demo preview" loading="lazy" src="demos/vanilla-framework.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>vanilla-framework</h3><span class="cat cat-A">A</span></div>
+        <p>Canonical&#x27;s Vanilla framework style — the Ubuntu design system: white pages, Ubuntu orange CTAs, Canonical aubergine strips, Ubuntu font. Use for clean, accessible, &quot;boring-on-purpose&quot; corporate open-source pages.</p>
+        <span class="kicker">Design systems</span>
+      </div>
+    </a>
+    <a class="card" href="demos/vaporwave.html" target="_blank" rel="noopener"
+       data-name="vaporwave vaporwave / synthwave retro-futurism — neon grid sunsets, chrome suns, palm silhouettes, vhs glitch. use for music labels, arcade pages, event flyers, streaming overlays, anything addressing an audience that reads the 80s reference." data-cat="C">
+      <div class="shot"><iframe title="vaporwave demo preview" loading="lazy" src="demos/vaporwave.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>vaporwave</h3><span class="cat cat-C">C</span></div>
+        <p>Vaporwave / synthwave retro-futurism — neon grid sunsets, chrome suns, palm silhouettes, VHS glitch. Use for music labels, arcade pages, event flyers, streaming overlays, anything addressing an audience that reads the 80s reference.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/wabi-sabi.html" target="_blank" rel="noopener"
+       data-name="wabi-sabi the japanese aesthetic of imperfection and transience — asymmetry, roughness, simplicity, modesty, and intimacy rendered in quiet earth tones, weathered textures, and generous negative space. use for artisan brands, ceramics, tea houses, slow-living products, and editorial pages that should feel handmade and human rather than polished." data-cat="D">
+      <div class="shot"><iframe title="wabi-sabi demo preview" loading="lazy" src="demos/wabi-sabi.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>wabi-sabi</h3><span class="cat cat-D">D</span></div>
+        <p>The Japanese aesthetic of imperfection and transience — asymmetry, roughness, simplicity, modesty, and intimacy rendered in quiet earth tones, weathered textures, and generous negative space. Use for artisan brands, ceramics, tea houses, slow-living products, and editorial pages that should feel handmade and human rather than polished.</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <a class="card" href="demos/y2k.html" target="_blank" rel="noopener"
+       data-name="y2k y2k chrome-and-gloss aesthetic — millennial techno-optimism with silver chrome gradients, bubblegum pink, icy blue, bubble type, and sparkle motifs. use for retro-futurist product pages, 2000s-nostalgia launches, and anything that should scream &quot;the future is now&quot;." data-cat="C">
+      <div class="shot"><iframe title="y2k demo preview" loading="lazy" src="demos/y2k.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>y2k</h3><span class="cat cat-C">C</span></div>
+        <p>Y2K chrome-and-gloss aesthetic — millennial techno-optimism with silver chrome gradients, bubblegum pink, icy blue, bubble type, and sparkle motifs. Use for retro-futurist product pages, 2000s-nostalgia launches, and anything that should scream &quot;the future is now&quot;.</p>
+        <span class="kicker">Movements & aesthetics</span>
+      </div>
+    </a>
+    <a class="card" href="demos/zine-diy.html" target="_blank" rel="noopener"
+       data-name="zine-diy diy punk zine / photocopy aesthetic — ransom-note type, cut-and-paste collage, high-contrast b/w, tape and staples. use for show flyers, fanzines, protest ephemera, and anything that should look made at 2am on a borrowed copier." data-cat="D">
+      <div class="shot"><iframe title="zine-diy demo preview" loading="lazy" src="demos/zine-diy.html" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="open">Open full demo ↗</span></div>
+      <div class="meta">
+        <div class="row"><h3>zine-diy</h3><span class="cat cat-D">D</span></div>
+        <p>DIY punk zine / photocopy aesthetic — ransom-note type, cut-and-paste collage, high-contrast B/W, tape and staples. Use for show flyers, fanzines, protest ephemera, and anything that should look made at 2am on a borrowed copier.</p>
+        <span class="kicker">Editorial, print & niche</span>
+      </div>
+    </a>
+    <div class="noresult" id="noresult">No skills match — try a different search.</div>
+  </div>
+</div></main>
+
+<footer><div class="wrap">
+  <span>design-skills · 70 design languages as Agent Skills · English</span>
+  <span>Click any card to open the full demo in a new tab.</span>
+</div></footer>
+
+<script>
+(function(){
+  // scale each preview iframe to its card width (demos authored at 1280x800)
+  function fit(){
+    document.querySelectorAll('.shot').forEach(function(w){
+      var f = w.querySelector('iframe');
+      if(!f) return;
+      var s = w.clientWidth / 1280;
+      f.style.transform = 'scale(' + s + ')';
+    });
+  }
+  if('ResizeObserver' in window){ new ResizeObserver(fit).observe(document.getElementById('grid')); }
+  window.addEventListener('resize', fit);
+  window.addEventListener('load', fit); fit();
+
+  var q = document.getElementById('q'),
+      grid = document.getElementById('grid'),
+      cards = Array.prototype.slice.call(grid.querySelectorAll('.card')),
+      nores = document.getElementById('noresult'),
+      count = document.getElementById('count'),
+      fbtns = Array.prototype.slice.call(document.querySelectorAll('.fbtn')),
+      active = 'ALL';
+
+  function apply(){
+    var term = q.value.trim().toLowerCase(), n = 0;
+    cards.forEach(function(c){
+      var okCat = (active === 'ALL' || c.dataset.cat === active);
+      var okTerm = (!term || c.dataset.name.indexOf(term) !== -1);
+      var show = okCat && okTerm;
+      c.classList.toggle('hidden', !show);
+      if(show) n++;
+    });
+    nores.style.display = n ? 'none' : 'block';
+    count.textContent = n + ' / 70 shown';
+    fit();
+  }
+  q.addEventListener('input', apply);
+  fbtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      fbtns.forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); active = b.dataset.f; apply();
+    });
+  });
+  apply();
+})();
+</script>
+</body>
+</html>
