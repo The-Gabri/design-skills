@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="g10">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>carbon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ================= Carbon v11 theme tokens ================= */
+:root, html[data-theme="g10"]{
+  --bg:#f4f4f4;
+  --layer-01:#ffffff; --layer-02:#f4f4f4; --layer-03:#e0e0e0;
+  --layer-accent:#e0e0e0;
+  --layer-hover:#e8e8e8; --layer-selected:#e0e0e0;
+  --field:#ffffff; --field-hover:#e8e8e8;
+  --text-primary:#161616; --text-secondary:#525252; --text-placeholder:#a8a8a8;
+  --text-inverse:#ffffff;
+  --border-subtle:#e0e0e0; --border-strong:#8d8d8d;
+  --link:#0f62fe; --focus:#0f62fe;
+  --bg-inverse:#161616; --text-on-inverse:#f4f4f4;
+  --btn-primary:#0f62fe; --btn-primary-hover:#0353e9; --btn-primary-active:#002d9c;
+  --support-error:#da1e28; --support-success:#24a148; --support-warning:#f1c21b; --support-info:#0f62fe;
+  --tag-red-bg:#ffd7d9; --tag-red-tx:#750e13;
+  --tag-magenta-bg:#ffd6e8; --tag-magenta-tx:#740937;
+  --tag-purple-bg:#e8daff; --tag-purple-tx:#491d8b;
+  --tag-blue-bg:#d0e2ff; --tag-blue-tx:#002d9c;
+  --tag-cyan-bg:#bae6ff; --tag-cyan-tx:#003a6d;
+  --tag-teal-bg:#9ef0f0; --tag-teal-tx:#004144;
+  --tag-green-bg:#defbe6; --tag-green-tx:#044317;
+  --tag-gray-bg:#e0e0e0; --tag-gray-tx:#161616;
+  --tag-coolgray-bg:#dde1e6; --tag-coolgray-tx:#121619;
+  --tag-warmgray-bg:#e5e0df; --tag-warmgray-tx:#171414;
+  --tag-hc-bg:#393939; --tag-hc-tx:#f4f4f4;
+}
+html[data-theme="g90"]{
+  --bg:#262626;
+  --layer-01:#393939; --layer-02:#4c4c4c; --layer-03:#6f6f6f;
+  --layer-accent:#525252;
+  --layer-hover:#4c4c4c; --layer-selected:#525252;
+  --field:#393939; --field-hover:#4c4c4c;
+  --text-primary:#f4f4f4; --text-secondary:#c6c6c6; --text-placeholder:#6f6f6f;
+  --text-inverse:#161616;
+  --border-subtle:#525252; --border-strong:#8d8d8d;
+  --link:#78a9ff; --focus:#ffffff;
+  --bg-inverse:#f4f4f4; --text-on-inverse:#161616;
+  --btn-primary:#0f62fe; --btn-primary-hover:#0353e9; --btn-primary-active:#002d9c;
+  --support-error:#ff8389; --support-success:#42be65; --support-warning:#f1c21b; --support-info:#78a9ff;
+  --tag-red-bg:#a2191f; --tag-red-tx:#ffd7d9;
+  --tag-magenta-bg:#9f1853; --tag-magenta-tx:#ffd6e8;
+  --tag-purple-bg:#6929c4; --tag-purple-tx:#e8daff;
+  --tag-blue-bg:#002d9c; --tag-blue-tx:#d0e2ff;
+  --tag-cyan-bg:#00539a; --tag-cyan-tx:#bae6ff;
+  --tag-teal-bg:#005d5d; --tag-teal-tx:#9ef0f0;
+  --tag-green-bg:#044317; --tag-green-tx:#defbe6;
+  --tag-gray-bg:#525252; --tag-gray-tx:#e0e0e0;
+  --tag-coolgray-bg:#3d4851; --tag-coolgray-tx:#dde1e6;
+  --tag-warmgray-bg:#433231; --tag-warmgray-tx:#e5e0df;
+  --tag-hc-bg:#f4f4f4; --tag-hc-tx:#161616;
+}
+html[data-theme="g100"]{
+  --bg:#161616;
+  --layer-01:#262626; --layer-02:#393939; --layer-03:#525252;
+  --layer-accent:#393939;
+  --layer-hover:#353535; --layer-selected:#393939;
+  --field:#262626; --field-hover:#353535;
+  --text-primary:#f4f4f4; --text-secondary:#c6c6c6; --text-placeholder:#6f6f6f;
+  --text-inverse:#161616;
+  --border-subtle:#393939; --border-strong:#8d8d8d;
+  --link:#78a9ff; --focus:#ffffff;
+  --bg-inverse:#f4f4f4; --text-on-inverse:#161616;
+  --btn-primary:#0f62fe; --btn-primary-hover:#0353e9; --btn-primary-active:#002d9c;
+  --support-error:#ff8389; --support-success:#42be65; --support-warning:#f1c21b; --support-info:#78a9ff;
+  --tag-red-bg:#a2191f; --tag-red-tx:#ffd7d9;
+  --tag-magenta-bg:#9f1853; --tag-magenta-tx:#ffd6e8;
+  --tag-purple-bg:#6929c4; --tag-purple-tx:#e8daff;
+  --tag-blue-bg:#002d9c; --tag-blue-tx:#d0e2ff;
+  --tag-cyan-bg:#00539a; --tag-cyan-tx:#bae6ff;
+  --tag-teal-bg:#005d5d; --tag-teal-tx:#9ef0f0;
+  --tag-green-bg:#044317; --tag-green-tx:#defbe6;
+  --tag-gray-bg:#525252; --tag-gray-tx:#e0e0e0;
+  --tag-coolgray-bg:#3d4851; --tag-coolgray-tx:#dde1e6;
+  --tag-warmgray-bg:#433231; --tag-warmgray-tx:#e5e0df;
+  --tag-hc-bg:#f4f4f4; --tag-hc-tx:#161616;
+}
+/* ================= base ================= */
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text-primary);
+  font:400 14px/20px 'IBM Plex Sans',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+  letter-spacing:.16px;-webkit-font-smoothing:antialiased}
+.mono{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+a{color:var(--link)}
+button{font-family:inherit;letter-spacing:.16px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.linklike{background:none;border:0;padding:0;color:var(--link);cursor:pointer;font-size:inherit;letter-spacing:inherit}
+.linklike:hover{text-decoration:underline}
+svg.ic{width:16px;height:16px;flex:0 0 16px;display:block}
+/* ================= UI shell (always gray-100) ================= */
+.shell{position:sticky;top:0;z-index:60;display:flex;align-items:center;height:48px;
+  background:#161616;color:#f4f4f4;padding:0 8px 0 0}
+.shell-menu{background:none;border:0;color:#f4f4f4;width:48px;height:48px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background 70ms cubic-bezier(0.2,0,0.38,0.9)}
+.shell-menu:hover{background:#353535}
+.shell-brand{display:flex;align-items:center;gap:8px;color:#f4f4f4;text-decoration:none;
+  padding:0 16px 0 8px;white-space:nowrap;font-size:14px;letter-spacing:.16px}
+.shell-brand b{font-weight:600}.shell-brand span{font-weight:400}
+.shell-search{margin-left:auto;position:relative;display:flex}
+.shell-search svg.ic{position:absolute;left:12px;top:8px;color:#a8a8a8;pointer-events:none}
+.shell-search input{width:min(288px,30vw);height:32px;background:#393939;border:0;color:#f4f4f4;
+  padding:0 12px 0 36px;font-size:14px;letter-spacing:.16px}
+.shell-search input::placeholder{color:#a8a8a8}
+.shell-search input:focus{outline:2px solid #fff;outline-offset:-2px}
+.theme-switch{display:flex;gap:2px;margin-left:12px;border-left:1px solid #393939;padding-left:12px}
+.theme-switch button{background:none;border:1px solid transparent;color:#c6c6c6;cursor:pointer;
+  font-size:12px;padding:6px 10px;letter-spacing:.32px}
+.theme-switch button:hover{color:#fff;background:#353535}
+.theme-switch button[aria-pressed="true"]{color:#fff;border-color:#78a9ff}
+.shell-ic{position:relative;background:none;border:0;color:#f4f4f4;cursor:pointer;width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;margin-left:4px}
+.shell-ic:hover{background:#353535}
+.shell-ic .dot{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;
+  background:#da1e28;border:1px solid #161616}
+.avatar{width:32px;height:32px;border-radius:50%;background:#0f62fe;color:#fff;border:0;
+  font-size:12px;font-weight:600;cursor:pointer;margin:0 8px 0 4px;letter-spacing:.32px}
+.avatar:hover{background:#0353e9}
+/* header dropdown panels */
+.hpanel{position:absolute;top:48px;right:0;width:360px;max-width:calc(100vw - 16px);
+  background:var(--layer-01);border:1px solid var(--border-subtle);color:var(--text-primary);z-index:70}
+.hpanel-head{display:flex;align-items:center;justify-content:space-between;
+  padding:16px;border-bottom:1px solid var(--border-subtle)}
+.hpanel-head h2{font-size:16px;line-height:22px;font-weight:600;margin:0}
+.hpanel-head .linklike{font-size:14px}
+.notif{display:flex;gap:12px;padding:16px;border-bottom:1px solid var(--border-subtle);font-size:14px}
+.notif:last-child{border-bottom:0}
+.notif svg.ic{margin-top:2px}
+.notif .n-title{font-weight:600;display:block}
+.notif .n-body{color:var(--text-secondary);display:block}
+.notif time{font-size:12px;color:var(--text-secondary);display:block;margin-top:4px}
+.notif-crit svg.ic{color:var(--support-error)}
+.notif-warn svg.ic{color:var(--support-warning)}
+.notif-info svg.ic{color:var(--support-info)}
+.acct{padding:8px 0}
+.acct-id{padding:12px 16px;border-bottom:1px solid var(--border-subtle)}
+.acct-id .nm{font-weight:600;font-size:14px}
+.acct-id .em{font-size:12px;color:var(--text-secondary)}
+.acct a{display:flex;align-items:center;gap:12px;padding:0 16px;height:40px;color:var(--text-primary);
+  text-decoration:none;font-size:14px}
+.acct a:hover{background:var(--layer-hover)}
+/* ================= layout ================= */
+.app{display:flex;min-height:calc(100vh - 48px)}
+.sidenav{width:256px;flex:0 0 auto;background:var(--layer-01);border-right:1px solid var(--border-subtle);
+  padding:16px 0;transition:width 150ms cubic-bezier(0.2,0,0.38,0.9);overflow:hidden}
+.sidenav .nav-label{font-size:12px;letter-spacing:.32px;color:var(--text-secondary);
+  padding:16px 16px 8px;white-space:nowrap}
+.sidenav .nav-label:first-child{padding-top:0}
+.sidenav a{display:flex;align-items:center;gap:12px;padding:0 16px;height:40px;color:var(--text-secondary);
+  text-decoration:none;font-size:14px;border-left:3px solid transparent;white-space:nowrap}
+.sidenav a svg.ic{color:var(--text-secondary)}
+.sidenav a:hover{background:var(--layer-hover);color:var(--text-primary)}
+.sidenav a:hover svg.ic{color:var(--text-primary)}
+.sidenav a.active{color:var(--text-primary);font-weight:600;border-left-color:var(--link);background:var(--layer-02)}
+.sidenav a.active svg.ic{color:var(--text-primary)}
+.app.rail .sidenav{width:48px}
+.app.rail .sidenav .nav-label,.app.rail .sidenav a span{display:none}
+.app.rail .sidenav a{padding:0;justify-content:center;border-left-width:0;border-bottom:3px solid transparent}
+.app.rail .sidenav a.active{border-bottom-color:var(--link)}
+main{flex:1;min-width:0;padding:24px 32px 64px}
+.wrap{max-width:1584px;margin:0 auto}
+/* ================= breadcrumb / page head ================= */
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-secondary);margin:0 0 8px;flex-wrap:wrap}
+.breadcrumb a{text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb svg.ic{width:12px;height:12px;color:var(--text-secondary)}
+.breadcrumb [aria-current]{color:var(--text-primary)}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin:0 0 8px;flex-wrap:wrap}
+h1{font-size:28px;line-height:36px;font-weight:400;margin:0;letter-spacing:0}
+.page-head p{color:var(--text-secondary);margin:8px 0 0;max-width:640px}
+.btn-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+/* ================= buttons ================= */
+.btn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 32px;border:1px solid transparent;
+  cursor:pointer;font-size:14px;letter-spacing:.16px;
+  transition:background 110ms cubic-bezier(0,0,0.38,0.9),color 110ms cubic-bezier(0,0,0.38,0.9)}
+.btn-md{height:40px;padding:0 16px}
+.btn-sm{height:32px;padding:0 12px}
+.btn-primary{background:var(--btn-primary);color:#fff}
+.btn-primary:hover{background:var(--btn-primary-hover)}
+.btn-primary:active{background:var(--btn-primary-active)}
+.btn-secondary{background:transparent;border-color:var(--link);color:var(--link)}
+.btn-secondary:hover{background:var(--link);color:#fff}
+.btn-tertiary{background:none;border:0;color:var(--link);padding:0 16px;cursor:pointer;font-size:14px;height:40px;
+  display:inline-flex;align-items:center;gap:8px}
+.btn-tertiary:hover{background:var(--layer-hover);color:var(--link)}
+.btn-danger-ghost{background:none;border:0;color:var(--support-error);padding:0 16px;cursor:pointer;
+  font-size:14px;height:40px;display:inline-flex;align-items:center}
+.btn-danger-ghost:hover{background:var(--layer-hover)}
+.btn:disabled{background:var(--layer-03);color:var(--text-placeholder);cursor:not-allowed;border-color:transparent}
+/* ================= tabs ================= */
+.tabs{display:flex;border-bottom:1px solid var(--border-subtle);margin:16px 0 0;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;
+  padding:12px 16px;font-size:14px;color:var(--text-secondary);cursor:pointer;white-space:nowrap;
+  transition:border-color 110ms cubic-bezier(0,0,0.38,0.9),color 110ms cubic-bezier(0,0,0.38,0.9)}
+.tab:hover{color:var(--text-primary);border-bottom-color:var(--border-strong)}
+.tab[aria-selected="true"]{color:var(--text-primary);border-bottom-color:#0f62fe;font-weight:600}
+.tab-panel{display:none;padding-top:24px}
+.tab-panel.active{display:block;animation:panel-in 110ms cubic-bezier(0,0,0.38,0.9)}
+@keyframes panel-in{from{opacity:0}to{opacity:1}}
+/* ================= tiles ================= */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;
+  background:var(--border-subtle);border:1px solid var(--border-subtle);margin:0 0 24px}
+.tile{background:var(--layer-01);padding:16px;min-width:0}
+.tile-label{font-size:12px;letter-spacing:.32px;color:var(--text-secondary);margin:0 0 8px}
+.tile-value{font-size:28px;line-height:36px;margin:0;letter-spacing:0}
+.tile-sub{font-size:12px;color:var(--text-secondary);margin:8px 0 0}
+/* ================= inline notification ================= */
+.notification{display:flex;gap:12px;align-items:flex-start;border-left:3px solid var(--support-info);
+  background:var(--layer-01);border-top:1px solid var(--border-subtle);
+  border-right:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);
+  padding:14px 16px;font-size:14px;margin:0 0 24px;max-width:1024px}
+.notification-warning{border-left-color:var(--support-warning)}
+.notification-error{border-left-color:var(--support-error)}
+.notification-success{border-left-color:var(--support-success)}
+.notification>svg.ic{margin-top:2px;color:var(--text-secondary)}
+.notification-warning>svg.ic{color:var(--support-warning)}
+.notification-error>svg.ic{color:var(--support-error)}
+.notification-success>svg.ic{color:var(--support-success)}
+.notification .n-title{font-weight:600;display:block}
+.notification .n-body{color:var(--text-secondary)}
+.n-close{margin-left:auto;background:none;border:0;cursor:pointer;color:var(--text-secondary);
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex:0 0 32px}
+.n-close:hover{color:var(--text-primary);background:var(--layer-hover)}
+/* ================= tags (v11: 16px fixed radius pill) ================= */
+.tag{display:inline-flex;align-items:center;min-height:24px;padding:0 8px;
+  font-size:12px;line-height:16px;letter-spacing:.32px;border-radius:16px;white-space:nowrap}
+.tag-red{background:var(--tag-red-bg);color:var(--tag-red-tx)}
+.tag-magenta{background:var(--tag-magenta-bg);color:var(--tag-magenta-tx)}
+.tag-purple{background:var(--tag-purple-bg);color:var(--tag-purple-tx)}
+.tag-blue{background:var(--tag-blue-bg);color:var(--tag-blue-tx)}
+.tag-cyan{background:var(--tag-cyan-bg);color:var(--tag-cyan-tx)}
+.tag-teal{background:var(--tag-teal-bg);color:var(--tag-teal-tx)}
+.tag-green{background:var(--tag-green-bg);color:var(--tag-green-tx)}
+.tag-gray{background:var(--tag-gray-bg);color:var(--tag-gray-tx)}
+.tag-coolgray{background:var(--tag-coolgray-bg);color:var(--tag-coolgray-tx)}
+.tag-warmgray{background:var(--tag-warmgray-bg);color:var(--tag-warmgray-tx)}
+.tag-hc{background:var(--tag-hc-bg);color:var(--tag-hc-tx)}
+/* ================= batch action bar ================= */
+.batchbar{display:flex;align-items:center;gap:16px;background:var(--bg-inverse);color:var(--text-on-inverse);
+  padding:0 16px;height:48px;margin-bottom:0;animation:panel-in 110ms cubic-bezier(0,0,0.38,0.9)}
+.batchbar .b-count{font-size:14px;white-space:nowrap}
+.batchbar .b-count strong{font-weight:600}
+.batchbar .b-actions{display:flex;gap:2px;margin-left:auto}
+.bbtn{background:none;border:0;color:var(--text-on-inverse);cursor:pointer;font-size:14px;
+  height:40px;padding:0 16px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.bbtn:hover{background:rgba(128,128,128,.25)}
+.bbtn.danger{color:var(--support-error)}
+html[data-theme="g10"] .bbtn.danger{color:#da1e28}
+.bbtn:disabled{color:var(--text-placeholder);cursor:not-allowed}
+/* ================= table toolbar ================= */
+.table-toolbar{display:flex;align-items:center;gap:16px;margin:24px 0 0;flex-wrap:wrap}
+.tbl-title{font-size:16px;line-height:22px;font-weight:600}
+.tbl-count{color:var(--text-secondary);font-weight:400}
+.tbl-tools{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tsearch{position:relative}
+.tsearch svg.ic{position:absolute;left:12px;top:12px;color:var(--text-secondary);pointer-events:none}
+.tsearch input{height:40px;width:288px;max-width:60vw;background:var(--field);border:0;
+  border-bottom:1px solid var(--border-strong);padding:0 36px 0 36px;font-size:14px;color:var(--text-primary)}
+.tsearch input::placeholder{color:var(--text-placeholder)}
+.tsearch input:focus{outline:2px solid var(--focus);outline-offset:-2px}
+.tsearch .tclear{position:absolute;right:4px;top:4px;width:32px;height:32px;background:none;border:0;
+  color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.tsearch .tclear:hover{color:var(--text-primary);background:var(--layer-hover)}
+.density{display:flex;gap:2px;align-items:center;font-size:12px;color:var(--text-secondary)}
+.density span{letter-spacing:.32px;margin-right:4px}
+.density button{background:none;border:1px solid transparent;color:var(--text-secondary);
+  font-size:12px;padding:6px 10px;cursor:pointer;letter-spacing:.32px}
+.density button:hover{color:var(--text-primary);background:var(--layer-hover)}
+.density button[aria-pressed="true"]{color:var(--link);border-color:var(--link)}
+.icon-btn-row{background:none;border:0;color:var(--text-secondary);cursor:pointer;width:32px;height:32px;
+  display:inline-flex;align-items:center;justify-content:center}
+.icon-btn-row:hover{color:var(--text-primary);background:var(--layer-hover)}
+.icon-btn-row.spin svg.ic{animation:spin 700ms cubic-bezier(0.2,0,0.38,0.9)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.refreshed{font-size:12px;color:var(--text-secondary)}
+/* ================= data table ================= */
+.table-wrap{overflow-x:auto;border:1px solid var(--border-subtle);border-top:0;background:var(--layer-01)}
+.data-table{width:100%;min-width:1020px;border-collapse:collapse;font-size:14px;--row-h:48px}
+.data-table thead th{background:var(--layer-accent);color:var(--text-primary);font-weight:600;
+  text-align:left;padding:0 16px;height:48px;border-bottom:1px solid var(--border-subtle);
+  white-space:nowrap;font-size:14px}
+.data-table thead th.sortable{cursor:pointer;user-select:none;padding:0}
+.data-table thead th.sortable .th-in{display:flex;align-items:center;gap:8px;padding:0 16px;height:48px;width:100%}
+.data-table thead th.sortable:hover .th-in{background:var(--layer-hover)}
+.data-table thead th.sortable .sort-ic{opacity:0;color:var(--text-secondary)}
+.data-table thead th.sortable:hover .sort-ic{opacity:1}
+.data-table thead th.sorted .sort-ic{opacity:1;color:var(--link)}
+.data-table thead th.num .th-in{justify-content:flex-end}
+.data-table tbody td{padding:0 16px;height:var(--row-h);border-bottom:1px solid var(--border-subtle);
+  color:var(--text-primary);white-space:nowrap;vertical-align:middle}
+.data-table tbody tr.body-row{transition:background 70ms cubic-bezier(0.2,0,0.38,0.9)}
+.data-table tbody tr.body-row:hover{background:var(--layer-hover)}
+.data-table tbody tr.body-row.selected{background:var(--layer-selected)}
+.data-table tbody tr.body-row.selected:hover{background:var(--layer-hover)}
+.data-table .num{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0}
+.data-table .mono{font-size:13px}
+.data-table .dim{color:var(--text-secondary)}
+.row-name{font-weight:400}
+tr.body-row .row-name button{font-weight:400}
+.xrow td{padding:0!important;border-bottom:1px solid var(--border-subtle);white-space:normal!important}
+.xdetail{background:var(--layer-02);padding:20px 24px 24px 60px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px;
+  animation:panel-in 110ms cubic-bezier(0,0,0.38,0.9)}
+.xsec h3{font-size:12px;letter-spacing:.32px;color:var(--text-secondary);font-weight:400;margin:0 0 12px}
+.xrow-kv{display:flex;justify-content:space-between;gap:16px;padding:6px 0;font-size:14px;
+  border-bottom:1px solid var(--border-subtle)}
+.xrow-kv:last-child{border-bottom:0}
+.xrow-kv .k{color:var(--text-secondary)}
+.xrow-kv .v{text-align:right}
+.xrow-kv .v.mono{font-size:12px}
+.pools{display:flex;flex-direction:column;gap:8px}
+.pool{display:flex;align-items:center;gap:12px;font-size:13px}
+.pool .mono{font-size:12px}
+.pool .pstat{margin-left:auto}
+.xtags{display:flex;gap:8px;flex-wrap:wrap}
+.crn-line{display:flex;align-items:center;gap:8px}
+.crn-line .mono{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:340px}
+/* custom checkbox */
+.cbx{display:inline-flex;cursor:pointer;position:relative;vertical-align:middle}
+.cbx input{position:absolute;opacity:0;width:16px;height:16px;margin:0;cursor:pointer}
+.cbx-box{width:16px;height:16px;border:1px solid var(--text-primary);display:inline-flex;
+  align-items:center;justify-content:center;background:transparent;transition:background 70ms}
+.cbx-box svg.ic{width:12px;height:12px;color:#fff;opacity:0}
+.cbx input:checked+.cbx-box{background:#0f62fe;border-color:#0f62fe}
+.cbx input:checked+.cbx-box svg.ic{opacity:1}
+.cbx input:focus-visible+.cbx-box{outline:2px solid var(--focus);outline-offset:2px}
+.cbx.ind .cbx-box{background:#0f62fe;border-color:#0f62fe}
+.cbx.ind .cbx-box svg.ic{opacity:0}
+.cbx.ind .cbx-box::after{content:"";width:8px;height:2px;background:#fff}
+/* expand chevron */
+.xbtn{background:none;border:0;color:var(--text-secondary);cursor:pointer;width:32px;height:32px;
+  display:inline-flex;align-items:center;justify-content:center}
+.xbtn:hover{color:var(--text-primary);background:var(--layer-hover)}
+.xbtn svg.ic{transition:transform 150ms cubic-bezier(0.2,0,0.38,0.9)}
+.xbtn[aria-expanded="true"] svg.ic{transform:rotate(90deg)}
+/* overflow menu */
+.ovf{position:relative;display:inline-flex}
+.ovf-menu{position:absolute;right:0;top:36px;min-width:208px;background:var(--layer-01);
+  border:1px solid var(--border-subtle);z-index:40;padding:4px 0}
+.ovf-menu button{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;
+  height:40px;padding:0 16px;font-size:14px;color:var(--text-primary);cursor:pointer;text-align:left;white-space:nowrap}
+.ovf-menu button:hover{background:var(--layer-hover)}
+.ovf-menu button.danger{color:var(--support-error)}
+.ovf-menu hr{border:0;border-top:1px solid var(--border-subtle);margin:4px 0}
+/* empty state */
+.empty-row td{padding:48px 16px!important;text-align:center;white-space:normal!important}
+.empty-row .e-title{font-size:16px;font-weight:600;margin:0 0 8px}
+.empty-row .e-body{color:var(--text-secondary);margin:0 0 16px}
+/* pagination */
+.pagination{display:flex;align-items:center;gap:16px;padding:0 16px;height:48px;font-size:14px;
+  color:var(--text-secondary);border-top:1px solid var(--border-subtle);background:var(--layer-01);flex-wrap:wrap}
+.pagination .spacer{flex:1}
+.pagination select{height:32px;background:var(--field);border:0;border-bottom:1px solid var(--border-strong);
+  color:var(--text-primary);font-size:14px;padding:0 8px}
+.pg-range{font-size:13px}
+.pagination .pg-btn{background:none;border:1px solid var(--border-strong);color:var(--text-primary);
+  height:32px;width:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.pagination .pg-btn:hover:not(:disabled){background:var(--layer-hover)}
+.pagination .pg-btn:disabled{border-color:var(--border-subtle);color:var(--text-placeholder);cursor:not-allowed}
+/* ================= activity feed ================= */
+.act-toolbar{display:flex;align-items:center;gap:16px;margin:0 0 16px;flex-wrap:wrap}
+.field-inline{display:flex;align-items:center;gap:12px;font-size:14px}
+.field-inline>span{font-size:12px;letter-spacing:.32px;color:var(--text-secondary)}
+select.field-sel{height:40px;background:var(--field);border:0;border-bottom:1px solid var(--border-strong);
+  padding:0 32px 0 16px;font-size:14px;color:var(--text-primary);appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23525252' stroke-width='1.5'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;cursor:pointer}
+select.field-sel:focus{outline:2px solid var(--focus);outline-offset:-2px}
+.live-pill{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);letter-spacing:.32px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--support-success)}
+.live-dot.paused{background:var(--text-placeholder)}
+.event-list{list-style:none;margin:0 0 16px;padding:0;border:1px solid var(--border-subtle);background:var(--layer-01)}
+.event{display:grid;grid-template-columns:88px 110px 150px 1fr;gap:16px;align-items:center;
+  padding:0 16px;min-height:48px;border-bottom:1px solid var(--border-subtle);font-size:14px;
+  animation:ev-in 240ms cubic-bezier(0,0,0.38,0.9)}
+.event:last-child{border-bottom:0}
+@keyframes ev-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.event .ev-time{font-size:12px;color:var(--text-secondary)}
+.event .ev-actor{font-size:12px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis}
+.event .ev-msg{min-width:0}
+.act-note{font-size:12px;color:var(--text-secondary)}
+/* ================= forms ================= */
+.two-col{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:48px;margin:0;align-items:start}
+.field{margin-bottom:24px;max-width:560px}
+.field>label,.field>.flabel{display:block;font-size:12px;letter-spacing:.32px;color:var(--text-secondary);margin-bottom:8px}
+.field input[type="text"],.field input[type="number"]{width:100%;height:40px;background:var(--field);border:0;
+  border-bottom:1px solid var(--border-strong);padding:0 16px;font-size:14px;color:var(--text-primary);letter-spacing:.16px}
+.field input:focus{outline:2px solid var(--focus);outline-offset:-2px}
+.field .fhint{display:block;font-style:normal;font-size:12px;color:var(--text-secondary);margin-top:8px}
+.field .ferr{display:none;font-size:12px;color:var(--support-error);margin-top:8px}
+.field.invalid input{border-bottom-color:var(--support-error)}
+.field.invalid .ferr{display:block}
+.field select{width:100%}
+.radio-row{display:flex;gap:24px}
+.radio{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px}
+.radio input{position:absolute;opacity:0}
+.radio .rdot{width:16px;height:16px;border-radius:50%;border:1px solid var(--text-primary);position:relative;flex:0 0 16px}
+.radio input:checked+.rdot::after{content:"";position:absolute;inset:3px;border-radius:50%;background:#0f62fe}
+.radio input:focus-visible+.rdot{outline:2px solid var(--focus);outline-offset:2px}
+/* toggle */
+.toggle{display:flex;align-items:center;gap:12px;cursor:pointer}
+.toggle input{position:absolute;opacity:0}
+.toggle .tk{width:48px;height:24px;border-radius:24px;background:var(--text-placeholder);position:relative;
+  transition:background 70ms cubic-bezier(0.2,0,0.38,0.9);flex:0 0 48px}
+.toggle .tk::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:#fff;transition:left 70ms cubic-bezier(0.2,0,0.38,0.9)}
+.toggle input:checked+.tk{background:#0f62fe}
+.toggle input:checked+.tk::after{left:27px}
+.toggle input:focus-visible+.tk{outline:2px solid var(--focus);outline-offset:2px}
+.toggle .tl{font-size:14px}
+/* number input with steppers */
+.numwrap{position:relative;max-width:160px}
+.numwrap input{padding-right:48px!important}
+.steppers{position:absolute;right:0;top:0;bottom:0;display:flex;flex-direction:column;width:32px}
+.steppers button{flex:1;background:none;border:0;border-left:1px solid var(--border-subtle);cursor:pointer;
+  color:var(--text-secondary);display:flex;align-items:center;justify-content:center}
+.steppers button:hover{color:var(--text-primary);background:var(--layer-hover)}
+.steppers svg.ic{width:12px;height:12px}
+/* accordion */
+.accordion{border-top:1px solid var(--border-subtle)}
+.accordion:last-child{border-bottom:1px solid var(--border-subtle)}
+.accordion summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;
+  align-items:center;padding:16px;font-size:14px;font-weight:600;color:var(--text-primary);gap:16px}
+.accordion summary::-webkit-details-marker{display:none}
+.accordion summary:hover{background:var(--layer-hover)}
+.accordion summary svg.ic{transition:transform 150ms cubic-bezier(0.2,0,0.38,0.9);color:var(--text-secondary)}
+.accordion[open] summary svg.ic{transform:rotate(180deg)}
+.accordion-body{padding:4px 16px 20px;font-size:14px;color:var(--text-secondary);max-width:720px}
+.accordion-body .mono{font-size:12px;background:var(--layer-03);padding:2px 6px;color:var(--text-primary)}
+/* code snippet */
+.code-snippet{display:flex;align-items:flex-start;background:var(--layer-01);
+  border:1px solid var(--border-subtle);padding:12px 8px 12px 16px;gap:12px;margin:16px 0;max-width:1024px}
+.code-snippet pre{margin:0;flex:1;min-width:0;font-family:'IBM Plex Mono',monospace;
+  font-size:12px;line-height:20px;color:var(--text-primary);white-space:pre-wrap;word-break:break-word}
+.copy-btn{background:none;border:0;cursor:pointer;color:var(--text-secondary);
+  width:32px;height:32px;flex:0 0 32px;display:flex;align-items:center;justify-content:center}
+.copy-btn:hover{color:var(--text-primary);background:var(--layer-hover)}
+.copy-btn.copied{color:var(--support-success)}
+/* ================= modal ================= */
+.modal-overlay{position:fixed;inset:0;background:rgba(22,22,22,.5);z-index:100;
+  display:flex;align-items:flex-start;justify-content:center;padding:64px 16px 16px;overflow-y:auto}
+.modal{background:var(--layer-01);width:640px;max-width:100%;color:var(--text-primary);
+  animation:modal-in 240ms cubic-bezier(0,0,0.38,0.9)}
+@keyframes modal-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:24px 24px 0}
+.modal-head h2{font-size:20px;line-height:28px;font-weight:400;margin:0 0 8px}
+.modal-sub{font-size:14px;color:var(--text-secondary);margin:0}
+.modal-body{padding:24px}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:16px 24px 24px}
+/* ================= toasts ================= */
+.toasts{position:fixed;right:16px;bottom:16px;z-index:120;display:flex;flex-direction:column;gap:8px;
+  width:360px;max-width:calc(100vw - 32px)}
+.toast{display:flex;gap:12px;align-items:flex-start;border-left:3px solid var(--support-success);
+  background:var(--layer-01);border-top:1px solid var(--border-subtle);
+  border-right:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);
+  padding:14px 16px;font-size:14px;
+  animation:toast-in 240ms cubic-bezier(0,0,0.38,0.9)}
+.toast.out{animation:toast-out 150ms cubic-bezier(0.2,0,1,0.9);opacity:0}
+@keyframes toast-in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes toast-out{to{opacity:0;transform:translateX(24px)}}
+.toast-error{border-left-color:var(--support-error)}
+.toast-warning{border-left-color:var(--support-warning)}
+.toast-info{border-left-color:var(--support-info)}
+.toast>svg.ic{margin-top:2px}
+.toast-success>svg.ic{color:var(--support-success)}
+.toast-error>svg.ic{color:var(--support-error)}
+.toast-warning>svg.ic{color:var(--support-warning)}
+.toast-info>svg.ic{color:var(--support-info)}
+.toast .t-title{font-weight:600;display:block}
+.toast .t-body{color:var(--text-secondary);display:block}
+/* ================= footer ================= */
+footer{border-top:1px solid var(--border-subtle);margin-top:48px;padding:16px 32px;
+  font-size:12px;color:var(--text-secondary);display:flex;justify-content:space-between;
+  gap:16px;flex-wrap:wrap}
+footer .mono{font-size:11px}
+/* ================= responsive ================= */
+@media (max-width:1100px){.two-col{grid-template-columns:1fr}}
+@media (max-width:900px){
+  .sidenav{position:fixed;left:0;top:48px;bottom:0;z-index:55;width:256px;
+    transform:translateX(-100%);transition:transform 150ms cubic-bezier(0.2,0,0.38,0.9)}
+  .app.nav-open .sidenav{transform:none}
+  main{padding:16px 16px 48px}
+  .shell-search{display:none}
+  .event{grid-template-columns:76px 1fr;row-gap:4px}
+  .event .ev-actor{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SVG sprite ================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-menu" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></symbol>
+<symbol id="i-search" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.6 10.6 14 14"/></symbol>
+<symbol id="i-bell" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2a4 4 0 0 0-4 4v2.4L2.8 11h10.4L12 8.4V6a4 4 0 0 0-4-4z"/><path d="M6.6 13a1.4 1.4 0 0 0 2.8 0"/></symbol>
+<symbol id="i-chev-d" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 6l4 4 4-4"/></symbol>
+<symbol id="i-chev-u" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 10l4-4 4 4"/></symbol>
+<symbol id="i-chev-r" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 4l4 4-4 4"/></symbol>
+<symbol id="i-chev-l" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4L6 8l4 4"/></symbol>
+<symbol id="i-close" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></symbol>
+<symbol id="i-warn" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2.3 14.6 13.5H1.4L8 2.3z"/><path d="M8 6.3v3.4"/><circle cx="8" cy="11.6" r="0.9" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-error" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="5.8"/><path d="M8 4.8v3.6"/><circle cx="8" cy="10.9" r="0.9" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-info" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="5.8"/><path d="M8 7.4v3.4"/><circle cx="8" cy="5" r="0.9" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 8.5l3.5 3.5L13 4.5"/></symbol>
+<symbol id="i-check-c" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="5.8"/><path d="M5.4 8.3l1.9 1.9 3.3-3.9"/></symbol>
+<symbol id="i-overflow" viewBox="0 0 16 16"><circle cx="8" cy="3" r="1.3" fill="currentColor"/><circle cx="8" cy="8" r="1.3" fill="currentColor"/><circle cx="8" cy="13" r="1.3" fill="currentColor"/></symbol>
+<symbol id="i-copy" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="6" y="6" width="7.5" height="7.5"/><path d="M10 6V2.5H2.5V10H6"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9"/><path d="M13.7 1.6v3h-3"/></symbol>
+<symbol id="i-external" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9.5 3.5h-6v9h9v-6"/><path d="M9.8 2.2h4v4M13.5 2.5L8 8"/></symbol>
+<symbol id="i-pause" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 3.5v9M10 3.5v9"/></symbol>
+<symbol id="i-play" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.2l7 4.8-7 4.8z"/></symbol>
+<symbol id="i-grid" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="2.5" width="4.5" height="4.5"/><rect x="9" y="2.5" width="4.5" height="4.5"/><rect x="2.5" y="9" width="4.5" height="4.5"/><rect x="9" y="9" width="4.5" height="4.5"/></symbol>
+<symbol id="i-layers" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.3l5.7 3L8 8.3 2.3 5.3 8 2.3z"/><path d="M2.3 8.3L8 11.3l5.7-3"/><path d="M2.3 11.3L8 14.3l5.7-3"/></symbol>
+<symbol id="i-server" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2.5" width="10" height="4.5"/><rect x="3" y="9" width="10" height="4.5"/><circle cx="5.4" cy="4.75" r="0.7" fill="currentColor" stroke="none"/><circle cx="5.4" cy="11.25" r="0.7" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-cube" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.3l5.2 2.9v5.6L8 13.7l-5.2-2.9V5.2L8 2.3z"/><path d="M8 8.1v5.4M2.9 5.3l5.1 2.8 5.1-2.8"/></symbol>
+<symbol id="i-globe" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5.5"/><path d="M2.5 8h11"/><ellipse cx="8" cy="8" rx="2.6" ry="5.5"/></symbol>
+<symbol id="i-db" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="8" cy="3.8" rx="5" ry="1.8"/><path d="M3 3.8v8.4c0 1 2.2 1.8 5 1.8s5-.8 5-1.8V3.8"/><path d="M3 8c0 1 2.2 1.8 5 1.8s5-.8 5-1.8"/></symbol>
+<symbol id="i-chart" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2.5 2.5v11h11"/><path d="M5.8 10.8V7M8.8 10.8V4.5M11.8 10.8V8"/></symbol>
+<symbol id="i-list" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 4h7.5M6 8h7.5M6 12h7.5"/><circle cx="3" cy="4" r="0.9" fill="currentColor" stroke="none"/><circle cx="3" cy="8" r="0.9" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="0.9" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-pulse" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.8 8h3l1.6-4.2 3.2 8.4L11.2 8h3"/></symbol>
+<symbol id="i-lock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3.5" y="7" width="9" height="6.5"/><path d="M5.5 7V5.4a2.5 2.5 0 0 1 5 0V7"/></symbol>
+<symbol id="i-tag" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2.5 2.5H8L13.5 8 8 13.5 2.5 8V2.5z"/><circle cx="6" cy="6" r="1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-gear" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.6v2.1M8 12.3v2.1M1.6 8h2.1M12.3 8h2.1M3.5 3.5l1.5 1.5M11 11l1.5 1.5M12.5 3.5L11 5M5 11l-1.5 1.5"/></symbol>
+</defs>
+</svg>
+
+<!-- ================= UI shell ================= -->
+<header class="shell">
+  <button class="shell-menu" id="navToggle" aria-label="Toggle navigation">
+    <svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg>
+  </button>
+  <a class="shell-brand" href="#"><b>IBM</b><span>Cloud</span></a>
+  <div class="shell-search">
+    <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+    <input type="search" id="shellSearch" placeholder="Search resources, docs, products" aria-label="Search resources">
+  </div>
+  <div class="theme-switch" role="group" aria-label="Theme">
+    <button data-set-theme="g10" aria-pressed="true" title="Gray 10 — light">g10</button>
+    <button data-set-theme="g90" aria-pressed="false" title="Gray 90 — dark">g90</button>
+    <button data-set-theme="g100" aria-pressed="false" title="Gray 100 — dark">g100</button>
+  </div>
+  <button class="shell-ic" id="bellBtn" aria-label="Notifications, 3 unread" aria-expanded="false" aria-controls="bellPanel">
+    <svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg>
+    <span class="dot" id="bellDot" aria-hidden="true"></span>
+  </button>
+  <button class="avatar" id="avatarBtn" aria-label="Account: Rafa Keller" aria-expanded="false" aria-controls="accountMenu">RK</button>
+  <div class="hpanel" id="bellPanel" role="dialog" aria-label="Notifications" hidden>
+    <div class="hpanel-head"><h2>Notifications</h2><button class="linklike" id="notifRead">Mark all as read</button></div>
+    <div class="notif notif-crit">
+      <svg class="ic" aria-hidden="true"><use href="#i-error"/></svg>
+      <div><span class="n-title">analytics-warehouse is in Failed state.</span>
+      <span class="n-body">Disk pressure on 6 worker nodes in us-east.</span>
+      <time>12 min ago</time></div>
+    </div>
+    <div class="notif notif-warn">
+      <svg class="ic" aria-hidden="true"><use href="#i-warn"/></svg>
+      <div><span class="n-title">Kubernetes 1.30 support ends 31 Oct 2026.</span>
+      <span class="n-body">2 clusters still run version 1.30.</span>
+      <time>1 h ago</time></div>
+    </div>
+    <div class="notif notif-info">
+      <svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>
+      <div><span class="n-title">dev-sandbox-03 provisioning started.</span>
+      <span class="n-body">au-syd · Kubernetes 1.32.3.</span>
+      <time>26 min ago</time></div>
+    </div>
+  </div>
+  <div class="hpanel" id="accountMenu" role="menu" aria-label="Account" hidden style="width:280px">
+    <div class="acct">
+      <div class="acct-id"><div class="nm">Rafa Keller</div><div class="em mono">r.keller@meridian.io</div></div>
+      <a href="#" role="menuitem" data-acct="profile">Manage profile</a>
+      <a href="#" role="menuitem" data-acct="apikeys">API keys</a>
+      <a href="#" role="menuitem" data-acct="logout">Log out</a>
+    </div>
+  </div>
+</header>
+
+<div class="app" id="app">
+  <!-- ================= side nav ================= -->
+  <nav class="sidenav" aria-label="Primary">
+    <div class="nav-label">Manage</div>
+    <a href="#" class="active" title="Clusters"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg><span>Clusters</span></a>
+    <a href="#" title="Node pools"><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg><span>Node pools</span></a>
+    <a href="#" title="Worker nodes"><svg class="ic" aria-hidden="true"><use href="#i-server"/></svg><span>Worker nodes</span></a>
+    <a href="#" title="Workloads"><svg class="ic" aria-hidden="true"><use href="#i-cube"/></svg><span>Workloads</span></a>
+    <a href="#" title="Ingress"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg><span>Ingress</span></a>
+    <a href="#" title="Storage"><svg class="ic" aria-hidden="true"><use href="#i-db"/></svg><span>Storage</span></a>
+    <div class="nav-label">Observe</div>
+    <a href="#" title="Monitoring"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg><span>Monitoring</span></a>
+    <a href="#" title="Logging"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span>Logging</span></a>
+    <a href="#" title="Activity tracker"><svg class="ic" aria-hidden="true"><use href="#i-pulse"/></svg><span>Activity tracker</span></a>
+    <div class="nav-label">Administer</div>
+    <a href="#" title="Access control"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span>Access (IAM)</span></a>
+    <a href="#" title="Billing and usage"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg><span>Billing and usage</span></a>
+    <a href="#" title="Settings"><svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg><span>Settings</span></a>
+  </nav>
+
+  <!-- ================= main ================= -->
+  <main>
+    <div class="wrap">
+      <p class="breadcrumb" aria-label="Breadcrumb">
+        <a href="#">Home</a><svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg>
+        <a href="#">Containers</a><svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg>
+        <span aria-current="page">Clusters</span>
+      </p>
+      <div class="page-head">
+        <div>
+          <h1>Clusters</h1>
+          <p id="pageSub">Create, manage, and scale Kubernetes clusters across regions.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-secondary btn-md" href="https://cloud.ibm.com/docs/containers" target="_blank" rel="noopener" id="docsLink">
+            View documentation<svg class="ic" aria-hidden="true"><use href="#i-external"/></svg>
+          </a>
+          <button class="btn btn-primary btn-md" id="createBtn">Create cluster</button>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Cluster views">
+        <button class="tab" role="tab" aria-selected="true" data-tab="overview" id="tab-overview">Overview</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="activity" id="tab-activity">Activity</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="config" id="tab-config">Configuration</button>
+      </div>
+
+      <!-- ============ TAB: overview ============ -->
+      <section class="tab-panel active" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+        <div class="tiles">
+          <div class="tile"><p class="tile-label">Total clusters</p><p class="tile-value" id="tileClusters">–</p><p class="tile-sub" id="tileClustersSub"></p></div>
+          <div class="tile"><p class="tile-label">Worker nodes</p><p class="tile-value" id="tileNodes">–</p><p class="tile-sub" id="tileNodesSub"></p></div>
+          <div class="tile"><p class="tile-label">CPU utilization</p><p class="tile-value" id="tileCpu">–</p><p class="tile-sub">Fleet average · last 24 h</p></div>
+          <div class="tile"><p class="tile-label">Need attention</p><p class="tile-value" id="tileAttention">–</p><p class="tile-sub" id="tileAttentionSub"></p></div>
+        </div>
+
+        <div class="notification notification-warning" id="warnNote" role="status">
+          <svg class="ic" aria-hidden="true"><use href="#i-warn"/></svg>
+          <div><span class="n-title">Kubernetes 1.30 reaches end of support on 31 October 2026.</span>
+          <span class="n-body"><button class="linklike" data-filter="1.30">analytics-warehouse</button> and
+          <button class="linklike" data-filter="1.30">iot-ingest</button> still run 1.30.
+          Upgrade them to 1.31 or later before the deadline. Upgrades drain and replace nodes one at a time.</span></div>
+          <button class="n-close" id="warnDismiss" aria-label="Dismiss notification"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+
+        <div class="batchbar" id="batchBar" hidden>
+          <span class="b-count"><strong id="batchN">0</strong> items selected</span>
+          <div class="b-actions">
+            <button class="bbtn" id="batchUpgrade">Upgrade</button>
+            <button class="bbtn" id="batchRestart">Restart worker nodes</button>
+            <button class="bbtn danger" id="batchDelete">Delete</button>
+          </div>
+          <button class="bbtn" id="batchCancel" aria-label="Cancel selection"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+
+        <div class="table-toolbar">
+          <div><span class="tbl-title">Clusters</span> <span class="tbl-count" id="tblCount"></span></div>
+          <div class="tbl-tools">
+            <div class="tsearch">
+              <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
+              <input type="search" id="tableSearch" placeholder="Search clusters" aria-label="Search clusters">
+              <button class="tclear" id="searchClear" aria-label="Clear search" hidden><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button>
+            </div>
+            <div class="density" role="group" aria-label="Table density">
+              <span>Density</span>
+              <button data-density="64px" aria-pressed="false">Tall</button>
+              <button data-density="48px" aria-pressed="true">Normal</button>
+              <button data-density="32px" aria-pressed="false">Short</button>
+              <button data-density="24px" aria-pressed="false">Compact</button>
+            </div>
+            <button class="icon-btn-row" id="refreshBtn" aria-label="Refresh data"><svg class="ic" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+            <span class="refreshed" id="refreshedAt"></span>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" id="clusterTable" aria-label="Kubernetes clusters">
+            <thead><tr>
+              <th style="width:52px"><span class="sr">Expand row</span></th>
+              <th style="width:52px"><label class="cbx" id="selectAllWrap"><input type="checkbox" id="selectAll" aria-label="Select all rows"><span class="cbx-box"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></label></th>
+              <th class="sortable sorted" data-key="name" tabindex="0"><span class="th-in">Name<svg class="ic sort-ic" aria-hidden="true"><use href="#i-chev-u" id="sortUse-name"/></svg></span></th>
+              <th class="sortable" data-key="status" tabindex="0"><span class="th-in">Status<svg class="ic sort-ic" aria-hidden="true"><use href="#i-chev-d"/></svg></span></th>
+              <th class="sortable" data-key="region" tabindex="0"><span class="th-in">Location<svg class="ic sort-ic" aria-hidden="true"><use href="#i-chev-d"/></svg></span></th>
+              <th class="sortable" data-key="version" tabindex="0"><span class="th-in">Version<svg class="ic sort-ic" aria-hidden="true"><use href="#i-chev-d"/></svg></span></th>
+              <th class="sortable num" data-key="nodes" tabindex="0"><span class="th-in">Worker nodes<svg class="ic sort-ic" aria-hidden="true"><use href="#i-chev-d"/></svg></span></th>
+              <th class="sortable num" data-key="cpu" tabindex="0"><span class="th-in">CPU<svg class="ic sort-ic" aria-hidden="true"><use href="#i-chev-d"/></svg></span></th>
+              <th class="sortable" data-key="created" tabindex="0"><span class="th-in">Created<svg class="ic sort-ic" aria-hidden="true"><use href="#i-chev-d"/></svg></span></th>
+              <th style="width:56px"><span class="sr">Row actions</span></th>
+            </tr></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div class="pagination">
+            <label class="field-inline"><span>Items per page</span>
+              <select id="pageSize" class="field-sel" style="height:32px" aria-label="Items per page">
+                <option value="10" selected>10</option><option value="20">20</option><option value="50">50</option>
+              </select>
+            </label>
+            <span class="spacer"></span>
+            <span class="pg-range mono" id="pageRange"></span>
+            <button class="pg-btn" id="prevPage" aria-label="Previous page"><svg class="ic" aria-hidden="true"><use href="#i-chev-l"/></svg></button>
+            <button class="pg-btn" id="nextPage" aria-label="Next page"><svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TAB: activity ============ -->
+      <section class="tab-panel" id="panel-activity" role="tabpanel" aria-labelledby="tab-activity">
+        <div class="act-toolbar">
+          <label class="field-inline"><span>Severity</span>
+            <select id="sevFilter" class="field-sel" aria-label="Filter by severity">
+              <option value="">All severities</option><option value="info">Info</option>
+              <option value="warning">Warning</option><option value="critical">Critical</option>
+            </select>
+          </label>
+          <button class="btn btn-tertiary btn-sm" id="liveToggle" aria-pressed="true">
+            <svg class="ic" aria-hidden="true"><use href="#i-pause" id="liveIcon"/></svg><span id="liveLabel">Pause live</span>
+          </button>
+          <span class="live-pill"><span class="live-dot" id="liveDot"></span><span id="liveText">Live</span></span>
+        </div>
+        <ul class="event-list" id="eventList" aria-live="polite"></ul>
+        <p class="act-note">Streaming from <span class="mono">activity-tracker-eu-de</span> · Retention: 30 days · Events are kept for audit purposes.</p>
+      </section>
+
+      <!-- ============ TAB: configuration ============ -->
+      <section class="tab-panel" id="panel-config" role="tabpanel" aria-labelledby="tab-config">
+        <div class="two-col">
+          <form id="configForm" novalidate>
+            <div class="field"><label for="cfgPrefix">Default cluster name prefix</label>
+              <input type="text" id="cfgPrefix" value="meridian">
+              <em class="fhint">Applied to clusters created from templates. Lowercase letters, numbers and hyphens only.</em>
+            </div>
+            <div class="field"><label for="cfgRg">Default resource group</label>
+              <select id="cfgRg" class="field-sel" style="width:100%">
+                <option selected>default</option><option>production</option><option>research</option><option>sandbox</option>
+              </select>
+              <em class="fhint">New clusters land in this resource group unless you pick another one.</em>
+            </div>
+            <div class="field"><label for="cfgFlavor">Default worker node flavor</label>
+              <select id="cfgFlavor" class="field-sel" style="width:100%">
+                <option selected>bx2.4x16 — 4 vCPU · 16 GB RAM</option>
+                <option>bx2.8x32 — 8 vCPU · 32 GB RAM</option>
+                <option>bx2.16x64 — 16 vCPU · 64 GB RAM</option>
+                <option>gx3.16x80 — 16 vCPU · 80 GB RAM · 1 GPU</option>
+              </select>
+            </div>
+            <div class="field"><span class="flabel" id="haLabel">High availability</span>
+              <div class="radio-row" role="radiogroup" aria-labelledby="haLabel">
+                <label class="radio"><input type="radio" name="ha" value="single"><span class="rdot"></span>Single zone</label>
+                <label class="radio"><input type="radio" name="ha" value="multi" checked><span class="rdot"></span>Multi-zone</label>
+              </div>
+              <em class="fhint">Multi-zone spreads worker nodes across 3 zones. Recommended for production.</em>
+            </div>
+            <div class="field">
+              <label class="toggle"><input type="checkbox" id="cfgAutoUpdate" checked><span class="tk"></span><span class="tl">Automatic patch updates</span></label>
+              <em class="fhint">Apply Kubernetes patch versions automatically on Sundays, 03:00 UTC. Minor versions always need approval.</em>
+            </div>
+            <div class="field"><label for="cfgNodes">Worker nodes per zone</label>
+              <div class="numwrap">
+                <input type="number" id="cfgNodes" value="3" min="1" max="50" aria-label="Worker nodes per zone">
+                <div class="steppers">
+                  <button type="button" id="nodesUp" aria-label="Increase"><svg class="ic" aria-hidden="true"><use href="#i-chev-u"/></svg></button>
+                  <button type="button" id="nodesDown" aria-label="Decrease"><svg class="ic" aria-hidden="true"><use href="#i-chev-d"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <div class="btn-row" style="margin-top:8px">
+              <button type="submit" class="btn btn-primary btn-md" id="saveCfg">Save changes</button>
+              <button type="button" class="btn-tertiary" id="resetCfg">Reset</button>
+            </div>
+          </form>
+          <div>
+            <details class="accordion" open>
+              <summary>Network configuration<svg class="ic" aria-hidden="true"><use href="#i-chev-d"/></svg></summary>
+              <div class="accordion-body">VPC <span class="mono">meridian-prod-vpc</span> with private subnets in
+              3 availability zones. Egress goes through the NAT gateway; ingress is handled by the managed
+              ALB with automatic TLS certificates.</div>
+            </details>
+            <details class="accordion">
+              <summary>Upgrade policy<svg class="ic" aria-hidden="true"><use href="#i-chev-d"/></svg></summary>
+              <div class="accordion-body">Patch versions apply automatically on Sundays at 03:00 UTC.
+              Minor versions require manual approval and drain nodes one at a time, starting with the
+              node pool that has the most spare capacity.</div>
+            </details>
+            <details class="accordion">
+              <summary>Delete protection<svg class="ic" aria-hidden="true"><use href="#i-chev-d"/></svg></summary>
+              <div class="accordion-body">Enabled for clusters tagged <span class="mono">env:production</span>.
+              Deleting a protected cluster requires typing the cluster name and approval from two administrators.</div>
+            </details>
+            <div class="code-snippet" style="margin-top:24px">
+              <pre><code id="kubeCmd">ibmcloud ks cluster config --cluster checkout-api-prod --admin</code></pre>
+              <button class="copy-btn" id="copyKube" aria-label="Copy command"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg></button>
+            </div>
+            <p style="font-size:12px;color:var(--text-secondary)">Download the admin kubeconfig for the selected cluster with the IBM Cloud CLI.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <span>IBM Cloud Kubernetes Service · fictional demo · Carbon tokens g10 / g90 / g100</span>
+      <span>Built from the carbon skill · design-skills</span>
+    </footer>
+  </main>
+</div>
+
+<!-- ================= create cluster modal ================= -->
+<div class="modal-overlay" id="modalOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <div>
+        <h2 id="modalTitle">Create cluster</h2>
+        <p class="modal-sub">Provision a new Kubernetes cluster. Billing starts when the first worker node is ready — roughly 20 minutes.</p>
+      </div>
+      <button class="n-close" id="modalClose" aria-label="Close dialog"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <form id="createForm" novalidate>
+      <div class="modal-body">
+        <div class="field" id="nameField"><label for="fName">Cluster name</label>
+          <input type="text" id="fName" placeholder="e.g. checkout-api-staging" autocomplete="off">
+          <em class="fhint">Lowercase letters, numbers and hyphens only. It can't be changed later.</em>
+          <em class="ferr" id="nameError">Enter a cluster name — lowercase letters, numbers and hyphens only.</em>
+        </div>
+        <div class="field"><label for="fRegion">Location</label>
+          <select id="fRegion" class="field-sel" style="width:100%">
+            <option value="eu-de" selected>eu-de — Frankfurt</option>
+            <option value="eu-gb">eu-gb — London</option>
+            <option value="us-south">us-south — Dallas</option>
+            <option value="us-east">us-east — Washington DC</option>
+            <option value="jp-tok">jp-tok — Tokyo</option>
+            <option value="au-syd">au-syd — Sydney</option>
+          </select>
+        </div>
+        <div class="field"><label for="fVersion">Kubernetes version</label>
+          <select id="fVersion" class="field-sel" style="width:100%">
+            <option selected>1.32.3</option><option>1.31.6</option><option>1.30.9</option>
+          </select>
+          <em class="fhint">1.30 reaches end of support on 31 October 2026. New clusters should use 1.32.</em>
+        </div>
+        <div class="field"><label for="fNodes">Worker nodes per zone</label>
+          <div class="numwrap">
+            <input type="number" id="fNodes" value="3" min="1" max="50">
+            <div class="steppers">
+              <button type="button" data-step="fNodes:1" aria-label="Increase"><svg class="ic" aria-hidden="true"><use href="#i-chev-u"/></svg></button>
+              <button type="button" data-step="fNodes:-1" aria-label="Decrease"><svg class="ic" aria-hidden="true"><use href="#i-chev-d"/></svg></button>
+            </div>
+          </div>
+          <em class="fhint">Flavor bx2.4x16 · billed per node, per hour.</em>
+        </div>
+        <div class="field" style="margin-bottom:0"><label for="fRg">Resource group</label>
+          <select id="fRg" class="field-sel" style="width:100%">
+            <option selected>default</option><option>production</option><option>research</option><option>sandbox</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-secondary btn-md" id="modalCancel">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-md" id="modalCreate">Create cluster</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+/* ============ helpers ============ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmtDate=iso=>{const[y,m,d]=iso.split("-").map(Number);return `${d} ${MONTHS[m-1]} ${y}`;};
+const now=()=>new Date().toTimeString().slice(0,8);
+
+/* ============ data: IBM Cloud Kubernetes Service ============ */
+const hex8=()=>Math.floor(Math.random()*0xffffffff).toString(16).padStart(8,"0");
+function mk(o){return Object.assign({
+  pools:[],vpc:"meridian-dev-vpc",rg:"default",tags:["env:dev","team:platform"],
+  by:"r.keller@meridian.io",detail:null},o);}
+const CLUSTERS=[
+ mk({name:"checkout-api-prod",status:"Running",region:"eu-de",city:"Frankfurt",version:"1.31.6",nodes:42,cpu:68,created:"2026-03-14",
+    pools:[["default","bx2.8x32",14],["compute","bx2.16x64",28]],vpc:"meridian-prod-vpc",rg:"production",tags:["env:production","team:platform"]}),
+ mk({name:"payments-vpc",status:"Running",region:"eu-de",city:"Frankfurt",version:"1.31.6",nodes:36,cpu:74,created:"2026-02-02",
+    pools:[["default","bx2.8x32",36]],vpc:"meridian-prod-vpc",rg:"production",tags:["env:production","team:payments"]}),
+ mk({name:"ml-inference",status:"Running",region:"us-south",city:"Dallas",version:"1.32.3",nodes:58,cpu:81,created:"2026-01-19",
+    pools:[["cpu","bx2.16x64",34],["gpu","gx3.16x80",24]],vpc:"ml-vpc",rg:"research",tags:["env:production","team:ml"]}),
+ mk({name:"search-cluster",status:"Running",region:"eu-gb",city:"London",version:"1.31.6",nodes:24,cpu:45,created:"2026-04-27",
+    pools:[["default","bx2.8x32",24]],vpc:"meridian-eu-vpc",rg:"production",tags:["env:production","team:search"]}),
+ mk({name:"staging-eu",status:"Running",region:"eu-de",city:"Frankfurt",version:"1.32.3",nodes:12,cpu:22,created:"2026-06-08",
+    pools:[["default","bx2.4x16",12]],vpc:"meridian-dev-vpc",rg:"sandbox",tags:["env:staging","team:platform"]}),
+ mk({name:"analytics-warehouse",status:"Failed",region:"us-east",city:"Washington DC",version:"1.30.9",nodes:30,cpu:97,created:"2025-11-30",
+    pools:[["default","bx2.16x64",30]],vpc:"analytics-vpc",rg:"production",tags:["env:production","team:data"],
+    detail:"Disk pressure on 6 worker nodes — kubelet is evicting pods. Add storage or drain the affected nodes."}),
+ mk({name:"edge-cache",status:"Running",region:"jp-tok",city:"Tokyo",version:"1.31.6",nodes:18,cpu:39,created:"2026-05-16",
+    pools:[["default","bx2.4x16",18]],vpc:"edge-vpc",rg:"production",tags:["env:production","team:edge"]}),
+ mk({name:"ledger-replica",status:"Running",region:"eu-gb",city:"London",version:"1.31.6",nodes:16,cpu:52,created:"2026-03-30",
+    pools:[["default","bx2.8x32",16]],vpc:"meridian-eu-vpc",rg:"production",tags:["env:production","team:payments"]}),
+ mk({name:"gpu-training-a",status:"Upgrading",region:"us-south",city:"Dallas",version:"1.31.6",nodes:24,cpu:63,created:"2026-02-14",
+    pools:[["gpu","gx3.16x80",24]],vpc:"ml-vpc",rg:"research",tags:["env:staging","team:ml"],
+    detail:"Upgrading to 1.32.3 — draining node pool gpu (step 2 of 5)."}),
+ mk({name:"dev-sandbox-03",status:"Provisioning",region:"au-syd",city:"Sydney",version:"1.32.3",nodes:0,cpu:null,created:"2026-10-02",
+    vpc:"meridian-dev-vpc",rg:"sandbox",detail:"Provisioning worker nodes — step 3 of 7."}),
+ mk({name:"iot-ingest",status:"Running",region:"eu-de",city:"Frankfurt",version:"1.30.9",nodes:28,cpu:58,created:"2025-12-11",
+    pools:[["default","bx2.8x32",28]],vpc:"iot-vpc",rg:"production",tags:["env:production","team:iot"]}),
+ mk({name:"risk-engine",status:"Running",region:"us-east",city:"Washington DC",version:"1.31.6",nodes:20,cpu:47,created:"2026-04-02",
+    pools:[["default","bx2.8x32",20]],vpc:"risk-vpc",rg:"production",tags:["env:production","team:risk"]}),
+ mk({name:"backup-orchestrator",status:"Running",region:"eu-de",city:"Frankfurt",version:"1.32.3",nodes:8,cpu:18,created:"2026-07-21",
+    pools:[["default","bx2.4x16",8]],tags:["env:tools","team:platform"]}),
+ mk({name:"fraud-detection",status:"Provisioning",region:"eu-gb",city:"London",version:"1.32.3",nodes:0,cpu:null,created:"2026-10-02",
+    vpc:"risk-vpc",rg:"sandbox",tags:["env:staging","team:risk"],detail:"Provisioning worker nodes — step 1 of 7."})
+];
+CLUSTERS.forEach(c=>{c.crn=`crn:v1:bluemix:public:containers-kubernetes:${c.region}:a/${hex8()}::`;
+  c.ingress=`${c.name}.${c.region}.containers.appdomain.cloud`;});
+const TAG={Running:"green",Provisioning:"blue",Upgrading:"purple",Failed:"red"};
+const state={filter:"",sortKey:"name",sortDir:1,page:1,pageSize:10,selected:new Set(),expanded:new Set()};
+
+/* ============ toasts ============ */
+const TICON={success:"i-check-c",error:"i-error",warning:"i-warn",info:"i-info"};
+function toast(kind,title,body){
+  const el=document.createElement("div");
+  el.className="toast toast-"+kind;
+  el.setAttribute("role","status");
+  el.innerHTML=`<svg class="ic" aria-hidden="true"><use href="#${TICON[kind]}"/></svg>
+    <div><span class="t-title"></span><span class="t-body"></span></div>
+    <button class="n-close" aria-label="Dismiss notification"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button>`;
+  el.querySelector(".t-title").textContent=title;
+  el.querySelector(".t-body").textContent=body||"";
+  el.querySelector(".n-close").addEventListener("click",()=>dismiss());
+  $("#toasts").appendChild(el);
+  const t=setTimeout(dismiss,4500);
+  function dismiss(){clearTimeout(t);el.classList.add("out");setTimeout(()=>el.remove(),160);}
+}
+
+/* ============ tiles ============ */
+function renderTiles(){
+  const total=CLUSTERS.length;
+  const nodes=CLUSTERS.reduce((a,c)=>a+c.nodes,0);
+  const cpus=CLUSTERS.filter(c=>c.cpu!=null).map(c=>c.cpu);
+  const avg=Math.round(cpus.reduce((a,c)=>a+c,0)/cpus.length);
+  const failed=CLUSTERS.filter(c=>c.status==="Failed").length;
+  const upgrading=CLUSTERS.filter(c=>c.status==="Upgrading").length;
+  const v130=CLUSTERS.filter(c=>c.version.startsWith("1.30")).length;
+  const attention=failed+upgrading+(v130?1:0);
+  const regions=new Set(CLUSTERS.map(c=>c.region)).size;
+  $("#tileClusters").textContent=total;
+  $("#tileClustersSub").textContent=`Across ${regions} regions`;
+  $("#tileNodes").textContent=nodes;
+  $("#tileNodesSub").textContent=`${CLUSTERS.reduce((a,c)=>a+c.pools.length,0)} node pools · autoscaling on 9`;
+  $("#tileCpu").textContent=avg+"%";
+  $("#tileAttention").textContent=attention;
+  $("#tileAttentionSub").textContent=`${failed} failed · ${upgrading} upgrading · ${v130} on 1.30`;
+  $("#pageSub").textContent=`Create, manage, and scale Kubernetes clusters across regions. ${attention} of ${total} clusters need attention.`;
+}
+
+/* ============ data table ============ */
+const tbody=$("#tableBody"), table=$("#clusterTable");
+function filtered(){
+  const f=state.filter;
+  let rows=CLUSTERS.filter(c=>!f||c.name.includes(f)||c.status.toLowerCase().includes(f)||c.region.includes(f)||c.version.includes(f)||(c.city||"").toLowerCase().includes(f));
+  const k=state.sortKey,d=state.sortDir;
+  rows=[...rows].sort((a,b)=>{
+    let va=a[k],vb=b[k];
+    if(k==="cpu"||k==="nodes"){va=va==null?-1:va;vb=vb==null?-1:vb;return (va-vb)*d;}
+    return String(va).localeCompare(String(vb))*d;
+  });
+  return rows;
+}
+function rowHtml(c){
+  const sel=state.selected.has(c.name)?" selected":"";
+  const exp=state.expanded.has(c.name);
+  const num=v=>v==null?'<span class="dim">—</span>':v;
+  return `<tr class="body-row${sel}" data-name="${c.name}">
+    <td><button class="xbtn" aria-expanded="${exp}" aria-label="${exp?"Collapse":"Expand"} row for ${c.name}"><svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg></button></td>
+    <td><label class="cbx"><input type="checkbox" class="row-check" data-name="${c.name}" aria-label="Select ${c.name}"${sel?' checked':""}><span class="cbx-box"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></label></td>
+    <td><button class="linklike row-name" data-expand>${c.name}</button></td>
+    <td><span class="tag tag-${TAG[c.status]}">${c.status}</span></td>
+    <td><span class="mono" title="${c.city}">${c.region}</span></td>
+    <td><span class="mono">${c.version}</span></td>
+    <td class="num">${num(c.nodes)}</td>
+    <td class="num">${c.cpu==null?'<span class="dim">—</span>':c.cpu+"%"}</td>
+    <td><span class="mono">${fmtDate(c.created)}</span></td>
+    <td><div class="ovf">
+      <button class="icon-btn-row ovf-btn" aria-label="Open actions menu for ${c.name}" aria-expanded="false"><svg class="ic" aria-hidden="true"><use href="#i-overflow"/></svg></button>
+      <div class="ovf-menu" hidden>
+        <button data-act="details">View details</button>
+        <button data-act="upgrade">Upgrade cluster</button>
+        <button data-act="restart">Restart worker nodes</button>
+        <hr>
+        <button class="danger" data-act="delete">Delete cluster</button>
+      </div>
+    </div></td>
+  </tr>${exp?expandHtml(c):""}`;
+}
+function expandHtml(c){
+  const pools=c.pools.length?c.pools.map(p=>
+    `<div class="pool"><span class="mono">${p[0]}</span><span class="dim mono">${p[1]}</span><span class="pstat num">${p[2]} nodes</span></div>`).join("")
+    :'<div class="pool"><span class="dim">No worker nodes yet — provisioning.</span></div>';
+  const statusRow=c.detail?`<div class="xrow-kv"><span class="k">Status detail</span><span class="v">${c.detail}</span></div>`:"";
+  return `<tr class="xrow" data-xname="${c.name}"><td colspan="10"><div class="xdetail">
+    <div class="xsec"><h3>Node pools</h3><div class="pools">${pools}</div></div>
+    <div class="xsec"><h3>Details</h3>${statusRow}
+      <div class="xrow-kv"><span class="k">VPC</span><span class="v mono">${c.vpc}</span></div>
+      <div class="xrow-kv"><span class="k">Ingress subdomain</span><span class="v mono">${c.ingress}</span></div>
+      <div class="xrow-kv"><span class="k">Resource group</span><span class="v">${c.rg}</span></div>
+      <div class="xrow-kv"><span class="k">Created by</span><span class="v mono">${c.by}</span></div>
+    </div>
+    <div class="xsec"><h3>Tags</h3><div class="xtags">${c.tags.map(t=>`<span class="tag tag-gray">${t}</span>`).join("")}</div></div>
+    <div class="xsec"><h3>CRN</h3><div class="crn-line"><span class="mono" title="${c.crn}">${c.crn}</span>
+      <button class="copy-btn copy-crn" data-crn="${c.crn}" aria-label="Copy CRN"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg></button></div></div>
+  </div></td></tr>`;
+}
+function render(){
+  const rows=filtered();
+  const total=rows.length, ps=state.pageSize;
+  const pages=Math.max(1,Math.ceil(total/ps));
+  if(state.page>pages)state.page=pages;
+  const start=(state.page-1)*ps, slice=rows.slice(start,start+ps);
+  tbody.innerHTML=slice.length?slice.map(rowHtml).join(""):
+    `<tr class="empty-row"><td colspan="10"><p class="e-title">No clusters match your search.</p>
+     <p class="e-body">Try a different name, status, region, or version.</p>
+     <button class="btn btn-tertiary btn-sm" id="emptyClear">Clear search</button></td></tr>`;
+  $("#tblCount").textContent=state.filter?`(${total} of ${CLUSTERS.length})`:`(${CLUSTERS.length})`;
+  $("#pageRange").textContent=total?`${start+1}–${Math.min(start+ps,total)} of ${total} items`:"0 items";
+  $("#prevPage").disabled=state.page<=1;
+  $("#nextPage").disabled=state.page>=pages;
+  const ec=$("#emptyClear");
+  if(ec)ec.addEventListener("click",()=>{state.filter="";$("#tableSearch").value="";$("#searchClear").hidden=true;state.page=1;render();});
+  syncSelectAll();
+}
+function syncSelectAll(){
+  const rows=filtered(), sel=rows.filter(c=>state.selected.has(c.name)).length;
+  const all=$("#selectAll"), wrap=$("#selectAllWrap");
+  all.checked=rows.length>0&&sel===rows.length;
+  all.indeterminate=sel>0&&sel<rows.length;
+  wrap.classList.toggle("ind",all.indeterminate);
+  const bar=$("#batchBar");
+  bar.hidden=state.selected.size===0;
+  $("#batchN").textContent=state.selected.size;
+}
+/* sorting */
+$$("th.sortable").forEach(th=>{
+  const go=()=>{
+    const k=th.dataset.key;
+    if(state.sortKey===k)state.sortDir*=-1;else{state.sortKey=k;state.sortDir=1;}
+    $$("th.sortable").forEach(o=>{o.classList.remove("sorted");
+      o.querySelector("use").setAttribute("href","#i-chev-d");});
+    th.classList.add("sorted");
+    th.querySelector("use").setAttribute("href",state.sortDir===1?"#i-chev-u":"#i-chev-d");
+    state.page=1;render();
+  };
+  th.addEventListener("click",go);
+  th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});
+});
+/* search */
+$("#tableSearch").addEventListener("input",e=>{
+  state.filter=e.target.value.trim().toLowerCase();
+  $("#searchClear").hidden=!e.target.value;
+  state.page=1;render();
+});
+$("#searchClear").addEventListener("click",()=>{
+  $("#tableSearch").value="";state.filter="";$("#searchClear").hidden=true;state.page=1;render();
+  $("#tableSearch").focus();
+});
+$$("#warnNote [data-filter]").forEach(b=>b.addEventListener("click",()=>{
+  const v=b.dataset.filter;
+  $("#tableSearch").value=v;state.filter=v;$("#searchClear").hidden=false;state.page=1;render();
+  $("#clusterTable").scrollIntoView({behavior:"smooth",block:"start"});
+}));
+$("#warnDismiss").addEventListener("click",()=>$("#warnNote").remove());
+/* density */
+$$("[data-density]").forEach(b=>b.addEventListener("click",()=>{
+  $$("[data-density]").forEach(x=>x.setAttribute("aria-pressed","false"));
+  b.setAttribute("aria-pressed","true");
+  table.style.setProperty("--row-h",b.dataset.density);
+}));
+/* pagination */
+$("#pageSize").addEventListener("change",e=>{state.pageSize=+e.target.value;state.page=1;render();});
+$("#prevPage").addEventListener("click",()=>{if(state.page>1){state.page--;render();}});
+$("#nextPage").addEventListener("click",()=>{state.page++;render();});
+/* refresh: jitter CPU like live telemetry */
+$("#refreshBtn").addEventListener("click",e=>{
+  const btn=e.currentTarget;
+  btn.classList.remove("spin");void btn.offsetWidth;btn.classList.add("spin");
+  CLUSTERS.forEach(c=>{if(c.cpu!=null)c.cpu=Math.min(98,Math.max(5,c.cpu+Math.round(Math.random()*6-3)));});
+  $("#refreshedAt").textContent="Last refreshed "+now();
+  renderTiles();render();
+});
+/* table interactions (delegated) */
+function closeMenus(except){$$(".ovf-menu").forEach(m=>{if(m!==except)m.hidden=true;});
+  $$(".ovf-btn").forEach(b=>b.setAttribute("aria-expanded","false"));}
+tbody.addEventListener("click",e=>{
+  const t=e.target;
+  const xbtn=t.closest(".xbtn"), rname=t.closest("[data-expand]");
+  const ovfBtn=t.closest(".ovf-btn"), menuBtn=t.closest(".ovf-menu button");
+  const copyBtn=t.closest(".copy-crn"), gotoBtn=t.closest("[data-goto]");
+  if(gotoBtn){e.preventDefault();applyFilter(gotoBtn.dataset.goto);return;}
+  if(xbtn||rname){
+    const tr=t.closest("tr.body-row"), name=tr.dataset.name;
+    state.expanded.has(name)?state.expanded.delete(name):state.expanded.add(name);
+    render();return;
+  }
+  if(ovfBtn){
+    const menu=ovfBtn.parentElement.querySelector(".ovf-menu");
+    const open=menu.hidden;
+    closeMenus();menu.hidden=!open;
+    ovfBtn.setAttribute("aria-expanded",String(open));return;
+  }
+  if(menuBtn){
+    const name=menuBtn.closest("tr.body-row").dataset.name, act=menuBtn.dataset.act;
+    closeMenus();rowAction(name,act);return;
+  }
+  if(copyBtn){
+    navigator.clipboard.writeText(copyBtn.dataset.crn).then(
+      ()=>toast("success","CRN copied to clipboard.",copyBtn.dataset.crn),
+      ()=>toast("warning","Copy failed.","Select the CRN text manually."));
+    return;
+  }
+});
+tbody.addEventListener("change",e=>{
+  const cb=e.target.closest(".row-check");if(!cb)return;
+  cb.checked?state.selected.add(cb.dataset.name):state.selected.delete(cb.dataset.name);
+  render();
+});
+$("#selectAll").addEventListener("change",e=>{
+  const rows=filtered();
+  if(e.target.checked)rows.forEach(c=>state.selected.add(c.name));
+  else rows.forEach(c=>state.selected.delete(c.name));
+  render();
+});
+function rowAction(name,act){
+  const c=CLUSTERS.find(x=>x.name===name);if(!c)return;
+  if(act==="details"){state.expanded.add(name);render();return;}
+  if(act==="upgrade"){
+    if(c.status==="Failed")toast("error","Cluster is in Failed state.","Resolve the failed worker nodes on "+name+" before upgrading.");
+    else if(c.status==="Upgrading")toast("info","Upgrade already in progress.",name+" is upgrading to 1.32.3.");
+    else if(c.status==="Provisioning")toast("warning","Cluster is still provisioning.",name+" must finish provisioning before it can be upgraded.");
+    else toast("success","Upgrade scheduled for "+name+".","Upgrading to 1.32.3 during the next maintenance window.");
+    return;
+  }
+  if(act==="restart"){toast("warning","Worker nodes restarting.",name+": nodes drain one at a time. Workloads will be rescheduled.");return;}
+  if(act==="delete"){toast("error","Delete protection is on.","Deleting "+name+" requires typing the cluster name and approval from two administrators.");return;}
+}
+/* batch actions */
+function clearSel(){state.selected.clear();render();}
+$("#batchCancel").addEventListener("click",clearSel);
+$("#batchUpgrade").addEventListener("click",()=>{const n=state.selected.size;
+  toast("info","Upgrade scheduled.",n+" cluster"+(n>1?"s":"")+" will upgrade to 1.32.3 during the next maintenance window.");clearSel();});
+$("#batchRestart").addEventListener("click",()=>{const n=state.selected.size;
+  toast("warning","Worker nodes restarting.",n+" cluster"+(n>1?"s":"")+": nodes drain one at a time.");clearSel();});
+$("#batchDelete").addEventListener("click",()=>{const n=state.selected.size;
+  toast("error","Delete protection is on.","Deleting "+n+" cluster"+(n>1?"s":"")+" requires typing each cluster name and approval from two administrators.");});
+function applyFilter(v){
+  document.querySelector('[data-tab="overview"]').click();
+  $("#tableSearch").value=v;state.filter=v.toLowerCase();$("#searchClear").hidden=false;state.page=1;render();
+  $("#clusterTable").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ============ theme (g10 / g90 / g100) ============ */
+function setTheme(t){
+  document.documentElement.dataset.theme=t;
+  $$("[data-set-theme]").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.setTheme===t)));
+  try{localStorage.setItem("carbon-theme",t);}catch(_){}
+}
+$$("[data-set-theme]").forEach(b=>b.addEventListener("click",()=>setTheme(b.dataset.setTheme)));
+try{const s=localStorage.getItem("carbon-theme");if(s)setTheme(s);}catch(_){}
+
+/* ============ tabs ============ */
+$$(".tab").forEach(t=>t.addEventListener("click",()=>{
+  $$(".tab").forEach(x=>x.setAttribute("aria-selected","false"));
+  t.setAttribute("aria-selected","true");
+  $$(".tab-panel").forEach(p=>p.classList.remove("active"));
+  $("#panel-"+t.dataset.tab).classList.add("active");
+}));
+
+/* ============ side nav / header panels ============ */
+$("#navToggle").addEventListener("click",()=>{
+  const app=$("#app");
+  if(window.matchMedia("(max-width: 900px)").matches)app.classList.toggle("nav-open");
+  else app.classList.toggle("rail");
+});
+function togglePanel(btn,panel){
+  const open=panel.hidden;
+  $("#bellPanel").hidden=true;$("#accountMenu").hidden=true;
+  $("#bellBtn").setAttribute("aria-expanded","false");$("#avatarBtn").setAttribute("aria-expanded","false");
+  panel.hidden=!open;btn.setAttribute("aria-expanded",String(open));
+}
+$("#bellBtn").addEventListener("click",e=>{e.stopPropagation();togglePanel(e.currentTarget,$("#bellPanel"));});
+$("#avatarBtn").addEventListener("click",e=>{e.stopPropagation();togglePanel(e.currentTarget,$("#accountMenu"));});
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".hpanel")&&!e.target.closest("#bellBtn")&&!e.target.closest("#avatarBtn")){
+    $("#bellPanel").hidden=true;$("#accountMenu").hidden=true;
+    $("#bellBtn").setAttribute("aria-expanded","false");$("#avatarBtn").setAttribute("aria-expanded","false");
+  }
+  if(!e.target.closest(".ovf"))closeMenus();
+  if(window.matchMedia("(max-width: 900px)").matches&&$("#app").classList.contains("nav-open")
+    &&!e.target.closest(".sidenav")&&!e.target.closest("#navToggle"))
+    $("#app").classList.remove("nav-open");
+});
+$("#notifRead").addEventListener("click",()=>{
+  $("#bellDot").hidden=true;$("#bellBtn").setAttribute("aria-label","Notifications");
+  $("#bellPanel").hidden=true;toast("success","All notifications marked as read.","You're caught up.");
+});
+$$("#accountMenu [data-acct]").forEach(a=>a.addEventListener("click",e=>{
+  e.preventDefault();$("#accountMenu").hidden=true;
+  const k=a.dataset.acct;
+  if(k==="logout")toast("info","You are signed out.","Session ended for r.keller@meridian.io.");
+  else toast("info",k==="profile"?"Profile settings.":"API keys.","Manage this in your IBM Cloud account pages.");
+}));
+$$(".sidenav a").forEach(a=>a.addEventListener("click",e=>{
+  e.preventDefault();
+  if(a.classList.contains("active"))return;
+  $$(".sidenav a").forEach(x=>x.classList.remove("active"));a.classList.add("active");
+  toast("info",a.textContent.trim()+".","This demo implements the Clusters view.");
+}));
+$("#shellSearch").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&e.target.value.trim())applyFilter(e.target.value.trim());
+});
+
+/* ============ activity feed ============ */
+const EV_SEV={info:"blue",warning:"hc",critical:"red"};
+let events=[], liveTimer=null, liveOn=true;
+const EV_TPL=[
+ ()=>({sev:"info",actor:"autoscaler",msg:c=>`Scaled node pool <span class="mono">default</span> in ${rl(c)} from 12 to 14 nodes.`}),
+ ()=>({sev:"info",actor:"cluster-manager",msg:c=>`Ingress certificate renewed for ${rl(c)} — valid for 90 days.`}),
+ ()=>({sev:"warning",actor:"upgrade-controller",msg:c=>`Upgrade to 1.32.3 started on ${rl(c)} — node pool <span class="mono">gpu</span> draining.`}),
+ ()=>({sev:"critical",actor:"node-agent",msg:c=>`Disk pressure on worker <span class="mono">10.241.0.${1+Math.floor(Math.random()*40)}</span> in ${rl(c)} — node cordoned.`}),
+ ()=>({sev:"info",actor:"backup-service",msg:c=>`Snapshot <span class="mono">nightly-${new Date().toISOString().slice(0,10).replaceAll("-","")}</span> verified for ${rl(c)} (4.2 GB).`}),
+ ()=>({sev:"critical",actor:"kubelet",msg:c=>`Failed to pull image <span class="mono">checkout-api:2.14.1</span> in ${rl(c)} (ImagePullBackOff).`}),
+ ()=>({sev:"warning",actor:"quota-enforcer",msg:c=>`${rl(c)} is at 92% of its worker node quota in us-south.`}),
+ ()=>({sev:"info",actor:"iam",msg:c=>`Service ID <span class="mono">iam-ServiceId-7f2a</span> granted Viewer role on ${rl(c)}.`})
+];
+function rl(name){return `<button class="linklike" data-goto="${name}">${name}</button>`;}
+function pushEvent(sev,actor,msgHtml,time){
+  events.unshift({sev,actor,msg:msgHtml,time:time||now()});
+  if(events.length>40)events.pop();
+  renderEvents();
+}
+function renderEvents(){
+  const f=$("#sevFilter").value;
+  const list=events.filter(e=>!f||e.sev===f);
+  $("#eventList").innerHTML=list.map(e=>
+    `<li class="event"><span class="ev-time mono">${e.time}</span>
+     <span><span class="tag tag-${EV_SEV[e.sev]}">${e.sev[0].toUpperCase()+e.sev.slice(1)}</span></span>
+     <span class="ev-actor mono">${e.actor}</span>
+     <span class="ev-msg">${e.msg}</span></li>`).join("")||
+    `<li class="event"><span class="ev-msg dim" style="grid-column:1/-1">No events at this severity yet.</span></li>`;
+}
+function seedEvents(){
+  const t=Date.now();
+  const at=min=>new Date(t-min*60000).toTimeString().slice(0,8);
+  pushEvent("info","autoscaler",`Scaled node pool <span class="mono">default</span> in ${rl("checkout-api-prod")} from 12 to 14 nodes.`,at(2));
+  pushEvent("warning","upgrade-controller",`Upgrade to 1.32.3 started on ${rl("gpu-training-a")} — node pool <span class="mono">gpu</span> draining.`,at(9));
+  pushEvent("critical","node-agent",`Disk pressure on worker <span class="mono">10.241.0.18</span> in ${rl("analytics-warehouse")} — node cordoned.`,at(14));
+  pushEvent("info","cluster-manager",`Ingress certificate renewed for ${rl("search-cluster")} — valid for 90 days.`,at(31));
+  pushEvent("info","backup-service",`Snapshot <span class="mono">nightly-20261002</span> verified for ${rl("ledger-replica")} (4.2 GB).`,at(47));
+  pushEvent("critical","kubelet",`Failed to pull image <span class="mono">checkout-api:2.14.1</span> in ${rl("payments-vpc")} (ImagePullBackOff).`,at(58));
+}
+function tickLive(){
+  const tpl=EV_TPL[Math.floor(Math.random()*EV_TPL.length)]();
+  const c=CLUSTERS[Math.floor(Math.random()*CLUSTERS.length)].name;
+  pushEvent(tpl.sev,tpl.actor,tpl.msg(c));
+}
+function setLive(on){
+  liveOn=on;
+  $("#liveLabel").textContent=on?"Pause live":"Resume live";
+  $("#liveIcon").setAttribute("href",on?"#i-pause":"#i-play");
+  $("#liveToggle").setAttribute("aria-pressed",String(on));
+  $("#liveDot").classList.toggle("paused",!on);
+  $("#liveText").textContent=on?"Live":"Paused";
+  clearInterval(liveTimer);
+  if(on)liveTimer=setInterval(tickLive,8000);
+}
+$("#liveToggle").addEventListener("click",()=>setLive(!liveOn));
+$("#sevFilter").addEventListener("change",renderEvents);
+$("#eventList").addEventListener("click",e=>{
+  const g=e.target.closest("[data-goto]");
+  if(g)applyFilter(g.dataset.goto);
+});
+
+/* ============ configuration tab ============ */
+const CFG_DEFAULTS={prefix:"meridian",rg:"default",flavor:"bx2.4x16 — 4 vCPU · 16 GB RAM",ha:"multi",auto:true,nodes:"3"};
+$("#configForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  toast("success","Configuration saved.","Default settings updated for new clusters in this account.");
+});
+$("#resetCfg").addEventListener("click",()=>{
+  $("#cfgPrefix").value=CFG_DEFAULTS.prefix;$("#cfgRg").value=CFG_DEFAULTS.rg;
+  $("#cfgFlavor").value=CFG_DEFAULTS.flavor;
+  document.querySelector('input[name="ha"][value="multi"]').checked=true;
+  $("#cfgAutoUpdate").checked=true;$("#cfgNodes").value=CFG_DEFAULTS.nodes;
+  toast("info","Defaults restored.","Configuration reset to the account defaults.");
+});
+function stepNum(id,delta){
+  const el=$("#"+id);
+  el.value=Math.min(50,Math.max(1,(+el.value||1)+delta));
+}
+$("#nodesUp").addEventListener("click",()=>stepNum("cfgNodes",1));
+$("#nodesDown").addEventListener("click",()=>stepNum("cfgNodes",-1));
+$$("[data-step]").forEach(b=>b.addEventListener("click",()=>{
+  const[id,d]=b.dataset.step.split(":");stepNum(id,+d);
+}));
+$("#copyKube").addEventListener("click",e=>{
+  const btn=e.currentTarget;
+  navigator.clipboard.writeText($("#kubeCmd").textContent.trim()).then(()=>{
+    btn.classList.add("copied");
+    toast("success","Copied to clipboard.","ibmcloud ks cluster config --cluster checkout-api-prod --admin");
+    setTimeout(()=>btn.classList.remove("copied"),1500);
+  },()=>toast("warning","Copy failed.","Select the command text manually."));
+});
+
+/* ============ create cluster modal ============ */
+const overlay=$("#modalOverlay");
+function openModal(){overlay.hidden=false;$("#nameField").classList.remove("invalid");
+  setTimeout(()=>$("#fName").focus(),50);}
+function closeModal(){overlay.hidden=true;$("#createForm").reset();}
+$("#createBtn").addEventListener("click",openModal);
+$("#modalClose").addEventListener("click",closeModal);
+$("#modalCancel").addEventListener("click",closeModal);
+overlay.addEventListener("click",e=>{if(e.target===overlay)closeModal();});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    if(!overlay.hidden)closeModal();
+    $("#bellPanel").hidden=true;$("#accountMenu").hidden=true;closeMenus();
+  }
+});
+$("#fName").addEventListener("input",()=>$("#nameField").classList.remove("invalid"));
+$("#createForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=$("#fName").value.trim().toLowerCase();
+  if(!/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/.test(name)){
+    $("#nameField").classList.add("invalid");$("#fName").focus();return;
+  }
+  if(CLUSTERS.some(c=>c.name===name)){
+    $("#nameError").textContent="A cluster with this name already exists.";
+    $("#nameField").classList.add("invalid");$("#fName").focus();return;
+  }
+  const region=$("#fRegion").value;
+  const city=$("#fRegion").selectedOptions[0].textContent.split("—")[1].trim();
+  CLUSTERS.unshift(mk({name,status:"Provisioning",region,city,
+    version:$("#fVersion").value,nodes:0,cpu:null,created:new Date().toISOString().slice(0,10),
+    vpc:"auto-vpc-"+region,rg:$("#fRg").value,
+    detail:"Provisioning worker nodes — step 1 of 7."}));
+  const added=CLUSTERS[0];
+  added.crn=`crn:v1:bluemix:public:containers-kubernetes:${region}:a/${hex8()}::`;
+  added.ingress=`${name}.${region}.containers.appdomain.cloud`;
+  state.filter="";$("#tableSearch").value="";$("#searchClear").hidden=true;
+  state.page=1;state.sortKey="created";state.sortDir=-1;
+  $$("th.sortable").forEach(o=>{o.classList.remove("sorted");o.querySelector("use").setAttribute("href","#i-chev-d");});
+  const cth=document.querySelector('th[data-key="created"]');
+  cth.classList.add("sorted");cth.querySelector("use").setAttribute("href","#i-chev-d");
+  closeModal();renderTiles();render();
+  toast("success","Cluster provisioning started.",name+" is being created in "+region+". Worker nodes will be ready in about 20 minutes.");
+});
+
+/* ============ init ============ */
+renderTiles();render();seedEvents();setLive(true);
+$("#refreshedAt").textContent="Last refreshed "+now();
+</script>
+</body>
+</html>
