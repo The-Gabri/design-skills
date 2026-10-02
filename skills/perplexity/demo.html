@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>perplexity</title>
+<style>
+:root{
+  --bg:#F8F8F6; --surface:#fff; --ink:#271A00; --ink2:#7C7464; --ink3:#9A958A;
+  --fog:#D1CFC7; --border:rgba(39,26,0,.10); --teal:#20B8CD; --teal-deep:#1591A3;
+  --teal-wash:rgba(32,184,205,.10);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial,sans-serif;
+  --serif:Georgia,"Source Serif 4","Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;min-height:100vh;display:flex}
+
+/* ---------- sidebar ---------- */
+.sidebar{width:264px;flex:none;border-right:1px solid var(--border);
+  padding:18px 14px;display:flex;flex-direction:column;gap:4px;
+  position:sticky;top:0;height:100vh;background:var(--bg)}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 10px 16px;
+  font-size:19px;font-weight:600;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+.brand svg{flex:none}
+.new-thread{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  border:1px solid var(--fog);background:var(--surface);border-radius:999px;
+  padding:10px;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;margin-bottom:18px;font-family:var(--sans)}
+.new-thread:hover{border-color:var(--teal);color:var(--teal-deep)}
+.side-label{font-size:13px;color:var(--ink2);padding:0 12px;margin:0 0 8px}
+.thread-link{display:block;padding:9px 12px;border-radius:10px;font-size:14px;color:var(--ink2);
+  text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thread-link:hover{background:rgba(39,26,0,.05);color:var(--ink)}
+.thread-link.active{background:var(--teal-wash);color:var(--ink)}
+.side-foot{margin-top:auto;padding:10px 12px;font-size:12.5px;color:var(--ink3)}
+
+/* ---------- main column ---------- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:flex-end;gap:10px;
+  padding:14px 24px}
+.menu-btn{display:none;border:1px solid var(--fog);background:var(--surface);border-radius:10px;
+  padding:8px 10px;cursor:pointer;color:var(--ink)}
+.btn-ghost{border:0;background:transparent;color:var(--ink2);font-size:14px;font-weight:500;
+  padding:9px 14px;border-radius:999px;cursor:pointer;font-family:var(--sans)}
+.btn-ghost:hover{color:var(--ink)}
+.btn-teal{border:0;background:var(--teal);color:#fff;font-size:14px;font-weight:600;
+  padding:9px 18px;border-radius:999px;cursor:pointer;font-family:var(--sans)}
+.btn-teal:hover{background:var(--teal-deep)}
+
+.col{width:100%;max-width:1120px;margin:0 auto;padding:0 24px}
+.col-narrow{max-width:760px}
+
+/* ---------- home / ask-first ---------- */
+.home{padding:13vh 24px 40px;text-align:center;max-width:860px;margin:0 auto}
+.home .bigmark{margin:0 auto 22px;display:block}
+.home h1{font-size:36px;font-weight:600;letter-spacing:-.025em;margin:0 0 30px}
+.ask{display:flex;align-items:center;background:var(--surface);border:1px solid rgba(39,26,0,.12);
+  border-radius:28px;padding:8px 8px 8px 24px;
+  transition:border-color .18s ease,box-shadow .18s ease}
+.ask:focus-within{border-color:var(--teal);box-shadow:0 8px 32px rgba(32,184,205,.14)}
+.ask input{flex:1;min-width:0;border:0;outline:0;background:transparent;
+  font-size:17px;color:var(--ink);font-family:var(--sans)}
+.ask input::placeholder{color:var(--ink3)}
+.ask button.send{width:44px;height:44px;flex:none;border:0;border-radius:50%;
+  background:var(--teal);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ask button.send:hover{background:var(--teal-deep)}
+.ask button.send:disabled{opacity:.45;cursor:default}
+.ask-row{display:flex;align-items:center;gap:10px;margin-top:12px;justify-content:flex-start}
+.focus{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--fog);
+  background:var(--surface);color:var(--ink2);font-size:13px;font-weight:500;
+  border-radius:999px;padding:7px 14px;cursor:pointer;font-family:var(--sans)}
+.focus:hover{border-color:var(--teal);color:var(--teal-deep)}
+.focus.on{border-color:var(--teal);color:var(--teal-deep);background:var(--teal-wash)}
+.suggest{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:34px;text-align:left}
+.suggest button{border:1px solid var(--border);background:var(--surface);border-radius:14px;
+  padding:12px 16px;font-size:14px;color:var(--ink);cursor:pointer;font-family:var(--sans);
+  text-align:left}
+.suggest button:hover{border-color:var(--teal)}
+.suggest button small{display:block;color:var(--ink2);font-size:12.5px;margin-top:4px}
+.home-hint{font-size:13.5px;color:var(--ink2);margin:26px 0 0}
+
+/* ---------- thread ---------- */
+.thread{display:none;padding:8px 0 40px}
+.thread.show{display:block}
+.thread-grid{display:flex;gap:44px;align-items:flex-start}
+.thread-main{flex:1;min-width:0}
+.q-title{font-size:23px;font-weight:600;letter-spacing:-.015em;margin:6px 0 22px;line-height:1.3}
+
+.steps{display:flex;gap:20px;list-style:none;margin:0 0 20px;padding:0;font-size:13.5px;color:var(--ink3)}
+.steps li{display:flex;align-items:center;gap:8px}
+.steps li.done{color:var(--ink2)}
+.steps li.done .st-n{color:var(--teal-deep);font-weight:700}
+.steps li.active{color:var(--ink)}
+.spin{width:12px;height:12px;border-radius:50%;border:2px solid var(--fog);
+  border-top-color:var(--teal);animation:pxspin .8s linear infinite;display:inline-block}
+@keyframes pxspin{to{transform:rotate(360deg)}}
+
+.label{font-size:13px;color:var(--ink2);margin:0 0 10px}
+.chips{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:2px;scrollbar-width:thin}
+.chip{flex:none;display:flex;align-items:center;gap:9px;background:var(--surface);
+  border:1px solid var(--border);border-radius:14px;padding:9px 14px 9px 9px;
+  font-size:13.5px;color:var(--ink);cursor:pointer;font-family:var(--sans);
+  transition:border-color .18s ease,box-shadow .18s ease}
+.chip:hover{border-color:var(--teal)}
+.chip.active{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-wash)}
+.chip .n{font-size:11px;font-weight:700;color:var(--teal-deep);background:var(--teal-wash);
+  border-radius:6px;padding:2px 7px}
+.chip .f{width:22px;height:22px;border-radius:6px;color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex:none}
+@keyframes chipflash{
+  0%{box-shadow:0 0 0 0 rgba(32,184,205,.55)}
+  100%{box-shadow:0 0 0 10px rgba(32,184,205,0)}
+}
+.chip.flash{animation:chipflash .9s ease-out 2;border-color:var(--teal)}
+.src-detail{display:none;background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:14px 18px;margin:6px 0 4px;font-size:13.5px}
+.src-detail.show{display:block;animation:fadein .3s ease both}
+.src-detail .sd-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.src-detail .sd-head .f{width:26px;height:26px;border-radius:7px;color:#fff;font-size:12px;
+  font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.src-detail strong{font-size:14px}
+.src-detail .sd-domain{color:var(--teal-deep);font-size:12.5px;font-weight:600}
+.src-detail p{margin:6px 0 0;color:var(--ink2);line-height:1.55}
+
+.answer{font-family:var(--serif);font-size:17.5px;line-height:1.72;color:var(--ink);
+  max-width:70ch;margin:18px 0 0}
+.answer p{margin:0 0 1em}
+.answer strong{font-weight:700}
+.cursor{display:inline-block;width:2px;height:1.1em;background:var(--teal);
+  vertical-align:-0.15em;animation:blink 1s steps(1) infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+
+.cite{position:relative;display:inline-block;color:var(--teal-deep);font-weight:700;
+  font-size:.72em;vertical-align:super;cursor:pointer;margin-left:2px;font-family:var(--sans);
+  padding:0 1px}
+.cite:hover{text-decoration:underline}
+.cite .tip{display:none;position:absolute;bottom:135%;left:50%;transform:translateX(-50%);
+  width:240px;background:var(--surface);border:1px solid rgba(39,26,0,.12);
+  border-radius:12px;padding:12px 14px;box-shadow:0 10px 30px rgba(39,26,0,.12);z-index:5;
+  font-weight:400;text-align:left}
+.cite:hover .tip{display:block}
+.tip strong{display:block;font-size:13.5px;color:var(--ink);font-family:var(--sans)}
+.tip em{display:block;font-style:normal;font-size:12px;color:var(--ink2);margin-top:3px;font-family:var(--sans)}
+
+.tools{display:flex;gap:6px;margin:20px 0 0}
+.tools button{border:1px solid transparent;background:transparent;color:var(--ink2);
+  font-size:13.5px;font-weight:500;border-radius:999px;padding:7px 14px;cursor:pointer;
+  font-family:var(--sans);display:inline-flex;align-items:center;gap:6px}
+.tools button:hover{border-color:var(--fog);color:var(--ink);background:var(--surface)}
+
+/* related: right sidebar on wide, stacked on narrow */
+.rel-side{width:300px;flex:none;position:sticky;top:18px}
+.rel{display:flex;align-items:center;justify-content:space-between;width:100%;gap:12px;
+  background:transparent;border:0;border-top:1px solid var(--border);
+  padding:13px 4px;font-size:14.5px;color:var(--ink);cursor:pointer;text-align:left;font-family:var(--sans)}
+.rel:last-of-type{border-bottom:1px solid var(--border)}
+.rel .plus{color:var(--ink3);font-size:20px;font-weight:300;line-height:1;flex:none}
+.rel:hover{color:var(--teal-deep)}
+.rel:hover .plus{color:var(--teal-deep)}
+
+.followup{position:sticky;bottom:0;padding:14px 0 26px;
+  background:linear-gradient(transparent,var(--bg) 38%)}
+.followup .ask{border-radius:24px;padding:6px 6px 6px 20px;box-shadow:0 4px 20px rgba(39,26,0,.08)}
+.followup .ask input{font-size:15.5px}
+.followup .ask button.send{width:38px;height:38px}
+
+.demo-note{border:1px dashed var(--fog);border-radius:14px;padding:14px 16px;
+  font-size:13.5px;color:var(--ink2);margin:18px 0 0;background:var(--surface)}
+
+.footer{margin-top:auto;padding:28px 24px 34px;text-align:center}
+.footer p{font-size:12.5px;color:var(--ink3);margin:0}
+
+.fade{animation:fadein .45s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+@media (max-width:1140px){
+  .thread-grid{flex-direction:column}
+  .rel-side{width:100%;position:static}
+  .rel-side .rel{font-size:15px}
+}
+@media (max-width:900px){
+  .sidebar{display:none}
+  .menu-btn{display:inline-flex}
+  .home{padding-top:10vh}
+  .home h1{font-size:30px}
+  .suggest{grid-template-columns:1fr}
+  .steps{flex-wrap:wrap;gap:12px}
+  .answer{font-size:16.5px}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="#" id="brandHome">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+      <rect width="26" height="26" rx="7" fill="#20B8CD"/>
+      <path d="M7 19V8.5L13 5l6 3.5V19l-6 3.5z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M7 8.5L13 12l6-3.5M13 12v10.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+    </svg>
+    perplexity
+  </a>
+  <button class="new-thread" id="newThreadBtn" type="button">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    New thread
+  </button>
+  <p class="side-label">Today</p>
+  <a class="thread-link" href="#" data-q="eclipse">Next total solar eclipse over Spain</a>
+  <a class="thread-link" href="#" data-q="aneto">Tallest peak in the Pyrenees</a>
+  <a class="thread-link" href="#" data-q="sky">Why is the sky blue?</a>
+  <a class="thread-link" href="#" data-q="llm">How do large language models work?</a>
+  <div class="side-foot">A fictional demo &mdash; not affiliated with Perplexity.</div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle threads">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <span style="flex:1"></span>
+    <button class="btn-ghost" type="button">Log in</button>
+    <button class="btn-teal" type="button">Sign up</button>
+  </div>
+
+  <div class="col">
+    <!-- HOME -->
+    <section class="home" id="homeView">
+      <svg class="bigmark" width="52" height="52" viewBox="0 0 26 26" aria-hidden="true">
+        <rect width="26" height="26" rx="7" fill="#20B8CD"/>
+        <path d="M7 19V8.5L13 5l6 3.5V19l-6 3.5z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M7 8.5L13 12l6-3.5M13 12v10.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+      </svg>
+      <h1>perplexity</h1>
+      <form class="ask" id="heroAsk">
+        <input type="text" id="heroInput" placeholder="Ask anything&hellip;" aria-label="Ask anything" autocomplete="off">
+        <button class="send" type="submit" aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        </button>
+      </form>
+      <div class="ask-row">
+        <button class="focus" id="focusBtn" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+          <span id="focusLabel">Focus: Web</span>
+        </button>
+      </div>
+      <div class="suggest">
+        <button type="button" data-q="eclipse">When is the next total solar eclipse visible from Spain?<small>Space &middot; 4 sources</small></button>
+        <button type="button" data-q="aneto">What is the tallest mountain in the Pyrenees?<small>Geography &middot; 3 sources</small></button>
+        <button type="button" data-q="sky">Why is the sky blue?<small>Physics &middot; 3 sources</small></button>
+        <button type="button" data-q="llm">How do large language models actually work?<small>AI &middot; 4 sources</small></button>
+      </div>
+      <p class="home-hint">Every answer cites its sources &mdash; click a citation number to jump to its source.</p>
+    </section>
+
+    <!-- THREAD -->
+    <section class="thread" id="threadView" aria-live="polite">
+      <div class="col-narrow">
+        <h2 class="q-title" id="qTitle"></h2>
+        <ol class="steps" id="steps"></ol>
+        <div id="sourcesWrap" style="display:none">
+          <p class="label" id="sourcesLabel">Sources</p>
+          <div class="chips" id="chips"></div>
+          <div class="src-detail" id="srcDetail"></div>
+        </div>
+      </div>
+      <div class="thread-grid col-narrow" style="max-width:1120px;margin:0 auto">
+        <div class="thread-main">
+          <article class="answer" id="answer"></article>
+          <div id="afterAnswer" style="display:none">
+            <div class="tools">
+              <button id="copyBtn" type="button">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                <span id="copyLabel">Copy</span>
+              </button>
+              <button id="shareBtn" type="button">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+                <span id="shareLabel">Share</span>
+              </button>
+              <button id="rewriteBtn" type="button">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+                <span id="rewriteLabel">Rewrite</span>
+              </button>
+            </div>
+          </div>
+          <div class="followup">
+            <form class="ask" id="followAsk">
+              <input type="text" id="followInput" placeholder="Ask a follow-up&hellip;" aria-label="Ask a follow-up" autocomplete="off">
+              <button class="send" type="submit" aria-label="Send">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+        <aside class="rel-side" id="relatedSide" style="display:none">
+          <p class="label">Related</p>
+          <div id="related"></div>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer">
+    <p>Built from the perplexity skill &middot; design-skills</p>
+  </footer>
+</div>
+
+<script>
+const ANSWERS = {
+  eclipse: {
+    question: "When is the next total solar eclipse visible from Spain?",
+    sources: [
+      { name: "NASA Science", domain: "nasa.gov \u00B7 Eclipse predictions", letter: "N", color: "#1a73e8",
+        blurb: "NASA's eclipse bulletins and the Five Millennium Canon of solar eclipses, with path maps and local circumstances." },
+      { name: "timeanddate.com", domain: "timeanddate.com \u00B7 Eclipse path maps", letter: "t", color: "#0f9d58",
+        blurb: "Interactive eclipse path and local timing tables for cities across the totality band." },
+      { name: "Wikipedia", domain: "en.wikipedia.org \u00B7 Solar eclipse of August 12, 2026", letter: "W", color: "#636363",
+        blurb: "Summary of the eclipse path, timing and visibility for the August 2026 event." },
+      { name: "Instituto Geogr\u00E1fico Nacional", domain: "ign.es \u00B7 Astronom\u00EDa", letter: "I", color: "#b3541e",
+        blurb: "Spain's national geographic institute eclipse pages, with visibility maps for the Iberian peninsula." }
+    ],
+    paragraphs: [
+      "The next total solar eclipse visible from Spain happens on **12 August 2026** [1], with the path of totality entering the northwest of the country in the late afternoon and sweeping across the north \u2014 from Galicia, over the Cantabrian coast and the interior, toward the Balearic Islands [2].",
+      "It will be the first total solar eclipse seen from mainland Spain in over a century [3]. Near the center of the path, totality lasts up to about one minute and 45 seconds [4], with cities such as A Coru\u00F1a, Bilbao, Zaragoza and Valencia inside or very close to the totality band [2].",
+      "Skywatchers get a second chance soon after: another total eclipse crosses southern Spain \u2014 including C\u00E1diz and M\u00E1laga \u2014 on 2 August 2027 [2]. For the 2026 event, certified eclipse glasses are mandatory for every partial phase; it is only safe to look without protection during the brief seconds of totality itself [1]."
+    ],
+    related: [
+      "How long will totality last in Zaragoza?",
+      "What is the safest way to watch a solar eclipse?",
+      "When is the next eclipse after 2027?"
+    ]
+  },
+  aneto: {
+    question: "What is the tallest mountain in the Pyrenees?",
+    sources: [
+      { name: "Wikipedia", domain: "en.wikipedia.org \u00B7 Aneto", letter: "W", color: "#636363",
+        blurb: "Overview of the peak, the Maladeta massif and the classic climbing routes." },
+      { name: "Instituto Geogr\u00E1fico Nacional", domain: "ign.es \u00B7 Toponimia", letter: "I", color: "#b3541e",
+        blurb: "Official Spanish cartography and summit elevations for the Pyrenees." },
+      { name: "Encyclopaedia Britannica", domain: "britannica.com \u00B7 Pyrenees", letter: "B", color: "#7a1f1f",
+        blurb: "Reference entry on the Pyrenees range and its main summits." }
+    ],
+    paragraphs: [
+      "The tallest mountain in the Pyrenees is **Aneto**, at **3,404 metres** above sea level [1]. It stands in the Maladeta massif in the province of Huesca, Aragon, close to the French border [2].",
+      "The second-highest summit is Posets (3,369 m), also in Aragon [3]. Aneto's summit holds the largest glacier in the Pyrenees \u2014 the Coronas glacier \u2014 although, like the rest of the range's ice, it has shrunk dramatically over the past century [1].",
+      "The classic ascent starts at the Renclusa refuge and crosses the glacier to the summit ridge, finishing at the famous Puente de Mahoma \u2014 a narrow exposed ridge that gives the climb its reputation [1]."
+    ],
+    related: [
+      "How long does the Aneto ascent take?",
+      "Which is higher, Aneto or Posets?",
+      "Is the Aneto glacier disappearing?"
+    ]
+  },
+  sky: {
+    question: "Why is the sky blue?",
+    sources: [
+      { name: "NASA Science", domain: "nasa.gov \u00B7 Space Place", letter: "N", color: "#1a73e8",
+        blurb: "NASA's explainer on sunlight and the atmosphere, written for students and teachers." },
+      { name: "NOAA", domain: "noaa.gov \u00B7 JetStream", letter: "O", color: "#0b5fa5",
+        blurb: "US weather service school on atmospheric optics and light scattering." },
+      { name: "Wikipedia", domain: "en.wikipedia.org \u00B7 Rayleigh scattering", letter: "W", color: "#636363",
+        blurb: "Physics of scattering of light by particles much smaller than its wavelength." }
+    ],
+    paragraphs: [
+      "The sky is blue because of **Rayleigh scattering**: as sunlight passes through the atmosphere, air molecules scatter short-wavelength light \u2014 blue and violet \u2014 far more strongly than long-wavelength reds and oranges [1][3]. That scattered blue light arrives at our eyes from every direction, painting the sky [2].",
+      "Violet is scattered even more than blue, but we perceive blue because our eyes are more sensitive to it and the upper atmosphere absorbs some violet [1].",
+      "At sunrise and sunset the same physics flips the palette: sunlight travels through much more air, so the blue is scattered away before it reaches us and the remaining reds and oranges dominate [2]."
+    ],
+    related: [
+      "Why are sunsets red?",
+      "What exactly is Rayleigh scattering?",
+      "Why is the sea blue?"
+    ]
+  },
+  llm: {
+    question: "How do large language models actually work?",
+    sources: [
+      { name: "Wikipedia", domain: "en.wikipedia.org \u00B7 Large language model", letter: "W", color: "#636363",
+        blurb: "Reference overview of model architecture, training objectives and known limitations." },
+      { name: "Google Research", domain: "research.google \u00B7 Attention Is All You Need", letter: "G", color: "#1a73e8",
+        blurb: "The 2017 paper that introduced the transformer architecture behind modern language models." },
+      { name: "Stanford HAI", domain: "hai.stanford.edu \u00B7 Explainers", letter: "S", color: "#8c1515",
+        blurb: "Stanford's human-centered AI explainers on how foundation models are built and evaluated." },
+      { name: "OpenAI", domain: "openai.com \u00B7 Technical reports", letter: "O", color: "#10a37f",
+        blurb: "Technical documentation on training methods and model behavior for the GPT series." }
+    ],
+    paragraphs: [
+      "A large language model is a neural network trained to **predict the next word** in a sequence [1]. It reads text as **tokens** \u2014 chunks of words or characters \u2014 and learns, from billions of examples, which tokens are most likely to follow any given context [1].",
+      "Modern LLMs are built on the **transformer** architecture, introduced in the 2017 paper \u201CAttention Is All You Need\u201D by researchers at Google [2]. The key mechanism, **self-attention**, lets the model weigh the relevance of every token in a passage when generating each new one, capturing long-range relationships that earlier architectures missed [2].",
+      "During training, the model adjusts billions of parameters to minimize its prediction error [4]. The result is a system that can draft, summarize and reason in natural language \u2014 though it has no direct access to facts: it generates plausible continuations, which is why it can confidently **hallucinate** information that isn't true [1][3]."
+    ],
+    related: [
+      "What is a transformer neural network?",
+      "Why do language models hallucinate?",
+      "How much data trains an LLM?"
+    ]
+  }
+};
+
+const homeView = document.getElementById("homeView");
+const threadView = document.getElementById("threadView");
+const qTitle = document.getElementById("qTitle");
+const stepsEl = document.getElementById("steps");
+const sourcesWrap = document.getElementById("sourcesWrap");
+const sourcesLabel = document.getElementById("sourcesLabel");
+const chipsEl = document.getElementById("chips");
+const srcDetail = document.getElementById("srcDetail");
+const answerEl = document.getElementById("answer");
+const afterAnswer = document.getElementById("afterAnswer");
+const relatedSide = document.getElementById("relatedSide");
+const relatedEl = document.getElementById("related");
+let streamTimer = null;
+let currentKey = null;
+
+function esc(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function rich(text){
+  return esc(text)
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/\[(\d+)\]/g, function(m, n){
+      return '<span class="cite" data-n="'+n+'" role="link" tabindex="0" aria-label="Source '+n+'">'+n+'<span class="tip"></span></span>';
+    });
+}
+function fillTips(data){
+  answerEl.querySelectorAll(".cite").forEach(function(c){
+    const s = data.sources[parseInt(c.dataset.n,10)-1];
+    if(!s) return;
+    c.querySelector(".tip").innerHTML =
+      "<strong>"+esc(s.name)+"</strong><em>"+esc(s.domain)+"</em>";
+  });
+}
+function pickKey(q){
+  const t = q.toLowerCase();
+  if(/eclipse|solar|totality|sun.*glass|watch.*sun/.test(t)) return "eclipse";
+  if(/aneto|pyrenees|posets/.test(t)) return "aneto";
+  if(/sky|blue|rayleigh|sunset|sunrise/.test(t)) return "sky";
+  if(/llm|language model|transformer|hallucinat|token|gpt/.test(t)) return "llm";
+  return null;
+}
+function resetSteps(n){
+  stepsEl.innerHTML =
+    '<li data-step="0"><span class="st-n">1</span><span class="st-t">Searching the web</span></li>' +
+    '<li data-step="1"><span class="st-n">2</span><span class="st-t">Reading '+n+' sources</span></li>' +
+    '<li data-step="2"><span class="st-n">3</span><span class="st-t">Writing answer</span></li>';
+}
+function setStep(i, state){
+  const li = stepsEl.querySelector('li[data-step="'+i+'"]');
+  if(!li) return;
+  if(state === "active"){
+    li.classList.add("active");
+    li.querySelector(".st-n").outerHTML = '<span class="spin"></span>';
+  } else if(state === "done"){
+    li.classList.remove("active"); li.classList.add("done");
+    const spin = li.querySelector(".spin");
+    if(spin) spin.outerHTML = '<span class="st-n">'+(i+1)+"</span>";
+  }
+}
+function expandSource(data, idx){
+  const s = data.sources[idx];
+  if(!s) return;
+  chipsEl.querySelectorAll(".chip").forEach(function(ch, i){
+    ch.classList.toggle("active", i === idx);
+  });
+  srcDetail.innerHTML =
+    '<div class="sd-head"><span class="f" style="background:'+s.color+'">'+esc(s.letter)+"</span>" +
+    "<strong>"+esc(s.name)+"</strong></div>" +
+    '<span class="sd-domain">'+esc(s.domain)+"</span>" +
+    "<p>"+esc(s.blurb)+"</p>";
+  srcDetail.classList.add("show");
+}
+function renderSources(data){
+  chipsEl.innerHTML = "";
+  srcDetail.classList.remove("show");
+  data.sources.forEach(function(s, i){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip fade"; b.title = s.domain;
+    b.setAttribute("aria-label", "Source "+(i+1)+": "+s.name);
+    b.innerHTML = '<span class="n">'+(i+1)+'</span>' +
+      '<span class="f" style="background:'+s.color+'">'+esc(s.letter)+"</span>" +
+      "<span>"+esc(s.name)+"</span>";
+    b.style.animationDelay = (i*0.08)+"s";
+    b.addEventListener("click", function(){
+      if(b.classList.contains("active")){
+        b.classList.remove("active");
+        srcDetail.classList.remove("show");
+      } else {
+        expandSource(data, i);
+      }
+    });
+    chipsEl.appendChild(b);
+  });
+  sourcesLabel.textContent = "Sources \u00B7 " + data.sources.length;
+  sourcesWrap.style.display = "block";
+  sourcesWrap.classList.add("fade");
+}
+function renderRelated(data){
+  relatedEl.innerHTML = "";
+  data.related.forEach(function(r){
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "rel";
+    b.innerHTML = "<span>"+esc(r)+'</span><span class="plus">+</span>';
+    b.onclick = function(){ ask(r); };
+    relatedEl.appendChild(b);
+  });
+  relatedSide.style.display = "block";
+}
+function streamAnswer(data){
+  clearInterval(streamTimer);
+  answerEl.innerHTML = "";
+  const paras = data.paragraphs.map(rich);
+  let pi = 0, wi = 0, words = [];
+  const cursor = document.createElement("span");
+  cursor.className = "cursor";
+  function nextPara(){
+    if(pi >= paras.length){ finish(); return; }
+    const tmp = document.createElement("div");
+    tmp.innerHTML = paras[pi];
+    const p = document.createElement("p");
+    answerEl.appendChild(p);
+    words = [];
+    tmp.childNodes.forEach(function(node){
+      if(node.nodeType === 3){
+        node.textContent.split(/(\s+)/).forEach(function(w){
+          if(w) words.push({t:"w", v:w});
+        });
+      } else if(node.nodeType === 1){
+        words.push({t:"html", v:node.outerHTML});
+      }
+    });
+    wi = 0; pi++;
+    p.appendChild(cursor);
+    tick(p);
+  }
+  function tick(p){
+    streamTimer = setInterval(function(){
+      let n = 0;
+      while(wi < words.length && n < 3){
+        const w = words[wi++];
+        if(w.t === "w") cursor.insertAdjacentText("beforebegin", w.v);
+        else cursor.insertAdjacentHTML("beforebegin", w.v);
+        n++;
+      }
+      if(wi >= words.length){
+        clearInterval(streamTimer);
+        setTimeout(nextPara, 240);
+      }
+    }, 26);
+  }
+  function finish(){
+    cursor.remove();
+    fillTips(data);
+    afterAnswer.style.display = "block";
+    afterAnswer.classList.add("fade");
+  }
+  nextPara();
+}
+function renderFallback(q){
+  qTitle.textContent = q;
+  sourcesWrap.style.display = "none";
+  srcDetail.classList.remove("show");
+  relatedSide.style.display = "none";
+  answerEl.innerHTML = "";
+  const p = document.createElement("p");
+  p.textContent = "This is a static demo, so it only ships four pre-written answers. Try one of the suggestions on the home screen \u2014 for example, the solar eclipse question.";
+  answerEl.appendChild(p);
+  const note = document.createElement("div");
+  note.className = "demo-note fade";
+  note.textContent = "Demo note: a live answer engine would search the web now and stream a cited answer here.";
+  afterAnswer.parentNode.insertBefore(note, afterAnswer);
+  afterAnswer.style.display = "block";
+  afterAnswer.classList.add("fade");
+}
+function ask(q){
+  const key = pickKey(q);
+  currentKey = key;
+  clearInterval(streamTimer);
+  threadView.querySelectorAll(".demo-note").forEach(function(el){ el.remove(); });
+  homeView.style.display = "none";
+  threadView.classList.add("show");
+  afterAnswer.style.display = "none";
+  afterAnswer.classList.remove("fade");
+  relatedSide.style.display = "none";
+  document.querySelectorAll(".thread-link").forEach(function(a){
+    a.classList.toggle("active", a.dataset.q === key);
+  });
+  if(!key){ renderFallback(q); return; }
+  const data = ANSWERS[key];
+  qTitle.textContent = data.question;
+  answerEl.innerHTML = "";
+  sourcesWrap.style.display = "none";
+  sourcesWrap.classList.remove("fade");
+  srcDetail.classList.remove("show");
+  resetSteps(data.sources.length);
+  setStep(0, "active");
+  setTimeout(function(){
+    setStep(0, "done"); setStep(1, "active");
+    renderSources(data);
+    setTimeout(function(){
+      setStep(1, "done"); setStep(2, "active");
+      renderRelated(data);
+      setTimeout(function(){
+        setStep(2, "done");
+        streamAnswer(data);
+      }, 500);
+    }, 900);
+  }, 700);
+  document.getElementById("followInput").value = "";
+  window.scrollTo({top:0});
+}
+function goHome(){
+  clearInterval(streamTimer);
+  threadView.classList.remove("show");
+  homeView.style.display = "block";
+  document.querySelectorAll(".thread-link").forEach(function(a){ a.classList.remove("active"); });
+  document.getElementById("heroInput").value = "";
+  window.scrollTo({top:0});
+}
+
+/* citation click -> scroll + flash + expand matching source chip */
+answerEl.addEventListener("click", function(e){
+  const cite = e.target.closest(".cite");
+  if(!cite) return;
+  e.preventDefault();
+  const idx = parseInt(cite.dataset.n, 10) - 1;
+  const data = currentKey ? ANSWERS[currentKey] : null;
+  if(data) expandSource(data, idx);
+  const chip = chipsEl.children[idx];
+  if(chip){
+    chip.scrollIntoView({behavior:"smooth", block:"nearest", inline:"center"});
+    chip.classList.remove("flash");
+    void chip.offsetWidth;
+    chip.classList.add("flash");
+    setTimeout(function(){ chip.classList.remove("flash"); }, 2000);
+  }
+});
+answerEl.addEventListener("keydown", function(e){
+  if(e.key === "Enter" && e.target.classList && e.target.classList.contains("cite")){
+    e.target.click();
+  }
+});
+
+document.getElementById("heroAsk").addEventListener("submit", function(e){
+  e.preventDefault();
+  const q = document.getElementById("heroInput").value.trim();
+  if(q) ask(q);
+});
+document.getElementById("followAsk").addEventListener("submit", function(e){
+  e.preventDefault();
+  const q = document.getElementById("followInput").value.trim();
+  if(q) ask(q);
+});
+document.querySelectorAll(".suggest button").forEach(function(b){
+  b.addEventListener("click", function(){ ask(ANSWERS[b.dataset.q].question); });
+});
+document.querySelectorAll(".thread-link").forEach(function(a){
+  a.addEventListener("click", function(e){
+    e.preventDefault();
+    ask(ANSWERS[a.dataset.q].question);
+  });
+});
+document.getElementById("newThreadBtn").addEventListener("click", goHome);
+document.getElementById("brandHome").addEventListener("click", function(e){
+  e.preventDefault(); goHome();
+});
+
+/* focus pill cycles Web -> Academic -> Writing -> off */
+const focusModes = ["Web", "Academic", "Writing"];
+let focusIdx = 0;
+document.getElementById("focusBtn").addEventListener("click", function(){
+  focusIdx++;
+  if(focusIdx > focusModes.length) focusIdx = 0;
+  const label = document.getElementById("focusLabel");
+  if(focusIdx === 0){
+    label.textContent = "Focus: Web";
+    this.classList.remove("on");
+  } else {
+    label.textContent = "Focus: " + focusModes[focusIdx - 1];
+    this.classList.add("on");
+  }
+});
+
+/* copy */
+document.getElementById("copyBtn").addEventListener("click", function(){
+  const txt = answerEl.innerText || "";
+  if(navigator.clipboard) navigator.clipboard.writeText(txt).catch(function(){});
+  const label = document.getElementById("copyLabel");
+  label.textContent = "Copied";
+  setTimeout(function(){ label.textContent = "Copy"; }, 1400);
+});
+
+/* share */
+document.getElementById("shareBtn").addEventListener("click", function(){
+  const data = currentKey ? ANSWERS[currentKey] : null;
+  const label = document.getElementById("shareLabel");
+  const done = function(msg){
+    label.textContent = msg;
+    setTimeout(function(){ label.textContent = "Share"; }, 1400);
+  };
+  const text = data ? data.question + "\n\n" + (answerEl.innerText || "").slice(0, 300) + "\u2026" : "perplexity";
+  if(navigator.share){
+    navigator.share({title: "perplexity", text: text}).then(function(){ done("Shared"); }).catch(function(){});
+  } else if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(function(){ done("Copied"); }).catch(function(){});
+  }
+});
+
+/* rewrite: re-run the answer pipeline quickly */
+document.getElementById("rewriteBtn").addEventListener("click", function(){
+  const data = currentKey ? ANSWERS[currentKey] : null;
+  if(!data) return;
+  clearInterval(streamTimer);
+  afterAnswer.style.display = "none";
+  afterAnswer.classList.remove("fade");
+  resetSteps(data.sources.length);
+  setStep(0, "done"); setStep(1, "done"); setStep(2, "active");
+  setTimeout(function(){
+    setStep(2, "done");
+    streamAnswer(data);
+  }, 600);
+});
+
+document.getElementById("menuBtn").addEventListener("click", function(){
+  const sb = document.getElementById("sidebar");
+  sb.style.display = (sb.style.display === "flex") ? "none" : "flex";
+  if(sb.style.display === "flex"){
+    sb.style.position = "fixed"; sb.style.zIndex = 50; sb.style.height = "100vh";
+    sb.style.boxShadow = "8px 0 30px rgba(39,26,0,.12)";
+  }
+});
+window.addEventListener("resize", function(){
+  if(window.innerWidth > 900){
+    const sb = document.getElementById("sidebar");
+    sb.style.display = ""; sb.style.position = ""; sb.style.zIndex = "";
+    sb.style.height = ""; sb.style.boxShadow = "";
+  }
+});
+</script>
+</body>
+</html>
