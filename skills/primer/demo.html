@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>primer</title>
+<style>
+/* ===== Primer functional tokens (real themes) ===== */
+:root, [data-theme="light"]{
+  --fgColor-default:#1f2328; --fgColor-muted:#59636e; --fgColor-accent:#0969da;
+  --fgColor-success:#1a7f37; --fgColor-danger:#d1242f; --fgColor-attention:#9a6700;
+  --fgColor-done:#8250df; --fgColor-onEmphasis:#ffffff;
+  --bgColor-default:#ffffff; --bgColor-muted:#f6f8fa; --bgColor-inset:#f6f8fa;
+  --bgColor-success-emphasis:#1f883d; --bgColor-danger-emphasis:#cf222e;
+  --bgColor-accent-muted:#ddf4ff; --bgColor-attention-muted:#fff8c5;
+  --bgColor-danger-muted:#ffebe9; --bgColor-success-muted:#dafbe1;
+  --borderColor-default:#d1d9e0; --borderColor-muted:#d1d9e0b3;
+  --borderColor-accent-muted:#54aeff66; --borderColor-attention-muted:#d4a72c66;
+  --borderColor-danger-muted:#ff818266; --borderColor-success-muted:#4ac26b66;
+  --focus-outlineColor:#0969da;
+  --button-default-bg:#f6f8fa; --button-default-bgHover:#eff2f5;
+  --button-primary-bg:#1f883d; --button-primary-bgHover:#1c8139;
+  --button-danger-fg:#d1242f;
+  --overlay-backdrop:#c8d1da66;
+  --unav-selected-border:#fd8c73;
+  --shadow-floating:0 0 0 1px #d1d9e080,0 24px 48px -12px #25292e14,0 48px 96px -24px #25292e14;
+  color-scheme:light;
+}
+[data-theme="dark"]{
+  --fgColor-default:#f0f6fc; --fgColor-muted:#9198a1; --fgColor-accent:#4493f8;
+  --fgColor-success:#3fb950; --fgColor-danger:#f85149; --fgColor-attention:#d29922;
+  --fgColor-done:#ab7df8; --fgColor-onEmphasis:#ffffff;
+  --bgColor-default:#0d1117; --bgColor-muted:#151b23; --bgColor-inset:#010409;
+  --bgColor-success-emphasis:#238636; --bgColor-danger-emphasis:#da3633;
+  --bgColor-accent-muted:#0c2d6b; --bgColor-attention-muted:#bb800926;
+  --bgColor-danger-muted:#f8514926; --bgColor-success-muted:#23863626;
+  --borderColor-default:#3d444d; --borderColor-muted:#3d444db3;
+  --borderColor-accent-muted:#1f6feb66; --borderColor-attention-muted:#bb800966;
+  --borderColor-danger-muted:#f8514966; --borderColor-success-muted:#23863666;
+  --focus-outlineColor:#1f6feb;
+  --button-default-bg:#21262d; --button-default-bgHover:#293038;
+  --button-primary-bg:#238636; --button-primary-bgHover:#2ea043;
+  --button-danger-fg:#f85149;
+  --overlay-backdrop:#161b2280;
+  --unav-selected-border:#f78166;
+  --shadow-floating:0 0 0 1px #3d444d,0 24px 48px -12px #010409cc,0 48px 96px -24px #010409cc;
+  color-scheme:dark;
+}
+[data-theme="dimmed"]{
+  --fgColor-default:#adbac7; --fgColor-muted:#768390; --fgColor-accent:#539bf5;
+  --fgColor-success:#57ab5a; --fgColor-danger:#e5534b; --fgColor-attention:#c69026;
+  --fgColor-done:#986ee2; --fgColor-onEmphasis:#ffffff;
+  --bgColor-default:#1c2128; --bgColor-muted:#22272e; --bgColor-inset:#161b22;
+  --bgColor-success-emphasis:#347d39; --bgColor-danger-emphasis:#c93c37;
+  --bgColor-accent-muted:#1b2b45; --bgColor-attention-muted:#ae7c1466;
+  --bgColor-danger-muted:#e5534b26; --bgColor-success-muted:#46954a26;
+  --borderColor-default:#444c56; --borderColor-muted:#444c56b3;
+  --borderColor-accent-muted:#316dca66; --borderColor-attention-muted:#ae7c1466;
+  --borderColor-danger-muted:#e5534b66; --borderColor-success-muted:#46954a66;
+  --focus-outlineColor:#316dca;
+  --button-default-bg:#2d333b; --button-default-bgHover:#373e47;
+  --button-primary-bg:#347d39; --button-primary-bgHover:#3b8a41;
+  --button-danger-fg:#e5534b;
+  --overlay-backdrop:#161b2299;
+  --unav-selected-border:#e0823d;
+  --shadow-floating:0 0 0 1px #444c56,0 24px 48px -12px #010409cc;
+  color-scheme:dark;
+}
+
+/* ===== Base ===== */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-size:14px; line-height:1.5;
+  background:var(--bgColor-default); color:var(--fgColor-default);
+}
+a{color:var(--fgColor-accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  font-size:12px;background:var(--bgColor-muted);padding:2px 4px;border-radius:4px}
+:focus-visible{outline:2px solid var(--focus-outlineColor);outline-offset:2px;border-radius:4px}
+
+/* ===== Global header (github.com style: always dark) ===== */
+.gh-header{background:#010409;color:#f0f6fc;padding:12px 16px;display:flex;align-items:center;gap:16px}
+.gh-header .brand{display:flex;align-items:center;gap:12px;font-weight:600;font-size:16px;color:#f0f6fc;text-decoration:none}
+.gh-header .brand svg{flex:none}
+.theme-switch{display:flex;margin-left:auto;border:1px solid #3d444d;border-radius:6px;overflow:hidden}
+.theme-switch button{background:transparent;border:0;color:#9198a1;font:500 12px/1 system-ui,sans-serif;
+  padding:8px 12px;cursor:pointer;white-space:nowrap}
+.theme-switch button[aria-pressed="true"]{background:#1f6feb;color:#fff}
+
+/* ===== Page layout ===== */
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+.repo-head{display:flex;align-items:center;gap:12px;padding:24px 0 0;flex-wrap:wrap}
+.repo-head .avatar{width:32px;height:32px;border-radius:6px;background:#0969da;color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;font-weight:600;font-size:16px;flex:none}
+.repo-head h1{font-size:20px;font-weight:400;margin:0}
+.repo-head h1 a{font-weight:600}
+.repo-head h1 .sep{color:var(--fgColor-muted);font-weight:400;margin:0 4px}
+.repo-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.repo-desc{color:var(--fgColor-muted);margin:8px 0 16px;max-width:640px}
+
+/* ===== Buttons ===== */
+.btn{appearance:none;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;
+  font:500 14px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--fgColor-default);background:var(--button-default-bg);
+  border:1px solid var(--borderColor-default);border-radius:6px;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--button-default-bgHover);text-decoration:none}
+.btn-primary{background:var(--button-primary-bg);border-color:#1f232826;color:var(--fgColor-onEmphasis)}
+.btn-primary:hover{background:var(--button-primary-bgHover)}
+.btn-danger-fg{color:var(--button-danger-fg)}
+.btn-sm{height:28px;font-size:12px}
+
+/* ===== Label (Public pill) ===== */
+.lbl{display:inline-block;font-size:12px;font-weight:500;line-height:20px;padding:0 10px;
+  border-radius:999px;border:1px solid var(--borderColor-default);
+  background:var(--bgColor-default);color:var(--fgColor-default);white-space:nowrap;vertical-align:middle}
+.lbl-bug{border-color:var(--borderColor-danger-muted);background:var(--bgColor-danger-muted);color:var(--fgColor-danger)}
+.lbl-enhancement{border-color:var(--borderColor-success-muted);background:var(--bgColor-success-muted);color:var(--fgColor-success)}
+.lbl-docs{border-color:var(--borderColor-accent-muted);background:var(--bgColor-accent-muted);color:var(--fgColor-accent)}
+.lbl-goodfirst{border-color:#c297ff66;background:#fbefff;color:#8250df}
+[data-theme="dark"] .lbl-goodfirst{background:#8250df26;color:#ab7df8}
+[data-theme="dimmed"] .lbl-goodfirst{background:#986ee226;color:#986ee2}
+.lbl-open-pill{background:var(--bgColor-success-emphasis);border-color:#1f232826;color:var(--fgColor-onEmphasis)}
+.lbl-closed-pill{background:var(--bgColor-danger-emphasis);border-color:#1f232826;color:var(--fgColor-onEmphasis)}
+.lbl-deps{border-color:var(--borderColor-attention-muted);background:var(--bgColor-attention-muted);color:var(--fgColor-attention)}
+
+/* ===== Banner ===== */
+.banner{display:flex;gap:8px;align-items:flex-start;padding:12px 16px;font-size:14px;
+  border:1px solid;border-radius:6px;margin:16px 0;color:var(--fgColor-default)}
+.banner svg{flex:none;margin-top:2px}
+.banner .msg{flex:1}
+.banner button{background:none;border:0;color:inherit;cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px}
+.banner-warning{background:var(--bgColor-attention-muted);border-color:var(--borderColor-attention-muted)}
+
+/* ===== UnderlineNav ===== */
+.unav{display:flex;gap:4px;border-bottom:1px solid var(--borderColor-default);overflow-x:auto;margin-top:8px}
+.unav a{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;font-size:14px;
+  color:var(--fgColor-default);text-decoration:none;white-space:nowrap;
+  border-bottom:2px solid transparent;margin-bottom:-1px}
+.unav a:hover{border-bottom-color:var(--borderColor-default);text-decoration:none}
+.unav a[aria-current="page"]{font-weight:600;border-bottom-color:var(--unav-selected-border)}
+.counter{font-size:12px;font-weight:500;min-width:20px;text-align:center;padding:0 6px;line-height:20px;
+  border-radius:999px;background:var(--bgColor-muted);border:1px solid var(--borderColor-muted)}
+
+/* ===== Sub nav (Open / Closed) ===== */
+.subnav{display:flex;align-items:center;gap:8px;margin:16px 0;flex-wrap:wrap}
+.subnav .filter{display:flex;border:1px solid var(--borderColor-default);border-radius:6px;overflow:hidden}
+.subnav .filter button{background:var(--bgColor-default);border:0;color:var(--fgColor-muted);
+  font:500 14px/1 system-ui,sans-serif;padding:9px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.subnav .filter button + button{border-left:1px solid var(--borderColor-default)}
+.subnav .filter button[aria-pressed="true"]{background:var(--bgColor-muted);color:var(--fgColor-default);font-weight:600}
+.search{flex:1;min-width:180px;max-width:320px;display:flex}
+.search input{flex:1;height:32px;padding:0 12px;font-size:14px;color:var(--fgColor-default);
+  background:var(--bgColor-default);border:1px solid var(--borderColor-default);border-radius:6px}
+.search input::placeholder{color:var(--fgColor-muted)}
+
+/* ===== DataTable ===== */
+.table-wrap{border:1px solid var(--borderColor-default);border-radius:6px;overflow:hidden;margin-bottom:32px}
+table.dtable{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
+.dtable th{font-size:12px;font-weight:600;color:var(--fgColor-muted);text-align:left;
+  padding:8px 16px;border-bottom:1px solid var(--borderColor-default);background:var(--bgColor-muted)}
+.dtable td{padding:12px 16px;border-bottom:1px solid var(--borderColor-muted);vertical-align:middle}
+.dtable tbody tr:last-child td{border-bottom:0}
+.dtable tbody tr:hover{background:var(--bgColor-muted)}
+.dtable .row-title{font-weight:600}
+.dtable .meta{color:var(--fgColor-muted);font-size:12px;margin-top:2px}
+.dtable .num{text-align:right;font-family:ui-monospace,Menlo,monospace;font-size:12px;white-space:nowrap}
+.dtable .add{color:var(--fgColor-success)} .dtable .del{color:var(--fgColor-danger)}
+.status-dot{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.status-open{color:var(--fgColor-success)} .status-closed{color:var(--fgColor-danger)}
+.status-merged{color:var(--fgColor-done)}
+.avatars{display:inline-flex;vertical-align:middle}
+.avatars i{width:20px;height:20px;border-radius:50%;border:2px solid var(--bgColor-default);
+  margin-left:-8px;color:#fff;font:600 10px/16px system-ui;font-style:normal;
+  display:inline-flex;align-items:center;justify-content:center}
+.avatars i:first-child{margin-left:0}
+.comment-count{display:inline-flex;align-items:center;gap:4px;color:var(--fgColor-muted);font-size:12px}
+.table-scroll{overflow-x:auto}
+
+/* ===== Blankslate ===== */
+.blankslate{max-width:480px;margin:48px auto 64px;padding:32px;text-align:center;
+  border:1px solid var(--borderColor-default);border-radius:6px;background:var(--bgColor-default)}
+.blankslate h3{font-size:20px;font-weight:600;margin:16px 0 4px}
+.blankslate p{color:var(--fgColor-muted);font-size:14px;margin:0 0 16px}
+.blankslate .actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+/* ===== Dialog ===== */
+.overlay{position:fixed;inset:0;background:var(--overlay-backdrop);display:none;
+  align-items:center;justify-content:center;z-index:100;padding:16px}
+.overlay.open{display:flex}
+.dialog{width:440px;max-width:100%;background:var(--bgColor-default);border-radius:12px;
+  box-shadow:var(--shadow-floating);border:1px solid var(--borderColor-muted)}
+.dialog header{display:flex;justify-content:space-between;align-items:center;
+  padding:16px;border-bottom:1px solid var(--borderColor-default)}
+.dialog header h2{font-size:16px;font-weight:600;margin:0}
+.dialog header button{background:none;border:0;cursor:pointer;color:var(--fgColor-muted);font-size:16px;padding:4px}
+.dialog .body{padding:16px;font-size:14px;display:flex;flex-direction:column;gap:12px}
+.dialog label{font-size:12px;font-weight:600;color:var(--fgColor-muted)}
+.dialog input,.dialog textarea{width:100%;padding:8px 12px;font-size:14px;color:var(--fgColor-default);
+  background:var(--bgColor-default);border:1px solid var(--borderColor-default);border-radius:6px;font-family:inherit}
+.dialog textarea{resize:vertical;min-height:88px}
+.dialog footer{display:flex;justify-content:flex-end;gap:8px;padding:16px;border-top:1px solid var(--borderColor-default)}
+
+/* ===== Footer ===== */
+.page-footer{border-top:1px solid var(--borderColor-default);margin-top:48px;padding:24px 0 40px;
+  color:var(--fgColor-muted);font-size:12px}
+.page-footer .wrap{display:flex;gap:24px;flex-wrap:wrap;align-items:center}
+.page-footer .spacer{flex:1}
+
+[hidden]{display:none!important}
+
+@media (max-width:640px){
+  .repo-actions{margin-left:0}
+  .repo-head h1{font-size:18px}
+  .gh-header{gap:10px}
+  .theme-switch button{padding:8px 8px}
+}
+</style>
+</head>
+<body>
+
+<header class="gh-header">
+  <a class="brand" href="#">
+    <svg width="24" height="24" viewBox="0 0 16 16" fill="#f0f6fc" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+    <span>Northwind</span>
+  </a>
+  <div class="theme-switch" role="group" aria-label="Color theme">
+    <button data-set-theme="light" aria-pressed="true">Light</button>
+    <button data-set-theme="dark" aria-pressed="false">Dark</button>
+    <button data-set-theme="dimmed" aria-pressed="false">Dimmed</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="repo-head">
+    <span class="avatar" aria-hidden="true">N</span>
+    <h1><a href="#">northwind</a><span class="sep">/</span><a href="#">ledger</a>
+      <span class="lbl" style="margin-left:8px">Public</span></h1>
+    <div class="repo-actions">
+      <button class="btn btn-sm">Pin</button>
+      <button class="btn btn-sm">Watch <span class="counter">48</span></button>
+      <button class="btn btn-sm">Fork <span class="counter">12</span></button>
+      <button class="btn btn-sm">Star <span class="counter">1.2k</span></button>
+      <button class="btn btn-sm btn-primary" id="new-pr-btn">New pull request</button>
+    </div>
+  </div>
+  <p class="repo-desc">General-purpose double-entry accounting library for Node.js. Post transactions, close books, and export statements without a database.</p>
+
+  <div class="banner banner-warning" id="dependabot-banner" role="alert">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575ZM8.75 5.75v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>
+    <div class="msg"><strong>2 Dependabot alerts</strong> affect this repository.
+    Review them to keep your dependencies secure. <a href="#">View alerts</a></div>
+    <button id="banner-dismiss" aria-label="Dismiss">✕</button>
+  </div>
+
+  <nav class="unav" aria-label="Repository">
+    <a href="#" data-tab="code">Code</a>
+    <a href="#" data-tab="pulls" aria-current="page">Pull requests <span class="counter">5</span></a>
+    <a href="#" data-tab="issues">Issues <span class="counter">6</span></a>
+    <a href="#" data-tab="actions">Actions</a>
+  </nav>
+
+  <!-- Pull requests -->
+  <section id="tab-pulls">
+    <div class="subnav">
+      <div class="filter" role="group" aria-label="Filter pull requests">
+        <button data-pr-filter="open" aria-pressed="true">Open <span class="counter">4</span></button>
+        <button data-pr-filter="closed" aria-pressed="false">Closed <span class="counter">1</span></button>
+      </div>
+      <div class="search"><input id="pr-search" type="search" placeholder="Search pull requests…" aria-label="Search pull requests"></div>
+    </div>
+    <div class="table-wrap"><div class="table-scroll">
+    <table class="dtable" id="pr-table">
+      <thead><tr><th>Title</th><th>Status</th><th>Checks</th><th class="num" style="text-align:right">Changes</th></tr></thead>
+      <tbody>
+        <tr data-state="open" data-title="fix off-by-one in balance rounding">
+          <td><span class="row-title"><a href="#">Fix off-by-one in balance rounding</a></span>
+            <div class="meta">#142 opened 2 hours ago by <strong>priya</strong>
+            <span class="avatars"><i style="background:#0969da">P</i></span>
+            <span class="lbl lbl-bug">bug</span></div></td>
+          <td><span class="status-dot status-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"/></svg> Open</span></td>
+          <td><span class="status-dot status-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm3.78 5.72a.75.75 0 0 0-1.06-1.06L7.25 8.13 5.78 6.66a.75.75 0 0 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0l3.5-3.5Z"/></svg> Passing</span></td>
+          <td class="num"><span class="add">+42</span> <span class="del">−8</span></td>
+        </tr>
+        <tr data-state="open" data-title="add csv export to statements">
+          <td><span class="row-title"><a href="#">Add CSV export to statements</a></span>
+            <div class="meta">#139 opened 5 hours ago by <strong>marcus</strong>
+            <span class="avatars"><i style="background:#8250df">M</i></span>
+            <span class="lbl lbl-enhancement">enhancement</span></div></td>
+          <td><span class="status-dot status-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"/></svg> Open</span></td>
+          <td><span class="status-dot status-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm3.78 5.72a.75.75 0 0 0-1.06-1.06L7.25 8.13 5.78 6.66a.75.75 0 0 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0l3.5-3.5Z"/></svg> Passing</span></td>
+          <td class="num"><span class="add">+318</span> <span class="del">−12</span></td>
+        </tr>
+        <tr data-state="open" data-title="bump actions checkout from 4 to 5 dependabot">
+          <td><span class="row-title"><a href="#">Bump actions/checkout from 4 to 5</a></span>
+            <div class="meta">#137 opened yesterday by <strong>dependabot</strong>
+            <span class="avatars"><i style="background:#59636e">D</i></span>
+            <span class="lbl lbl-deps">dependencies</span></div></td>
+          <td><span class="status-dot status-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"/></svg> Open</span></td>
+          <td><span class="status-dot status-closed"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm2.47 5.53a.75.75 0 0 0-1.06 0L8 6.94 6.59 5.53a.75.75 0 0 0-1.06 1.06L6.94 8 5.53 9.41a.75.75 0 0 0 1.06 1.06L8 9.06l1.41 1.41a.75.75 0 0 0 1.06-1.06L9.06 8l1.41-1.41a.75.75 0 0 0 0-1.06Z"/></svg> Failing</span></td>
+          <td class="num"><span class="add">+6</span> <span class="del">−6</span></td>
+        </tr>
+        <tr data-state="open" data-title="docs rewrite quickstart for v3">
+          <td><span class="row-title"><a href="#">Docs: rewrite quickstart for v3</a></span>
+            <div class="meta">#131 opened 2 days ago by <strong>priya</strong>
+            <span class="avatars"><i style="background:#0969da">P</i><i style="background:#1f883d">J</i></span>
+            <span class="lbl lbl-docs">documentation</span></div></td>
+          <td><span class="status-dot status-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"/></svg> Open</span></td>
+          <td><span class="status-dot status-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm3.78 5.72a.75.75 0 0 0-1.06-1.06L7.25 8.13 5.78 6.66a.75.75 0 0 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0l3.5-3.5Z"/></svg> Passing</span></td>
+          <td class="num"><span class="add">+120</span> <span class="del">−45</span></td>
+        </tr>
+        <tr data-state="closed" data-title="revert cache account tree in memory">
+          <td><span class="row-title"><a href="#">Revert "cache account tree in memory"</a></span>
+            <div class="meta">#128 merged 3 days ago by <strong>jonas</strong>
+            <span class="avatars"><i style="background:#bc4c00">J</i></span>
+            <span class="lbl lbl-bug">bug</span></div></td>
+          <td><span class="status-dot status-merged"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M5.45 5.154A4.678 4.678 0 0 0 6.75 8c0 .34.04.673.115.997l2.49-2.49a1.75 1.75 0 0 1 2.475 0l.004.005A1.75 1.75 0 0 1 12.25 9h2.219a.75.75 0 0 0 .53-1.28l-2.72-2.72a.75.75 0 0 0-1.06 0L8.5 7.72 6.78 6a.75.75 0 0 0-1.06 0L3 8.72a.75.75 0 1 0 1.06 1.06l2.19-2.19 1.72 1.72-2.27 2.27A4.5 4.5 0 1 1 8 12.5v-1.5a.75.75 0 0 1 1.5 0V14a.75.75 0 0 1-.75.75h-3a.75.75 0 0 1 0-1.5h1.44A3 3 0 0 0 8 7.56l-2.55-2.406Z"/></svg> Merged</span></td>
+          <td><span class="status-dot status-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0Zm3.78 5.72a.75.75 0 0 0-1.06-1.06L7.25 8.13 5.78 6.66a.75.75 0 0 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0l3.5-3.5Z"/></svg> Passing</span></td>
+          <td class="num"><span class="add">+3</span> <span class="del">−41</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div></div>
+  </section>
+
+  <!-- Issues -->
+  <section id="tab-issues" hidden>
+    <div class="subnav">
+      <div class="search"><input id="issue-search" type="search" placeholder="Search issues…" aria-label="Search issues"></div>
+    </div>
+    <div class="table-wrap"><div class="table-scroll">
+    <table class="dtable" id="issue-table">
+      <thead><tr><th>Title</th><th>Status</th><th>Comments</th></tr></thead>
+      <tbody>
+        <tr data-title="rounding errors compound over long transaction histories">
+          <td><span class="row-title"><a href="#">Rounding errors compound over long transaction histories</a></span>
+            <div class="meta">#88 opened 4 days ago by <strong>jonas</strong>
+            <span class="lbl lbl-bug">bug</span> <span class="lbl lbl-goodfirst">good first issue</span></div></td>
+          <td><span class="lbl lbl-open-pill">Open</span></td>
+          <td><span class="comment-count"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0 1 13.25 12H9.06l-2.573 2.573A1.458 1.458 0 0 1 4 13.543V12H2.75A1.75 1.75 0 0 1 1 10.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.75.75 0 0 1 .53-.22h4.25a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg> 14</span></td>
+        </tr>
+        <tr data-title="support multi-currency accounts">
+          <td><span class="row-title"><a href="#">Support multi-currency accounts</a></span>
+            <div class="meta">#81 opened 1 week ago by <strong>marcus</strong>
+            <span class="lbl lbl-enhancement">enhancement</span></div></td>
+          <td><span class="lbl lbl-open-pill">Open</span></td>
+          <td><span class="comment-count"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0 1 13.25 12H9.06l-2.573 2.573A1.458 1.458 0 0 1 4 13.543V12H2.75A1.75 1.75 0 0 1 1 10.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.75.75 0 0 1 .53-.22h4.25a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg> 23</span></td>
+        </tr>
+        <tr data-title="type definitions missing for closebooks">
+          <td><span class="row-title"><a href="#">Type definitions missing for <code>closeBooks</code></a></span>
+            <div class="meta">#77 opened 1 week ago by <strong>priya</strong>
+            <span class="lbl lbl-docs">documentation</span></div></td>
+          <td><span class="lbl lbl-open-pill">Open</span></td>
+          <td><span class="comment-count"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0 1 13.25 12H9.06l-2.573 2.573A1.458 1.458 0 0 1 4 13.543V12H2.75A1.75 1.75 0 0 1 1 10.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.75.75 0 0 1 .53-.22h4.25a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg> 4</span></td>
+        </tr>
+        <tr data-title="flaky test statement.spec.ts times out on ci">
+          <td><span class="row-title"><a href="#">Flaky test: statement.spec.ts times out on CI</a></span>
+            <div class="meta">#72 opened 2 weeks ago by <strong>jonas</strong>
+            <span class="lbl lbl-bug">bug</span></div></td>
+          <td><span class="lbl lbl-open-pill">Open</span></td>
+          <td><span class="comment-count"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0 1 13.25 12H9.06l-2.573 2.573A1.458 1.458 0 0 1 4 13.543V12H2.75A1.75 1.75 0 0 1 1 10.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.75.75 0 0 1 .53-.22h4.25a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg> 8</span></td>
+        </tr>
+        <tr data-title="add example for tax-year reporting">
+          <td><span class="row-title"><a href="#">Add example for tax-year reporting</a></span>
+            <div class="meta">#64 opened 3 weeks ago by <strong>marcus</strong>
+            <span class="lbl lbl-docs">documentation</span> <span class="lbl lbl-goodfirst">good first issue</span></div></td>
+          <td><span class="lbl lbl-open-pill">Open</span></td>
+          <td><span class="comment-count"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0 1 13.25 12H9.06l-2.573 2.573A1.458 1.458 0 0 1 4 13.543V12H2.75A1.75 1.75 0 0 1 1 10.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.75.75 0 0 1 .53-.22h4.25a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg> 2</span></td>
+        </tr>
+        <tr data-title="v3 migration guide">
+          <td><span class="row-title"><a href="#">v3 migration guide</a></span>
+            <div class="meta">#59 opened 1 month ago by <strong>priya</strong>
+            <span class="lbl lbl-docs">documentation</span></div></td>
+          <td><span class="lbl lbl-open-pill">Open</span></td>
+          <td><span class="comment-count"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0 1 13.25 12H9.06l-2.573 2.573A1.458 1.458 0 0 1 4 13.543V12H2.75A1.75 1.75 0 0 1 1 10.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.75.75 0 0 1 .53-.22h4.25a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg> 31</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div></div>
+  </section>
+
+  <!-- Code -->
+  <section id="tab-code" hidden>
+    <div class="blankslate">
+      <svg width="32" height="32" viewBox="0 0 16 16" fill="currentColor" style="color:var(--fgColor-muted)" aria-hidden="true"><path d="m11.28 3.22 4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L13.94 8l-3.72-3.72a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215Zm-6.56 0a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.06 8l3.72 3.72a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L.47 8.53a.75.75 0 0 1 0-1.06Z"/></svg>
+      <h3>Browse the code</h3>
+      <p>This demo focuses on the collaboration surface: pull requests, issues, and actions.
+      The source lives in <code>src/</code> — start with <code>ledger.js</code> and the
+      <code>quickstart</code> guide.</p>
+      <div class="actions">
+        <button class="btn btn-primary" data-goto="pulls">Review pull requests</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Actions (empty state) -->
+  <section id="tab-actions" hidden>
+    <div class="blankslate">
+      <svg width="32" height="32" viewBox="0 0 16 16" fill="currentColor" style="color:var(--fgColor-muted)" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM6.5 4.75a.75.75 0 0 1 1.5 0v3.5a.75.75 0 0 1-1.5 0v-3.5ZM8 10.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>
+      <h3>There are no workflow runs yet</h3>
+      <p>Automate your build, test, and deployment with GitHub Actions.
+      Start with a starter workflow or write your own <code>.yml</code>.</p>
+      <div class="actions">
+        <button class="btn btn-primary">Set up a workflow yourself</button>
+        <button class="btn">View starter workflows</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="page-footer">
+  <div class="wrap">
+    <span>© 2026 Northwind Labs, Inc. — fictional demo repository</span>
+    <span class="spacer"></span>
+    <span>Built from the primer skill · design-skills</span>
+  </div>
+</footer>
+
+<!-- Dialog: New pull request -->
+<div class="overlay" id="pr-dialog">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <header>
+      <h2 id="dlg-title">Open a pull request</h2>
+      <button id="dlg-close" aria-label="Close">✕</button>
+    </header>
+    <div class="body">
+      <div>
+        <label for="dlg-name">Title</label><br>
+        <input id="dlg-name" type="text" placeholder="e.g. Fix rounding drift in multi-leg postings">
+      </div>
+      <div>
+        <label for="dlg-desc">Description</label><br>
+        <textarea id="dlg-desc" placeholder="Leave a comment — reviewers will see this first."></textarea>
+      </div>
+    </div>
+    <footer>
+      <button class="btn" id="dlg-cancel">Cancel</button>
+      <button class="btn btn-primary" id="dlg-create">Create pull request</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+
+  /* --- Theme switcher: Primer's real themes --- */
+  var saved = null;
+  try { saved = localStorage.getItem('primer-demo-theme'); } catch(e){}
+  if (saved) setTheme(saved);
+  function setTheme(name){
+    root.setAttribute('data-theme', name);
+    document.querySelectorAll('[data-set-theme]').forEach(function(b){
+      b.setAttribute('aria-pressed', b.getAttribute('data-set-theme') === name ? 'true' : 'false');
+    });
+    try { localStorage.setItem('primer-demo-theme', name); } catch(e){}
+  }
+  document.querySelectorAll('[data-set-theme]').forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.getAttribute('data-set-theme')); });
+  });
+
+  /* --- UnderlineNav tabs --- */
+  var tabs = document.querySelectorAll('.unav a[data-tab]');
+  function showTab(name){
+    tabs.forEach(function(a){
+      if (a.getAttribute('data-tab') === name) a.setAttribute('aria-current','page');
+      else a.removeAttribute('aria-current');
+    });
+    ['pulls','issues','code','actions'].forEach(function(t){
+      document.getElementById('tab-' + t).hidden = (t !== name);
+    });
+  }
+  tabs.forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); showTab(a.getAttribute('data-tab')); });
+  });
+  document.querySelectorAll('[data-goto]').forEach(function(b){
+    b.addEventListener('click', function(){ showTab(b.getAttribute('data-goto')); });
+  });
+
+  /* --- Banner dismiss --- */
+  document.getElementById('banner-dismiss').addEventListener('click', function(){
+    document.getElementById('dependabot-banner').hidden = true;
+  });
+
+  /* --- PR Open/Closed filter + search --- */
+  var prFilter = 'open';
+  var prSearch = '';
+  function applyPrFilter(){
+    document.querySelectorAll('#pr-table tbody tr').forEach(function(tr){
+      var okState = tr.getAttribute('data-state') === prFilter;
+      var okSearch = tr.getAttribute('data-title').indexOf(prSearch) !== -1;
+      tr.hidden = !(okState && okSearch);
+    });
+  }
+  document.querySelectorAll('[data-pr-filter]').forEach(function(b){
+    b.addEventListener('click', function(){
+      prFilter = b.getAttribute('data-pr-filter');
+      document.querySelectorAll('[data-pr-filter]').forEach(function(x){
+        x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+      });
+      applyPrFilter();
+    });
+  });
+  document.getElementById('pr-search').addEventListener('input', function(e){
+    prSearch = e.target.value.trim().toLowerCase();
+    applyPrFilter();
+  });
+  applyPrFilter();
+
+  /* --- Issue search --- */
+  document.getElementById('issue-search').addEventListener('input', function(e){
+    var q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('#issue-table tbody tr').forEach(function(tr){
+      tr.hidden = tr.getAttribute('data-title').indexOf(q) === -1;
+    });
+  });
+
+  /* --- Dialog: New pull request --- */
+  var overlay = document.getElementById('pr-dialog');
+  var nameInput = document.getElementById('dlg-name');
+  function openDialog(){ overlay.classList.add('open'); nameInput.focus(); }
+  function closeDialog(){ overlay.classList.remove('open'); }
+  document.getElementById('new-pr-btn').addEventListener('click', openDialog);
+  document.getElementById('dlg-close').addEventListener('click', closeDialog);
+  document.getElementById('dlg-cancel').addEventListener('click', closeDialog);
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) closeDialog(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDialog(); });
+  document.getElementById('dlg-create').addEventListener('click', function(){
+    var title = nameInput.value.trim() || 'Untitled pull request';
+    var tr = document.createElement('tr');
+    tr.setAttribute('data-state','open');
+    tr.setAttribute('data-title', title.toLowerCase());
+    tr.innerHTML =
+      '<td><span class="row-title"><a href="#">' + escapeHtml(title) + '</a></span>' +
+      '<div class="meta">#143 opened just now by <strong>you</strong> ' +
+      '<span class="avatars"><i style="background:#1f883d">Y</i></span></div></td>' +
+      '<td><span class="status-dot status-open"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"/></svg> Open</span></td>' +
+      '<td><span class="status-dot" style="color:var(--fgColor-muted)">—</span></td>' +
+      '<td class="num"><span class="add">+0</span> <span class="del">−0</span></td>';
+    var tbody = document.querySelector('#pr-table tbody');
+    tbody.insertBefore(tr, tbody.firstChild);
+    nameInput.value = ''; document.getElementById('dlg-desc').value = '';
+    closeDialog();
+    showTab('pulls');
+    applyPrFilter();
+  });
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+})();
+</script>
+</body>
+</html>
