@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>figma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#F24E1E; --orange:#FF7262; --purple:#A259FF; --blue:#1ABCFE; --green:#0ACF83;
+    --action:#0D99FF; --blurple:#5551FF;
+    --ink:#000000; --canvas:#ffffff; --dark:#1E1E1E;
+    --font-display:'Space Grotesk','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --font-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--canvas);color:var(--ink);
+       -webkit-font-smoothing:antialiased;letter-spacing:-0.01em}
+  ::selection{background:var(--purple);color:#fff}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+  .eyebrow{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.14em;
+           font-size:12px;font-weight:600}
+  h1,h2,h3{font-family:var(--font-display);letter-spacing:-0.03em;line-height:1.02;font-weight:700}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
+      backdrop-filter:blur(8px);border-bottom:1px solid #e5e5e5}
+  .nav-inner{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;
+             display:flex;align-items:center;gap:32px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);
+         font-weight:700;font-size:20px;letter-spacing:-0.02em;text-decoration:none;color:var(--ink)}
+  .nav-links{display:flex;gap:24px;margin-left:8px}
+  .nav-links a{color:var(--ink);text-decoration:none;font-weight:500;font-size:15px}
+  .nav-links a:hover{text-decoration:underline;text-underline-offset:4px}
+  .nav-cta{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .login{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;
+       border-radius:50px;padding:14px 32px;font-weight:600;font-size:16px;
+       text-decoration:none;min-height:44px;cursor:pointer;border:1px solid transparent;
+       transition:background .18s ease-out,transform .18s ease-out}
+  .btn:active{transform:scale(.97)}
+  .btn-black{background:var(--ink);color:#fff}
+  .btn-black:hover{background:#2b2b2b}
+  .btn-white{background:#fff;color:var(--ink);border-color:var(--ink)}
+  .btn-white:hover{background:#f4f4f4}
+  .btn-sm{padding:9px 22px;font-size:14px;min-height:44px}
+
+  /* ---------- hero: green color block ---------- */
+  .hero{background:var(--green);color:var(--ink);padding:96px 0 72px;overflow:hidden;position:relative}
+  .hero .eyebrow{margin-bottom:20px;display:block}
+  .hero h1{font-size:clamp(3rem,8.5vw,5.75rem);max-width:12ch}
+  .hero p.sub{font-size:clamp(1.05rem,2vw,1.3rem);font-weight:500;margin:24px 0 32px;max-width:46ch}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+  .shapes{position:absolute;right:-30px;top:40px;opacity:.95;pointer-events:none}
+  .shapes svg{display:block}
+
+  /* ---------- canvas section ---------- */
+  .canvas-sec{padding:96px 0;background:var(--canvas)}
+  .canvas-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+               flex-wrap:wrap;margin-bottom:36px}
+  .canvas-head h2{font-size:clamp(2rem,4.5vw,3.25rem);max-width:16ch}
+  .presence{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px}
+  .presence .dot{width:10px;height:10px;border-radius:50%;background:var(--green);
+                 border:1.5px solid var(--ink);animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  .mock-canvas{position:relative;border:2px solid var(--ink);border-radius:16px;
+               background:#fafafa;min-height:420px;overflow:hidden}
+  .mock-toolbar{display:flex;align-items:center;gap:10px;padding:12px 16px;
+                border-bottom:2px solid var(--ink);background:#fff}
+  .tool{width:34px;height:34px;border:1.5px solid var(--ink);border-radius:50%;
+        display:flex;align-items:center;justify-content:center;font-size:13px;
+        font-family:var(--font-mono);font-weight:600}
+  .tool.active{background:var(--ink);color:#fff}
+  .frame{position:absolute;border:2px dashed var(--ink);border-radius:8px;background:#fff;
+         box-shadow:6px 6px 0 rgba(0,0,0,.08)}
+  .frame .tag{position:absolute;top:-26px;left:0;font-family:var(--font-mono);font-size:11px;
+              text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+  .cursor-chip{position:absolute;display:inline-flex;align-items:center;gap:6px;
+    background:var(--c);color:#fff;font-weight:600;font-size:13px;padding:5px 10px;
+    border-radius:20px;border:1.5px solid var(--ink);white-space:nowrap;
+    transition:transform .12s linear;z-index:5;box-shadow:3px 3px 0 rgba(0,0,0,.15)}
+  .cursor-chip svg{display:block}
+  .frame-shapes{display:flex;gap:12px;align-items:center;justify-content:center;height:100%}
+
+  /* ---------- marquee ---------- */
+  .marquee{background:var(--blue);color:var(--ink);border-top:2px solid var(--ink);
+           border-bottom:2px solid var(--ink);overflow:hidden;padding:14px 0;white-space:nowrap}
+  .marquee .track{display:inline-block;font-family:var(--font-display);font-weight:700;
+    font-size:20px;letter-spacing:-0.01em;animation:scroll 22s linear infinite}
+  .marquee .track span{margin:0 18px}
+  .marquee .star{color:var(--ink)}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+
+  /* ---------- features ---------- */
+  .features{padding:96px 0}
+  .features h2{font-size:clamp(2rem,4.5vw,3.25rem);margin-bottom:16px}
+  .features .lede{font-size:18px;max-width:60ch;margin-bottom:48px}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .card{border:2px solid var(--ink);border-radius:16px;overflow:hidden;background:#fff;
+        transition:transform .2s ease-out,box-shadow .2s ease-out}
+  .card:hover{transform:translateY(-6px);box-shadow:8px 8px 0 rgba(0,0,0,.12)}
+  .card .art{height:170px;display:flex;align-items:center;justify-content:center}
+  .card .art svg{width:70%;height:auto}
+  .card .body{padding:24px;border-top:2px solid var(--ink)}
+  .card h3{font-size:22px;margin-bottom:10px}
+  .card p{font-size:15px;line-height:1.55}
+
+  /* ---------- testimonial: orange block ---------- */
+  .quote{background:var(--orange);color:var(--ink);padding:96px 0}
+  .quote blockquote p{font-family:var(--font-display);font-weight:700;letter-spacing:-0.03em;
+    line-height:1.08;font-size:clamp(1.8rem,4.5vw,3.4rem);max-width:22ch;margin-bottom:32px}
+  .quote footer{display:flex;align-items:center;gap:14px;font-weight:600}
+  .avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;
+          justify-content:center;color:#fff;font-weight:700;font-size:20px;
+          border:2px solid var(--ink)}
+
+  /* ---------- pricing ---------- */
+  .pricing{padding:96px 0}
+  .pricing h2{font-size:clamp(2rem,4.5vw,3.25rem);text-align:center;margin-bottom:12px}
+  .pricing .lede{text-align:center;margin-bottom:32px;font-size:17px}
+  .tabs{display:flex;justify-content:center;margin-bottom:48px}
+  .tabs-inner{display:inline-flex;border:2px solid var(--ink);border-radius:50px;padding:4px;background:#fff}
+  .tab{border:0;background:none;border-radius:50px;padding:12px 30px;font-weight:600;
+       font-size:15px;cursor:pointer;font-family:var(--font-body);color:var(--ink)}
+  .tab.selected{background:var(--ink);color:#fff}
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch}
+  .tier{border:2px solid var(--ink);border-radius:16px;padding:32px;background:#fff;
+        display:flex;flex-direction:column;gap:14px}
+  .tier.hot{background:var(--dark);color:#fff;border-color:var(--dark)}
+  .tier .tname{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.14em;
+               font-size:12px;font-weight:600}
+  .tier .price{font-family:var(--font-display);font-size:52px;font-weight:700;letter-spacing:-0.03em}
+  .tier .price small{font-size:16px;font-weight:500;letter-spacing:0}
+  .tier ul{list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px;flex:1}
+  .tier ul li::before{content:"✓ ";font-weight:700}
+  .tier.hot ul li::before{content:"✓ "}
+  .tier .btn{align-self:stretch;text-align:center}
+
+  /* ---------- CTA: black block ---------- */
+  .cta{background:var(--dark);color:#fff;padding:110px 0;text-align:center}
+  .cta h2{font-size:clamp(2.5rem,6.5vw,4.25rem);margin-bottom:16px;color:#fff}
+  .cta p{font-size:18px;margin-bottom:36px;color:#d8d8d8}
+  .cta .btn-white{background:#fff}
+
+  /* ---------- footer ---------- */
+  footer.site{background:var(--ink);color:#fff;padding:72px 0 32px}
+  .f-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:40px;margin-bottom:56px}
+  .f-brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);
+           font-weight:700;font-size:20px;margin-bottom:16px}
+  .f-grid .flabel{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.14em;
+                  font-size:11px;color:#9a9a9a;margin-bottom:16px;font-weight:600}
+  .f-grid ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .f-grid ul a{color:#fff;text-decoration:none;font-size:15px}
+  .f-grid ul a:hover{text-decoration:underline;text-underline-offset:4px}
+  .f-bottom{border-top:1px solid #333;padding-top:24px;display:flex;justify-content:space-between;
+            gap:16px;flex-wrap:wrap;font-size:13px;color:#9a9a9a}
+
+  @media (max-width:900px){
+    .cards{grid-template-columns:1fr}
+    .tiers{grid-template-columns:1fr}
+    .f-grid{grid-template-columns:1fr 1fr}
+    .nav-links{display:none}
+    .shapes{display:none}
+    .hero{padding:64px 0 56px}
+    .hero-ctas .btn{flex:1 1 100%;text-align:center}
+    .mock-canvas{min-height:360px}
+  }
+  @media (max-width:560px){.f-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 160 60" width="72" height="27" aria-hidden="true">
+        <rect x="4" y="4" width="24" height="24" rx="12" fill="#F24E1E"/>
+        <rect x="32" y="4" width="24" height="24" rx="12" fill="#FF7262"/>
+        <rect x="60" y="4" width="24" height="52" rx="12" fill="#A259FF"/>
+        <rect x="88" y="4" width="24" height="24" rx="12" fill="#1ABCFE"/>
+        <path d="M116 4h12a12 12 0 0 1 12 12v12a12 12 0 0 1-12 12h-12a12 12 0 0 1-12-12V16a12 12 0 0 1 12-12z" fill="#0ACF83"/>
+      </svg>
+      Framejoy
+    </a>
+    <div class="nav-links">
+      <a href="#canvas">Product</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#community">Community</a>
+    </div>
+    <div class="nav-cta">
+      <a class="login" href="#">Log in</a>
+      <a class="btn btn-black btn-sm" href="#pricing">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Framejoy · Collaborative design</span>
+    <h1>Design together, ship faster.</h1>
+    <p class="sub">One canvas for the whole team — designers, writers, and engineers editing live, side by side, no version chaos.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-black" href="#pricing">Get started for free</a>
+      <a class="btn btn-white" href="#canvas">Watch the film</a>
+    </div>
+  </div>
+  <div class="shapes" aria-hidden="true">
+    <svg viewBox="0 0 300 300" width="280" height="280">
+      <rect x="20" y="20" width="60" height="60" rx="30" fill="#F24E1E"/>
+      <rect x="100" y="20" width="60" height="60" rx="30" fill="#FF7262"/>
+      <rect x="180" y="20" width="60" height="120" rx="30" fill="#A259FF"/>
+      <rect x="20" y="100" width="60" height="60" rx="30" fill="#1ABCFE"/>
+      <path d="M100 100h30a30 30 0 0 1 30 30v30a30 30 0 0 1-30 30h-30a30 30 0 0 1-30-30v-30a30 30 0 0 1 30-30z" fill="#0ACF83"/>
+      <rect x="180" y="160" width="60" height="60" rx="30" fill="#000000"/>
+      <circle cx="50" cy="230" r="28" fill="#FFFFFF"/>
+    </svg>
+  </div>
+</header>
+
+<section class="canvas-sec" id="canvas">
+  <div class="wrap">
+    <div class="canvas-head">
+      <div>
+        <span class="eyebrow">Multiplayer · Live</span>
+        <h2>Every cursor in the room, on one canvas.</h2>
+      </div>
+      <div class="presence"><span class="dot"></span> 4 people designing right now</div>
+    </div>
+    <div class="mock-canvas" id="mockCanvas" aria-label="Live collaborative canvas demo">
+      <div class="mock-toolbar">
+        <span class="tool active">M</span><span class="tool">F</span>
+        <span class="tool">R</span><span class="tool">P</span><span class="tool">T</span>
+        <span style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;
+              letter-spacing:.12em;font-weight:600;margin-left:auto">Launch-page.fig</span>
+      </div>
+      <div class="frame" style="left:5%;top:22%;width:34%;height:56%">
+        <span class="tag">Hero / Desktop</span>
+        <div class="frame-shapes">
+          <svg viewBox="0 0 120 60" width="120" height="60">
+            <rect x="4" y="4" width="48" height="20" rx="10" fill="#1ABCFE"/>
+            <rect x="4" y="30" width="112" height="10" rx="5" fill="#1E1E1E"/>
+            <rect x="4" y="44" width="70" height="10" rx="5" fill="#9a9a9a"/>
+          </svg>
+        </div>
+      </div>
+      <div class="frame" style="right:6%;top:30%;width:26%;height:44%">
+        <span class="tag">Card / Mobile</span>
+        <div class="frame-shapes">
+          <svg viewBox="0 0 80 90" width="80" height="90">
+            <circle cx="40" cy="28" r="20" fill="#A259FF"/>
+            <rect x="10" y="56" width="60" height="10" rx="5" fill="#F24E1E"/>
+            <rect x="20" y="70" width="40" height="10" rx="5" fill="#0ACF83"/>
+          </svg>
+        </div>
+      </div>
+      <!-- named cursors are animated by JS -->
+    </div>
+    <p style="margin-top:16px;font-size:14px;font-weight:500">
+      <span class="eyebrow" style="font-size:11px">Tip</span>&nbsp;
+      Watch Ana, Ravi, June, and Theo work the file live. Cursors never sleep at Framejoy.
+    </p>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="track" id="marqueeTrack">
+    <span>AUTO LAYOUT</span><span class="star">✳</span><span>MULTIPLAYER</span><span class="star">✳</span>
+    <span>DEV MODE</span><span class="star">✳</span><span>VARIABLES</span><span class="star">✳</span>
+    <span>PROTOTYPING</span><span class="star">✳</span><span>COMPONENTS</span><span class="star">✳</span>
+    <span>AUTO LAYOUT</span><span class="star">✳</span><span>MULTIPLAYER</span><span class="star">✳</span>
+    <span>DEV MODE</span><span class="star">✳</span><span>VARIABLES</span><span class="star">✳</span>
+    <span>PROTOTYPING</span><span class="star">✳</span><span>COMPONENTS</span><span class="star">✳</span>
+  </div>
+</div>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <span class="eyebrow">Features</span>
+    <h2>Built for the whole team, not just designers.</h2>
+    <p class="lede">Framejoy keeps everyone in the same file from first sketch to final ship — no exports, no drift, no "which version is live?"</p>
+    <div class="cards">
+      <article class="card">
+        <div class="art" style="background:#1ABCFE">
+          <svg viewBox="0 0 160 90" aria-hidden="true">
+            <rect x="18" y="14" width="124" height="62" rx="10" fill="#ffffff" stroke="#000" stroke-width="4"/>
+            <path d="M40 30l16 8-9 3-4 9z" fill="#F24E1E" stroke="#000" stroke-width="2.5"/>
+            <path d="M88 26l16 8-9 3-4 9z" fill="#A259FF" stroke="#000" stroke-width="2.5"/>
+            <path d="M118 52l16 8-9 3-4 9z" fill="#0ACF83" stroke="#000" stroke-width="2.5"/>
+          </svg>
+        </div>
+        <div class="body">
+          <h3>Multiplayer editing</h3>
+          <p>Everyone's cursor on one canvas, with names attached. Comment, co-edit, and follow along in real time.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="art" style="background:#A259FF">
+          <svg viewBox="0 0 160 90" aria-hidden="true">
+            <rect x="30" y="18" width="100" height="54" rx="10" fill="#ffffff" stroke="#000" stroke-width="4"/>
+            <rect x="44" y="30" width="72" height="10" rx="5" fill="#FF7262"/>
+            <rect x="44" y="46" width="48" height="10" rx="5" fill="#000000"/>
+          </svg>
+        </div>
+        <div class="body">
+          <h3>Auto layout that just works</h3>
+          <p>Resize one element and the whole layout behaves. Constraints, spacing, and wrapping — handled.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="art" style="background:#0ACF83">
+          <svg viewBox="0 0 160 90" aria-hidden="true">
+            <rect x="46" y="10" width="68" height="70" rx="10" fill="#ffffff" stroke="#000" stroke-width="4"/>
+            <text x="80" y="52" text-anchor="middle" font-family="monospace" font-size="20" font-weight="700" fill="#000">&lt;/&gt;</text>
+          </svg>
+        </div>
+        <div class="body">
+          <h3>Handoff without the handoff</h3>
+          <p>Engineers inspect the same file and copy production-ready styles and code. No redlines, ever.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="quote" id="community">
+  <div class="wrap">
+    <span class="eyebrow">Community</span>
+    <blockquote>
+      <p>"We killed the handoff deck. Designers and engineers live in the same file now — and nobody misses the old way."</p>
+      <footer>
+        <span class="avatar" style="background:#A259FF">M</span>
+        <span>Maya Chen — Design Lead, Paperplane</span>
+      </footer>
+    </blockquote>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <span class="eyebrow" style="display:block;text-align:center;margin-bottom:16px">Pricing</span>
+    <h2>Start free. Scale when you're ready.</h2>
+    <p class="lede">Every plan includes multiplayer, version history, and unlimited viewers.</p>
+    <div class="tabs">
+      <div class="tabs-inner" role="tablist" aria-label="Billing period">
+        <button class="tab selected" role="tab" aria-selected="true" data-period="monthly">Monthly</button>
+        <button class="tab" role="tab" aria-selected="false" data-period="yearly">Yearly</button>
+      </div>
+    </div>
+    <div class="tiers">
+      <div class="tier">
+        <span class="tname">Starter</span>
+        <div class="price" data-monthly="$0" data-yearly="$0">$0<small> / forever</small></div>
+        <p>For trying things out and side projects.</p>
+        <ul>
+          <li>3 design files</li>
+          <li>Unlimited viewers</li>
+          <li>30-day version history</li>
+        </ul>
+        <a class="btn btn-white" href="#">Get started</a>
+      </div>
+      <div class="tier hot">
+        <span class="tname">Professional</span>
+        <div class="price" data-monthly="$15" data-yearly="$12">$15<small> / editor / mo</small></div>
+        <p>For teams shipping real product, fast.</p>
+        <ul>
+          <li>Unlimited files</li>
+          <li>Dev mode + code connect</li>
+          <li>Unlimited version history</li>
+          <li>Shared libraries</li>
+        </ul>
+        <a class="btn btn-white" href="#">Start 14-day trial</a>
+      </div>
+      <div class="tier">
+        <span class="tname">Organization</span>
+        <div class="price" data-monthly="$45" data-yearly="$36">$45<small> / editor / mo</small></div>
+        <p>For companies with design at scale.</p>
+        <ul>
+          <li>Everything in Professional</li>
+          <li>SSO + advanced security</li>
+          <li>Design system analytics</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a class="btn btn-white" href="#">Contact sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Your next file is a team sport.</h2>
+    <p>Invite the whole crew. First three files are on us.</p>
+    <a class="btn btn-white" href="#">Start designing free</a>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <div class="f-brand">
+          <svg viewBox="0 0 160 60" width="60" height="23" aria-hidden="true">
+            <rect x="4" y="4" width="24" height="24" rx="12" fill="#F24E1E"/>
+            <rect x="32" y="4" width="24" height="24" rx="12" fill="#FF7262"/>
+            <rect x="60" y="4" width="24" height="52" rx="12" fill="#A259FF"/>
+            <rect x="88" y="4" width="24" height="24" rx="12" fill="#1ABCFE"/>
+            <path d="M116 4h12a12 12 0 0 1 12 12v12a12 12 0 0 1-12 12h-12a12 12 0 0 1-12-12V16a12 12 0 0 1 12-12z" fill="#0ACF83"/>
+          </svg>
+          Framejoy
+        </div>
+        <p style="color:#9a9a9a;font-size:14px;max-width:30ch">A fictional design tool, styled with the figma skill. Where teams draw together.</p>
+      </div>
+      <div>
+        <p class="flabel">Product</p>
+        <ul>
+          <li><a href="#canvas">Multiplayer</a></li>
+          <li><a href="#features">Auto layout</a></li>
+          <li><a href="#features">Dev mode</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="flabel">Resources</p>
+        <ul>
+          <li><a href="#">Help center</a></li>
+          <li><a href="#community">Community</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Config 2026</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="flabel">Company</p>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <span>Built from the figma skill · design-skills</span>
+      <span>© 2026 Framejoy (fictional). Not affiliated with Figma, Inc.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Animated multiplayer cursors drifting across the mock canvas
+  (function(){
+    var canvas = document.getElementById('mockCanvas');
+    var people = [
+      {name:'Ana',  color:'#F24E1E', x:0.16, y:0.34, dx:0.10, dy:0.07, ph:0.0},
+      {name:'Ravi', color:'#A259FF', x:0.62, y:0.60, dx:0.08, dy:0.11, ph:1.7},
+      {name:'June', color:'#1ABCFE', x:0.44, y:0.30, dx:0.12, dy:0.05, ph:3.4},
+      {name:'Theo', color:'#0ACF83', x:0.80, y:0.40, dx:0.06, dy:0.09, ph:5.1}
+    ];
+    var els = people.map(function(p){
+      var el = document.createElement('div');
+      el.className = 'cursor-chip';
+      el.style.setProperty('--c', p.color);
+      el.innerHTML = '<svg width="16" height="16" viewBox="0 0 18 18">' +
+        '<path d="M3 2l12 6-7 2-3 7z" fill="#fff" stroke="#000" stroke-width="1.6"/></svg>' +
+        '<span>' + p.name + '</span>';
+      canvas.appendChild(el);
+      return el;
+    });
+    var t0 = performance.now();
+    function frame(now){
+      var t = (now - t0) / 1000;
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      people.forEach(function(p, i){
+        var x = (p.x + p.dx * Math.sin(t * 0.7 + p.ph)) * w;
+        var y = (p.y + p.dy * Math.cos(t * 0.9 + p.ph)) * h;
+        x = Math.max(8, Math.min(w - 90, x));
+        y = Math.max(64, Math.min(h - 40, y));
+        els[i].style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+      });
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  // Pricing period toggle (selected = black fill, the brand pattern)
+  (function(){
+    var tabs = document.querySelectorAll('.tab');
+    tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        tabs.forEach(function(t){ t.classList.remove('selected'); t.setAttribute('aria-selected','false'); });
+        tab.classList.add('selected');
+        tab.setAttribute('aria-selected','true');
+        var period = tab.getAttribute('data-period');
+        document.querySelectorAll('.price').forEach(function(p){
+          var val = p.getAttribute('data-' + period);
+          var small = p.querySelector('small');
+          var suffix = (period === 'yearly' && val !== '$0') ? ' / editor / mo, billed yearly'
+                     : (val === '$0') ? ' / forever' : ' / editor / mo';
+          p.innerHTML = val + '<small>' + suffix + '</small>';
+        });
+      });
+    });
+  })();
+</script>
+</body>
+</html>
