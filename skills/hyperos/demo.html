@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hyperos</title>
+<style>
+  :root{
+    --hy-blue:#3482FF; --hy-bg:#F1F1F4; --hy-card:#FFFFFF; --hy-tint:#F6F6F9;
+    --hy-tile-off:#E9E9EE; --hy-text:#191919; --hy-sec:#8A8A8E;
+    --hy-green:#32C759; --hy-red:#FF3B30; --hy-yellow:#FFC107;
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --ease:cubic-bezier(.2,0,0,1); --pop:cubic-bezier(.3,1.4,.4,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:var(--font);background:#E4E4E9;color:#191919;min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;padding:32px 16px 48px}
+  .page-head{text-align:center;margin-bottom:24px;max-width:560px}
+  .page-head .kicker{font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#8A8A8E;margin-bottom:8px}
+  .page-head h1{font-size:28px;font-weight:700;letter-spacing:-.3px}
+  .page-head p{font-size:15px;line-height:22px;color:#5b5b60;margin-top:8px}
+
+  /* ---------- phone ---------- */
+  .phone{width:392px;max-width:94vw;height:840px;border-radius:52px;background:#0b0b0e;
+    padding:12px;box-shadow:0 30px 80px rgb(0 0 0/.35),0 4px 16px rgb(0 0 0/.25);
+    position:relative}
+  .screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;
+    background:var(--hy-bg)}
+  .screen.dark{--hy-bg:#0F0F12;--hy-card:#1C1C21;--hy-tint:#2A2A31;--hy-tile-off:#2E2E36;
+    --hy-text:#F5F5F7;--hy-sec:#9A9AA0;color:var(--hy-text)}
+  /* vivid wallpaper: sunrise over mountains */
+  .wallpaper{position:absolute;inset:0;
+    background:
+      radial-gradient(120% 60% at 50% 108%, #2b3a67 0%, transparent 55%),
+      radial-gradient(90% 45% at 50% 100%, #3f5d8f 0%, transparent 60%),
+      radial-gradient(60% 34% at 50% 78%, #ff9d5c 0%, transparent 70%),
+      radial-gradient(38% 22% at 50% 66%, #ffd98a 0%, transparent 72%),
+      linear-gradient(180deg,#7ec8e3 0%,#a8d8e8 34%,#f7c873 58%,#f0955a 78%,#31456e 100%)}
+  .wallpaper::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 90% at 50% 110%, rgb(20 30 60/.45), transparent 55%)}
+
+  .notch{position:absolute;top:12px;left:50%;translate:-50%;width:118px;height:32px;
+    background:#0b0b0e;border-radius:9999px;z-index:40;transition:width .3s var(--ease)}
+  .screen.touched .notch{width:150px}
+  .statusbar{position:absolute;top:0;left:0;right:0;z-index:30;display:flex;
+    align-items:center;justify-content:space-between;padding:16px 30px 0;font-size:14px;font-weight:600;color:#fff}
+  .statusbar .sicons{display:flex;align-items:center;gap:7px}
+  .statusbar svg{display:block}
+
+  .scroll{position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;z-index:10}
+  .scroll::-webkit-scrollbar{display:none}
+
+  /* ---------- control center ---------- */
+  .cc{margin:64px 14px 0;border-radius:30px;padding:16px;
+    background:color-mix(in srgb,#ffffff 58%,transparent);
+    -webkit-backdrop-filter:blur(30px) saturate(1.5);backdrop-filter:blur(30px) saturate(1.5);
+    box-shadow:0 12px 40px rgb(0 0 0/.18), inset 0 1px 0 rgb(255 255 255/.5)}
+  .screen.dark .cc{background:color-mix(in srgb,#1c1c21 62%,transparent);
+    box-shadow:0 12px 40px rgb(0 0 0/.4), inset 0 1px 0 rgb(255 255 255/.08)}
+  .cc .date{font-size:13px;font-weight:500;color:#fff;text-shadow:0 1px 6px rgb(0 0 0/.4);margin:0 4px 12px}
+  .cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .cc-tile{border:0;border-radius:26px;cursor:pointer;background:var(--hy-tile-off);color:var(--hy-text);
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;
+    padding:13px;min-height:104px;font-family:var(--font);text-align:left;
+    transition:background .25s var(--ease), transform .12s var(--pop)}
+  .cc-tile:active{transform:scale(.96)}
+  .cc-tile .g{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgb(0 0 0/.09)}
+  .cc-tile .g svg{width:19px;height:19px}
+  .cc-tile .t{font-size:13px;font-weight:600;line-height:16px}
+  .cc-tile .s{font-size:11px;font-weight:400;color:var(--hy-sec);line-height:14px}
+  .cc-tile.on{background:var(--hy-blue);color:#fff}
+  .cc-tile.on .g{background:rgb(255 255 255/.28)}
+  .cc-tile.on .s{color:rgb(255 255 255/.85)}
+  .cc-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+  .cc-mini{border:0;border-radius:50%;aspect-ratio:1;cursor:pointer;background:var(--hy-tile-off);
+    color:var(--hy-text);display:grid;place-items:center;transition:background .25s var(--ease),transform .12s var(--pop)}
+  .cc-mini:active{transform:scale(.92)}
+  .cc-mini svg{width:20px;height:20px}
+  .cc-mini.on{background:var(--hy-blue);color:#fff}
+  .cc-mini.warn.on{background:var(--hy-red)}
+
+  .cc-sliders{display:flex;gap:10px;margin-top:10px}
+  .cc-slider{position:relative;flex:1;height:172px;border-radius:9999px;cursor:pointer;
+    background:var(--hy-tile-off);overflow:hidden;touch-action:none}
+  .cc-slider .fill{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:9999px}
+  .cc-slider .glyph{position:absolute;left:50%;translate:-50%;font-size:0;color:var(--hy-sec)}
+  .cc-slider .glyph svg{width:20px;height:20px;display:block}
+  .cc-slider .glyph.top{top:12px;color:#fff;filter:drop-shadow(0 1px 3px rgb(0 0 0/.35))}
+  .cc-slider .glyph.bottom{bottom:12px}
+  .cc-slider .pct{position:absolute;left:50%;top:50%;translate:-50% -50%;font-size:15px;font-weight:700;color:#fff;
+    text-shadow:0 1px 6px rgb(0 0 0/.45);pointer-events:none;opacity:0;transition:opacity .2s}
+  .cc-slider.drag .pct{opacity:1}
+  .cc-slider.loud .fill{background:var(--hy-blue)}
+
+  .cc-music{margin-top:10px;display:flex;align-items:center;gap:12px;background:var(--hy-card);
+    border-radius:22px;padding:12px 14px}
+  .cc-music .art{width:48px;height:48px;border-radius:14px;flex:none;
+    background:conic-gradient(from 40deg,#f6d365,#fda085,#f6d365);
+    display:grid;place-items:center;color:#fff;font-size:20px;font-weight:700}
+  .cc-music .meta{flex:1;min-width:0}
+  .cc-music .song{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cc-music .artist{font-size:13px;color:var(--hy-sec)}
+  .cc-music .ctrl{display:flex;gap:2px;align-items:center}
+  .cc-music .ctrl button{border:0;background:transparent;cursor:pointer;color:var(--hy-text);
+    width:38px;height:38px;border-radius:50%;display:grid;place-items:center}
+  .cc-music .ctrl button:active{background:rgb(0 0 0/.07)}
+  .cc-music .ctrl svg{width:20px;height:20px}
+
+  /* ---------- settings ---------- */
+  .settings{margin:14px 14px 0;padding-bottom:40px}
+  .set-head{display:flex;align-items:flex-end;justify-content:space-between;margin:6px 4px 12px}
+  .set-head h2{font-size:27px;font-weight:700;letter-spacing:-.4px;color:#fff;text-shadow:0 2px 10px rgb(0 0 0/.45)}
+  .set-head .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(145deg,#ff9d5c,#ff6900);
+    display:grid;place-items:center;color:#fff;font-weight:700;font-size:17px;
+    box-shadow:0 2px 10px rgb(0 0 0/.3)}
+  .mi-search{display:flex;align-items:center;gap:10px;background:color-mix(in srgb,#ffffff 70%,transparent);
+    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+    border-radius:16px;padding:12px 16px;color:#6b6b70;margin-bottom:14px;font-size:16px}
+  .mi-search svg{width:18px;height:18px;flex:none}
+  .mi-search input{border:0;background:transparent;outline:none;flex:1;font:400 16px/22px var(--font);color:#191919}
+  .mi-search input::placeholder{color:#9a9aa0}
+  .set-card{background:var(--hy-card);border-radius:20px;overflow:hidden;margin-bottom:14px;
+    box-shadow:0 2px 14px rgb(0 0 0/.05)}
+  .set-card .cap{padding:12px 16px 4px;font-size:13px;font-weight:600;color:var(--hy-sec)}
+  .row{display:flex;align-items:center;gap:14px;padding:8px 16px;min-height:60px;
+    text-decoration:none;color:inherit;border-bottom:1px solid var(--hy-tint);cursor:pointer;background:transparent;border-left:0;border-right:0;border-top:0;width:100%;font-family:var(--font);text-align:left}
+  .row:last-child{border-bottom:0}
+  .row:active{background:rgb(0 0 0/.04)}
+  .ric{width:34px;height:34px;border-radius:10px;background:var(--c);color:#fff;
+    display:grid;place-items:center;flex:none}
+  .ric svg{width:18px;height:18px}
+  .rt{flex:1;display:flex;flex-direction:column;min-width:0}
+  .rt b{font-size:16px;font-weight:500;line-height:22px}
+  .rt small{font-size:13px;color:var(--hy-sec);line-height:18px}
+  .chev{color:#C7C7CC;font-size:22px;font-weight:300}
+  .mi-switch{width:52px;height:32px;border-radius:9999px;border:0;cursor:pointer;flex:none;
+    background:#D9D9DE;position:relative;transition:background .25s var(--ease)}
+  .mi-switch span{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;
+    background:#fff;box-shadow:0 2px 6px rgb(0 0 0/.25);transition:left .25s var(--ease)}
+  .mi-switch.on{background:var(--hy-blue)}
+  .mi-switch.on span{left:23px}
+
+  .about{display:flex;gap:14px;align-items:center}
+  .about .phone-ic{width:56px;height:56px;border-radius:16px;flex:none;
+    background:linear-gradient(145deg,#1c1c21,#3a3a44);display:grid;place-items:center;color:#fff}
+  .about .phone-ic svg{width:28px;height:28px}
+  .hyperos-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--hy-blue);
+    background:color-mix(in srgb,var(--hy-blue) 12%,transparent);border-radius:8px;padding:3px 8px;margin-top:4px}
+
+  .hint{margin:18px 4px 0;font-size:13px;line-height:20px;color:#fff;text-shadow:0 1px 6px rgb(0 0 0/.5);opacity:.92}
+  .hint b{font-weight:700}
+
+  .foot{margin-top:28px;font-size:13px;color:#8A8A8E}
+  @media (max-width:480px){ .phone{height:800px} .page-head h1{font-size:24px} }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <div class="kicker">Xiaomi HyperOS · Life Aesthetics</div>
+  <h1>Control Center &amp; Settings</h1>
+  <p>A pocket of HyperOS 4: frosted Soft Light Glass over a vivid wallpaper, big blue
+  toggle tiles, fat sliders — tap everything, it all works.</p>
+</div>
+
+<div class="phone" id="phone">
+  <div class="screen" id="screen">
+    <div class="wallpaper"></div>
+    <div class="notch"></div>
+    <div class="statusbar">
+      <span>9:41</span>
+      <span class="sicons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".4"/></svg>
+        <svg width="17" height="12" viewBox="0 0 16 12" fill="#fff"><path d="M8 9.6a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2zM8 5.4c1.8 0 3.4.7 4.6 1.9l-1.5 1.5A4.4 4.4 0 0 0 8 7.8c-1.2 0-2.3.4-3.1 1l-1.5-1.5A6.4 6.4 0 0 1 8 5.4zM8 1c2.9 0 5.6 1.2 7.6 3.1L14 5.7A8.4 8.4 0 0 0 8 3.4c-2.3 0-4.4.9-6 2.3L.4 4.1A11.4 11.4 0 0 1 8 1z" transform="translate(0,-1)"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" fill="none" stroke="#fff" opacity=".5"/><rect x="2.5" y="2.5" width="15" height="7" rx="2" fill="#FFC107"/><path d="M23.5 4v4a2.2 2.2 0 0 0 0-4z" fill="#fff" opacity=".5"/></svg>
+      </span>
+    </div>
+
+    <div class="scroll">
+      <!-- ============ CONTROL CENTER ============ -->
+      <div class="cc">
+        <div class="date">Friday, October 2</div>
+        <div class="cc-grid">
+          <button class="cc-tile on" aria-pressed="true" data-sub="HomeNet_5G">
+            <span class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10.5 10.5 0 0 1 13 0M8.6 16a6 6 0 0 1 6.8 0"/><circle cx="12" cy="19.4" r="1.6" fill="currentColor" stroke="none"/></svg></span>
+            <span><span class="t">Wi-Fi</span><br><span class="s">HomeNet_5G</span></span>
+          </button>
+          <button class="cc-tile on" aria-pressed="true" data-sub="Mi Watch S3">
+            <span class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8l10 8-5 4V4l5 4L7 16"/></svg></span>
+            <span><span class="t">Bluetooth</span><br><span class="s">Mi Watch S3</span></span>
+          </button>
+          <button class="cc-tile" aria-pressed="false" data-sub="Off">
+            <span class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v10M7 7.5a8 8 0 0 1 10 0M5 5.5A12 12 0 0 1 19 5.5"/></svg></span>
+            <span><span class="t">Mobile data</span><br><span class="s">Off</span></span>
+          </button>
+          <button class="cc-tile" aria-pressed="false" data-sub="Off">
+            <span class="g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6l-1 7 4 4v2H6v-2l4-4-1-7z"/><path d="M12 15v6"/></svg></span>
+            <span><span class="t">Flashlight</span><br><span class="s">Off</span></span>
+          </button>
+        </div>
+        <div class="cc-row">
+          <button class="cc-mini" aria-pressed="false" title="Airplane mode"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5v-2l-8-4.5V4.2a1.2 1.2 0 0 0-2.4 0V9l-8 4.5v2l8-2.3v5.4l-2.4 1.7v1.5l3.6-1 3.6 1v-1.5L13 18.2v-5.4l8 2.7z"/></svg></button>
+          <button class="cc-mini on" aria-pressed="true" title="Auto-rotate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="7" y="3.5" width="10" height="17" rx="2.5"/><path d="M3 8.5A8.5 8.5 0 0 1 20 7M21 15.5A8.5 8.5 0 0 1 4 17"/></svg></button>
+          <button class="cc-mini warn" aria-pressed="false" title="Do not disturb"><svg viewBox="0 0 24 24" fill="none" stroke="current" stroke-width="2.2" stroke-linecap="round"><path d="M20.5 18.5A9 9 0 0 1 5.5 3.5a9 9 0 1 0 15 15z"/></svg></button>
+          <button class="cc-mini on" aria-pressed="true" title="Location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></button>
+        </div>
+        <div class="cc-sliders">
+          <div class="cc-slider" id="bright" role="slider" aria-label="Brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="72" tabindex="0">
+            <div class="fill" style="height:72%"></div>
+            <span class="glyph top"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0-15v2.5M12 19.5V22M2.5 12H5m14 0h2.5M5 5l1.8 1.8M17.2 17.2L19 19M19 5l-1.8 1.8M6.8 17.2L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            <span class="glyph bottom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5m14 0h2.5M5 5l1.8 1.8M17.2 17.2L19 19M19 5l-1.8 1.8M6.8 17.2L5 19"/></svg></span>
+            <span class="pct">72%</span>
+          </div>
+          <div class="cc-slider loud" id="vol" role="slider" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="45" tabindex="0">
+            <div class="fill" style="height:45%"></div>
+            <span class="glyph top"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.8a4.5 4.5 0 0 1 0 6.4M18.4 6.4a8 8 0 0 1 0 11.2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></span>
+            <span class="glyph bottom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/></svg></span>
+            <span class="pct">45%</span>
+          </div>
+        </div>
+        <div class="cc-music">
+          <div class="art">M</div>
+          <div class="meta"><div class="song">Midnight City</div><div class="artist">M83 · Hurry Up, We're Dreaming</div></div>
+          <div class="ctrl">
+            <button aria-label="Previous"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2.5v14H6zM19 5v14L9.5 12z"/></svg></button>
+            <button aria-label="Play or pause" id="playbtn"><svg id="playic" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+            <button aria-label="Next"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 5H18v14h-2.5zM5 5v14l9.5-7z"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ SETTINGS ============ -->
+      <div class="settings">
+        <div class="set-head"><h2>Settings</h2><div class="avatar">G</div></div>
+        <label class="mi-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><input placeholder="Search settings" aria-label="Search settings"></label>
+
+        <div class="set-card">
+          <button class="row"><span class="ric" style="--c:#3482FF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10.5 10.5 0 0 1 13 0M8.6 16a6 6 0 0 1 6.8 0"/><circle cx="12" cy="19.4" r="1.6" fill="currentColor" stroke="none"/></svg></span><span class="rt"><b>Wi-Fi</b><small>HomeNet_5G</small></span><span class="chev">›</span></button>
+          <button class="row"><span class="ric" style="--c:#5856D6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8l10 8-5 4V4l5 4L7 16"/></svg></span><span class="rt"><b>Bluetooth</b><small>On · 2 devices connected</small></span><span class="chev">›</span></button>
+          <button class="row"><span class="ric" style="--c:#32C759"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v10M7 7.5a8 8 0 0 1 10 0M5 5.5A12 12 0 0 1 19 5.5"/></svg></span><span class="rt"><b>Mobile network</b><small>5G · 2 SIMs</small></span><span class="chev">›</span></button>
+        </div>
+
+        <div class="set-card">
+          <div class="cap">PERSONALIZATION</div>
+          <button class="row"><span class="ric" style="--c:#FF9F0A"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5m14 0h2.5M5 5l1.8 1.8M17.2 17.2L19 19M19 5l-1.8 1.8M6.8 17.2L5 19"/></svg></span><span class="rt"><b>Display</b><small>120 Hz · Vivid</small></span><span class="chev">›</span></button>
+          <button class="row"><span class="ric" style="--c:#AF52DE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/></svg></span><span class="rt"><b>Sound &amp; vibration</b><small>Mi Sound · Dolby Atmos</small></span><span class="chev">›</span></button>
+          <button class="row"><span class="ric" style="--c:#FF6482"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="10.5" r="1.4" fill="currentColor" stroke="none"/><path d="M3.5 17l4.5-4.5 3 3 3.5-3.5 5 5"/></svg></span><span class="rt"><b>Wallpaper &amp; personalization</b><small>Vivid sunrise</small></span><span class="chev">›</span></button>
+          <div class="row"><span class="ric" style="--c:#1c1c21"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20.5 18.5A9 9 0 0 1 5.5 3.5a9 9 0 1 0 15 15z"/></svg></span><span class="rt"><b>Dark mode</b><small>Schedule: sunset to sunrise</small></span><button class="mi-switch" id="darksw" role="switch" aria-checked="false" aria-label="Dark mode"><span></span></button></div>
+        </div>
+
+        <div class="set-card">
+          <div class="cap">DEVICE</div>
+          <button class="row"><span class="ric" style="--c:#FFC107"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="8" width="15" height="9" rx="2.5"/><path d="M21 11v3" stroke-linecap="round"/><rect x="5.5" y="10.5" width="9" height="4" rx="1.2" fill="currentColor" stroke="none"/></svg></span><span class="rt"><b>Battery</b><small>100% · Healthy · 2h left at this rate</small></span><span class="chev">›</span></button>
+          <button class="row"><span class="ric" style="--c:#5AC8FA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M9 7.5h6"/></svg></span><span class="rt"><b>Storage</b><small>86.4 GB of 256 GB used</small></span><span class="chev">›</span></button>
+          <button class="row"><span class="ric" style="--c:#FF3B30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.6-8 9-4.8-1.4-8-4.5-8-9V6l8-3z"/><path d="M9.5 12l2 2 3.5-4"/></svg></span><span class="rt"><b>Security &amp; privacy</b><small>All checks passed</small></span><span class="chev">›</span></button>
+        </div>
+
+        <div class="set-card">
+          <button class="row about">
+            <span class="phone-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2.5" width="10" height="19" rx="2.8"/><path d="M11 18.5h2" stroke-linecap="round"/></svg></span>
+            <span class="rt"><b>Xiaomi 17 Ultra</b><small>16 GB + 512 GB · Snapdragon 8 Elite Gen 5</small><span class="hyperos-badge">HYPEROS 4.0.7.0</span></span>
+            <span class="chev">›</span>
+          </button>
+        </div>
+
+        <p class="hint"><b>Try it:</b> tap the blue tiles and mini toggles, drag the brightness and volume pills, hit play on the music card, or flip Dark mode.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">Built from the hyperos skill · design-skills</div>
+
+<script>
+(function(){
+  const screen = document.getElementById('screen');
+  screen.addEventListener('pointerdown',()=>{screen.classList.add('touched');
+    setTimeout(()=>screen.classList.remove('touched'),900);});
+
+  // toggle tiles + mini toggles
+  document.querySelectorAll('.cc-tile,.cc-mini').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const on = el.classList.toggle('on');
+      el.setAttribute('aria-pressed', on);
+      if(el.classList.contains('cc-tile')){
+        const sub = el.querySelector('.s');
+        if(sub) sub.textContent = on ? (el.dataset.sub || 'On') : 'Off';
+      }
+    });
+  });
+
+  // generic switches
+  document.querySelectorAll('.mi-switch').forEach(sw=>{
+    sw.addEventListener('click',e=>{
+      e.stopPropagation();
+      const on = sw.classList.toggle('on');
+      sw.setAttribute('aria-checked', on);
+      if(sw.id==='darksw') screen.classList.toggle('dark', on);
+    });
+  });
+
+  // vertical sliders: drag + keyboard
+  function makeSlider(el){
+    const fill = el.querySelector('.fill'), pct = el.querySelector('.pct');
+    function set(v){
+      v = Math.max(0, Math.min(100, Math.round(v)));
+      fill.style.height = v + '%';
+      pct.textContent = v + '%';
+      el.setAttribute('aria-valuenow', v);
+    }
+    function fromEvent(e){
+      const r = el.getBoundingClientRect();
+      set((r.bottom - e.clientY) / r.height * 100);
+    }
+    el.addEventListener('pointerdown', e=>{
+      el.classList.add('drag'); el.setPointerCapture(e.pointerId); fromEvent(e);
+      const move = ev=>fromEvent(ev);
+      const up = ()=>{ el.classList.remove('drag');
+        el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); };
+      el.addEventListener('pointermove', move); el.addEventListener('pointerup', up);
+    });
+    el.addEventListener('keydown', e=>{
+      const v = +el.getAttribute('aria-valuenow');
+      if(e.key==='ArrowUp'||e.key==='ArrowRight'){ set(v+5); e.preventDefault(); }
+      if(e.key==='ArrowDown'||e.key==='ArrowLeft'){ set(v-5); e.preventDefault(); }
+    });
+  }
+  makeSlider(document.getElementById('bright'));
+  makeSlider(document.getElementById('vol'));
+
+  // music play/pause
+  const playbtn = document.getElementById('playbtn'), playic = document.getElementById('playic');
+  let playing = false;
+  const pausePath = 'M7 5h4v14H7zM13 5h4v14h-4z';
+  const playPath = 'M8 5v14l11-7z';
+  playbtn.addEventListener('click',()=>{
+    playing = !playing;
+    playic.innerHTML = '<path d="'+(playing?pausePath:playPath)+'"/>';
+    playbtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+  });
+})();
+</script>
+</body>
+</html>
