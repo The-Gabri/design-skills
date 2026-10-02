@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>airbnb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rausch:#FF5A5F; --rausch-hover:#FF7E82; --rausch-pressed:#E04C51;
+  --rausch-wash:#FFF1F2;
+  --ink:#222222; --foggy:#767676; --hof:#484848; --tertiary:#B0B0B0;
+  --canvas:#FFFFFF; --surface:#F7F7F7; --hairline:#EBEBEB; --border:#DDDDDD;
+  --babu:#00A699; --arches:#FC642D; --star:#FFB400;
+  --shadow:rgba(0,0,0,0.02) 0 0 0 1px, rgba(0,0,0,0.04) 0 2px 6px, rgba(0,0,0,0.1) 0 4px 8px;
+  --font:'Nunito Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--ink);background:var(--canvas);font-size:15px;line-height:1.43;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+img,svg{display:block}
+
+/* ---------- header ---------- */
+.site-header{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--hairline)}
+.header-inner{max-width:1760px;margin:0 auto;height:80px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{color:var(--rausch);font-weight:800;font-size:27px;letter-spacing:-1.2px;text-decoration:none;line-height:1}
+.product-tabs{display:flex;gap:36px}
+.product-tabs button{background:none;border:0;font-size:16px;font-weight:500;color:var(--foggy);cursor:pointer;padding:28px 2px 26px;position:relative}
+.product-tabs button:hover{color:var(--ink)}
+.product-tabs button.is-active{color:var(--ink);font-weight:700}
+.product-tabs button.is-active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--ink)}
+.header-actions{display:flex;align-items:center;gap:8px}
+.host-link{font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;padding:12px 16px;border-radius:999px}
+.host-link:hover{background:var(--surface)}
+.icon-btn{background:none;border:0;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.icon-btn:hover{background:var(--surface)}
+.menu-pill{display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:999px;padding:7px 7px 7px 14px;background:#fff;cursor:pointer;transition:box-shadow .15s ease-out}
+.menu-pill:hover{box-shadow:0 2px 4px rgba(0,0,0,.12)}
+.menu-pill .avatar{width:32px;height:32px;border-radius:50%;background:var(--foggy);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px}
+
+/* ---------- search section ---------- */
+.search-zone{max-width:1760px;margin:0 auto;padding:20px 40px 0}
+.search-pill{display:flex;align-items:stretch;background:#fff;border:1px solid var(--border);border-radius:999px;
+  box-shadow:0 1px 2px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);max-width:860px;margin:0 auto;overflow:hidden}
+.seg{flex:1.2;padding:12px 26px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;border-radius:999px;min-width:0}
+.seg.small{flex:0.8}
+.seg + .seg{border-left:1px solid var(--hairline)}
+.seg:hover{background:var(--surface)}
+.seg label{font-size:12px;font-weight:800;letter-spacing:.2px;cursor:pointer}
+.seg input{border:0;outline:0;font-size:14px;color:var(--ink);background:transparent;width:100%;font-family:inherit}
+.seg input::placeholder{color:var(--foggy)}
+.orb{width:48px;height:48px;margin:8px;border:0;border-radius:50%;background:var(--rausch);display:grid;place-items:center;cursor:pointer;flex:none;transition:background .15s ease-out,transform .15s ease-out}
+.orb:hover{background:var(--rausch-hover);transform:scale(1.04)}
+.orb:active{background:var(--rausch-pressed)}
+
+/* ---------- category bar ---------- */
+.cat-zone{max-width:1760px;margin:0 auto;padding:0 40px}
+.cat-bar{display:flex;gap:34px;overflow-x:auto;padding:18px 4px 0;scrollbar-width:none;border-bottom:1px solid var(--hairline)}
+.cat-bar::-webkit-scrollbar{display:none}
+.cat{display:flex;flex-direction:column;align-items:center;gap:9px;background:none;border:0;color:var(--foggy);
+  font-size:12px;font-weight:700;cursor:pointer;padding:0 2px 12px;white-space:nowrap;transition:color .15s}
+.cat svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s ease-out}
+.cat:hover{color:var(--ink);border-bottom:2px solid var(--border)}
+.cat:hover svg{transform:translateY(-2px)}
+.cat.is-active{color:var(--ink);border-bottom:2px solid var(--ink)}
+
+/* ---------- results meta ---------- */
+.results-zone{max-width:1760px;margin:0 auto;padding:26px 40px 0}
+.results-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.results-head h1{font-size:22px;font-weight:700}
+.results-head p{color:var(--foggy);font-size:14px;margin-top:2px}
+.total-toggle{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600}
+.switch{position:relative;width:48px;height:32px;flex:none;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.switch .track{position:absolute;inset:0;background:var(--tertiary);border-radius:999px;transition:background .18s ease-out}
+.switch .track::after{content:"";position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:50%;background:#fff;transition:transform .18s ease-out;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch input:checked + .track{background:var(--ink)}
+.switch input:checked + .track::after{transform:translateX(16px)}
+
+/* ---------- listing grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:40px 26px;padding:26px 0 80px}
+.card{font-size:15px;cursor:pointer}
+.card.hidden{display:none}
+.photo{position:relative;aspect-ratio:20/19;border-radius:12px;overflow:hidden;background:var(--surface)}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity .25s ease-out}
+.slide.on{opacity:1}
+.slide svg{width:100%;height:100%}
+.badge{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.96);border-radius:14px;padding:5px 12px;font-size:13px;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.heart{position:absolute;top:8px;right:8px;background:none;border:0;cursor:pointer;padding:5px;z-index:3}
+.heart svg{width:27px;height:27px;fill:rgba(0,0,0,.45);stroke:#fff;stroke-width:2;transition:transform .18s ease-out,fill .15s}
+.heart:hover svg{transform:scale(1.12)}
+.heart[aria-pressed="true"] svg{fill:var(--rausch);stroke:var(--rausch);animation:pop .3s ease-out}
+@keyframes pop{0%{transform:scale(.6)}55%{transform:scale(1.3)}100%{transform:scale(1)}}
+.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.95);display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .18s ease-out,transform .18s ease-out;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:3}
+.card:hover .nav-arrow{opacity:1}
+.nav-arrow:hover{transform:translateY(-50%) scale(1.06)}
+.nav-arrow.prev{left:12px}.nav-arrow.next{right:12px}
+.dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3}
+.dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:background .15s}
+.dots i.on{background:#fff}
+.meta{padding-top:13px;display:grid;gap:3px}
+.meta .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.meta .row strong{font-weight:700}
+.meta p{color:var(--foggy)}
+.rating{white-space:nowrap;font-size:14px}
+.rating .star{color:var(--ink);font-size:13px}
+.price-row{margin-top:5px}
+.price-row strong{font-weight:700}
+.price-total{color:var(--foggy);text-decoration:underline;text-underline-offset:2px}
+.card.flash .photo{outline:3px solid var(--rausch);outline-offset:3px}
+
+/* ---------- map view ---------- */
+.map-wrap{display:none;margin:26px 0 80px;border:1px solid var(--hairline);border-radius:16px;overflow:hidden;position:relative;height:560px;background:#EDEBE4}
+.map-wrap.open{display:block}
+.map-wrap svg.map{width:100%;height:100%}
+.pin{position:absolute;transform:translate(-50%,-50%);background:#fff;border:0;border-radius:999px;padding:7px 12px;
+  font-weight:800;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.28);cursor:pointer;transition:transform .15s ease-out,background .15s,color .15s;white-space:nowrap}
+.pin:hover{transform:translate(-50%,-50%) scale(1.12)}
+.pin.is-active{background:var(--ink);color:#fff;transform:translate(-50%,-50%) scale(1.15)}
+.map-note{position:absolute;left:16px;bottom:16px;background:rgba(255,255,255,.95);border-radius:12px;padding:10px 16px;font-size:13px;color:var(--foggy);box-shadow:var(--shadow)}
+
+/* ---------- floating map toggle ---------- */
+.map-toggle{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:90;background:var(--ink);color:#fff;
+  border:0;border-radius:999px;padding:14px 22px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;
+  box-shadow:0 6px 20px rgba(0,0,0,.3);transition:transform .15s ease-out}
+.map-toggle:hover{transform:translateX(-50%) scale(1.04)}
+
+/* ---------- empty states ---------- */
+.empty{display:none;text-align:center;padding:90px 20px}
+.empty.open{display:block}
+.empty h2{font-size:26px;font-weight:700;margin-bottom:10px}
+.empty p{color:var(--foggy);max-width:460px;margin:0 auto 26px}
+.btn-rausch{background:var(--rausch);color:#fff;border:0;border-radius:8px;padding:14px 30px;font-size:16px;font-weight:700;cursor:pointer}
+.btn-rausch:hover{background:var(--rausch-hover)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--hairline);background:#fff}
+.footer-inner{max-width:1760px;margin:0 auto;padding:48px 40px 0}
+.footer-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;padding-bottom:40px}
+.footer-cols h4{font-size:14px;font-weight:700;margin-bottom:16px}
+.footer-cols ul{list-style:none;display:grid;gap:13px}
+.footer-cols a{color:var(--ink);text-decoration:none;font-size:14px}
+.footer-cols a:hover{text-decoration:underline}
+.footer-bottom{border-top:1px solid var(--hairline);padding:22px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:14px}
+.footer-bottom .links{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.footer-bottom a{color:var(--ink);text-decoration:none}
+.footer-bottom a:hover{text-decoration:underline}
+.footer-bottom .dot{color:var(--foggy)}
+.locale{display:flex;align-items:center;gap:18px;font-weight:700}
+.skill-credit{max-width:1760px;margin:0 auto;padding:0 40px 26px;color:var(--tertiary);font-size:13px}
+
+/* ---------- responsive ---------- */
+@media(max-width:900px){
+  .header-inner{padding:0 20px}
+  .product-tabs{display:none}
+  .host-link{display:none}
+  .search-zone,.cat-zone,.results-zone{padding-left:20px;padding-right:20px}
+  .search-pill{flex-direction:column;border-radius:20px;overflow:hidden}
+  .seg{padding:14px 22px}
+  .seg + .seg{border-left:0;border-top:1px solid var(--hairline)}
+  .orb{width:calc(100% - 16px);border-radius:12px;height:48px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:32px 18px}
+  .footer-cols{grid-template-columns:1fr 1fr}
+  .footer-inner,.skill-credit{padding-left:20px;padding-right:20px}
+}
+@media(max-width:560px){.footer-cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="#" aria-label="airbnb home">airbnb</a>
+    <nav class="product-tabs" aria-label="Products">
+      <button class="is-active" data-tab="stays">Stays</button>
+      <button data-tab="experiences">Experiences</button>
+      <button data-tab="services">Services</button>
+    </nav>
+    <div class="header-actions">
+      <a class="host-link" href="#">Become a host</a>
+      <button class="icon-btn" aria-label="Choose language">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>
+      </button>
+      <button class="menu-pill" aria-label="Account menu">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2.4"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <span class="avatar">G</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="stays-view">
+  <section class="search-zone" aria-label="Search">
+    <form class="search-pill" id="search-form" role="search">
+      <div class="seg">
+        <label for="q-where">Where</label>
+        <input id="q-where" type="text" placeholder="Search destinations" autocomplete="off">
+      </div>
+      <div class="seg small">
+        <label for="q-in">Check in</label>
+        <input id="q-in" type="text" placeholder="Add dates">
+      </div>
+      <div class="seg small">
+        <label for="q-out">Check out</label>
+        <input id="q-out" type="text" placeholder="Add dates">
+      </div>
+      <div class="seg">
+        <label for="q-who">Who</label>
+        <input id="q-who" type="text" placeholder="Add guests">
+      </div>
+      <button class="orb" type="submit" aria-label="Search">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.2 16.2L21 21"/></svg>
+      </button>
+    </form>
+  </section>
+
+  <section class="cat-zone" aria-label="Categories">
+    <div class="cat-bar" id="cat-bar" role="tablist"></div>
+  </section>
+
+  <section class="results-zone">
+    <div class="results-head">
+      <div>
+        <h1 id="results-title">Stays around the world</h1>
+        <p id="results-sub">Over 1,000 stays · Jan 12 – 17 · 2 guests</p>
+      </div>
+      <label class="total-toggle">
+        <span>Display total before taxes</span>
+        <span class="switch">
+          <input type="checkbox" id="total-toggle">
+          <span class="track"></span>
+        </span>
+      </label>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="map-wrap" id="map-wrap" aria-label="Map of stays">
+      <svg class="map" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="1200" height="560" fill="#E9E7DE"/>
+        <path d="M-40 420 Q 220 360 420 430 T 900 400 T 1300 440 L1300 620 L-40 620 Z" fill="#CFE3C8"/>
+        <path d="M120 180 Q 300 120 480 170 T 880 150 T 1180 200" stroke="#FFFFFF" stroke-width="26" fill="none" stroke-linecap="round"/>
+        <path d="M120 180 Q 300 120 480 170 T 880 150 T 1180 200" stroke="#D8D5CB" stroke-width="2" stroke-dasharray="14 12" fill="none"/>
+        <path d="M620 -20 L 600 300 L 660 580" stroke="#FFFFFF" stroke-width="20" fill="none" stroke-linecap="round"/>
+        <path d="M-20 300 L 1220 260" stroke="#FFFFFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <ellipse cx="950" cy="430" rx="120" ry="60" fill="#BCD9EF"/>
+        <ellipse cx="220" cy="120" rx="90" ry="44" fill="#D5E8D2"/>
+        <g fill="#FFFFFF" opacity=".85">
+          <rect x="180" y="330" width="26" height="18" rx="2"/><rect x="214" y="326" width="20" height="22" rx="2"/>
+          <rect x="700" y="200" width="30" height="20" rx="2"/><rect x="740" y="206" width="18" height="16" rx="2"/>
+          <rect x="480" y="470" width="24" height="18" rx="2"/><rect x="1010" y="300" width="22" height="20" rx="2"/>
+        </g>
+      </svg>
+      <div id="pins"></div>
+      <div class="map-note">Prices are per night, before taxes. Select a pin to find the stay.</div>
+    </div>
+
+    <div class="empty" id="no-results">
+      <h2>No exact matches</h2>
+      <p>Try adjusting your search or exploring a different category — great stays are waiting just around the corner.</p>
+      <button class="btn-rausch" id="reset-btn">Clear search</button>
+    </div>
+  </section>
+</main>
+
+<main id="alt-view" style="display:none">
+  <div class="empty open" style="display:block">
+    <h2 id="alt-title">Experiences</h2>
+    <p id="alt-copy">This demo focuses on Stays — the heart of the Airbnb product. Head back to browse homes around the world.</p>
+    <button class="btn-rausch" id="back-btn">Back to Stays</button>
+  </div>
+</main>
+
+<button class="map-toggle" id="map-toggle" aria-pressed="false">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg>
+  <span id="map-toggle-label">Show map</span>
+</button>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-cols">
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">AirCover</a></li>
+          <li><a href="#">Cancellation options</a></li>
+          <li><a href="#">Safety information</a></li>
+          <li><a href="#">Report a concern</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Hosting</h4>
+        <ul>
+          <li><a href="#">Try hosting</a></li>
+          <li><a href="#">AirCover for Hosts</a></li>
+          <li><a href="#">Hosting resources</a></li>
+          <li><a href="#">Community forum</a></li>
+          <li><a href="#">Hosting responsibly</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Airbnb</h4>
+        <ul>
+          <li><a href="#">Newsroom</a></li>
+          <li><a href="#">New features</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Investors</a></li>
+          <li><a href="#">Gift cards</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="links">
+        <span>© 2026 demo</span><span class="dot">·</span>
+        <a href="#">Privacy</a><span class="dot">·</span>
+        <a href="#">Terms</a><span class="dot">·</span>
+        <a href="#">Sitemap</a>
+      </div>
+      <div class="locale">
+        <span style="display:flex;align-items:center;gap:6px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>English (US)</span><span>$ USD</span>
+      </div>
+    </div>
+  </div>
+  <div class="skill-credit">Built from the airbnb skill · design-skills</div>
+</footer>
+<script>
+/* ---------- flat SVG scene painters (day / dusk / night) ---------- */
+const W = 400, H = 380;
+function sky(sun, extra){
+  const stars = sun.night ? '<g fill="#FFFFFF" opacity=".9"><circle cx="60" cy="46" r="2"/><circle cx="150" cy="30" r="1.6"/><circle cx="240" cy="58" r="2"/><circle cx="330" cy="36" r="1.6"/><circle cx="300" cy="90" r="1.4"/><circle cx="90" cy="100" r="1.4"/></g>' : '';
+  const orb = sun.night
+    ? '<circle cx="320" cy="70" r="26" fill="#F4F1DE"/><circle cx="310" cy="62" r="5" fill="#E2DDC4"/><circle cx="328" cy="78" r="3.4" fill="#E2DDC4"/>'
+    : '<circle cx="320" cy="70" r="30" fill="'+sun.sun+'"/>';
+  return '<rect width="400" height="380" fill="'+sun.sky+'"/>' + stars + orb + (extra||'');
+}
+function hills(c1,c2,y){
+  return '<path d="M0 '+y+' Q 100 '+(y-70)+' 200 '+y+' T 400 '+(y-10)+' L400 380 L0 380 Z" fill="'+c1+'"/>'
+       + '<path d="M0 '+(y+40)+' Q 130 '+(y-20)+' 260 '+(y+40)+' T 400 '+(y+30)+' L400 380 L0 380 Z" fill="'+c2+'"/>';
+}
+const SCENES = {
+  beach(m){
+    const P = m==='night'
+      ? {sky:'#22314E',sun:'#F4F1DE',sea:'#1E3A5F',sand:'#B99F6E',palm:'#1E4A3A',night:true}
+      : m==='dusk'
+      ? {sky:'#F7B267',sun:'#FF8C42',sea:'#2F6F8F',sand:'#EBCB92',palm:'#2E6B4F',night:false}
+      : {sky:'#A8D5E2',sun:'#FFD66B',sea:'#4AA3C7',sand:'#F2DFB8',palm:'#3E7D4E',night:false};
+    return sky(P,
+      '<rect y="220" width="400" height="70" fill="'+P.sea+'"/>'
+      + (m==='night' ? '<g stroke="#FFFFFF" stroke-width="2" opacity=".5"><path d="M90 245 h40"/><path d="M220 262 h52"/><path d="M310 240 h30"/></g>' : '<g stroke="#FFFFFF" stroke-width="3" opacity=".7"><path d="M80 244 q20 -8 40 0"/><path d="M230 262 q24 -9 48 0"/><path d="M310 240 q16 -6 32 0"/></g>')
+      + '<rect y="290" width="400" height="90" fill="'+P.sand+'"/>'
+      + '<rect x="86" y="150" width="14" height="150" rx="7" fill="#8A5A3B"/>'
+      + '<g fill="'+P.palm+'"><ellipse cx="93" cy="140" rx="52" ry="16" transform="rotate(-24 93 140)"/><ellipse cx="93" cy="140" rx="52" ry="16" transform="rotate(24 93 140)"/><ellipse cx="93" cy="132" rx="46" ry="14"/></g>'
+      + '<path d="M280 292 L320 220 L360 292 Z" fill="#FF5A5F"/><rect x="318" y="220" width="5" height="74" fill="#8A5A3B"/>');
+  },
+  cabin(m){
+    const P = m==='night'
+      ? {sky:'#22314E',snow:'#8FA3BF',tree:'#1E4A3A',wood:'#5D3A26',roof:'#3A2A22',win:'#FFD66B',night:true}
+      : m==='dusk'
+      ? {sky:'#F2A56B',snow:'#F6E7D4',tree:'#2E6B4F',wood:'#8A5A3B',roof:'#5D3A26',win:'#FFE9A8',night:false}
+      : {sky:'#A8D5E2',snow:'#FFFFFF',tree:'#3E7D4E',wood:'#8A5A3B',roof:'#5D3A26',win:'#BEE3F0',night:false};
+    return sky(P,
+      '<path d="M0 210 L120 90 L240 210 Z" fill="'+P.snow+'"/><path d="M180 210 L300 70 L420 210 Z" fill="'+P.snow+'" opacity=".85"/>'
+      + '<g fill="'+P.tree+'"><path d="M52 300 l22 -60 22 60 Z"/><path d="M56 272 l18 -48 18 48 Z"/><path d="M330 300 l22 -60 22 60 Z"/><path d="M334 272 l18 -48 18 48 Z"/></g>'
+      + '<rect y="300" width="400" height="80" fill="'+P.snow+'"/>'
+      + '<rect x="130" y="230" width="140" height="80" fill="'+P.wood+'"/>'
+      + '<path d="M115 232 L200 175 L285 232 Z" fill="'+P.roof+'"/>'
+      + '<rect x="188" y="268" width="26" height="42" fill="'+P.roof+'"/>'
+      + '<rect x="145" y="248" width="30" height="26" fill="'+P.win+'"/><rect x="225" y="248" width="30" height="26" fill="'+P.win+'"/>'
+      + (m==='night' ? '<rect x="196" y="196" width="8" height="16" fill="#5D3A26"/>' : ''));
+  },
+  city(m){
+    const P = m==='night'
+      ? {sky:'#1F2B45',win:'#FFD66B',b1:'#3A4560',b2:'#2E3A52',street:'#22293B',night:true}
+      : m==='dusk'
+      ? {sky:'#E88B5A',win:'#FFE9A8',b1:'#8A6A72',b2:'#745A66',street:'#5A4A52',night:false}
+      : {sky:'#AED6E4',win:'#EAF6FB',b1:'#9AA7B5',b2:'#8A97A6',street:'#7C8894',night:false};
+    let b = '';
+    const wins = (x,y,w,h)=>{let s='';for(let r=0;r<4;r++)for(let c=0;c<3;c++)s+='<rect x="'+(x+8+c*14)+'" y="'+(y+10+r*18)+'" width="8" height="10" fill="'+P.win+'"/>';return s;};
+    b += '<rect x="30" y="130" width="80" height="200" fill="'+P.b1+'"/>'+wins(30,130,80,200);
+    b += '<rect x="125" y="80" width="95" height="250" fill="'+P.b2+'"/>'+wins(125,80,95,250);
+    b += '<rect x="235" y="150" width="70" height="180" fill="'+P.b1+'"/>'+wins(235,150,70,180);
+    b += '<rect x="318" y="105" width="60" height="225" fill="'+P.b2+'"/>'+wins(318,105,60,225);
+    b += '<rect y="330" width="400" height="50" fill="'+P.street+'"/><g stroke="#FFFFFF" stroke-width="3" stroke-dasharray="18 14" opacity=".8"><path d="M0 355 h400"/></g>';
+    return sky(P,b);
+  },
+  lake(m){
+    const P = m==='night'
+      ? {sky:'#22314E',mtn:'#33415E',lake:'#1E3A5F',dock:'#4A3A2E',night:true}
+      : m==='dusk'
+      ? {sky:'#F2A56B',mtn:'#7A5A6E',lake:'#3E7C99',dock:'#6B4A34',night:false}
+      : {sky:'#A8D5E2',mtn:'#7A8BA0',lake:'#4AA3C7',dock:'#8A5A3B',night:false};
+    return sky(P,
+      '<path d="M0 230 L110 110 L220 230 Z" fill="'+P.mtn+'"/><path d="M170 230 L290 90 L410 230 Z" fill="'+P.mtn+'" opacity=".8"/>'
+      + '<rect y="230" width="400" height="150" fill="'+P.lake+'"/>'
+      + '<g fill="#FFFFFF" opacity="'+(m==='night'?'.25':'.55')+'"><ellipse cx="140" cy="270" rx="46" ry="8"/><ellipse cx="270" cy="300" rx="60" ry="9"/></g>'
+      + '<rect x="60" y="300" width="120" height="12" fill="'+P.dock+'"/><rect x="80" y="312" width="10" height="40" fill="'+P.dock+'"/><rect x="150" y="312" width="10" height="40" fill="'+P.dock+'"/>'
+      + '<path d="M300 300 l40 0 l-8 -22 l-24 0 Z" fill="#FFFFFF"/><rect x="316" y="278" width="8" height="24" fill="'+P.dock+'"/>');
+  },
+  desert(m){
+    const P = m==='night'
+      ? {sky:'#26314B',sun:'#F4F1DE',dune1:'#6B5B73',dune2:'#54455C',cactus:'#1E4A3A',night:true}
+      : m==='dusk'
+      ? {sky:'#F2A56B',sun:'#FF8C42',dune1:'#E0A468',dune2:'#C98F52',cactus:'#2E6B4F',night:false}
+      : {sky:'#BFE0EA',sun:'#FFD66B',dune1:'#F0D49A',dune2:'#E4BE78',cactus:'#3E7D4E',night:false};
+    return sky(P,
+      '<ellipse cx="100" cy="330" rx="220" ry="90" fill="'+P.dune1+'"/><ellipse cx="330" cy="350" rx="240" ry="100" fill="'+P.dune2+'"/>'
+      + '<g fill="'+P.cactus+'"><rect x="300" y="200" width="18" height="110" rx="9"/><rect x="272" y="230" width="14" height="44" rx="7"/><rect x="272" y="262" width="34" height="14" rx="7"/><rect x="318" y="222" width="34" height="14" rx="7"/><rect x="338" y="222" width="14" height="50" rx="7"/></g>'
+      + '<ellipse cx="90" cy="300" rx="30" ry="8" fill="'+P.dune2+'" opacity=".6"/>');
+  },
+  forest(m){
+    const P = m==='night'
+      ? {sky:'#22314E',tree:'#1E4034',tree2:'#16332A',ground:'#2A3B33',win:'#FFD66B',night:true}
+      : m==='dusk'
+      ? {sky:'#EFA26A',tree:'#2E6B4F',tree2:'#26593F',ground:'#5F7A52',win:'#FFE9A8',night:false}
+      : {sky:'#AED6E4',tree:'#3E7D4E',tree2:'#35704A',ground:'#7CB06B',win:'#DFF2F7',night:false};
+    let trees='';
+    [[40,150],[90,120],[310,140],[355,170]].forEach(t=>{
+      trees += '<rect x="'+(t[0]-7)+'" y="'+(t[1]+40)+'" width="14" height="120" fill="#6B4A34"/>'
+             + '<circle cx="'+t[0]+'" cy="'+t[1]+'" r="52" fill="'+P.tree+'"/><circle cx="'+(t[0]+24)+'" cy="'+(t[1]+22)+'" r="38" fill="'+P.tree2+'"/>';
+    });
+    return sky(P, trees
+      + '<rect y="300" width="400" height="80" fill="'+P.ground+'"/>'
+      + '<rect x="168" y="180" width="80" height="60" rx="6" fill="#8A5A3B"/>'
+      + '<path d="M158 182 L208 140 L258 182 Z" fill="#5D3A26"/>'
+      + '<rect x="186" y="204" width="44" height="36" rx="4" fill="'+P.win+'"/>'
+      + '<rect x="204" y="120" width="8" height="26" fill="#6B4A34"/>');
+  },
+  countryside(m){
+    const P = m==='night'
+      ? {sky:'#26314B',field:'#3E5A44',field2:'#33493A',wall:'#8A7A66',roof:'#4A3A30',win:'#FFD66B',night:true}
+      : m==='dusk'
+      ? {sky:'#F2A56B',field:'#8FAB6B',field2:'#7D9A5C',wall:'#D9C49A',roof:'#8A5A3B',win:'#FFE9A8',night:false}
+      : {sky:'#AED6E4',field:'#9CCB7E',field2:'#8ABB6C',wall:'#EAD9B0',roof:'#A06A42',win:'#BEE3F0',night:false};
+    return sky(P,
+      '<rect y="250" width="400" height="130" fill="'+P.field+'"/><path d="M0 290 Q 200 260 400 295 L400 380 L0 380 Z" fill="'+P.field2+'"/>'
+      + '<rect x="130" y="220" width="140" height="80" fill="'+P.wall+'"/>'
+      + '<path d="M115 222 L200 165 L285 222 Z" fill="'+P.roof+'"/>'
+      + '<rect x="190" y="258" width="24" height="42" fill="'+P.roof+'"/>'
+      + '<rect x="148" y="240" width="28" height="24" fill="'+P.win+'"/><rect x="226" y="240" width="28" height="24" fill="'+P.win+'"/>'
+      + '<rect x="290" y="200" width="14" height="100" fill="#6B4A34"/><circle cx="297" cy="185" r="34" fill="'+(m==='night'?'#1E4034':'#4E8A54')+'"/>'
+      + '<g stroke="#FFFFFF" stroke-width="3" opacity=".7"><path d="M40 330 h60 M300 340 h70"/></g>');
+  },
+  castle(m){
+    const P = m==='night'
+      ? {sky:'#26314B',stone:'#5A6478',stone2:'#4A5468',roof:'#8A3A44',win:'#FFD66B',night:true}
+      : m==='dusk'
+      ? {sky:'#F2A56B',stone:'#C9B8A6',stone2:'#B8A695',roof:'#A04A52',win:'#FFE9A8',night:false}
+      : {sky:'#AED6E4',stone:'#D8CFC2',stone2:'#C6BCAD',roof:'#B85A62',win:'#7FA8BC',night:false};
+    const tower=(x,w,h)=>'<rect x="'+x+'" y="'+(300-h)+'" width="'+w+'" height="'+h+'" fill="'+P.stone+'"/>'
+      + '<path d="M'+(x-8)+' '+(300-h)+' L'+(x+w/2)+' '+(300-h-46)+' L'+(x+w+8)+' '+(300-h)+' Z" fill="'+P.roof+'"/>'
+      + '<rect x="'+(x+w/2-2)+'" y="'+(300-h-66)+'" width="4" height="22" fill="#8A5A3B"/><path d="M'+(x+w/2+2)+' '+(300-h-66)+' l22 7 l-22 7 Z" fill="#FF5A5F"/>'
+      + '<rect x="'+(x+w/2-9)+'" y="'+(300-h+30)+'" width="18" height="26" rx="9" fill="'+P.win+'"/>';
+    return sky(P,
+      '<rect y="300" width="400" height="80" fill="'+(m==='night'?'#2E3B33':'#8ABB6C')+'"/>'
+      + '<rect x="90" y="210" width="220" height="95" fill="'+P.stone2+'"/>'
+      + tower(60,64,150) + tower(276,64,150) + tower(168,64,190)
+      + '<g fill="'+P.win+'"><rect x="120" y="240" width="16" height="24" rx="8"/><rect x="264" y="240" width="16" height="24" rx="8"/><rect x="150" y="240" width="16" height="24" rx="8"/><rect x="234" y="240" width="16" height="24" rx="8"/></g>'
+      + '<path d="M185 305 v-45 a15 15 0 0 1 30 0 v45 Z" fill="'+P.roof+'"/>');
+  }
+};
+
+/* ---------- data ---------- */
+const CATS = [
+  {id:'views',    label:'Amazing views', icon:'<path d="M2 16 L9 8 L14 13 L20 5"/><circle cx="18" cy="6" r="2.2"/><path d="M2 20 h20"/>'},
+  {id:'cabins',   label:'Cabins',        icon:'<path d="M3 13 L12 5 L21 13"/><path d="M6 12 v8 h12 v-8"/><path d="M10 20 v-5 h4 v5"/>'},
+  {id:'beach',    label:'Beachfront',    icon:'<path d="M2 18 q3 -2 6 0 t6 0 t6 0"/><path d="M12 18 V7"/><path d="M12 7 C7 7 6 11 4 12 C8 12 12 11 12 7 C12 11 16 12 20 12 C18 11 17 7 12 7"/>'},
+  {id:'tiny',     label:'Tiny homes',    icon:'<rect x="7" y="10" width="10" height="9" rx="1"/><path d="M5 10 L12 4 L19 10"/><circle cx="9.5" cy="14" r="1"/>'},
+  {id:'castles',  label:'Castles',       icon:'<path d="M5 20 V9 l2 -1 V5 h2 v2 h2 V5 h2 v2 h2 V5 h2 v3 l2 1 v11"/><path d="M5 20 h14"/>'},
+  {id:'tree',     label:'Treehouses',    icon:'<circle cx="12" cy="8" r="5"/><path d="M12 13 v8"/><rect x="9" y="14" width="6" height="4" rx="1"/>'},
+  {id:'lake',     label:'Lakefront',     icon:'<path d="M2 17 q3 -2 6 0 t6 0 t6 0"/><path d="M7 13 L12 6 L17 13"/><path d="M4 13 h16"/>'},
+  {id:'city',     label:'City',          icon:'<rect x="4" y="10" width="6" height="10"/><rect x="14" y="4" width="6" height="16"/><path d="M2 20 h20"/>'},
+  {id:'desert',   label:'Desert',        icon:'<circle cx="17" cy="7" r="3"/><path d="M2 18 Q8 12 14 17 T22 16"/>'},
+  {id:'country',  label:'Countryside',   icon:'<path d="M3 17 L9 9 L13 13 L21 5"/><path d="M3 20 h18"/>'}
+];
+const LISTINGS = [
+  {city:'Joshua Tree, California', country:'United States', name:'Desert dome under the stars', scene:'desert', cat:'views',   rating:'4.96', reviews:312, price:214, fav:true,  host:'Individual host', beds:'Stargazing deck · 2 beds', dates:'Jan 12 – 17', pin:[22,38]},
+  {city:'Marbella, Spain',         country:'Spain',          name:'Beachfront villa with pool',  scene:'beach',  cat:'beach',   rating:'4.89', reviews:204, price:386, fav:false, host:'Superhost',       beds:'Sea views · 3 bedrooms',  dates:'Feb 2 – 7',   pin:[47,60]},
+  {city:'Kyoto, Japan',            country:'Japan',          name:'Machiya townhouse',           scene:'city',   cat:'city',    rating:'4.93', reviews:178, price:152, fav:true,  host:'Individual host', beds:'Garden patio · 2 bedrooms', dates:'Mar 8 – 13', pin:[82,30]},
+  {city:'Oia, Santorini',          country:'Greece',         name:'Cliffside cave suite',        scene:'beach',  cat:'views',   rating:'4.97', reviews:421, price:512, fav:true,  host:'Superhost',       beds:'Caldera view · Plunge pool', dates:'Apr 4 – 9', pin:[55,66]},
+  {city:'Aspen, Colorado',         country:'United States',  name:'Alpine A-frame cabin',        scene:'cabin',  cat:'cabins',  rating:'4.91', reviews:156, price:445, fav:false, host:'Superhost',       beds:'Hot tub · Ski-in access', dates:'Jan 19 – 24', pin:[26,52]},
+  {city:'Big Sur, California',     country:'United States',  name:'Redwood treehouse retreat',   scene:'forest', cat:'tree',    rating:'4.88', reviews:98,  price:289, fav:false, host:'Individual host', beds:'Forest canopy deck',      dates:'Feb 15 – 20', pin:[18,64]},
+  {city:'Lake Como, Italy',        country:'Italy',          name:'Villa balcony over the lake', scene:'lake',   cat:'lake',    rating:'4.95', reviews:267, price:378, fav:true,  host:'Superhost',       beds:'Lake view · 2 bedrooms',  dates:'May 3 – 8',   pin:[60,44]},
+  {city:'Reykjavík, Iceland',      country:'Iceland',        name:'Nordic glass cabin',          scene:'cabin',  cat:'views',   rating:'4.94', reviews:189, price:332, fav:false, host:'Individual host', beds:'Northern lights view',    dates:'Jan 26 – 31', pin:[40,20]},
+  {city:'Cotswolds, England',      country:'United Kingdom', name:'Honey-stone cottage',         scene:'country',cat:'country', rating:'4.90', reviews:143, price:198, fav:false, host:'Superhost',       beds:'Fireplace · Garden',      dates:'Mar 22 – 27', pin:[52,34]},
+  {city:'Ubud, Bali',              country:'Indonesia',      name:'Jungle villa and pool',       scene:'forest', cat:'views',   rating:'4.92', reviews:231, price:176, fav:false, host:'Superhost',       beds:'Infinity pool · 3 bedrooms', dates:'Jun 7 – 12', pin:[88,62]},
+  {city:'Marrakech, Morocco',      country:'Morocco',        name:'Riad courtyard suite',        scene:'desert', cat:'desert',  rating:'4.87', reviews:167, price:124, fav:false, host:'Individual host', beds:'Plunge pool · Rooftop',   dates:'Apr 18 – 23', pin:[50,72]},
+  {city:'Bavaria, Germany',        country:'Germany',        name:'Fairytale castle stay',       scene:'castle', cat:'castles', rating:'4.98', reviews:96,  price:890, fav:true,  host:'Professional host', beds:'Tower suite · 4 guests',  dates:'May 17 – 22', pin:[64,28]}
+];
+const MODES = ['day','dusk','night'];
+const NIGHTS = 5;
+
+/* ---------- render: categories ---------- */
+const catBar = document.getElementById('cat-bar');
+let activeCat = 'all';
+function renderCats(){
+  catBar.innerHTML =
+    '<button class="cat'+(activeCat==='all'?' is-active':'')+'" data-cat="all" role="tab" aria-selected="'+(activeCat==='all')+'">'
+    + '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4 v16 M4 12 h16"/></svg><span>All stays</span></button>'
+    + CATS.map(c =>
+      '<button class="cat'+(activeCat===c.id?' is-active':'')+'" data-cat="'+c.id+'" role="tab" aria-selected="'+(activeCat===c.id)+'">'
+      + '<svg viewBox="0 0 24 24">'+c.icon+'</svg><span>'+c.label+'</span></button>'
+    ).join('');
+  catBar.querySelectorAll('.cat').forEach(b => b.addEventListener('click', () => {
+    activeCat = b.dataset.cat;
+    renderCats(); applyFilters();
+    const active = catBar.querySelector('.is-active');
+    if(active) active.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+  }));
+}
+
+/* ---------- render: cards ---------- */
+const grid = document.getElementById('grid');
+const saved = new Set();
+let showTotals = false;
+const money = n => '$' + n.toLocaleString('en-US');
+
+function priceHTML(l){
+  const total = l.price * NIGHTS;
+  if(showTotals)
+    return '<p class="price-row"><strong>'+money(total)+'</strong> total before taxes <span class="price-total">'+money(l.price)+' night</span></p>';
+  return '<p class="price-row"><strong>'+money(l.price)+'</strong> night <span class="price-total">· '+money(total)+' total</span></p>';
+}
+
+function renderCards(){
+  grid.innerHTML = LISTINGS.map((l,i) => {
+    const slides = MODES.map((m,k) =>
+      '<div class="slide'+(k===0?' on':'')+'"><svg viewBox="0 0 400 380" preserveAspectRatio="xMidYMid slice" role="img" aria-label="'+l.name+' — '+m+' view">'+SCENES[l.scene](m)+'</svg></div>'
+    ).join('');
+    return '<article class="card" data-i="'+i+'" data-cat="'+l.cat+'" data-search="'+(l.city+' '+l.country+' '+l.name).toLowerCase()+'">'
+      + '<div class="photo">' + slides
+      + (l.fav ? '<span class="badge">Guest favorite</span>' : '')
+      + '<button class="heart" aria-label="Save '+l.name+' to wishlist" aria-pressed="false">'
+      + '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>'
+      + '<button class="nav-arrow prev" aria-label="Previous photo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2.6"><path d="M15 5l-7 7 7 7"/></svg></button>'
+      + '<button class="nav-arrow next" aria-label="Next photo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2.6"><path d="M9 5l7 7-7 7"/></svg></button>'
+      + '<div class="dots"><i class="on"></i><i></i><i></i></div>'
+      + '</div>'
+      + '<div class="meta">'
+      + '<div class="row"><strong>'+l.city+'</strong><span class="rating"><span class="star">★</span> '+l.rating+'</span></div>'
+      + '<p>'+l.beds+'</p>'
+      + '<p>'+l.dates+'</p>'
+      + priceHTML(l)
+      + '</div></article>';
+  }).join('');
+
+  grid.querySelectorAll('.card').forEach(card => {
+    const i = +card.dataset.i;
+    const slides = card.querySelectorAll('.slide');
+    const dots = card.querySelectorAll('.dots i');
+    let cur = 0;
+    const go = n => {
+      cur = (n + slides.length) % slides.length;
+      slides.forEach((s,k)=>s.classList.toggle('on', k===cur));
+      dots.forEach((d,k)=>d.classList.toggle('on', k===cur));
+    };
+    card.querySelector('.prev').addEventListener('click', e => {e.stopPropagation(); go(cur-1);});
+    card.querySelector('.next').addEventListener('click', e => {e.stopPropagation(); go(cur+1);});
+    const heart = card.querySelector('.heart');
+    if(saved.has(i)) heart.setAttribute('aria-pressed','true');
+    heart.addEventListener('click', e => {
+      e.stopPropagation();
+      const on = heart.getAttribute('aria-pressed') === 'true';
+      heart.setAttribute('aria-pressed', String(!on));
+      on ? saved.delete(i) : saved.add(i);
+    });
+  });
+}
+
+/* ---------- filters ---------- */
+const qWhere = document.getElementById('q-where');
+const noResults = document.getElementById('no-results');
+const resultsTitle = document.getElementById('results-title');
+const resultsSub = document.getElementById('results-sub');
+
+function applyFilters(){
+  const q = qWhere.value.trim().toLowerCase();
+  let n = 0;
+  grid.querySelectorAll('.card').forEach(card => {
+    const okCat = activeCat==='all' || card.dataset.cat===activeCat;
+    const okQ = !q || card.dataset.search.includes(q);
+    const show = okCat && okQ;
+    card.classList.toggle('hidden', !show);
+    if(show) n++;
+  });
+  noResults.classList.toggle('open', n===0);
+  const catLabel = activeCat==='all' ? 'around the world'
+    : CATS.find(c=>c.id===activeCat).label.toLowerCase();
+  resultsTitle.textContent = q
+    ? 'Stays matching “'+qWhere.value.trim()+'”'
+    : 'Stays '+catLabel;
+  resultsSub.textContent = n===0 ? 'No stays found'
+    : 'Over '+n+' stay'+(n===1?'':'s')+' · Jan 12 – 17 · 2 guests';
+}
+document.getElementById('search-form').addEventListener('submit', e => {e.preventDefault(); applyFilters();});
+qWhere.addEventListener('input', applyFilters);
+document.getElementById('reset-btn').addEventListener('click', () => {
+  qWhere.value=''; activeCat='all'; renderCats(); applyFilters();
+});
+document.getElementById('total-toggle').addEventListener('change', e => {
+  showTotals = e.target.checked;
+  grid.querySelectorAll('.card').forEach(card => {
+    const l = LISTINGS[+card.dataset.i];
+    card.querySelector('.price-row').outerHTML = priceHTML(l);
+  });
+});
+
+/* ---------- map ---------- */
+const mapWrap = document.getElementById('map-wrap');
+const pinsBox = document.getElementById('pins');
+const mapToggle = document.getElementById('map-toggle');
+const mapLabel = document.getElementById('map-toggle-label');
+let mapOpen = false;
+
+pinsBox.innerHTML = LISTINGS.map((l,i) =>
+  '<button class="pin" data-i="'+i+'" style="left:'+l.pin[0]+'%;top:'+l.pin[1]+'%">'+money(l.price)+'</button>'
+).join('');
+pinsBox.querySelectorAll('.pin').forEach(pin => pin.addEventListener('click', () => {
+  pinsBox.querySelectorAll('.pin').forEach(p=>p.classList.remove('is-active'));
+  pin.classList.add('is-active');
+  const card = grid.querySelector('.card[data-i="'+pin.dataset.i+'"]');
+  grid.querySelectorAll('.card').forEach(c=>c.classList.remove('flash'));
+  if(card){
+    card.classList.remove('hidden');
+    card.classList.add('flash');
+    setTimeout(()=>card.scrollIntoView({behavior:'smooth', block:'center'}), 60);
+    setTimeout(()=>card.classList.remove('flash'), 2200);
+  }
+}));
+mapToggle.addEventListener('click', () => {
+  mapOpen = !mapOpen;
+  mapWrap.classList.toggle('open', mapOpen);
+  grid.style.display = mapOpen ? 'none' : '';
+  noResults.classList.toggle('open', false);
+  mapLabel.textContent = mapOpen ? 'Show list' : 'Show map';
+  mapToggle.setAttribute('aria-pressed', String(mapOpen));
+  if(mapOpen) mapWrap.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ---------- product tabs ---------- */
+const staysView = document.getElementById('stays-view');
+const altView = document.getElementById('alt-view');
+document.querySelectorAll('.product-tabs button').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.product-tabs button').forEach(b=>b.classList.remove('is-active'));
+  btn.classList.add('is-active');
+  const tab = btn.dataset.tab;
+  if(tab==='stays'){ staysView.style.display=''; altView.style.display='none'; }
+  else {
+    staysView.style.display='none'; altView.style.display='';
+    document.getElementById('alt-title').textContent = tab==='experiences' ? 'Experiences' : 'Services';
+    document.getElementById('alt-copy').textContent =
+      'This demo focuses on Stays — the heart of the Airbnb product. Head back to browse homes around the world.';
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+}));
+document.getElementById('back-btn').addEventListener('click', () =>
+  document.querySelector('.product-tabs button[data-tab="stays"]').click());
+
+/* ---------- init ---------- */
+renderCats();
+renderCards();
+applyFilters();
+</script>
+</body>
+</html>
