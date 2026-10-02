@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>flat-design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#009688;       --teal-dark:#00796B;
+    --orange:#FF5722;      --orange-dark:#D84315;
+    --amber:#FFC107;       --amber-dark:#E68900;
+    --blue:#2196F3;       --blue-dark:#1565C0;
+    --ink:#212121;        --ink-2:#757575; --line:#E3E3E3;
+    --paper:#FFFFFF;      --canvas:#FAFAFA;
+    --font:"Nunito","Segoe UI","Avenir Next",system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{font-family:var(--font);color:var(--ink);background:var(--canvas);line-height:1.5}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  a{text-decoration:none}
+
+  /* ---------- long shadow helper: hard 45° steps, darker tint of surface ---------- */
+  .ls{--ls:rgba(0,0,0,.12);
+    box-shadow:8px 8px 0 var(--ls),16px 16px 0 var(--ls),
+               24px 24px 0 var(--ls),32px 32px 0 rgba(0,0,0,.04)}
+
+  /* ---------- buttons: solid, tinted elevation only ---------- */
+  .btn{display:inline-block;border:0;border-radius:4px;cursor:pointer;font-family:var(--font);
+    font-weight:800;font-size:16px;padding:15px 30px;color:#fff;background:var(--orange);
+    box-shadow:0 6px 16px rgba(216,67,21,.35);
+    transition:transform .18s ease-out,box-shadow .18s ease-out}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(216,67,21,.42)}
+  .btn:active{transform:translateY(1px);box-shadow:0 3px 8px rgba(216,67,21,.35)}
+  .btn-ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px #fff}
+  .btn-ghost:hover{box-shadow:inset 0 0 0 2px #fff;background:rgba(255,255,255,.12)}
+  .btn-teal{background:var(--teal);box-shadow:0 6px 16px rgba(0,121,107,.35)}
+  .btn-teal:hover{box-shadow:0 10px 24px rgba(0,121,107,.42)}
+  .btn-sm{padding:11px 22px;font-size:14px}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:60;background:var(--paper)}
+  .nav-in{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:32px}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:900;font-size:23px;letter-spacing:-.01em;color:var(--ink)}
+  .logo-mark{width:36px;height:36px;border-radius:9px;background:var(--teal);display:grid;place-items:center;
+    box-shadow:3px 3px 0 var(--teal-dark),6px 6px 0 var(--teal-dark),9px 9px 0 var(--teal-dark)}
+  .nav-links{display:flex;gap:30px;margin-left:auto;align-items:center}
+  .nav-links a{color:var(--ink-2);font-weight:700;font-size:15px}
+  .nav-links a:hover{color:var(--ink)}
+  .burger{display:none;margin-left:auto;border:0;background:var(--canvas);border-radius:4px;
+    width:44px;height:44px;cursor:pointer;flex-direction:column;gap:6px;align-items:center;justify-content:center}
+  .burger span{display:block;width:22px;height:3px;border-radius:2px;background:var(--ink)}
+  .mobile-menu{display:none;background:var(--paper);border-top:1px solid #eee;padding:8px 24px 20px}
+  .mobile-menu a{display:block;padding:13px 0;font-weight:700;font-size:16px;color:var(--ink);border-bottom:1px solid #f0f0f0}
+  .mobile-menu .btn{margin-top:14px;width:100%}
+  body.nav-open .mobile-menu{display:block}
+
+  /* ---------- hero: one bold solid block ---------- */
+  .hero{background:var(--teal);color:#fff;overflow:hidden}
+  .hero-in{max-width:1120px;margin:0 auto;padding:88px 24px 112px;display:grid;
+    grid-template-columns:1.02fr .98fr;gap:56px;align-items:center}
+  .eyebrow{font-size:13px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;opacity:.85;margin-bottom:20px}
+  h1{font-size:60px;line-height:1.02;font-weight:900;letter-spacing:-.02em;margin-bottom:22px;
+    text-shadow:4px 4px 0 var(--teal-dark),8px 8px 0 var(--teal-dark),
+                12px 12px 0 var(--teal-dark),16px 16px 0 var(--teal-dark)}
+  .hero .lede{font-size:19px;font-weight:600;max-width:44ch;margin-bottom:34px;opacity:.96}
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap}
+  .hero-proof{margin-top:28px;font-size:14px;font-weight:700;opacity:.85}
+
+  /* ---------- flat phone mockup: pure geometry ---------- */
+  .stage{position:relative;height:500px}
+  .phone{position:absolute;top:8px;left:50%;transform:translateX(-50%) rotate(-2deg);width:282px;
+    background:var(--paper);border-radius:28px;padding:16px 16px 22px;color:var(--ink);
+    box-shadow:0 30px 60px rgba(0,77,64,.35)}
+  .ph-notch{width:110px;height:20px;background:var(--ink);border-radius:0 0 10px 10px;margin:0 auto 12px}
+  .ph-row{display:flex;align-items:center;gap:11px}
+  .ph-ava{width:40px;height:40px;border-radius:50%;background:var(--amber);display:grid;
+    place-items:center;font-weight:900;color:var(--ink);font-size:16px}
+  .ph-row .t{font-weight:900;font-size:16px;line-height:1.2}
+  .ph-row .s{font-size:12px;font-weight:700;color:var(--ink-2)}
+  .ph-bell{margin-left:auto;width:36px;height:36px;border-radius:10px;background:var(--canvas);
+    display:grid;place-items:center}
+  .ph-bal{background:var(--orange);border-radius:14px;color:#fff;padding:18px;margin-top:14px;
+    --ls:var(--orange-dark);
+    box-shadow:6px 6px 0 var(--ls),12px 12px 0 var(--ls),18px 18px 0 rgba(0,0,0,.06)}
+  .ph-bal .lbl{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.92}
+  .ph-bal strong{display:block;font-size:35px;font-weight:900;letter-spacing:-.02em;margin:3px 0}
+  .ph-bal .sub{font-size:13px;font-weight:700}
+  .ph-bars{display:flex;align-items:flex-end;gap:8px;height:78px;margin-top:16px;padding:0 4px}
+  .ph-bars i{flex:1;border-radius:4px 4px 2px 2px;background:var(--blue);min-height:8px}
+  .ph-bars i:nth-child(2n){background:var(--teal)}
+  .ph-bars i:nth-child(3){background:var(--amber)}
+  .ph-bars i:nth-child(6){background:var(--orange)}
+  .ph-tx{list-style:none;margin-top:14px}
+  .ph-tx li{display:flex;align-items:center;gap:11px;padding:10px 2px;border-top:1px solid #f1f1f1;font-size:13px}
+  .tx-ico{flex:0 0 34px;width:34px;height:34px;border-radius:9px;display:grid;place-items:center}
+  .tx-l{flex:1;font-weight:800}
+  .tx-l em{display:block;font-style:normal;font-weight:600;color:var(--ink-2);font-size:12px}
+  .tx-amt{font-weight:900;font-size:14px}
+  .tx-amt.out{color:var(--ink)}
+  .tx-amt.in{color:var(--teal-dark)}
+  .ph-btn{margin-top:16px;background:var(--ink);color:#fff;border-radius:10px;text-align:center;
+    font-weight:900;font-size:15px;padding:14px;cursor:pointer;transition:transform .15s ease-out}
+  .ph-btn:hover{transform:translateY(-2px)}
+  .ph-btn:active{transform:translateY(1px)}
+
+  /* floating geometric shapes, each with a 45° stepped long shadow */
+  .shape{position:absolute;display:grid;place-items:center;font-weight:900;color:#fff}
+  .shape.coin{width:78px;height:78px;border-radius:50%;background:var(--amber);color:var(--ink);
+    font-size:32px;top:30px;left:5%;
+    --ls:var(--amber-dark);
+    box-shadow:7px 7px 0 var(--ls),14px 14px 0 var(--ls),21px 21px 0 var(--ls),28px 28px 0 rgba(0,0,0,.06)}
+  .shape.sq{width:66px;height:66px;border-radius:12px;background:var(--blue);top:316px;left:1%;
+    --ls:var(--blue-dark);
+    box-shadow:6px 6px 0 var(--ls),12px 12px 0 var(--ls),18px 18px 0 var(--ls),24px 24px 0 rgba(0,0,0,.06)}
+  .shape.note{background:var(--paper);color:var(--ink);border-radius:8px;padding:12px 17px;font-size:13px;
+    top:160px;right:0;display:flex;gap:10px;align-items:center;
+    box-shadow:6px 6px 0 rgba(0,0,0,.10),12px 12px 0 rgba(0,0,0,.10),18px 18px 0 rgba(0,0,0,.05)}
+  .shape.note .dot{width:11px;height:11px;border-radius:50%;background:var(--teal)}
+  .shape.tri{top:404px;right:7%;width:0;height:0;border-left:34px solid transparent;
+    border-right:34px solid transparent;border-bottom:56px solid var(--orange);
+    filter:drop-shadow(6px 6px 0 var(--orange-dark)) drop-shadow(12px 12px 0 var(--orange-dark))}
+
+  /* ---------- stats band with display numerals ---------- */
+  .stats{background:var(--ink);color:#fff}
+  .stats-in{max-width:1120px;margin:0 auto;padding:52px 24px;display:grid;
+    grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+  .stat b{display:block;font-size:44px;font-weight:900;letter-spacing:-.02em;
+    text-shadow:3px 3px 0 #000,6px 6px 0 #000,9px 9px 0 rgba(0,0,0,.55)}
+  .stat b .unit{font-size:24px;vertical-align:baseline}
+  .stat span{font-size:14px;font-weight:700;opacity:.7}
+
+  /* ---------- features ---------- */
+  .features{padding:96px 0;background:var(--canvas)}
+  .section-head{max-width:660px;margin-bottom:52px}
+  .section-head .kicker{font-size:13px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--orange);margin-bottom:12px}
+  .section-head h2{font-size:40px;font-weight:900;letter-spacing:-.015em;margin-bottom:12px}
+  .section-head p{font-size:18px;color:var(--ink-2);font-weight:600}
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px 32px}
+  .tile{width:72px;height:72px;border-radius:10px;display:grid;place-items:center;margin-bottom:20px;
+    --ls:rgba(0,0,0,.12);
+    box-shadow:6px 6px 0 var(--ls),12px 12px 0 var(--ls),
+               18px 18px 0 var(--ls),24px 24px 0 rgba(0,0,0,.05)}
+  .tile.t-teal{background:var(--teal);--ls:var(--teal-dark)}
+  .tile.t-orange{background:var(--orange);--ls:var(--orange-dark)}
+  .tile.t-blue{background:var(--blue);--ls:var(--blue-dark)}
+  .tile.t-amber{background:var(--amber);--ls:var(--amber-dark)}
+  .tile.t-ink{background:var(--ink);--ls:#000}
+  .tile.t-teal2{background:var(--teal-dark);--ls:#00564E}
+  .feat h3{font-size:19px;font-weight:900;margin-bottom:8px}
+  .feat p{color:var(--ink-2);font-size:15.5px;font-weight:600}
+
+  /* ---------- tabs: one app, three jobs ---------- */
+  .jobs{background:var(--paper);padding:96px 0}
+  .tabs{display:inline-flex;background:var(--canvas);border-radius:6px;padding:5px;margin:34px 0 40px;
+    box-shadow:0 4px 14px rgba(33,33,33,.08)}
+  .tab{border:0;background:transparent;padding:12px 26px;border-radius:4px;font-family:var(--font);
+    font-weight:800;font-size:15px;color:var(--ink-2);cursor:pointer;transition:background .18s,color .18s}
+  .tab.is-active{background:var(--teal);color:#fff}
+  .panel{display:none}
+  .panel.is-active{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;animation:fadeUp .3s ease-out}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .panel h3{font-size:30px;font-weight:900;letter-spacing:-.015em;margin-bottom:12px}
+  .panel p{font-size:17px;color:var(--ink-2);font-weight:600;margin-bottom:22px;max-width:46ch}
+  .panel ul{list-style:none}
+  .panel li{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;font-size:15.5px;font-weight:700}
+  .check{flex:0 0 24px;width:24px;height:24px;border-radius:6px;background:var(--teal);display:grid;place-items:center;margin-top:1px}
+  /* flat UI cards inside panels: white on tinted solid fields */
+  .mock{background:var(--canvas);border-radius:14px;padding:30px;
+    --ls:rgba(0,0,0,.10);
+    box-shadow:8px 8px 0 var(--ls),16px 16px 0 var(--ls),24px 24px 0 rgba(0,0,0,.04)}
+  .mock .m-title{font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-2);margin-bottom:18px}
+  .bar-row{margin-bottom:16px}
+  .bar-row .lbl{display:flex;justify-content:space-between;font-size:14px;font-weight:800;margin-bottom:7px}
+  .bar-row .lbl span:last-child{color:var(--ink-2)}
+  .bar-track{height:14px;border-radius:4px;background:#E8E8E8;overflow:hidden}
+  .bar-fill{height:100%;border-radius:4px}
+  .goal-wrap{display:flex;align-items:center;gap:26px}
+  .goal-meta .g-name{font-weight:900;font-size:19px}
+  .goal-meta .g-amt{font-weight:800;font-size:15px;color:var(--teal-dark);margin:4px 0 10px}
+  .goal-meta .g-note{font-size:14px;color:var(--ink-2);font-weight:600;max-width:26ch}
+  .bill{display:flex;align-items:center;gap:14px;background:var(--paper);border-radius:10px;
+    padding:15px 18px;margin-bottom:12px}
+  .bill .b-ico{flex:0 0 42px;width:42px;height:42px;border-radius:10px;display:grid;place-items:center}
+  .bill .b-name{flex:1;font-weight:800;font-size:15px}
+  .bill .b-name em{display:block;font-style:normal;font-weight:600;font-size:13px;color:var(--ink-2)}
+  .bill .b-amt{font-weight:900;font-size:16px}
+  .left-card{margin-top:6px;background:var(--ink);color:#fff;border-radius:10px;padding:18px 20px;
+    display:flex;justify-content:space-between;align-items:center}
+  .left-card .k{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+  .left-card strong{font-size:28px;font-weight:900}
+
+  /* ---------- testimonials on a solid amber band ---------- */
+  .quotes{background:var(--amber);color:var(--ink);padding:96px 0}
+  .quotes .section-head .kicker{color:var(--ink)}
+  .quotes .section-head p{color:var(--ink);opacity:.75}
+  .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  .quote{background:var(--paper);border-radius:10px;padding:32px;
+    box-shadow:0 12px 28px rgba(120,70,0,.16)}
+  .quote .stars{display:flex;gap:4px;margin-bottom:16px}
+  .quote p{font-size:16.5px;font-weight:700;line-height:1.55}
+  .quote .who{display:flex;align-items:center;gap:14px;margin-top:24px}
+  .ava{flex:0 0 48px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+    font-weight:900;font-size:17px;color:#fff}
+  .who b{display:block;font-size:15px}
+  .who span{font-size:13px;color:var(--ink-2);font-weight:700}
+
+  /* ---------- pricing ---------- */
+  .pricing{padding:96px 0;background:var(--canvas)}
+  .pricing .section-head{margin-left:auto;margin-right:auto;text-align:center}
+  .billing-row{display:flex;align-items:center;justify-content:center;gap:14px;
+    margin-bottom:12px;font-weight:800;font-size:15px}
+  .switch{display:inline-flex;align-items:center;cursor:pointer;position:relative}
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .track{width:58px;height:30px;border-radius:4px;background:#CFCFCF;position:relative;transition:background .2s}
+  .knob{position:absolute;top:5px;left:5px;width:20px;height:20px;border-radius:3px;background:#fff;transition:left .2s}
+  .switch input:checked + .track{background:var(--teal)}
+  .switch input:checked + .track .knob{left:33px}
+  .switch input:focus-visible + .track{outline:3px solid var(--teal);outline-offset:2px}
+  .billing-row em{font-style:normal;color:var(--teal-dark);font-weight:900}
+  #billing-note{font-size:14px;color:var(--ink-2);font-weight:700;text-align:center;margin-bottom:38px;min-height:21px}
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1020px;
+    margin:0 auto;align-items:stretch}
+  .plan{background:var(--paper);border-radius:10px;padding:36px 32px;display:flex;flex-direction:column}
+  .plan.featured{background:var(--teal);color:#fff;
+    --ls:var(--teal-dark);
+    box-shadow:8px 8px 0 var(--ls),16px 16px 0 var(--ls),24px 24px 0 rgba(0,0,0,.07)}
+  .plan .tag{align-self:flex-start;background:var(--amber);color:var(--ink);font-size:12px;font-weight:900;
+    letter-spacing:.1em;padding:7px 14px;border-radius:4px;margin-bottom:18px;text-transform:uppercase}
+  .plan h3{font-size:21px;font-weight:900;margin-bottom:4px}
+  .plan .for{font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:16px}
+  .plan.featured .for{color:#fff;opacity:.85}
+  .plan .price{font-size:52px;font-weight:900;letter-spacing:-.02em;line-height:1}
+  .plan .price small{font-size:20px;font-weight:800;vertical-align:super}
+  .plan .per{font-size:14px;font-weight:700;color:var(--ink-2);margin:6px 0 22px}
+  .plan.featured .per{color:#fff;opacity:.85}
+  .plan ul{list-style:none;margin:0 0 28px;flex:1}
+  .plan li{display:flex;gap:11px;align-items:flex-start;margin-bottom:11px;font-size:14.5px;font-weight:700}
+  .plan li svg{flex:0 0 20px;margin-top:2px}
+  .plan .btn{width:100%}
+  .plan .btn-line{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--line)}
+  .plan .btn-line:hover{box-shadow:inset 0 0 0 2px var(--ink);transform:translateY(-2px)}
+  .plan.featured .btn{background:var(--orange)}
+
+  /* ---------- faq accordion ---------- */
+  .faq{padding:96px 0;background:var(--paper)}
+  .faq-list{max-width:780px;margin-top:8px}
+  .faq-item{background:var(--canvas);border-radius:8px;margin-bottom:12px}
+  .faq-q{width:100%;border:0;background:none;text-align:left;padding:20px 24px;font-family:var(--font);
+    font-size:17px;font-weight:800;color:var(--ink);cursor:pointer;display:flex;
+    justify-content:space-between;align-items:center;gap:16px}
+  .faq-q .plus{flex:0 0 32px;width:32px;height:32px;border-radius:7px;background:var(--teal);color:#fff;
+    display:grid;place-items:center;transition:transform .2s}
+  .faq-item.open .faq-q .plus{transform:rotate(45deg);background:var(--orange)}
+  .faq-a{display:none;padding:0 24px 24px;color:var(--ink-2);font-size:16px;font-weight:600;max-width:64ch}
+  .faq-item.open .faq-a{display:block}
+
+  /* ---------- cta band + footer ---------- */
+  .cta-band{background:var(--blue);color:#fff;text-align:center;padding:104px 24px}
+  .cta-band h2{font-size:46px;font-weight:900;letter-spacing:-.015em;margin-bottom:16px;
+    text-shadow:4px 4px 0 var(--blue-dark),8px 8px 0 var(--blue-dark),12px 12px 0 var(--blue-dark)}
+  .cta-band p{font-size:18px;font-weight:600;margin-bottom:36px;opacity:.92}
+  .cta-band .btn{background:#fff;color:var(--blue);
+    --ls:var(--blue-dark);
+    box-shadow:6px 6px 0 var(--ls),12px 12px 0 var(--ls),18px 18px 0 rgba(0,0,0,.10)}
+  .cta-band .btn:hover{transform:translateY(-2px)}
+  footer{background:var(--ink);color:#9E9E9E}
+  .foot-in{max-width:1120px;margin:0 auto;padding:60px 24px 36px;display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+  footer h4{color:#fff;font-size:15px;font-weight:900;margin-bottom:16px}
+  footer a{color:#9E9E9E;font-size:14px;font-weight:600;display:block;margin-bottom:11px}
+  footer a:hover{color:#fff}
+  .foot-brand{display:flex;align-items:center;gap:11px;font-size:22px;font-weight:900;color:#fff;margin-bottom:14px}
+  .foot-brand .logo-mark{width:32px;height:32px}
+  .foot-brand + p{font-size:14px;font-weight:600;max-width:34ch}
+  .foot-base{max-width:1120px;margin:0 auto;padding:22px 24px;border-top:1px solid #424242;
+    font-size:13px;font-weight:600;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+  /* ---------- scroll reveal ---------- */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease-out,transform .5s ease-out}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (max-width:940px){
+    h1{font-size:42px}
+    .hero-in{grid-template-columns:1fr;padding:56px 24px 72px;gap:44px}
+    .stage{height:470px;max-width:420px;margin:0 auto;width:100%}
+    .stats-in{grid-template-columns:repeat(2,1fr);gap:30px}
+    .feat-grid{grid-template-columns:1fr 1fr}
+    .panel.is-active{grid-template-columns:1fr;gap:36px}
+    .quote-grid{grid-template-columns:1fr}
+    .plans{grid-template-columns:1fr;max-width:440px}
+    .nav-links,.nav-in .btn{display:none}
+    .burger{display:flex}
+    .foot-in{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:560px){
+    .feat-grid{grid-template-columns:1fr}
+    .cta-band h2{font-size:34px}
+    .stats-in{grid-template-columns:1fr 1fr}
+    .stat b{font-size:34px}
+  }
+</style>
+</head>
+<body id="top">
+<nav aria-label="Main navigation">
+  <div class="nav-in">
+    <a class="logo" href="#top" aria-label="Pockets home">
+      <span class="logo-mark" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 0 0 4h14a3 3 0 0 1 0 6H9"/><circle cx="17.5" cy="16" r="1.4" fill="#fff" stroke="none"/></svg>
+      </span>
+      Pockets
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#jobs">How it works</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <a class="btn btn-teal btn-sm nav-cta" href="#pricing">Get the app</a>
+    <button class="burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features">Features</a>
+    <a href="#jobs">How it works</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#pricing">Pricing</a>
+    <a class="btn btn-teal" href="#pricing">Get the app</a>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <p class="eyebrow">The friendly budget app</p>
+      <h1>Give every euro a job.</h1>
+      <p class="lede">Pockets sorts your spending automatically, nudges you before you overshoot, and turns saving into something you actually look forward to.</p>
+      <div class="hero-ctas">
+        <a class="btn" href="#pricing">Start free</a>
+        <a class="btn btn-ghost" href="#jobs">See how it works</a>
+      </div>
+      <p class="hero-proof">Free forever plan &middot; No card needed &middot; 4.9 on the App Store</p>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="phone">
+        <div class="ph-notch"></div>
+        <div class="ph-row">
+          <div class="ph-ava">M</div>
+          <div>
+            <div class="t">Hi, Marta</div>
+            <div class="s">October budget</div>
+          </div>
+          <div class="ph-bell">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#212121" stroke-width="2.2" stroke-linecap="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          </div>
+        </div>
+        <div class="ph-bal">
+          <div class="lbl">Left to spend</div>
+          <strong>&euro;1,240</strong>
+          <div class="sub">of &euro;2,000 &middot; 12 days to go</div>
+        </div>
+        <div class="ph-bars">
+          <i style="height:38%"></i><i style="height:55%"></i><i style="height:42%"></i>
+          <i style="height:70%"></i><i style="height:60%"></i><i style="height:88%"></i><i style="height:48%"></i>
+        </div>
+        <ul class="ph-tx">
+          <li>
+            <span class="tx-ico" style="background:#009688">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>
+            </span>
+            <span class="tx-l">Rent<em>Housing &middot; today</em></span>
+            <span class="tx-amt out">&minus;&euro;650</span>
+          </li>
+          <li>
+            <span class="tx-ico" style="background:#FFC107">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#212121" stroke-width="2.4" stroke-linecap="round"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L5 3H2"/><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/></svg>
+            </span>
+            <span class="tx-l">Mercadona<em>Groceries &middot; yesterday</em></span>
+            <span class="tx-amt out">&minus;&euro;84.20</span>
+          </li>
+          <li>
+            <span class="tx-ico" style="background:#2196F3">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+            </span>
+            <span class="tx-l">Salary<em>Income &middot; Oct 1</em></span>
+            <span class="tx-amt in">+&euro;2,000</span>
+          </li>
+        </ul>
+        <div class="ph-btn">Add expense</div>
+      </div>
+      <div class="shape coin">&euro;</div>
+      <div class="shape sq">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </div>
+      <div class="shape note"><span class="dot"></span>Saved &euro;120 this week</div>
+      <div class="shape tri"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= STATS ================= -->
+<section class="stats" aria-label="Pockets in numbers">
+  <div class="stats-in">
+    <div class="stat reveal"><b><span class="count" data-target="2.4" data-decimals="1">0</span><span class="unit">M</span></b><span>happy savers</span></div>
+    <div class="stat reveal"><b><span class="unit">&euro;</span><span class="count" data-target="1.2" data-decimals="1">0</span><span class="unit">B</span></b><span>tracked every year</span></div>
+    <div class="stat reveal"><b><span class="count" data-target="4.9" data-decimals="1">0</span><span class="unit">&#9733;</span></b><span>average app-store rating</span></div>
+    <div class="stat reveal"><b><span class="count" data-target="38" data-decimals="0">0</span></b><span>countries and counting</span></div>
+  </div>
+</section>
+
+<!-- ================= FEATURES ================= -->
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="kicker">Features</p>
+      <h2>Everything a budget should do, nothing it shouldn't.</h2>
+      <p>No spreadsheets, no guilt trips. Just a clear picture of your money and a gentle push in the right direction.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat reveal">
+        <div class="tile t-teal" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+        </div>
+        <h3>Auto-categorized spending</h3>
+        <p>Every purchase lands in the right pocket by itself. Rent, groceries, nights out — sorted before you've put the phone away.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="tile t-orange" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        </div>
+        <h3>Nudges, not nagging</h3>
+        <p>A friendly heads-up when a pocket runs low — two days before it matters, not two hours after it's too late.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="tile t-blue" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+        </div>
+        <h3>Real-time sync</h3>
+        <p>Bank, card and cash in one place, updated the second money moves. Your balance is always the truth, never a guess.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="tile t-amber" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#212121" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+        </div>
+        <h3>Saving goals that stick</h3>
+        <p>Name it, set a date, watch the ring fill. Pockets moves a little aside every payday so you don't have to think about it.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="tile t-ink" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        </div>
+        <h3>Bank-grade privacy</h3>
+        <p>Read-only bank connections, 256-bit encryption, and your data is never sold. Delete everything with one tap, anytime.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="tile t-teal2" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17.5" cy="9.5" r="2.6"/><path d="M16 14.6c2.9.3 5 2 5.7 4.9"/></svg>
+        </div>
+        <h3>Shared pockets</h3>
+        <p>Split rent, trips and groceries with a partner or flatmates. Everyone sees the shared pockets — nobody sees your private ones.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= JOBS / TABS ================= -->
+<section class="jobs" id="jobs">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="kicker">How it works</p>
+      <h2>One app, three jobs.</h2>
+      <p>Track where it goes, save for what matters, and plan the month before it plans you.</p>
+    </div>
+    <div class="reveal" style="text-align:center">
+      <div class="tabs" role="tablist" aria-label="What Pockets does">
+        <button class="tab is-active" role="tab" aria-selected="true" data-tab="track" id="tab-track">Track</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="save" id="tab-save">Save</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="plan" id="tab-plan">Plan</button>
+      </div>
+    </div>
+
+    <div class="panel is-active" id="panel-track" role="tabpanel" aria-labelledby="tab-track">
+      <div>
+        <h3>See every euro, the moment it moves.</h3>
+        <p>Connect your bank once. Pockets files each transaction into its pocket and shows you the month as it really looks — not as you remember it.</p>
+        <ul>
+          <li><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg></span>120+ spending categories, auto-assigned</li>
+          <li><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg></span>Cash expenses added in under five seconds</li>
+          <li><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg></span>Weekly digest every Sunday evening</li>
+        </ul>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <p class="m-title">October spending</p>
+        <div class="bar-row"><div class="lbl"><span>Housing</span><span>&euro;650</span></div><div class="bar-track"><div class="bar-fill" style="width:92%;background:#009688"></div></div></div>
+        <div class="bar-row"><div class="lbl"><span>Groceries</span><span>&euro;310</span></div><div class="bar-track"><div class="bar-fill" style="width:56%;background:#2196F3"></div></div></div>
+        <div class="bar-row"><div class="lbl"><span>Going out</span><span>&euro;145</span></div><div class="bar-track"><div class="bar-fill" style="width:34%;background:#FFC107"></div></div></div>
+        <div class="bar-row" style="margin-bottom:0"><div class="lbl"><span>Transport</span><span>&euro;88</span></div><div class="bar-track"><div class="bar-fill" style="width:22%;background:#FF5722"></div></div></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-save" role="tabpanel" aria-labelledby="tab-save">
+      <div>
+        <h3>Goals that fill themselves.</h3>
+        <p>Pick a goal and a date. Pockets sets aside a little every payday and shows the ring filling — watching it grow is half the fun.</p>
+        <ul>
+          <li><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg></span>Automatic round-ups on every purchase</li>
+          <li><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg></span>Payday transfers you can pause anytime</li>
+          <li><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg></span>Shared goals for trips and gifts</li>
+        </ul>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <p class="m-title">Saving goals</p>
+        <div class="goal-wrap">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="54" fill="none" stroke="#E8E8E8" stroke-width="16"/>
+            <circle cx="65" cy="65" r="54" fill="none" stroke="#009688" stroke-width="16"
+              stroke-linecap="round" stroke-dasharray="230.7 339.3" transform="rotate(-90 65 65)"/>
+            <text x="65" y="62" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="24" fill="#212121">68%</text>
+            <text x="65" y="84" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="700" font-size="12" fill="#757575">of goal</text>
+          </svg>
+          <div class="goal-meta">
+            <div class="g-name">Lisbon long weekend</div>
+            <div class="g-amt">&euro;816 of &euro;1,200</div>
+            <div class="g-note">On track — &euro;96 per payday until Dec 12.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-plan" role="tabpanel" aria-labelledby="tab-plan">
+      <div>
+        <h3>Plan the month before it plans you.</h3>
+        <p>Bills, subscriptions and paydays on one timeline. Pockets tells you what's safe to spend today — down to the euro.</p>
+        <ul>
+          <li><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg></span>Subscription radar finds forgotten trials</li>
+          <li><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg></span>"Safe to spend" figure updates daily</li>
+          <li><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg></span>Bill reminders two days ahead</li>
+        </ul>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <p class="m-title">Upcoming</p>
+        <div class="bill">
+          <span class="b-ico" style="background:#FF5722"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg></span>
+          <span class="b-name">Electricity<em>Due Oct 5</em></span><span class="b-amt">&euro;62</span>
+        </div>
+        <div class="bill">
+          <span class="b-ico" style="background:#2196F3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></span>
+          <span class="b-name">Phone plan<em>Due Oct 12</em></span><span class="b-amt">&euro;19</span>
+        </div>
+        <div class="bill">
+          <span class="b-ico" style="background:#009688"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+          <span class="b-name">Gym<em>Due Oct 15</em></span><span class="b-amt">&euro;35</span>
+        </div>
+        <div class="left-card"><span class="k">Safe to spend today</span><strong>&euro;41</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="quotes" id="reviews">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="kicker">Reviews</p>
+      <h2>Loved by people who used to hate budgeting.</h2>
+      <p>2.4 million savers, one shared opinion: it finally feels easy.</p>
+    </div>
+    <div class="quote-grid">
+      <div class="quote reveal">
+        <div class="stars" aria-label="5 out of 5 stars">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+        </div>
+        <p>"Pockets ended the 'where did all my money go' conversation in our house. The nudges arrive before the damage, not after."</p>
+        <div class="who">
+          <span class="ava" style="background:#009688" aria-hidden="true">MR</span>
+          <div><b>Marta Ruiz</b><span>Teacher &middot; Zaragoza</span></div>
+        </div>
+      </div>
+      <div class="quote reveal">
+        <div class="stars" aria-label="5 out of 5 stars">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+        </div>
+        <p>"I'm a freelancer with chaotic income and Pockets is the first app that gets it. The safe-to-spend number is my favorite thing on my phone."</p>
+        <div class="who">
+          <span class="ava" style="background:#FF5722" aria-hidden="true">DK</span>
+          <div><b>Daniel Kova&#269;</b><span>Freelance designer &middot; Berlin</span></div>
+        </div>
+      </div>
+      <div class="quote reveal">
+        <div class="stars" aria-label="5 out of 5 stars">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E68900"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg>
+        </div>
+        <p>"We share pockets for groceries and the trip fund, and I still keep my own private ones. It's the only money app my wife and I both open daily."</p>
+        <div class="who">
+          <span class="ava" style="background:#2196F3" aria-hidden="true">AS</span>
+          <div><b>Amara Silva</b><span>Nurse &middot; Lisbon</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRICING ================= -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="kicker">Pricing</p>
+      <h2>Honest prices, no fine print.</h2>
+      <p>Start free, upgrade when it pays for itself. Cancel in two taps, keep your data.</p>
+    </div>
+    <div class="billing-row reveal">
+      <span>Monthly</span>
+      <label class="switch">
+        <input type="checkbox" id="billingToggle" aria-label="Toggle yearly billing">
+        <span class="track" aria-hidden="true"><span class="knob"></span></span>
+      </label>
+      <span>Yearly <em>&minus;20%</em></span>
+    </div>
+    <p id="billing-note">Billed monthly. Cancel anytime.</p>
+    <div class="plans">
+      <div class="plan reveal">
+        <h3>Starter</h3>
+        <p class="for">For trying the habit</p>
+        <p class="price"><small>&euro;</small><span class="p-val" data-m="0" data-y="0">0</span></p>
+        <p class="per p-per" data-m="free forever" data-y="free forever">free forever</p>
+        <ul>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009688" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>Auto-categorized spending</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009688" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>2 budget pockets</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009688" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>1 device</li>
+        </ul>
+        <a class="btn btn-line" href="#top">Start free</a>
+      </div>
+      <div class="plan featured reveal">
+        <span class="tag">Most popular</span>
+        <h3>Plus</h3>
+        <p class="for">For serious savers</p>
+        <p class="price"><small>&euro;</small><span class="p-val" data-m="4.99" data-y="3.99">4.99</span></p>
+        <p class="per p-per" data-m="per month, billed monthly" data-y="per month, billed yearly (&euro;47.88)">per month, billed monthly</p>
+        <ul>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>Everything in Starter</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>Unlimited pockets &amp; goals</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>Bank sync &amp; bill radar</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>All devices, priority support</li>
+        </ul>
+        <a class="btn" href="#top">Try Plus free for 30 days</a>
+      </div>
+      <div class="plan reveal">
+        <h3>Family</h3>
+        <p class="for">For households that share</p>
+        <p class="price"><small>&euro;</small><span class="p-val" data-m="8.99" data-y="7.19">8.99</span></p>
+        <p class="per p-per" data-m="per month, billed monthly" data-y="per month, billed yearly (&euro;86.28)">per month, billed monthly</p>
+        <ul>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009688" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>Everything in Plus</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009688" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>6 members, shared pockets</li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#009688" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 7"/></svg>Private pockets stay private</li>
+        </ul>
+        <a class="btn btn-line" href="#top">Start Family trial</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="kicker">FAQ</p>
+      <h2>Fair questions.</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Is my bank login safe with Pockets?<span class="plus" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <p class="faq-a">Yes. Connections are read-only through regulated open-banking providers — Pockets can see transactions but can never move money. Everything is encrypted with 256-bit AES, and you can revoke access or delete your data in one tap.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What happens when the free trial of Plus ends?<span class="plus" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <p class="faq-a">Nothing sneaky. You drop back to the free Starter plan automatically — we never charge without asking. Your pockets, history and goals stay exactly where you left them.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Can I share Pockets without sharing everything?<span class="plus" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <p class="faq-a">That's the whole point of shared pockets. Invite someone to the groceries or trip pocket and they only see that one. Your personal pockets, salary and private goals stay invisible to everyone else.</p>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Does Pockets work with cash?<span class="plus" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <p class="faq-a">Yes — tap "Add expense", type the amount and pick a pocket. It takes under five seconds, and cash entries sit right next to your bank transactions in the same timeline.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="cta-band">
+  <h2 class="reveal">Your money, finally friendly.</h2>
+  <p class="reveal">Join 2.4 million people who stopped guessing. Free to start, two minutes to set up.</p>
+  <a class="btn reveal" href="#pricing">Start free today</a>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="foot-in">
+    <div>
+      <div class="foot-brand">
+        <span class="logo-mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 0 0 4h14a3 3 0 0 1 0 6H9"/><circle cx="17.5" cy="16" r="1.4" fill="#fff" stroke="none"/></svg>
+        </span>
+        Pockets
+      </div>
+      <p>The friendly budget app. Track spending, save for what matters, plan the month — all in one place.</p>
+    </div>
+    <div>
+      <h4>Product</h4>
+      <a href="#features">Features</a>
+      <a href="#jobs">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#reviews">Reviews</a>
+    </div>
+    <div>
+      <h4>Company</h4>
+      <a href="#top">About</a>
+      <a href="#top">Careers</a>
+      <a href="#top">Press kit</a>
+      <a href="#top">Contact</a>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <a href="#top">Privacy</a>
+      <a href="#top">Terms</a>
+      <a href="#top">Security</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <span>&copy; <span id="year">2026</span> Pockets Labs, Inc. Made with solid colors and zero gradients.</span>
+    <span>Built from the flat-design skill &middot; design-skills</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- mobile nav ---------- */
+  var burger = document.getElementById("navBurger");
+  var menu = document.getElementById("mobileMenu");
+  burger.addEventListener("click", function(){
+    var open = document.body.classList.toggle("nav-open");
+    burger.setAttribute("aria-expanded", open ? "true" : "false");
+    burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  });
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      document.body.classList.remove("nav-open");
+      burger.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  /* ---------- tabs ---------- */
+  var tabs = document.querySelectorAll(".tab");
+  tabs.forEach(function(tab){
+    tab.addEventListener("click", function(){
+      tabs.forEach(function(t){
+        t.classList.remove("is-active");
+        t.setAttribute("aria-selected", "false");
+      });
+      document.querySelectorAll(".panel").forEach(function(p){
+        p.classList.remove("is-active");
+      });
+      tab.classList.add("is-active");
+      tab.setAttribute("aria-selected", "true");
+      document.getElementById("panel-" + tab.getAttribute("data-tab")).classList.add("is-active");
+    });
+  });
+
+  /* ---------- animated counters ---------- */
+  function animateCount(el){
+    var target = parseFloat(el.getAttribute("data-target"));
+    var decimals = parseInt(el.getAttribute("data-decimals"), 10) || 0;
+    var start = null, dur = 1400;
+    function frame(now){
+      if(!start) start = now;
+      var p = Math.min((now - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals);
+      if(p < 1) requestAnimationFrame(frame);
+      else el.textContent = target.toFixed(decimals);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- scroll reveal + counters ---------- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add("in");
+        e.target.querySelectorAll(".count").forEach(function(c){
+          if(!c.dataset.done){ c.dataset.done = "1"; animateCount(c); }
+        });
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.25});
+  document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+
+  /* ---------- pricing toggle ---------- */
+  var toggle = document.getElementById("billingToggle");
+  var note = document.getElementById("billing-note");
+  toggle.addEventListener("change", function(){
+    var yearly = toggle.checked;
+    document.querySelectorAll(".p-val").forEach(function(el){
+      el.textContent = yearly ? el.getAttribute("data-y") : el.getAttribute("data-m");
+    });
+    document.querySelectorAll(".p-per").forEach(function(el){
+      el.textContent = yearly ? el.getAttribute("data-y") : el.getAttribute("data-m");
+    });
+    note.textContent = yearly
+      ? "Billed yearly. Cancel anytime — we refund the unused months."
+      : "Billed monthly. Cancel anytime.";
+  });
+
+  /* ---------- faq accordion ---------- */
+  document.querySelectorAll(".faq-item").forEach(function(item){
+    var q = item.querySelector(".faq-q");
+    q.addEventListener("click", function(){
+      var open = item.classList.toggle("open");
+      q.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
+
+  /* ---------- footer year ---------- */
+  document.getElementById("year").textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
