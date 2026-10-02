@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>openai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d0d0d; --ink-soft:#1a1a1a; --graphite:#3c3c3c;
+    --slate:#6e6e80; --ash:#9b9b9b;
+    --canvas:#ffffff; --canvas-soft:#fafafa; --surface:#f7f7f8;
+    --hairline:#e5e5e5;
+    --green:#10a37f; --green-deep:#0a7a5e;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--canvas);color:var(--ink);
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    font-size:16px;line-height:1.6}
+  a{color:inherit}
+  ::selection{background:#0d0d0d;color:#fff}
+  section[id],footer[id]{scroll-margin-top:76px}
+  a:focus-visible,button:focus-visible,input:focus-visible{
+    outline:2px solid var(--ink);outline-offset:3px}
+
+  /* ---------- nav ---------- */
+  .nav{position:sticky;top:0;z-index:50;background:var(--canvas);
+    border-bottom:1px solid var(--hairline)}
+  .nav-inner{max-width:1200px;margin:0 auto;padding:12px 24px;display:flex;
+    align-items:center;gap:32px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;
+    font-weight:600;font-size:17px;letter-spacing:-0.01em;margin-right:auto}
+  .links{display:flex;gap:28px}
+  .links a{text-decoration:none;font-size:15px}
+  .links a:hover{text-decoration:underline;text-underline-offset:4px}
+  .btn{display:inline-block;padding:10px 20px;border-radius:12px;font-size:15px;
+    font-weight:500;text-decoration:none;line-height:1.4;cursor:pointer;border:0;
+    transition:background-color 180ms ease-out}
+  .btn-primary{background:var(--ink);color:#fff}
+  .btn-primary:hover{background:var(--ink-soft)}
+  .btn-text{font-weight:500;text-decoration:none;display:inline-flex;
+    align-items:center;gap:6px}
+  .btn-text:hover{text-decoration:underline;text-underline-offset:4px}
+  .btn-text .arr{transition:transform 180ms ease-out}
+  .btn-text:hover .arr{transform:translateX(3px)}
+
+  /* ---------- featured hero ---------- */
+  .hero{max-width:1200px;margin:0 auto;padding:128px 24px 120px}
+  .eyebrow{font-size:12px;font-weight:500;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--slate);margin-bottom:24px}
+  .hero h1{font-size:clamp(44px,6vw,76px);font-weight:500;letter-spacing:-0.03em;
+    line-height:1.05;margin-bottom:28px;max-width:14ch}
+  .hero .lede{font-size:20px;line-height:1.6;color:var(--graphite);
+    max-width:620px;margin-bottom:40px;font-weight:400}
+  .hero-actions{display:flex;align-items:center;gap:32px;flex-wrap:wrap}
+  .hero-meta{margin-top:56px;padding-top:24px;border-top:1px solid var(--hairline);
+    display:flex;gap:48px;flex-wrap:wrap}
+  .hero-meta .stat{display:block}
+  .hero-meta .num{font-size:28px;font-weight:500;letter-spacing:-0.02em;display:block}
+  .hero-meta .lbl{font-size:13px;color:var(--slate);display:block;margin-top:2px}
+
+  /* ---------- index ---------- */
+  .index{max-width:1200px;margin:0 auto;padding:0 24px 64px}
+  .index-head{border-top:1px solid var(--hairline);padding-top:40px;
+    margin-bottom:8px;display:flex;justify-content:space-between;
+    align-items:baseline;gap:24px;flex-wrap:wrap}
+  .index-head h2{font-size:32px;font-weight:500;letter-spacing:-0.02em}
+  .count{font-size:14px;color:var(--slate)}
+
+  .controls{padding:32px 0 40px;display:flex;flex-direction:column;gap:20px}
+  .search{position:relative;max-width:520px}
+  .search svg{position:absolute;left:18px;top:50%;transform:translateY(-50%);
+    width:16px;height:16px;color:var(--ash);pointer-events:none}
+  .search input{width:100%;padding:12px 44px 12px 44px;border:1px solid var(--hairline);
+    border-radius:9999px;font-family:var(--sans);font-size:15px;color:var(--ink);
+    background:var(--canvas);outline:none;transition:border-color 180ms ease-out}
+  .search input::placeholder{color:var(--ash)}
+  .search input:focus{border-color:#b5b5b5}
+  .search .clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);
+    width:32px;height:32px;border:0;border-radius:50%;background:transparent;
+    cursor:pointer;display:none;align-items:center;justify-content:center;color:var(--slate)}
+  .search .clear.show{display:flex}
+  .search .clear:hover{background:var(--surface);color:var(--ink)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{padding:8px 18px;border-radius:9999px;border:1px solid var(--hairline);
+    background:var(--canvas);font-family:var(--sans);font-size:14px;font-weight:500;
+    color:var(--graphite);cursor:pointer;transition:all 180ms ease-out}
+  .chip:hover{border-color:#c9c9c9;color:var(--ink)}
+  .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:56px 40px}
+  .card{display:block;text-decoration:none;color:var(--ink)}
+  .card.hidden{display:none}
+  .card .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .card .eyebrow{margin-bottom:6px}
+  .meta{font-size:13px;color:var(--ash);margin-bottom:14px}
+  .card h3{font-size:20px;font-weight:500;line-height:1.35;letter-spacing:-0.01em;
+    margin-bottom:14px}
+  .card:hover h3{text-decoration:underline;text-underline-offset:3px;
+    text-decoration-thickness:1px}
+  .abstract{overflow:hidden;max-height:0;transition:max-height 320ms ease-out}
+  .card.open .abstract{max-height:220px}
+  .abstract p{font-size:15px;line-height:1.65;color:var(--graphite);
+    padding-bottom:4px}
+  .expand{display:inline-flex;align-items:center;gap:8px;border:0;background:none;
+    font-family:var(--sans);font-size:13px;font-weight:500;color:var(--slate);
+    cursor:pointer;padding:0}
+  .expand:hover{color:var(--green)}
+  .expand svg{width:14px;height:14px;transition:transform 220ms ease-out;flex:none}
+  .card.open .expand svg{transform:rotate(45deg)}
+  .card.open .expand .lbl-open{display:inline}
+  .card.open .expand .lbl-closed{display:none}
+  .expand .lbl-open{display:none}
+
+  .empty{display:none;padding:80px 0;text-align:left}
+  .empty.show{display:block}
+  .empty h3{font-size:24px;font-weight:500;letter-spacing:-0.02em;margin-bottom:8px}
+  .empty p{font-size:16px;color:var(--slate);margin-bottom:24px}
+  .empty .chip{font-size:15px;padding:10px 22px}
+
+  /* ---------- api strip ---------- */
+  .strip{max-width:1200px;margin:0 auto;padding:0 24px 120px}
+  .strip-inner{border-top:1px solid var(--hairline);padding-top:56px;
+    display:flex;justify-content:space-between;align-items:flex-start;
+    gap:48px;flex-wrap:wrap}
+  .strip h3{font-size:28px;font-weight:500;letter-spacing:-0.02em;margin-bottom:12px}
+  .strip p{font-size:16px;color:var(--graphite);max-width:520px;line-height:1.65}
+  .strip .links-row{display:flex;gap:12px;align-items:center;flex:none}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--hairline);background:var(--canvas-soft)}
+  .f-cols{max-width:1200px;margin:0 auto;padding:64px 24px;display:grid;
+    grid-template-columns:repeat(4,1fr);gap:32px}
+  .f-cols h5{font-size:13px;font-weight:600;margin-bottom:16px}
+  .f-cols a{display:block;font-size:14px;color:var(--slate);text-decoration:none;
+    margin-bottom:12px}
+  .f-cols a:hover{text-decoration:underline;color:var(--ink)}
+  .f-base{max-width:1200px;margin:0 auto;padding:24px;display:flex;
+    justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+    border-top:1px solid var(--hairline);font-size:13px;color:var(--slate)}
+  .f-base .legal a{color:var(--slate);text-decoration:none;margin-left:24px}
+  .f-base .legal a:hover{text-decoration:underline}
+  .skill-line{font-size:12px;color:var(--ash);text-align:center;padding:0 24px 32px}
+
+  @media (max-width:900px){
+    .grid{grid-template-columns:repeat(2,1fr);gap:48px 32px}
+  }
+  @media (max-width:640px){
+    .links{display:none}
+    .hero{padding:88px 24px 80px}
+    .grid{grid-template-columns:1fr;gap:40px}
+    .f-cols{grid-template-columns:repeat(2,1fr)}
+    .hero-meta{gap:32px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important}
+    .abstract{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#">
+      <!-- Original six-petal geometric blossom mark, drawn for this demo -->
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true">
+        <g fill="none" stroke="#0d0d0d" stroke-width="4.2">
+          <path d="M24 5 C29.5 12.5 29.5 21 24 28.5 C18.5 21 18.5 12.5 24 5 Z"/>
+          <path d="M24 5 C29.5 12.5 29.5 21 24 28.5 C18.5 21 18.5 12.5 24 5 Z" transform="rotate(60 24 24)"/>
+          <path d="M24 5 C29.5 12.5 29.5 21 24 28.5 C18.5 21 18.5 12.5 24 5 Z" transform="rotate(120 24 24)"/>
+          <path d="M24 5 C29.5 12.5 29.5 21 24 28.5 C18.5 21 18.5 12.5 24 5 Z" transform="rotate(180 24 24)"/>
+          <path d="M24 5 C29.5 12.5 29.5 21 24 28.5 C18.5 21 18.5 12.5 24 5 Z" transform="rotate(240 24 24)"/>
+          <path d="M24 5 C29.5 12.5 29.5 21 24 28.5 C18.5 21 18.5 12.5 24 5 Z" transform="rotate(300 24 24)"/>
+        </g>
+      </svg>
+      <span>OpenAI</span>
+    </a>
+    <div class="links">
+      <a href="#index">Research</a>
+      <a href="#api">API</a>
+      <a href="#company">Company</a>
+    </div>
+    <a class="btn btn-primary" href="#">Try ChatGPT</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <p class="eyebrow">Announcement &middot; Oct 1, 2026</p>
+  <h1>Introducing GPT-5.2</h1>
+  <p class="lede">Our most capable model for agentic coding, long-horizon
+     reasoning, and professional knowledge work &mdash; now available in
+     ChatGPT and the API.</p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="#index">Read the announcement</a>
+    <a class="btn-text" href="#api">Try in the API
+      <svg class="arr" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+        <path d="M2 7h9M8 3.5 11.5 7 8 10.5" stroke="currentColor" stroke-width="1.6"
+          fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+  <div class="hero-meta">
+    <div class="stat"><span class="num">1M</span><span class="lbl">Token context window</span></div>
+    <div class="stat"><span class="num">45%</span><span class="lbl">Fewer confabulations on long tasks</span></div>
+    <div class="stat"><span class="num">40h</span><span class="lbl">Sustained agentic coding sessions</span></div>
+  </div>
+</section>
+
+<section class="index" id="index">
+  <div class="index-head">
+    <h2>Research index</h2>
+    <span class="count" id="resultCount" aria-live="polite"></span>
+  </div>
+
+  <div class="controls">
+    <div class="search">
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.6" fill="none"/>
+        <path d="M11 11l3.2 3.2" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Search the index"
+        aria-label="Search the research index" autocomplete="off">
+      <button class="clear" id="clearSearch" aria-label="Clear search">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <path d="M2.5 2.5l9 9M11.5 2.5l-9 9" stroke="currentColor"
+            stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="chips" role="group" aria-label="Filter by category" id="chipRow">
+      <button class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" data-filter="Models" aria-pressed="false">Models</button>
+      <button class="chip" data-filter="Research" aria-pressed="false">Research</button>
+      <button class="chip" data-filter="API" aria-pressed="false">API</button>
+      <button class="chip" data-filter="Safety" aria-pressed="false">Safety</button>
+    </div>
+  </div>
+
+  <div class="grid" id="cardGrid" role="list"></div>
+
+  <div class="empty" id="emptyState">
+    <h3>No results</h3>
+    <p id="emptyMsg">Nothing in the index matches your search.</p>
+    <button class="chip" id="resetBtn">Clear search and filters</button>
+  </div>
+</section>
+
+<section class="strip" id="api">
+  <div class="strip-inner">
+    <div>
+      <h3>Build with the API</h3>
+      <p>GPT-5.2, Sora 2, and the o-series reasoning models behind one
+         consistent interface &mdash; with structured outputs, tool use, and
+         a 1M-token context window.</p>
+    </div>
+    <div class="links-row">
+      <a class="btn btn-primary" href="#">Get started</a>
+      <a class="btn-text" href="#">Read the docs
+        <svg class="arr" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <path d="M2 7h9M8 3.5 11.5 7 8 10.5" stroke="currentColor" stroke-width="1.6"
+            fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer id="company">
+  <div class="f-cols">
+    <div>
+      <h5>Research</h5>
+      <a href="#index">Overview</a><a href="#index">Index</a>
+      <a href="#index">Safety</a><a href="#index">Publications</a>
+    </div>
+    <div>
+      <h5>API</h5>
+      <a href="#api">Docs</a><a href="#api">Pricing</a>
+      <a href="#api">Playground</a><a href="#api">Status</a>
+    </div>
+    <div>
+      <h5>Products</h5>
+      <a href="#">ChatGPT</a><a href="#">Sora</a><a href="#">For Business</a>
+    </div>
+    <div>
+      <h5>Company</h5>
+      <a href="#">About</a><a href="#">Careers</a><a href="#">News</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="f-base">
+    <span>OpenAI &copy; 2015&ndash;2026</span>
+    <div class="legal">
+      <a href="#">Privacy policy</a><a href="#">Terms of use</a><a href="#">Security</a>
+    </div>
+  </div>
+  <p class="skill-line">Built from the openai skill &middot; design-skills</p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---- index data: real-feeling announcements, measured OpenAI copy voice ---- */
+  var ITEMS = [
+    { cat: "Models", date: "Oct 1, 2026", read: "6 min read",
+      title: "Introducing GPT-5.2",
+      abstract: "Our most capable model for agentic coding, long-horizon reasoning, and professional knowledge work \u2014 with a 1M-token context window, fewer confabulations on sustained tasks, and state-of-the-art tool use. Available today in ChatGPT and the API." },
+    { cat: "Safety", date: "Oct 1, 2026", read: "9 min read",
+      title: "GPT-5.2 System Card",
+      abstract: "Our safety evaluation report for GPT-5.2: capability assessments, third-party red-teaming results, and the mitigations in place before deployment, published alongside the model release." },
+    { cat: "API", date: "Sep 30, 2026", read: "4 min read",
+      title: "GPT-5.2 in the API: 1M context, structured outputs, lower latency",
+      abstract: "The Responses API gains GPT-5.2 with a 1M-token context window, prompt caching, structured outputs, and a new reasoning-effort parameter for dialing compute up or down per request." },
+    { cat: "Models", date: "Sep 29, 2026", read: "5 min read",
+      title: "Introducing Sora 2",
+      abstract: "Native audio, physically grounded motion, and tighter prompt adherence in our new video generation model \u2014 rolling out in the Sora app with built-in provenance and likeness safeguards." },
+    { cat: "Research", date: "Sep 22, 2026", read: "12 min read",
+      title: "Reasoning models learn to use tools in reinforcement learning",
+      abstract: "We show that reliable tool use emerges when reasoning models train with reinforcement learning on tasks that require external information \u2014 and that the gains compound with longer reasoning traces." },
+    { cat: "Models", date: "Sep 15, 2026", read: "7 min read",
+      title: "o4: reasoning that checks its work",
+      abstract: "Our newest reasoning model plans before it acts, verifies intermediate steps, and can show its chain of thought on demand \u2014 measurably reducing errors on mathematics and code benchmarks." },
+    { cat: "Safety", date: "Sep 10, 2026", read: "11 min read",
+      title: "Updating the Preparedness Framework",
+      abstract: "How we track frontier capabilities, set evaluation thresholds, and decide when additional safeguards are required \u2014 refreshed with new categories for agentic coding and autonomous research." },
+    { cat: "Research", date: "Sep 8, 2026", read: "10 min read",
+      title: "Measuring long-horizon reliability",
+      abstract: "A benchmark suite for 40-hour agentic coding tasks, with a protocol for scoring partial progress without human grading \u2014 built to capture where agents actually fail over long horizons." },
+    { cat: "API", date: "Sep 2, 2026", read: "3 min read",
+      title: "Batch API is now generally available",
+      abstract: "Run large non-urgent workloads at 50% lower cost with 24-hour turnaround \u2014 the same frontier models, the same outputs, a quieter queue." },
+    { cat: "Safety", date: "Aug 27, 2026", read: "8 min read",
+      title: "Red-teaming the Sora 2 image model",
+      abstract: "External experts probed Sora 2 for deceptive imagery and likeness misuse ahead of launch. We report what they found, what we changed, and what remains an open research problem." },
+    { cat: "Research", date: "Aug 25, 2026", read: "14 min read",
+      title: "Deliberative alignment: reasoning explicitly about the Charter",
+      abstract: "Teaching models to reason through the Charter's prescriptions during training, rather than merely imitating aligned behavior \u2014 with evaluations that test the reasoning itself." },
+    { cat: "API", date: "Aug 18, 2026", read: "5 min read",
+      title: "Codex CLI: agents in your terminal",
+      abstract: "An open-source local agent that reads, writes, and runs your code \u2014 now with GPT-5.2, checkpointing, and project-scoped approvals for reviewable autonomy." }
+  ];
+
+  var grid = document.getElementById("cardGrid");
+  var chips = document.querySelectorAll("#chipRow .chip");
+  var searchInput = document.getElementById("searchInput");
+  var clearSearch = document.getElementById("clearSearch");
+  var resultCount = document.getElementById("resultCount");
+  var emptyState = document.getElementById("emptyState");
+  var emptyMsg = document.getElementById("emptyMsg");
+  var resetBtn = document.getElementById("resetBtn");
+
+  var activeFilter = "all";
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  /* ---- render the index ---- */
+  function render() {
+    var html = "";
+    ITEMS.forEach(function (it, i) {
+      html +=
+        '<article class="card" role="listitem" data-cat="' + escapeHtml(it.cat) + '" data-idx="' + i + '">' +
+          '<div class="top"><div>' +
+            '<span class="eyebrow">' + escapeHtml(it.cat) + '</span>' +
+            '<div class="meta">' + escapeHtml(it.date) + ' &middot; ' + escapeHtml(it.read) + '</div>' +
+          '</div></div>' +
+          '<h3>' + escapeHtml(it.title) + '</h3>' +
+          '<div class="abstract" id="abs-' + i + '"><p>' + escapeHtml(it.abstract) + '</p></div>' +
+          '<button class="expand" aria-expanded="false" aria-controls="abs-' + i + '">' +
+            '<svg viewBox="0 0 14 14" aria-hidden="true">' +
+              '<path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+            '</svg>' +
+            '<span class="lbl-closed">Abstract</span><span class="lbl-open">Collapse</span>' +
+          '</button>' +
+        '</article>';
+    });
+    grid.innerHTML = html;
+  }
+
+  function norm(s) { return (s || "").toLowerCase(); }
+
+  function applyFilters() {
+    var q = norm(searchInput.value).trim();
+    var visible = 0;
+    var cards = grid.querySelectorAll(".card");
+    cards.forEach(function (card) {
+      var idx = parseInt(card.getAttribute("data-idx"), 10);
+      var it = ITEMS[idx];
+      var matchesCat = activeFilter === "all" || it.cat === activeFilter;
+      var hay = norm(it.title) + " " + norm(it.abstract) + " " + norm(it.cat) + " " + norm(it.date);
+      var matchesQ = !q || hay.indexOf(q) !== -1;
+      var show = matchesCat && matchesQ;
+      card.classList.toggle("hidden", !show);
+      if (show) visible++;
+    });
+
+    if (q) {
+      resultCount.textContent = visible + " of " + ITEMS.length + " for \u201C" + searchInput.value.trim() + "\u201D";
+    } else if (activeFilter !== "all") {
+      resultCount.textContent = visible + " of " + ITEMS.length + " in " + activeFilter;
+    } else {
+      resultCount.textContent = ITEMS.length + " announcements";
+    }
+
+    var empty = visible === 0;
+    emptyState.classList.toggle("show", empty);
+    if (empty) {
+      emptyMsg.textContent = q
+        ? "Nothing in the index matches \u201C" + searchInput.value.trim() + "\u201D."
+        : "Nothing in " + activeFilter + " yet.";
+    }
+  }
+
+  /* ---- expandable abstracts (event delegation) ---- */
+  grid.addEventListener("click", function (e) {
+    var btn = e.target.closest(".expand");
+    if (!btn) return;
+    var card = btn.closest(".card");
+    var open = card.classList.toggle("open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  /* ---- category filter chips ---- */
+  chips.forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      chips.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+      chip.setAttribute("aria-pressed", "true");
+      activeFilter = chip.getAttribute("data-filter");
+      applyFilters();
+    });
+  });
+
+  /* ---- search ---- */
+  searchInput.addEventListener("input", function () {
+    clearSearch.classList.toggle("show", searchInput.value.length > 0);
+    applyFilters();
+  });
+  clearSearch.addEventListener("click", function () {
+    searchInput.value = "";
+    clearSearch.classList.remove("show");
+    searchInput.focus();
+    applyFilters();
+  });
+  searchInput.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && searchInput.value) {
+      searchInput.value = "";
+      clearSearch.classList.remove("show");
+      applyFilters();
+    }
+  });
+
+  resetBtn.addEventListener("click", function () {
+    searchInput.value = "";
+    clearSearch.classList.remove("show");
+    activeFilter = "all";
+    chips.forEach(function (c) {
+      c.setAttribute("aria-pressed", c.getAttribute("data-filter") === "all" ? "true" : "false");
+    });
+    applyFilters();
+  });
+
+  render();
+  applyFilters();
+})();
+</script>
+</body>
+</html>
