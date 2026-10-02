@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>de-stijl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+/* ============ DE STIJL TOKENS ============ */
+:root{
+  --red:#E01F26; --blue:#225095; --yellow:#FAC901;
+  --black:#1A1A1A; --white:#FFFFFF; --grey:#C0C0C0;
+  --line:8px;   /* THE line weight — every structural black rule on the page */
+  --thin:3px;   /* detail separators only (table rows, small button borders) */
+  --font-display:'Archivo Black','Arial Black',Arial,Helvetica,sans-serif;
+  --font-body:'Archivo','Helvetica Neue',Arial,system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--white);color:var(--black);font-family:var(--font-body);font-size:16px;line-height:1.5}
+/* no curves, no shadows, no gradients, no transitions anywhere — the discipline */
+h1,h2,h3{font-family:var(--font-display);text-transform:uppercase;line-height:1.05;letter-spacing:.01em}
+.eyebrow{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.28em}
+a{color:inherit}
+
+/* ============ TOP BAR ============ */
+.topbar{background:var(--black);color:var(--white);display:flex;justify-content:space-between;align-items:center;padding:10px 24px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.22em}
+.topbar .dot{display:inline-block;width:10px;height:10px;background:var(--red);margin-right:10px;vertical-align:baseline}
+
+/* ============ NAV ============ */
+.mainnav{display:flex;align-items:stretch;border-bottom:var(--line) solid var(--black);background:var(--white)}
+.logo{display:flex;align-items:center;gap:14px;padding:14px 24px;border-right:var(--line) solid var(--black);text-decoration:none}
+.logo-mark{width:44px;height:44px;background:var(--red);color:var(--white);font-family:var(--font-display);font-size:18px;display:flex;align-items:center;justify-content:center}
+.logo-name{font-family:var(--font-display);font-size:15px;text-transform:uppercase;letter-spacing:.06em;line-height:1.15}
+.navlinks{display:flex;align-items:stretch;margin-left:auto}
+.navlinks a{display:flex;align-items:center;padding:0 26px;text-decoration:none;font-weight:900;font-size:13px;text-transform:uppercase;letter-spacing:.18em;border-left:var(--line) solid var(--black)}
+.navlinks a:hover{background:var(--yellow)}
+.navlinks a.cta{background:var(--red);color:var(--white)}
+.navlinks a.cta:hover{background:var(--black)}
+
+/* ============ GENERATIVE MONDRIAN ============
+   The JS tiles the unit square with exact guillotine subdivision — every
+   rect shares full edges with its neighbours, zero overlap, zero gaps.
+   Every rect carries a half-line border; two halves meet at every shared
+   edge to form exactly one line weight, and the container's own half-line
+   border meets the rects' outer halves the same way. One weight everywhere,
+   including the outer frame. */
+.mondrian{position:relative;background:var(--black);border:calc(var(--line) / 2) solid var(--black)}
+.mondrian > div{position:absolute;box-sizing:border-box;border:calc(var(--line) / 2) solid var(--black)}
+.m-red{background:var(--red)} .m-blue{background:var(--blue)} .m-yellow{background:var(--yellow)}
+.m-black{background:var(--black)} .m-white{background:var(--white)} .m-grey{background:var(--grey)}
+
+/* ============ HERO — a Mondrian composition ============ */
+.hero{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:minmax(88px,auto);gap:var(--line);background:var(--black);border:var(--line) solid var(--black)}
+.plane{padding:36px;min-width:0}
+.p-white{background:var(--white)} .p-red{background:var(--red);color:var(--white)}
+.p-blue{background:var(--blue);color:var(--white)} .p-yellow{background:var(--yellow)}
+.p-grey{background:var(--grey)} .p-black{background:var(--black);color:var(--white)}
+.hero-title{grid-column:1/8;grid-row:1/4;display:flex;flex-direction:column;justify-content:center}
+.hero-title h1{font-size:clamp(44px,7vw,92px);margin:14px 0 18px}
+.hero-title p{max-width:44ch;font-size:17px}
+.hero-cta{grid-column:8/13;grid-row:1/3;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.hero-cta .price{font-family:var(--font-display);font-size:30px;text-transform:uppercase}
+.hero-stat1{grid-column:8/10;grid-row:3/5;display:flex;flex-direction:column;justify-content:center}
+.hero-stat1 .num{font-family:var(--font-display);font-size:52px;line-height:1}
+.hero-stat1 .lbl{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.22em;margin-top:8px}
+.hero-quote{grid-column:10/13;grid-row:3/5;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.hero-quote blockquote{font-family:var(--font-display);font-size:19px;text-transform:uppercase;line-height:1.35}
+.hero-artists{grid-column:1/8;grid-row:4/5;display:flex;align-items:center;flex-wrap:wrap}
+.hero-artists .an{display:flex;align-items:center;gap:12px;padding:6px 22px;font-weight:900;font-size:14px;text-transform:uppercase;letter-spacing:.24em;white-space:nowrap}
+.hero-artists .sq{width:14px;height:14px;flex:none}
+.sq-r{background:var(--red)} .sq-b{background:var(--blue)}
+.sq-y{background:var(--yellow)} .sq-k{background:var(--black)}
+
+/* ============ BUTTONS ============ */
+.btn{display:inline-block;padding:18px 38px;background:var(--black);color:var(--white);font-family:var(--font-display);font-size:14px;text-transform:uppercase;letter-spacing:.18em;text-decoration:none;border:none;cursor:pointer}
+.btn:hover{background:var(--white);color:var(--black)}
+.btn-red{background:var(--red);color:var(--white)} .btn-red:hover{background:var(--black);color:var(--white)}
+.btn-blue{background:var(--blue);color:var(--white)} .btn-blue:hover{background:var(--black);color:var(--white)}
+.btn-yellow{background:var(--yellow);color:var(--black)} .btn-yellow:hover{background:var(--black);color:var(--white)}
+
+/* ============ RULE DIVIDER ============ */
+.rule{height:var(--line);background:var(--black);position:relative}
+.rule i{position:absolute;top:0;bottom:0;left:12%;width:22%;background:var(--red)}
+.rule.alt i{left:64%;width:14%;background:var(--blue)}
+
+/* ============ SECTIONS ============ */
+.section{padding:72px 48px;max-width:1280px;margin:0 auto}
+.section-head{display:flex;align-items:flex-end;gap:24px;margin-bottom:36px;flex-wrap:wrap}
+.section-head h2{font-size:clamp(28px,4vw,48px)}
+.section-head .kicker{background:var(--black);color:var(--white);padding:8px 16px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.24em}
+.section-head p{flex-basis:100%;max-width:62ch;color:#333}
+.section-head .head-cta{margin-left:auto}
+
+/* ============ TABS ============ */
+.tabs{background:var(--black);padding:var(--line);display:flex;gap:var(--line);flex-wrap:wrap}
+.tab{flex:1;min-width:160px;padding:18px;border:var(--line) solid var(--black);background:var(--white);font-family:var(--font-display);font-size:13px;text-transform:uppercase;letter-spacing:.16em;cursor:pointer}
+.tab.is-active{background:var(--red);color:var(--white)}
+.tab[data-tab="tickets"].is-active{background:var(--blue)}
+.tab[data-tab="getting"].is-active{background:var(--yellow);color:var(--black)}
+.tab:not(.is-active):hover{background:var(--grey)}
+.tabpanel{display:none;border:var(--line) solid var(--black);border-top:none;padding:40px}
+.tabpanel.is-open{display:block}
+
+/* hours table */
+.hours{width:100%;border-collapse:collapse;max-width:640px}
+.hours td{padding:14px 18px;border-bottom:var(--thin) solid var(--black);font-size:16px}
+.hours tr td:first-child{font-weight:900;text-transform:uppercase;letter-spacing:.12em;font-size:13px;width:40%}
+.hours tr.closed td{background:var(--grey)}
+
+/* tickets */
+.ticket-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.price-list{width:100%;border-collapse:collapse;border:var(--line) solid var(--black)}
+.price-list th{background:var(--black);color:var(--white);text-align:left;padding:14px 18px;font-family:var(--font-display);font-size:12px;text-transform:uppercase;letter-spacing:.16em}
+.price-list td{padding:14px 18px;border-top:var(--thin) solid var(--black)}
+.price-list tr:nth-child(even) td{background:var(--grey)}
+.stepper{border:var(--line) solid var(--black);padding:32px;background:var(--white)}
+.stepper h3{font-size:20px;margin-bottom:6px}
+.stepper .sub{font-size:14px;color:#444;margin-bottom:22px}
+.stepper-row{display:flex;align-items:stretch;gap:0;border:var(--line) solid var(--black);width:max-content;margin-bottom:22px}
+.stepper-row button{width:56px;height:56px;font-family:var(--font-display);font-size:22px;background:var(--white);border:none;cursor:pointer}
+.stepper-row button:hover{background:var(--yellow)}
+.stepper-row .qty{width:72px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:22px;border-left:var(--thin) solid var(--black);border-right:var(--thin) solid var(--black)}
+.total-line{font-family:var(--font-display);font-size:24px;text-transform:uppercase;margin-bottom:22px}
+.total-line span{color:var(--red)}
+.order-msg{margin-top:18px;padding:16px;background:var(--yellow);font-weight:700;display:none}
+.order-msg.show{display:block}
+
+/* visit */
+.visit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:var(--line) solid var(--black)}
+.visit-cell{padding:32px;border-right:var(--line) solid var(--black)}
+.visit-cell:last-child{border-right:none}
+.visit-cell h3{font-size:16px;margin-bottom:12px}
+.visit-cell .tag{display:inline-block;padding:6px 12px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.2em;margin-bottom:14px;color:var(--white);background:var(--black)}
+.visit-cell .tag.b{background:var(--blue)} .visit-cell .tag.r{background:var(--red)} .visit-cell .tag.y{background:var(--yellow);color:var(--black)}
+
+/* ============ FILTER + CARDS ============ */
+.filters{display:flex;gap:var(--line);flex-wrap:wrap;margin-bottom:32px}
+.filter{padding:14px 26px;border:var(--line) solid var(--black);background:var(--white);font-family:var(--font-display);font-size:12px;text-transform:uppercase;letter-spacing:.16em;cursor:pointer}
+.filter.is-active{background:var(--black);color:var(--white)}
+.filter:not(.is-active):hover{background:var(--yellow)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+/* the card carries no border of its own: the composition's exact line-weight
+   frame (container half-line + rect outer halves) is the top frame, and the
+   caption block draws its own matching frame below. One weight everywhere. */
+.card{margin:0;background:var(--white)}
+.card.hidden{display:none}
+.card-art{height:232px;cursor:pointer}
+.card-art .card-veil{position:absolute;inset:0;z-index:2;display:none;flex-direction:column;justify-content:center;gap:10px;padding:24px;background:var(--black);color:var(--white)}
+.card-art:hover .card-veil,.card-art:focus-visible .card-veil{display:flex}
+.card-art:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.card-veil strong{font-family:var(--font-display);font-size:15px;text-transform:uppercase;line-height:1.35}
+.card-veil span{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.2em;color:var(--yellow)}
+.card figcaption{background:var(--black);color:var(--white);padding:14px 16px;border:var(--line) solid var(--black);border-top:none}
+.card figcaption strong{display:block;font-family:var(--font-display);font-size:13px;text-transform:uppercase;letter-spacing:.04em;line-height:1.4}
+.card figcaption span{font-size:13px;color:var(--grey)}
+.card .cat{display:inline-block;margin-top:10px;padding:4px 10px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.2em;background:var(--yellow);color:var(--black)}
+
+/* ============ MANIFESTO ============ */
+.manifesto{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:minmax(72px,auto);gap:var(--line);background:var(--black);border:var(--line) solid var(--black)}
+.m-title{grid-column:1/6;grid-row:1/3;background:var(--black);color:var(--white);padding:36px;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.m-title .no{font-family:var(--font-display);font-size:64px;line-height:1;color:var(--red)}
+.m-title h3{font-size:22px}
+.m-point{background:var(--white);padding:32px;display:flex;gap:20px;align-items:flex-start}
+.m-point .n{font-family:var(--font-display);font-size:34px;line-height:1;flex:none;width:52px}
+.m-point p{font-size:16px;max-width:52ch}
+.m-p1{grid-column:6/13;grid-row:1/2}
+.m-p2{grid-column:6/10;grid-row:2/3}
+.m-p3{grid-column:1/9;grid-row:3/4}
+.m-red{grid-column:10/13;grid-row:2/3;background:var(--red)}
+.m-blue{grid-column:9/11;grid-row:3/4;background:var(--blue)}
+.m-yellow{grid-column:11/13;grid-row:3/4;background:var(--yellow)}
+
+/* ============ CALENDAR ============ */
+.cal{width:100%;border-collapse:collapse;border:var(--line) solid var(--black)}
+.cal th{background:var(--black);color:var(--white);text-align:left;padding:14px 18px;font-family:var(--font-display);font-size:12px;text-transform:uppercase;letter-spacing:.16em}
+.cal td{padding:16px 18px;border-top:var(--thin) solid var(--black);vertical-align:top}
+.cal tbody tr:nth-child(even){background:var(--grey)}
+.cal .d{background:var(--red);color:var(--white);font-weight:900;white-space:nowrap;text-transform:uppercase;letter-spacing:.08em}
+.cal tr:nth-child(2) .d{background:var(--blue)}
+.cal tr:nth-child(3) .d{background:var(--yellow);color:var(--black)}
+.cal td.ev strong{display:block;font-family:var(--font-display);font-size:14px;text-transform:uppercase;margin-bottom:4px}
+
+/* ============ FOOTER ============ */
+footer{background:var(--black);color:var(--white)}
+.foot-strip{display:grid;grid-template-columns:2fr 1fr 1fr 2fr;gap:var(--line);background:var(--black);padding:var(--line)}
+.foot-strip i{display:block;height:26px}
+.foot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;padding:56px 48px;max-width:1280px;margin:0 auto}
+.foot-grid h3{font-size:14px;letter-spacing:.14em;margin-bottom:16px;color:var(--yellow)}
+.foot-grid p,.foot-grid li{font-size:14px;color:#ddd;list-style:none;line-height:2}
+.foot-grid ul{padding:0}
+.foot-base{border-top:var(--line) solid var(--white);padding:20px 48px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:#bbb}
+
+/* ============ KEYBOARD FOCUS (instant, square, disciplined) ============ */
+.tab:focus-visible,.filter:focus-visible,.btn:focus-visible,.navlinks a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:900px){
+  :root{--line:6px}
+  .hero{grid-template-columns:1fr;grid-auto-rows:auto}
+  .hero-title,.hero-cta,.hero-stat1,.hero-quote,.hero-artists{grid-column:1/-1;grid-row:auto}
+  .manifesto{grid-template-columns:1fr;grid-auto-rows:auto}
+  .m-title,.m-p1,.m-p2,.m-p3,.m-red,.m-blue,.m-yellow{grid-column:1/-1;grid-row:auto}
+  .m-red,.m-blue,.m-yellow{min-height:56px}
+  .ticket-grid{grid-template-columns:1fr}
+  .visit-grid{grid-template-columns:1fr}
+  .visit-cell{border-right:none;border-bottom:var(--line) solid var(--black)}
+  .visit-cell:last-child{border-bottom:none}
+  .navlinks a{padding:0 14px;font-size:11px}
+  .section{padding:48px 20px}
+  .foot-grid{grid-template-columns:1fr;gap:32px;padding:40px 20px}
+  .topbar{font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span><span class="dot"></span>Nieuwe Stijl — Museum of Neoplastic Art · Rotterdam</span>
+  <span>Open today 10:00 – 18:00</span>
+</header>
+
+<nav class="mainnav">
+  <a class="logo" href="#top">
+    <span class="logo-mark">NS</span>
+    <span class="logo-name">Nieuwe<br>Stijl</span>
+  </a>
+  <div class="navlinks">
+    <a href="#exhibition">Exhibition</a>
+    <a href="#visit">Visit</a>
+    <a href="#calendar">Calendar</a>
+    <a class="cta" href="#visit">Tickets</a>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- HERO: the page itself is a Mondrian composition -->
+  <section class="hero" aria-label="Current exhibition">
+    <div class="plane p-white hero-title">
+      <p class="eyebrow">On view · 2 Oct 2026 — 14 Mar 2027</p>
+      <h1>Composition 25</h1>
+      <p>A hundred years of the grid. Mondrian, Van Doesburg, Rietveld and Van der Leck — from the first De Stijl manifesto of 1917 to the present. Line. Plane. Colour. Nothing else.</p>
+    </div>
+    <div class="plane p-red hero-cta">
+      <p class="eyebrow" style="color:#fff">Admission</p>
+      <p class="price">Adults €16</p>
+      <p style="font-size:14px;max-width:26ch">Under 18 free. Members always free.</p>
+      <div><button class="btn" id="hero-book" type="button">Book tickets</button></div>
+    </div>
+    <div class="plane p-blue hero-stat1">
+      <span class="num">120+</span>
+      <span class="lbl">Works · 4 halls</span>
+    </div>
+    <div class="plane p-white hero-quote">
+      <blockquote>“The white rectangle is not empty. It holds the others apart.”</blockquote>
+      <p class="eyebrow">— Gallery notes, Hall A</p>
+    </div>
+    <div class="plane p-yellow hero-artists">
+      <span class="an"><i class="sq sq-r"></i>Mondrian</span>
+      <span class="an"><i class="sq sq-b"></i>Van Doesburg</span>
+      <span class="an"><i class="sq sq-y"></i>Rietveld</span>
+      <span class="an"><i class="sq sq-k"></i>Van der Leck</span>
+    </div>
+  </section>
+
+  <div class="rule" aria-hidden="true"><i></i></div>
+
+  <!-- VISIT: working tabs -->
+  <section class="section" id="visit">
+    <div class="section-head">
+      <span class="kicker">Plan your visit</span>
+      <h2>The museum in rectangles</h2>
+      <p>Four halls, one grid. Everything you need is below — hours, prices and how to reach the Wilhelminakade building.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Visit information">
+      <button class="tab is-active" data-tab="hours" role="tab" aria-selected="true" type="button">Hours</button>
+      <button class="tab" data-tab="tickets" role="tab" aria-selected="false" type="button">Tickets</button>
+      <button class="tab" data-tab="getting" role="tab" aria-selected="false" type="button">Getting here</button>
+    </div>
+
+    <div class="tabpanel is-open" id="panel-hours" role="tabpanel">
+      <table class="hours">
+        <tr><td>Tuesday – Friday</td><td>10:00 – 18:00</td></tr>
+        <tr><td>Saturday – Sunday</td><td>10:00 – 20:00</td></tr>
+        <tr><td>Thursday late</td><td>Open until 22:00, bar in Hall D</td></tr>
+        <tr class="closed"><td>Monday</td><td>Closed — the grid rests</td></tr>
+      </table>
+    </div>
+
+    <div class="tabpanel" id="panel-tickets" role="tabpanel">
+      <div class="ticket-grid">
+        <table class="price-list">
+          <thead><tr><th>Ticket</th><th>Price</th></tr></thead>
+          <tbody>
+            <tr><td>Adult</td><td>€16</td></tr>
+            <tr><td>Student / 65+</td><td>€10</td></tr>
+            <tr><td>Under 18</td><td>Free</td></tr>
+            <tr><td>Member</td><td>Free, always</td></tr>
+          </tbody>
+        </table>
+        <div class="stepper">
+          <h3>Adult tickets</h3>
+          <p class="sub">€16 each. Pick a number. Pay at the desk or online — no queues either way.</p>
+          <div class="stepper-row">
+            <button id="t-minus" type="button" aria-label="One fewer ticket">−</button>
+            <span class="qty" id="t-qty">2</span>
+            <button id="t-plus" type="button" aria-label="One more ticket">+</button>
+          </div>
+          <p class="total-line">Total <span id="t-total">€32</span></p>
+          <button class="btn btn-red" id="t-add" type="button">Add to order</button>
+          <p class="order-msg" id="t-msg"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabpanel" id="panel-getting" role="tabpanel">
+      <div class="visit-grid">
+        <div class="visit-cell">
+          <span class="tag r">Address</span>
+          <h3>Wilhelminakade 100</h3>
+          <p>3072 AP Rotterdam<br>The white block with the red corner. You cannot miss it.</p>
+        </div>
+        <div class="visit-cell">
+          <span class="tag b">Transit</span>
+          <h3>Metro D / E — Wilhelminaplein</h3>
+          <p>Tram 20 and 25 stop at the door. Bike racks on the yellow square outside.</p>
+        </div>
+        <div class="visit-cell">
+          <span class="tag y">Access</span>
+          <h3>Step-free, all halls</h3>
+          <p>Lifts in the black core. Wheelchairs available at the desk, free of charge.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule alt" aria-hidden="true"><i></i></div>
+
+  <!-- EXHIBITION: working filter + generative compositions -->
+  <section class="section" id="exhibition">
+    <div class="section-head">
+      <span class="kicker">The exhibition</span>
+      <h2>Works on the grid</h2>
+      <p>Each work is shown the way De Stijl would show it: as a composition of rectangles. Every canvas below is generated, not drawn — click one to recompose it. Filter by discipline.</p>
+      <span class="head-cta"><button class="btn btn-blue" id="recompose" type="button">Recompose the walls</button></span>
+    </div>
+
+    <div class="filters" role="group" aria-label="Filter works">
+      <button class="filter is-active" data-filter="all" type="button">All</button>
+      <button class="filter" data-filter="painting" type="button">Painting</button>
+      <button class="filter" data-filter="furniture" type="button">Furniture</button>
+      <button class="filter" data-filter="architecture" type="button">Architecture</button>
+    </div>
+
+    <div class="cards" id="cards">
+      <figure class="card" data-cat="painting">
+        <div class="card-art mondrian" data-seed="11" tabindex="0" role="button" aria-label="Recompose Composition with Red, Blue and Yellow">
+          <div class="card-veil"><strong>Composition with Red, Blue and Yellow</strong><span>Click to recompose</span></div>
+        </div>
+        <figcaption>
+          <strong>Composition with Red, Blue and Yellow</strong>
+          <span>Piet Mondrian · 1930 · Oil on canvas</span>
+          <span class="cat">Painting</span>
+        </figcaption>
+      </figure>
+
+      <figure class="card" data-cat="painting">
+        <div class="card-art mondrian" data-seed="23" tabindex="0" role="button" aria-label="Recompose Counter-Composition XIII">
+          <div class="card-veil"><strong>Counter-Composition XIII</strong><span>Click to recompose</span></div>
+        </div>
+        <figcaption>
+          <strong>Counter-Composition XIII</strong>
+          <span>Theo van Doesburg · 1925–26 · Oil on canvas</span>
+          <span class="cat">Painting</span>
+        </figcaption>
+      </figure>
+
+      <figure class="card" data-cat="painting">
+        <div class="card-art mondrian" data-seed="37" tabindex="0" role="button" aria-label="Recompose Composition">
+          <div class="card-veil"><strong>Composition</strong><span>Click to recompose</span></div>
+        </div>
+        <figcaption>
+          <strong>Composition</strong>
+          <span>Bart van der Leck · 1918 · Oil on canvas</span>
+          <span class="cat">Painting</span>
+        </figcaption>
+      </figure>
+
+      <figure class="card" data-cat="painting">
+        <div class="card-art mondrian" data-seed="41" tabindex="0" role="button" aria-label="Recompose Broadway Boogie Woogie">
+          <div class="card-veil"><strong>Broadway Boogie Woogie</strong><span>Click to recompose</span></div>
+        </div>
+        <figcaption>
+          <strong>Broadway Boogie Woogie</strong>
+          <span>Piet Mondrian · 1942–43 · Oil on canvas</span>
+          <span class="cat">Painting</span>
+        </figcaption>
+      </figure>
+
+      <figure class="card" data-cat="furniture">
+        <div class="card-art mondrian" data-seed="53" tabindex="0" role="button" aria-label="Recompose Red-Blue Chair">
+          <div class="card-veil"><strong>Red-Blue Chair</strong><span>Click to recompose</span></div>
+        </div>
+        <figcaption>
+          <strong>Red-Blue Chair</strong>
+          <span>Gerrit Rietveld · 1923 · Painted wood</span>
+          <span class="cat">Furniture</span>
+        </figcaption>
+      </figure>
+
+      <figure class="card" data-cat="architecture">
+        <div class="card-art mondrian" data-seed="67" tabindex="0" role="button" aria-label="Recompose Rietveld Schröder House">
+          <div class="card-veil"><strong>Rietveld Schröder House</strong><span>Click to recompose</span></div>
+        </div>
+        <figcaption>
+          <strong>Rietveld Schröder House</strong>
+          <span>Gerrit Rietveld · 1924 · Utrecht</span>
+          <span class="cat">Architecture</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <div class="rule" aria-hidden="true"><i></i></div>
+
+  <!-- MANIFESTO -->
+  <section class="section" id="manifesto">
+    <div class="section-head">
+      <span class="kicker">The manifesto</span>
+      <h2>1918: The programme</h2>
+      <p>Manifesto I, published in De Stijl, vol. II, no. 1, November 1918. Excerpts — the words that set the grid in motion.</p>
+    </div>
+    <div class="manifesto">
+      <div class="m-title">
+        <span class="no">I</span>
+        <h3>De Stijl Manifesto</h3>
+        <p class="eyebrow" style="color:var(--grey)">November 1918 · Leiden</p>
+      </div>
+      <div class="m-point m-p1">
+        <span class="n" style="color:var(--red)">1</span>
+        <p>There is an old and a new consciousness of time. The old is connected with the individual. The new is connected with the universal.</p>
+      </div>
+      <div class="m-point m-p2">
+        <span class="n" style="color:var(--blue)">2</span>
+        <p>The war is destroying the old world with its contents: individual domination in every state.</p>
+      </div>
+      <div class="m-red" aria-hidden="true"></div>
+      <div class="m-point m-p3">
+        <span class="n" style="color:var(--yellow)">3</span>
+        <p>The new art has brought to the fore what the new consciousness of time contains: a balance between the universal and the individual.</p>
+      </div>
+      <div class="m-blue" aria-hidden="true"></div>
+      <div class="m-yellow" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <div class="rule alt" aria-hidden="true"><i></i></div>
+
+  <!-- CALENDAR -->
+  <section class="section" id="calendar">
+    <div class="section-head">
+      <span class="kicker">On the calendar</span>
+      <h2>October at the museum</h2>
+      <p>Talks, workshops and late openings. All events are included in the admission price unless stated.</p>
+    </div>
+    <table class="cal">
+      <thead><tr><th>Date</th><th>Event</th><th>Where</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="d">Sat 3 Oct</td>
+          <td class="ev"><strong>Opening: Composition 25</strong>Curators walk the full grid, hall by hall. 11:00 and 15:00.</td>
+          <td>Halls A–D</td>
+        </tr>
+        <tr>
+          <td class="d">Thu 8 Oct</td>
+          <td class="ev"><strong>Late Thursday: The diagonal that split the movement</strong>Talk on Van Doesburg's Elementarism and the 1924 schism. 19:30.</td>
+          <td>Hall D</td>
+        </tr>
+        <tr>
+          <td class="d">Sat 17 Oct</td>
+          <td class="ev"><strong>Family workshop: Build a composition</strong>Red, blue, yellow paper; black tape; no rulers allowed after 14:00.</td>
+          <td>Atelier</td>
+        </tr>
+        <tr>
+          <td class="d">Sun 25 Oct</td>
+          <td class="ev"><strong>Rietveld day: Chair clinic</strong>Bring your own wooden chair. We provide the primary colours. €5 materials.</td>
+          <td>Courtyard</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-strip" aria-hidden="true">
+    <i style="background:var(--red)"></i><i style="background:var(--white)"></i><i style="background:var(--blue)"></i><i style="background:var(--yellow)"></i>
+  </div>
+  <div class="foot-grid">
+    <div>
+      <h3>Nieuwe Stijl</h3>
+      <p>Museum of Neoplastic Art<br>Wilhelminakade 100<br>3072 AP Rotterdam</p>
+    </div>
+    <div>
+      <h3>The rule</h3>
+      <ul>
+        <li>Red, blue, yellow.</li>
+        <li>Black, white, grey.</li>
+        <li>Horizontal and vertical only.</li>
+        <li>No more, no less.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Members</h3>
+      <p>Always free. Always first.<br>Join at the desk in Hall A.</p>
+      <p style="margin-top:16px"><a href="#visit" class="btn btn-yellow">Become a member</a></p>
+    </div>
+  </div>
+  <div class="foot-base">
+    <span>Built from the de-stijl skill · design-skills</span>
+    <span>1917 — 1931 — 2026</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- Seeded RNG (mulberry32) ---- */
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  /* ---- Exact guillotine subdivision: every rect shares full edges with its
+        neighbours — zero overlap, zero gaps, areas sum to exactly 1. ---- */
+  function subdivide(r, depth, rng, out){
+    var canV = r.w > 0.26, canH = r.h > 0.26;
+    if (depth <= 0 || (!canV && !canH) || Math.min(r.w, r.h) < 0.20){
+      out.push(r); return;
+    }
+    var vertical = (canV && canH) ? (rng() < (r.w >= r.h ? 0.7 : 0.3)) : canV;
+    var t = 0.32 + rng() * 0.36;
+    var a = { x: r.x, y: r.y,
+              w: vertical ? r.w * t : r.w,
+              h: vertical ? r.h : r.h * t };
+    var b = { x: vertical ? r.x + r.w * t : r.x,
+              y: vertical ? r.y : r.y + r.h * t,
+              w: vertical ? r.w * (1 - t) : r.w,
+              h: vertical ? r.h : r.h * (1 - t) };
+    subdivide(a, depth - 1, rng, out);
+    subdivide(b, depth - 1, rng, out);
+  }
+
+  function adjacent(p, q){
+    var eps = 1e-6;
+    var xTouch = Math.abs(p.x + p.w - q.x) < eps || Math.abs(q.x + q.w - p.x) < eps;
+    var yTouch = Math.abs(p.y + p.h - q.y) < eps || Math.abs(q.y + q.h - p.y) < eps;
+    var yOverlap = Math.min(p.y + p.h, q.y + q.h) - Math.max(p.y, q.y) > eps;
+    var xOverlap = Math.min(p.x + p.w, q.x + q.w) - Math.max(p.x, q.x) > eps;
+    return (xTouch && yOverlap) || (yTouch && xOverlap);
+  }
+
+  /* ---- Color by neoplastic rules: 2–3 primaries on planes with real
+        presence (no speck-sized colour blocks), never stacked on each
+        other; black/grey only as small planes; the rest is structural white.
+        (Every shared edge carries a black line anyway, so the primaries
+        are always separated by the grid.) ---- */
+  function colorize(rects, rng){
+    var order = rects.slice().sort(function(a, b){
+      return (b.w * b.h) - (a.w * a.h);
+    });
+    var colors = {};
+    var primaries = ['m-red', 'm-blue', 'm-yellow'].sort(function(){ return rng() - 0.5; });
+    var big = order.filter(function(r){ return r.w * r.h >= 0.06; });
+    var nPrim = Math.min(2 + (rng() < 0.5 ? 1 : 0), big.length);
+    var taken = [];
+    for (var i = 0; i < nPrim; i++){
+      var pick = null;
+      for (var j = 0; j < big.length; j++){
+        var r = big[j];
+        if (taken.indexOf(r) !== -1) continue;
+        var ok = taken.every(function(o){ return !adjacent(r, o); });
+        if (ok || !pick){ pick = r; if (ok) break; }
+      }
+      if (pick){ colors[rects.indexOf(pick)] = primaries[i]; taken.push(pick); }
+    }
+    var rest = rects.filter(function(r){ return colors[rects.indexOf(r)] === undefined; });
+    rest.sort(function(a, b){ return (a.w * a.h) - (b.w * b.h); });
+    if (rng() < 0.35 && rest.length){
+      colors[rects.indexOf(rest[0])] = 'm-black'; rest.shift();
+    }
+    if (rng() < 0.4 && rest.length){
+      var g = rest[Math.floor(rng() * rest.length)];
+      colors[rects.indexOf(g)] = 'm-grey';
+    }
+    rects.forEach(function(r, idx){
+      if (!colors[idx]) colors[idx] = 'm-white';
+    });
+    return colors;
+  }
+
+  function renderComposition(el, seed){
+    var rng = mulberry32(seed);
+    var rects = [];
+    subdivide({ x: 0, y: 0, w: 1, h: 1 }, 3, rng, rects);
+    var colors = colorize(rects, rng);
+    var veil = el.querySelector('.card-veil');
+    Array.prototype.slice.call(el.querySelectorAll(':scope > div:not(.card-veil)'))
+      .forEach(function(d){ el.removeChild(d); });
+    rects.forEach(function(r, idx){
+      var d = document.createElement('div');
+      d.className = colors[idx];
+      d.style.left   = (r.x * 100).toFixed(3) + '%';
+      d.style.top    = (r.y * 100).toFixed(3) + '%';
+      d.style.width  = (r.w * 100).toFixed(3) + '%';
+      d.style.height = (r.h * 100).toFixed(3) + '%';
+      el.insertBefore(d, veil);
+    });
+  }
+
+  function renderAll(){
+    document.querySelectorAll('.card-art.mondrian').forEach(function(el){
+      var s = parseInt(el.getAttribute('data-seed'), 10) || 1;
+      renderComposition(el, s);
+    });
+  }
+
+  renderAll();
+
+  /* Click (or Enter on) a canvas to recompose it; the button recomposes all */
+  function recomposeOne(el){
+    var s = Math.floor(Math.random() * 1e9);
+    el.setAttribute('data-seed', String(s));
+    renderComposition(el, s);
+  }
+  document.querySelectorAll('.card-art.mondrian').forEach(function(el){
+    el.addEventListener('click', function(){ recomposeOne(el); });
+    el.addEventListener('keydown', function(ev){
+      if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); recomposeOne(el); }
+    });
+  });
+  document.getElementById('recompose').addEventListener('click', function(){
+    document.querySelectorAll('.card-art.mondrian').forEach(recomposeOne);
+  });
+
+  /* ---- Tabs: Visit section ---- */
+  var tabs = document.querySelectorAll('.tab');
+  var panels = document.querySelectorAll('.tabpanel');
+  function openTab(name){
+    tabs.forEach(function(t){
+      var on = t.getAttribute('data-tab') === name;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    panels.forEach(function(p){ p.classList.toggle('is-open', p.id === 'panel-' + name); });
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){ openTab(t.getAttribute('data-tab')); });
+  });
+
+  /* ---- Hero CTA: jump to the tickets tab ---- */
+  document.getElementById('hero-book').addEventListener('click', function(){
+    openTab('tickets');
+    document.getElementById('visit').scrollIntoView();
+  });
+
+  /* ---- Exhibition filter ---- */
+  var filters = document.querySelectorAll('.filter');
+  var cards = document.querySelectorAll('#cards .card');
+  filters.forEach(function(f){
+    f.addEventListener('click', function(){
+      var want = f.getAttribute('data-filter');
+      filters.forEach(function(x){ x.classList.toggle('is-active', x === f); });
+      cards.forEach(function(c){
+        var show = (want === 'all') || (c.getAttribute('data-cat') === want);
+        c.classList.toggle('hidden', !show);
+      });
+    });
+  });
+
+  /* ---- Ticket stepper ---- */
+  var PRICE = 16, MIN = 1, MAX = 10;
+  var qtyEl = document.getElementById('t-qty');
+  var totalEl = document.getElementById('t-total');
+  var msgEl = document.getElementById('t-msg');
+  function render(){
+    var q = parseInt(qtyEl.textContent, 10);
+    totalEl.textContent = '€' + (q * PRICE);
+    return q;
+  }
+  document.getElementById('t-minus').addEventListener('click', function(){
+    var q = parseInt(qtyEl.textContent, 10);
+    if (q > MIN){ qtyEl.textContent = q - 1; msgEl.classList.remove('show'); }
+    render();
+  });
+  document.getElementById('t-plus').addEventListener('click', function(){
+    var q = parseInt(qtyEl.textContent, 10);
+    if (q < MAX){ qtyEl.textContent = q + 1; msgEl.classList.remove('show'); }
+    render();
+  });
+  document.getElementById('t-add').addEventListener('click', function(){
+    var q = render();
+    msgEl.textContent = q + ' × Adult ticket — €' + (q * PRICE) + '. Order noted. Pay at the desk or online.';
+    msgEl.classList.add('show');
+  });
+  render();
+})();
+</script>
+
+</body>
+</html>
