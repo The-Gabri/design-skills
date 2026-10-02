@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>neumorphism</title>
+<style>
+  :root {
+    --bg: #e0e5ec;
+    --dark: #a3b1c6;
+    --light: #ffffff;
+    --text: #3f4756;
+    --muted: #5d6575;
+    --accent: #e07b39;
+    --accent-deep: #c5661f;
+    --cool: #3d9db3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- nav ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg);
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(163,177,198,.35);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-weight: 700; font-size: 1.35rem; letter-spacing: .02em; color: var(--text); text-decoration: none; }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 6px; align-items: center; }
+  .nav-links a {
+    text-decoration: none; color: var(--muted); font-weight: 600; font-size: .95rem;
+    padding: 10px 18px; border-radius: 999px;
+  }
+  .nav-links a:hover { color: var(--text); box-shadow: 4px 4px 8px var(--dark), -4px -4px 8px var(--light); }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    border: none; cursor: pointer; font-weight: 700; font-size: 1rem;
+    border-radius: 14px; padding: 15px 30px; color: var(--text);
+    background: var(--bg);
+    box-shadow: 6px 6px 12px var(--dark), -6px -6px 12px var(--light);
+    transition: box-shadow .18s ease-out, transform .18s ease-out;
+  }
+  .btn:hover { box-shadow: 8px 8px 18px var(--dark), -8px -8px 18px var(--light); }
+  .btn:active { box-shadow: inset 4px 4px 8px var(--dark), inset -4px -4px 8px var(--light); }
+  .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .btn-accent { background: var(--accent); color: #fff; box-shadow: 6px 6px 12px rgba(192,105,40,.45), -6px -6px 12px var(--light); }
+  .btn-accent:hover { background: var(--accent-deep); box-shadow: 8px 8px 18px rgba(192,105,40,.45), -8px -8px 18px var(--light); }
+  .btn-accent:active { box-shadow: inset 4px 4px 8px rgba(0,0,0,.28), inset -4px -4px 8px rgba(255,255,255,.35); }
+
+  /* ---------- hero ---------- */
+  .hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; padding: 84px 0 64px; }
+  .eyebrow {
+    display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 18px;
+  }
+  h1 { font-size: clamp(2.4rem, 4.6vw, 3.6rem); line-height: 1.12; font-weight: 800; margin-bottom: 20px; }
+  .lede { font-size: 1.15rem; color: var(--muted); max-width: 30rem; margin-bottom: 34px; }
+  .hero-cta { display: flex; gap: 18px; flex-wrap: wrap; }
+  .hero-note { margin-top: 22px; font-size: .9rem; color: var(--muted); }
+
+  /* ---------- thermostat device card ---------- */
+  .device {
+    background: var(--bg); border-radius: 40px; padding: 44px 40px 36px;
+    box-shadow: 14px 14px 30px var(--dark), -14px -14px 30px var(--light);
+    display: flex; flex-direction: column; align-items: center; gap: 22px;
+  }
+  .device-caption { font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .temp-well {
+    width: 220px; height: 220px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: inset 8px 8px 16px var(--dark), inset -8px -8px 16px var(--light);
+  }
+  .temp-well .num { font-size: 3.4rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .temp-well .unit { font-size: .95rem; color: var(--muted); font-weight: 600; margin-top: 6px; }
+  #mode-status { font-size: .9rem; color: var(--muted); font-weight: 600; }
+  #mode-status strong { color: var(--accent); }
+  .temp-row { display: flex; gap: 22px; }
+  .stepper {
+    width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer;
+    font-size: 1.8rem; font-weight: 700; color: var(--text); background: var(--bg);
+    box-shadow: 6px 6px 12px var(--dark), -6px -6px 12px var(--light);
+    transition: box-shadow .15s ease-out;
+  }
+  .stepper:active { box-shadow: inset 4px 4px 8px var(--dark), inset -4px -4px 8px var(--light); }
+  .stepper:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+  .segmented { display: inline-flex; gap: 6px; padding: 6px; border-radius: 999px; background: var(--bg);
+    box-shadow: inset 4px 4px 8px var(--dark), inset -4px -4px 8px var(--light); }
+  .segmented button {
+    border: none; background: transparent; color: var(--muted); border-radius: 999px;
+    padding: 11px 24px; font-weight: 700; font-size: .95rem; cursor: pointer;
+    transition: box-shadow .18s ease-out, color .18s ease-out;
+  }
+  .segmented button.is-active { color: var(--text); background: var(--bg);
+    box-shadow: 4px 4px 8px var(--dark), -4px -4px 8px var(--light); }
+  .segmented button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- sections ---------- */
+  section.block { padding: 64px 0; }
+  .section-title { font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 800; margin-bottom: 12px; }
+  .section-sub { color: var(--muted); font-size: 1.08rem; max-width: 36rem; margin-bottom: 44px; }
+
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+  .card {
+    background: var(--bg); border-radius: 26px; padding: 30px 26px;
+    box-shadow: 9px 9px 18px var(--dark), -9px -9px 18px var(--light);
+    transition: box-shadow .18s ease-out;
+  }
+  .card:hover { box-shadow: 11px 11px 24px var(--dark), -11px -11px 24px var(--light); }
+  .iconwell {
+    display: inline-grid; place-items: center; width: 58px; height: 58px; border-radius: 18px;
+    background: var(--bg); margin-bottom: 20px;
+    box-shadow: inset 4px 4px 8px var(--dark), inset -4px -4px 8px var(--light);
+  }
+  .iconwell svg { width: 26px; height: 26px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .card h3 { font-size: 1.12rem; font-weight: 700; margin-bottom: 10px; }
+  .card p { font-size: .95rem; color: var(--muted); }
+
+  /* ---------- control panel ---------- */
+  .panel {
+    background: var(--bg); border-radius: 34px; padding: 52px;
+    box-shadow: 12px 12px 26px var(--dark), -12px -12px 26px var(--light);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+  }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 0; border-bottom: 1px solid rgba(163,177,198,.35); }
+  .row:last-of-type { border-bottom: none; }
+  .row h4 { font-size: 1.05rem; font-weight: 700; }
+  .row p { font-size: .92rem; color: var(--muted); }
+  .status { font-size: .85rem; font-weight: 700; color: var(--muted); }
+  .status.on { color: var(--accent); }
+
+  .toggle {
+    width: 72px; height: 38px; border: none; border-radius: 999px; background: var(--bg);
+    cursor: pointer; position: relative; flex-shrink: 0;
+    box-shadow: inset 4px 4px 8px var(--dark), inset -4px -4px 8px var(--light);
+    transition: box-shadow .2s ease-out;
+  }
+  .toggle .knob {
+    position: absolute; top: 5px; left: 5px; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--bg);
+    box-shadow: 3px 3px 6px var(--dark), -3px -3px 6px var(--light);
+    transition: transform .2s ease-out, background .2s ease-out;
+  }
+  .toggle[aria-checked="true"] .knob { transform: translateX(34px); background: var(--accent); }
+  .toggle:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+  .slider-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .slider-label h4 { font-size: 1.05rem; font-weight: 700; }
+  .slider-label output { font-size: 1.25rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .neu-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 14px; border-radius: 999px;
+    background: var(--bg); outline-offset: 5px; cursor: pointer;
+    box-shadow: inset 3px 3px 7px var(--dark), inset -3px -3px 7px var(--light); }
+  .neu-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 32px; height: 32px; border-radius: 50%;
+    background: var(--bg); border: none; cursor: grab;
+    box-shadow: 4px 4px 9px var(--dark), -4px -4px 9px var(--light); }
+  .neu-slider::-webkit-slider-thumb:active { cursor: grabbing; box-shadow: inset 3px 3px 6px var(--dark), inset -3px -3px 6px var(--light); }
+  .neu-slider::-moz-range-thumb { width: 32px; height: 32px; border-radius: 50%; background: var(--bg); border: none; cursor: grab;
+    box-shadow: 4px 4px 9px var(--dark), -4px -4px 9px var(--light); }
+  .neu-slider::-moz-range-track { height: 14px; border-radius: 999px; background: var(--bg);
+    box-shadow: inset 3px 3px 7px var(--dark), inset -3px -3px 7px var(--light); }
+  .neu-slider:focus-visible { outline: 3px solid var(--accent); }
+  .slider-hint { margin-top: 14px; font-size: .92rem; color: var(--muted); }
+
+  /* ---------- pricing ---------- */
+  .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: stretch; }
+  .price-card {
+    background: var(--bg); border-radius: 30px; padding: 44px;
+    box-shadow: 11px 11px 24px var(--dark), -11px -11px 24px var(--light);
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .price-card h3 { font-size: 1.3rem; font-weight: 800; }
+  .price { font-size: 3rem; font-weight: 800; line-height: 1; }
+  .price small { font-size: 1rem; font-weight: 600; color: var(--muted); }
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .check-list li { display: flex; gap: 12px; align-items: flex-start; font-size: .98rem; color: var(--muted); }
+  .check-list svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 3px; stroke: var(--cool); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .price-well {
+    border-radius: 20px; padding: 28px;
+    box-shadow: inset 5px 5px 10px var(--dark), inset -5px -5px 10px var(--light);
+    font-size: .98rem; color: var(--muted);
+  }
+  .price-well strong { color: var(--text); }
+
+  footer { padding: 44px 0 54px; text-align: center; color: var(--muted); font-size: .88rem; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 44px; }
+    .cards { grid-template-columns: 1fr 1fr; }
+    .panel { grid-template-columns: 1fr; padding: 36px 28px; }
+    .price-grid { grid-template-columns: 1fr; }
+    .nav-links a:not(.btn) { display: none; }
+  }
+  @media (max-width: 560px) {
+    .cards { grid-template-columns: 1fr; }
+    .wrap { padding: 0 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="logo" href="#top">Arcadia<span>.</span></a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#app">App</a>
+      <a href="#specs">Specs</a>
+      <a class="btn" href="#specs" style="padding:12px 24px;">Buy Ember</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap" id="top">
+  <header class="hero">
+    <div>
+      <span class="eyebrow">Arcadia Ember · 3rd generation</span>
+      <h1>The thermostat you want to touch.</h1>
+      <p class="lede">Ember learns your routine, keeps every room exactly where you like it, and looks like it was carved out of a single piece of cloud. No menus to fight — just press, glide, and feel the click.</p>
+      <div class="hero-cta">
+        <a class="btn btn-accent" href="#specs" style="text-decoration:none;">Buy Ember — $189</a>
+        <a class="btn" href="#app" style="text-decoration:none;">Try the controls</a>
+      </div>
+      <p class="hero-note">Free shipping · 30-day home trial · Works with every boiler made after 2004</p>
+    </div>
+
+    <div class="device" role="group" aria-label="Interactive thermostat preview">
+      <span class="device-caption">Live preview</span>
+      <div class="temp-well">
+        <span class="num" id="temp-display">21.5</span>
+        <span class="unit">degrees · inside</span>
+      </div>
+      <div class="temp-row">
+        <button class="stepper" id="temp-minus" aria-label="Decrease temperature">−</button>
+        <button class="stepper" id="temp-plus" aria-label="Increase temperature">+</button>
+      </div>
+      <div class="segmented" role="tablist" aria-label="Thermostat mode">
+        <button role="tab" aria-selected="true" class="is-active" id="mode-heat">Heat</button>
+        <button role="tab" aria-selected="false" id="mode-cool">Cool</button>
+        <button role="tab" aria-selected="false" id="mode-auto">Auto</button>
+      </div>
+      <p id="mode-status"><strong>Heating</strong> to 21.5°</p>
+    </div>
+  </header>
+
+  <section class="block" id="features">
+    <h2 class="section-title">Soft on the wall, sharp on the details.</h2>
+    <p class="section-sub">Everything Ember does is built around one idea: your home's climate should feel as calm as it looks.</p>
+    <div class="cards">
+      <article class="card">
+        <span class="iconwell" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>
+        </span>
+        <h3>Learns your rhythm</h3>
+        <p>Ember watches for a week, then starts pre-heating before your alarm and easing off after you leave. You never touch a schedule again.</p>
+      </article>
+      <article class="card">
+        <span class="iconwell" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3c-4 4-6 7-6 10a6 6 0 0 0 12 0c0-3-2-6-6-10z"/><path d="M9.5 13.5a2.5 2.5 0 0 0 2.5 2.5"/></svg>
+        </span>
+        <h3>Room-by-room comfort</h3>
+        <p>Clip-on sensors tell Ember the nursery is chilly while the office is fine. Each room gets its own target, down to half a degree.</p>
+      </article>
+      <article class="card">
+        <span class="iconwell" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
+        </span>
+        <h3>Sunrise wake-up</h3>
+        <p>Pair Ember with your blinds and it warms the bedroom as the light comes in. Waking up cold becomes a story you tell guests.</p>
+      </article>
+      <article class="card">
+        <span class="iconwell" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        </span>
+        <h3>Freeze guard</h3>
+        <p>Going away in January? Ember holds the house at a safe floor and alerts you if a pipe-risking cold snap rolls through.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block" id="app">
+    <h2 class="section-title">Your whole home, one soft surface.</h2>
+    <p class="section-sub">The Arcadia app mirrors the dial. Everything presses in like a real button — try it, these controls are live.</p>
+    <div class="panel">
+      <div>
+        <div class="row">
+          <div>
+            <h4>Away mode</h4>
+            <p>Drop to 17° while nobody is home.</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span class="status" id="status-away">Off</span>
+            <button class="toggle" id="toggle-away" role="switch" aria-checked="false" aria-label="Away mode"><span class="knob"></span></button>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <h4>Quiet fan</h4>
+            <p>Circulate air at a whisper, all night.</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span class="status" id="status-fan">Off</span>
+            <button class="toggle" id="toggle-fan" role="switch" aria-checked="false" aria-label="Quiet fan"><span class="knob"></span></button>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <h4>Smart schedule</h4>
+            <p>Let Ember run the week on its own.</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span class="status on" id="status-schedule">On</span>
+            <button class="toggle" id="toggle-schedule" role="switch" aria-checked="true" aria-label="Smart schedule"><span class="knob"></span></button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="slider-label">
+          <h4><label for="setback-slider">Night setback</label></h4>
+          <output id="setback-value" for="setback-slider">18.0°</output>
+        </div>
+        <input class="neu-slider" id="setback-slider" type="range" min="15" max="21" step="0.5" value="18" aria-describedby="setback-hint">
+        <p class="slider-hint" id="setback-hint">How low Ember lets the house drift while you sleep. Most people save 12% on heating at 18°.</p>
+        <div class="price-well" style="margin-top:30px;">
+          <strong>This month so far:</strong> 214 kWh, down 9% from last October. At this rate Ember pays for itself in <strong>14 months</strong>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="specs">
+    <h2 class="section-title">One dial. Zero subscriptions.</h2>
+    <p class="section-sub">Buy it once, own it forever. Firmware updates are free for the life of the product.</p>
+    <div class="price-grid">
+      <div class="price-card">
+        <h3>Ember Thermostat</h3>
+        <p class="price">$189 <small>one-time</small></p>
+        <ul class="check-list">
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Soft-touch dial with haptic click</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>2 room sensors included in the box</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Boiler, heat pump and underfloor compatible</li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Works offline — no cloud account required</li>
+        </ul>
+        <button class="btn btn-accent" id="buy-btn" style="margin-top:8px;">Add to cart</button>
+        <p class="status" id="buy-status" role="status" style="text-align:center;"></p>
+      </div>
+      <div class="price-card">
+        <h3>In the box</h3>
+        <div class="price-well">
+          <strong>What's included:</strong> Ember dial, magnetic wall plate, 2 room sensors, trim kit in matte white, 3-year warranty, and a screwdriver you'll actually keep.
+        </div>
+        <div class="price-well">
+          <strong>Install time:</strong> about 25 minutes with the guided app flow. No C-wire needed for most systems — the power extender is in the box.
+        </div>
+        <div class="price-well">
+          <strong>Our promise:</strong> if your heating bill doesn't drop in the first winter, send Ember back. We'll cover the return shipping.
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="wrap">
+  Built from the neumorphism skill · design-skills
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- thermostat temperature ---------- */
+  var tempDisplay = document.getElementById('temp-display');
+  var modeStatus = document.getElementById('mode-status');
+  var currentTemp = 21.5;
+  var modeWord = 'Heating';
+
+  function renderTemp() {
+    tempDisplay.textContent = currentTemp.toFixed(1);
+    modeStatus.innerHTML = '<strong>' + modeWord + '</strong> to ' + currentTemp.toFixed(1) + '°';
+  }
+  document.getElementById('temp-minus').addEventListener('click', function () {
+    currentTemp = Math.max(15, Math.round((currentTemp - 0.5) * 2) / 2);
+    renderTemp();
+  });
+  document.getElementById('temp-plus').addEventListener('click', function () {
+    currentTemp = Math.min(28, Math.round((currentTemp + 0.5) * 2) / 2);
+    renderTemp();
+  });
+
+  /* ---------- mode tabs ---------- */
+  var tabs = [
+    { el: document.getElementById('mode-heat'), word: 'Heating' },
+    { el: document.getElementById('mode-cool'), word: 'Cooling' },
+    { el: document.getElementById('mode-auto'), word: 'Holding' }
+  ];
+  tabs.forEach(function (tab) {
+    tab.el.addEventListener('click', function () {
+      tabs.forEach(function (t) {
+        t.el.classList.remove('is-active');
+        t.el.setAttribute('aria-selected', 'false');
+      });
+      tab.el.classList.add('is-active');
+      tab.el.setAttribute('aria-selected', 'true');
+      modeWord = tab.word;
+      renderTemp();
+    });
+  });
+
+  /* ---------- toggles ---------- */
+  function wireToggle(toggleId, statusId) {
+    var toggle = document.getElementById(toggleId);
+    var status = document.getElementById(statusId);
+    toggle.addEventListener('click', function () {
+      var on = toggle.getAttribute('aria-checked') === 'true';
+      toggle.setAttribute('aria-checked', String(!on));
+      status.textContent = on ? 'Off' : 'On';
+      status.classList.toggle('on', !on);
+    });
+  }
+  wireToggle('toggle-away', 'status-away');
+  wireToggle('toggle-fan', 'status-fan');
+  wireToggle('toggle-schedule', 'status-schedule');
+
+  /* ---------- night setback slider ---------- */
+  var slider = document.getElementById('setback-slider');
+  var sliderValue = document.getElementById('setback-value');
+  slider.addEventListener('input', function () {
+    sliderValue.textContent = parseFloat(slider.value).toFixed(1) + '°';
+  });
+
+  /* ---------- add to cart ---------- */
+  document.getElementById('buy-btn').addEventListener('click', function () {
+    document.getElementById('buy-status').textContent = 'Added — Ember ships within 48 hours.';
+  });
+})();
+</script>
+</body>
+</html>
