@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>skeuomorphism</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --linen-hi: #d4d6d8; --linen-lo: #bfc1c3;
+    --leather-hi: #54402a; --leather-lo: #3a2b1c;
+    --stitch: #d9c69a;
+    --blue-hi: #8fb0dd; --blue-lo: #4d7ab8; --blue-edge: #1e3f73;
+    --paper: #fdf6c8;
+  }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #1c1c1c;
+    background: #2b2b2b;
+    -webkit-font-smoothing: antialiased;
+  }
+  .device { max-width: 480px; margin: 0 auto; background: #111; }
+
+  /* ---------- 1. fake iOS 6 status bar ---------- */
+  .statusbar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #000; color: #fff; font-size: 12px; font-weight: bold;
+    padding: 4px 10px; letter-spacing: .3px;
+  }
+  .battery {
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .battery .cell {
+    width: 22px; height: 10px; border: 1px solid #999; border-radius: 2px;
+    position: relative; padding: 1px;
+  }
+  .battery .cell::before {
+    content: ""; display: block; width: 70%; height: 100%;
+    background: linear-gradient(#b6e388, #7cc24f); border-radius: 1px;
+  }
+  .battery .cell::after {
+    content: ""; position: absolute; right: -4px; top: 2px;
+    width: 2px; height: 4px; background: #999; border-radius: 0 1px 1px 0;
+  }
+
+  /* ---------- 2. glossy blue nav bar ---------- */
+  .navbar {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    background: linear-gradient(var(--blue-hi), var(--blue-lo));
+    border-bottom: 1px solid var(--blue-edge);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .navbar h1 {
+    font-size: 19px; font-weight: bold; color: #fff;
+    text-shadow: 0 -1px 1px rgba(0,0,0,.55); letter-spacing: .2px;
+  }
+  .backbtn {
+    font: bold 13px "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+    padding: 6px 14px 6px 22px; border: 1px solid var(--blue-edge);
+    border-radius: 5px; cursor: pointer;
+    background: linear-gradient(#7d9fd2, #3f68a8);
+    clip-path: polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+  }
+  .backbtn:active { background: linear-gradient(#3f68a8, #2c5288); }
+
+  /* ---------- 3. stitched leather hero ---------- */
+  .hero {
+    background:
+      radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,.09), transparent 60%),
+      repeating-linear-gradient(45deg, rgba(0,0,0,.05) 0 2px, transparent 2px 4px),
+      linear-gradient(var(--leather-hi), var(--leather-lo));
+    border-top: 1px solid rgba(0,0,0,.6);
+    border-bottom: 1px solid rgba(0,0,0,.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+    padding: 16px 14px;
+  }
+  .hero-stitch {
+    border: 2px dashed var(--stitch); border-radius: 4px;
+    padding: 22px 16px; display: flex; gap: 16px; align-items: center;
+  }
+  .appicon {
+    flex: 0 0 96px; width: 96px; height: 96px; border-radius: 18px;
+    border: 1px solid rgba(0,0,0,.55); position: relative; overflow: hidden;
+    background:
+      radial-gradient(90% 70% at 50% 0%, rgba(255,255,255,.10), transparent 55%),
+      linear-gradient(#5d4830, #42301e);
+    box-shadow: 0 3px 8px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  .appicon::before { /* gloss */
+    content: ""; position: absolute; inset: 0; border-radius: 18px;
+    background: linear-gradient(rgba(255,255,255,.38), rgba(255,255,255,.06) 48%, transparent 52%);
+  }
+  .appicon span {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font: bold 44px Georgia, "Times New Roman", serif; color: #e8c877;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.15);
+  }
+  .hero-copy h2 {
+    font-size: 30px; font-weight: bold; color: #f2ede2; letter-spacing: .3px;
+    text-shadow: 0 -1px 2px rgba(0,0,0,.7);
+  }
+  .hero-copy p.tag {
+    margin-top: 6px; font-size: 14px; color: #cbb894; font-style: italic;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.6);
+  }
+  .hero-actions { display: flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: wrap; }
+  .gel-btn {
+    font: bold 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+    padding: 10px 26px; border: 1px solid var(--blue-edge); border-radius: 8px;
+    background: linear-gradient(var(--blue-hi) 0%, #5b8ac4 48%, #3c6dae 52%, var(--blue-lo) 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 1px 3px rgba(0,0,0,.45);
+    cursor: pointer; position: relative; overflow: hidden;
+  }
+  .gel-btn::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 48%;
+    background: linear-gradient(rgba(255,255,255,.45), rgba(255,255,255,.05));
+  }
+  .gel-btn:active {
+    background: linear-gradient(#3c6dae, #2c5288);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,.45);
+  }
+  .stars { display: flex; gap: 2px; }
+  .stars button {
+    background: none; border: 0; cursor: pointer; font-size: 24px; line-height: 1;
+    color: #e8c877; text-shadow: 0 1px 2px rgba(0,0,0,.7), 0 -1px 0 rgba(0,0,0,.4);
+    padding: 2px;
+  }
+  .stars button.dim { color: #6e5c40; }
+  .rating-label { font-size: 12px; color: #a8946e; text-shadow: 0 -1px 0 rgba(0,0,0,.6); }
+
+  /* ---------- 4. segmented tabs ---------- */
+  .tabbar {
+    background: linear-gradient(#3a3a3c, #232324);
+    border-bottom: 1px solid #000; padding: 10px 12px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+    display: flex; justify-content: center;
+  }
+  .seg { display: inline-flex; border: 1px solid var(--blue-edge); border-radius: 7px; overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 1px 2px rgba(0,0,0,.4); }
+  .seg button {
+    font: bold 13px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #fff;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.5); padding: 8px 22px; border: 0;
+    border-right: 1px solid rgba(0,0,0,.35); cursor: pointer;
+    background: linear-gradient(#7d9fd2 0%, #527cb8 50%, #3f68a8 50%, #4d7ab8 100%);
+  }
+  .seg button:last-child { border-right: 0; }
+  .seg button.on {
+    background: linear-gradient(#9db9e2 0%, #6f96cc 50%, #5780bd 50%, #6b90c8 100%);
+    box-shadow: inset 0 2px 6px rgba(0,20,60,.55);
+  }
+
+  /* ---------- panels ---------- */
+  .panel { display: none; }
+  .panel.on { display: block; }
+
+  /* linen panel (Overview) */
+  .linen {
+    background-color: #c9cbcd;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
+      linear-gradient(var(--linen-hi), var(--linen-lo));
+    padding: 18px 14px 24px;
+  }
+  .linen h3 {
+    font-size: 21px; font-weight: bold; color: #3d3d3d; letter-spacing: .2px;
+    text-shadow: 0 1px 0 rgba(255,255,255,.7); margin-bottom: 8px;
+  }
+  .linen p.blurb { font-size: 14px; line-height: 1.55; color: #2e2e2e;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5); margin-bottom: 16px; }
+  .grouped {
+    background: #f7f5ef; border: 1px solid #9a9a9a; border-radius: 10px; overflow: hidden;
+    box-shadow: inset 0 1px 0 #fff, 0 1px 3px rgba(0,0,0,.25);
+  }
+  .grouped .row {
+    display: flex; justify-content: space-between; padding: 11px 14px; font-size: 15px;
+    border-bottom: 1px solid #d9d4c5; color: #1c1c1c;
+  }
+  .grouped .row:last-child { border-bottom: 0; }
+  .grouped .row .k { color: #6e6a5e; }
+  .grouped .row .v { font-weight: 500; }
+
+  /* wooden shelf (Library) */
+  .wood {
+    background:
+      repeating-linear-gradient(93deg, rgba(0,0,0,.13) 0 3px, transparent 3px 9px),
+      repeating-linear-gradient(88deg, rgba(255,255,255,.05) 0 2px, transparent 2px 14px),
+      linear-gradient(#7d5732, #5d3f22);
+    padding: 22px 14px 26px;
+  }
+  .wood h3 {
+    font-size: 21px; font-weight: bold; color: #f2e6cf; margin-bottom: 14px;
+    text-shadow: 0 -1px 2px rgba(0,0,0,.7);
+  }
+  .shelf {
+    position: relative; display: flex; gap: 14px; align-items: flex-end;
+    padding: 0 8px 16px; border-bottom: 0;
+  }
+  .book {
+    width: 104px; height: 138px; border-radius: 2px 7px 7px 2px;
+    border-left: 5px solid rgba(0,0,0,.35);
+    box-shadow: 2px 4px 8px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.3);
+    padding: 12px 8px; display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .book::before { /* spine gloss */
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(255,255,255,.22), transparent 40%);
+  }
+  .book b { font-size: 13px; color: #fff; text-shadow: 0 -1px 1px rgba(0,0,0,.6); line-height: 1.3; }
+  .book small { font-size: 10px; color: rgba(255,255,255,.75); text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
+  .book.red { background: linear-gradient(#a03d2e, #7c2a20); }
+  .book.green { background: linear-gradient(#3f6b34, #2c4d24); }
+  .book.navy { background: linear-gradient(#2e4a68, #1e3247); }
+  .ledge {
+    height: 14px; margin: 0 -14px;
+    background: linear-gradient(#8a6236, #4e3319);
+    border-top: 1px solid rgba(255,255,255,.28);
+    box-shadow: 0 4px 6px rgba(0,0,0,.55), inset 0 -2px 3px rgba(0,0,0,.35);
+  }
+  .wood .note { margin-top: 12px; font-size: 12px; color: #d9c9a8; font-style: italic;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.6); }
+
+  /* notepad reviews */
+  .reviews {
+    background: #202020; padding: 18px 14px 24px;
+  }
+  .reviews h3 {
+    font-size: 21px; font-weight: bold; color: #f2ede2; margin-bottom: 14px;
+    text-shadow: 0 -1px 2px rgba(0,0,0,.8);
+  }
+  .notepad {
+    font-family: "Marker Felt", "Comic Sans MS", cursive; color: #3a3226;
+    background:
+      linear-gradient(90deg, transparent 0 34px, #e5a3a3 34px 36px, transparent 36px),
+      repeating-linear-gradient(#fdf6c8 0 26px, #a9c6df 26px 27px);
+    border: 1px solid #d8cf9e; border-radius: 2px;
+    box-shadow: 0 3px 6px rgba(0,0,0,.5), inset 0 1px 0 #fff;
+    padding: 8px 14px 12px 48px; line-height: 27px; font-size: 15px;
+    margin-bottom: 14px;
+  }
+  .notepad .who { display: block; text-align: right; font-size: 13px; color: #6e5f45; }
+
+  /* ---------- 5. brushed metal workshop ---------- */
+  .workshop {
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 3px),
+      linear-gradient(#d3d7db, #b3b8be);
+    border-top: 1px solid #6f747a; border-bottom: 1px solid #6f747a;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.7), inset 0 -1px 0 rgba(0,0,0,.15);
+    padding: 18px 14px 22px;
+  }
+  .workshop h3 {
+    font-size: 21px; font-weight: bold; color: #3a3d40; margin-bottom: 4px;
+    text-shadow: 0 1px 0 rgba(255,255,255,.7);
+  }
+  .workshop p.sub { font-size: 13px; color: #5c6064; text-shadow: 0 1px 0 rgba(255,255,255,.6); margin-bottom: 14px; }
+  .pref {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(#f2f2f2, #e2e2e2);
+    border: 1px solid #8a8e93; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;
+    box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0,0,0,.2);
+  }
+  .pref .label { font-size: 14px; font-weight: 600; color: #2c2c2c; text-shadow: 0 1px 0 #fff; }
+  .pref .label small { display: block; font-weight: 400; font-size: 12px; color: #6e6e6e; }
+
+  /* iOS 6 toggle */
+  .ios6-switch input { display: none; }
+  .ios6-switch .track {
+    display: inline-block; position: relative; width: 94px; height: 27px; flex: 0 0 94px;
+    border-radius: 14px; border: 1px solid #6d6d6d; overflow: hidden;
+    background: linear-gradient(#8a8a8a, #b5b5b5);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.6);
+    cursor: pointer;
+  }
+  .ios6-switch .labels { position: absolute; inset: 0; display: flex; transition: transform .25s ease; }
+  .ios6-switch .labels span { flex: 0 0 94px; line-height: 27px; text-align: center;
+    font: bold 13px "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  .ios6-switch .labels span:first-child { color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+    background: linear-gradient(#5b8ac4, #2f5fa0); }
+  .ios6-switch .labels span:last-child { color: #7a7a7a; text-shadow: 0 1px 0 rgba(255,255,255,.7); }
+  .ios6-switch input:not(:checked) + .track .labels { transform: translateX(-94px); }
+  .ios6-switch .knob {
+    position: absolute; top: -1px; left: 0; width: 44px; height: 27px; border-radius: 13px;
+    border: 1px solid #7a7a7a;
+    background: linear-gradient(#ffffff 0%, #e8e8e8 45%, #cfcfcf 55%, #f4f4f4 100%);
+    box-shadow: 0 1px 3px rgba(0,0,0,.5), inset 0 1px 0 #fff;
+    transition: left .25s ease;
+  }
+  .ios6-switch input:not(:checked) + .track .knob { left: 48px; }
+
+  /* brushed metal slider */
+  .slider-block { margin-top: 16px; }
+  .slider-block .cap { display: flex; justify-content: space-between; font-size: 13px;
+    font-weight: 600; color: #3a3d40; text-shadow: 0 1px 0 rgba(255,255,255,.7); margin-bottom: 8px; }
+  .slider-track {
+    position: relative; height: 9px; border-radius: 5px; cursor: pointer;
+    background: repeating-linear-gradient(90deg, #b9bec3 0 2px, #a9aeb4 2px 3px);
+    border: 1px solid #6f747a;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.5);
+    touch-action: none;
+  }
+  .slider-fill {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 65%; border-radius: 5px;
+    background: linear-gradient(#7d9fd2, #3f68a8);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .slider-knob {
+    position: absolute; top: -10px; left: 65%; width: 28px; height: 28px; margin-left: -14px;
+    border-radius: 50%; border: 1px solid #6f747a;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #d9dde1 45%, #a9aeb4 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,.45), inset 0 1px 0 #fff;
+  }
+
+  /* stitched divider */
+  .divider {
+    background: linear-gradient(var(--leather-hi), var(--leather-lo));
+    padding: 8px 14px;
+  }
+  .divider div { border-top: 2px dashed var(--stitch); }
+
+  /* ---------- 6. alert (UIAlertView) ---------- */
+  .alert-overlay {
+    display: none; position: fixed; inset: 0; z-index: 50;
+    background: rgba(0,0,0,.45); align-items: center; justify-content: center; padding: 24px;
+  }
+  .alert-overlay.show { display: flex; }
+  .alert {
+    width: 100%; max-width: 300px; border-radius: 10px; overflow: hidden;
+    border: 1px solid #0f0f0f;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(120,150,200,.35), transparent 60%),
+      linear-gradient(#3a4a63, #232c3d);
+    box-shadow: 0 8px 30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.25);
+    text-align: center; padding: 18px 16px 14px;
+  }
+  .alert h4 { color: #fff; font-size: 17px; font-weight: bold; text-shadow: 0 -1px 1px rgba(0,0,0,.7); margin-bottom: 8px; }
+  .alert p { color: #cfd6e2; font-size: 13px; line-height: 1.5; text-shadow: 0 -1px 0 rgba(0,0,0,.6); margin-bottom: 16px; }
+  .alert .btns { display: flex; gap: 10px; }
+  .alert .btns button { flex: 1; }
+  .alert-btn {
+    font: bold 14px "Helvetica Neue", Helvetica, Arial, sans-serif; color: #fff;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.5); padding: 9px 0;
+    border: 1px solid #101418; border-radius: 7px; cursor: pointer;
+    background: linear-gradient(#8a939e, #5c656f);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 1px 2px rgba(0,0,0,.4);
+  }
+  .alert-btn.blue { border-color: var(--blue-edge);
+    background: linear-gradient(var(--blue-hi) 0%, #5b8ac4 48%, #3c6dae 52%, var(--blue-lo) 100%); }
+  .alert-btn:active { box-shadow: inset 0 2px 5px rgba(0,0,0,.45); }
+
+  footer {
+    background: #1a1a1a; color: #8a8a8a; font-size: 12px; text-align: center;
+    padding: 16px 12px 26px; line-height: 1.7; text-shadow: 0 -1px 0 #000;
+  }
+  footer .skill { color: #c9c9c9; }
+
+  @media (max-width: 420px) {
+    .hero-stitch { flex-direction: column; text-align: center; }
+    .hero-actions { justify-content: center; }
+    .seg button { padding: 8px 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="device">
+
+  <!-- status bar -->
+  <div class="statusbar">
+    <span>AT&amp;T&nbsp;&nbsp;&#9679;&#9679;&#9679;&#9679;&#9679;</span>
+    <span id="statusTime">9:41 AM</span>
+    <span class="battery"><span class="cell"></span></span>
+  </div>
+
+  <!-- nav bar -->
+  <header class="navbar">
+    <button class="backbtn" id="backBtn">Apps</button>
+    <h1>Inkwell</h1>
+  </header>
+
+  <!-- leather hero -->
+  <section class="hero">
+    <div class="hero-stitch">
+      <div class="appicon"><span>Iw</span></div>
+      <div class="hero-copy">
+        <h2>Inkwell</h2>
+        <p class="tag">A leather-bound journal for your iPad. Stitched, ruled, and ready to write in.</p>
+        <div class="hero-actions">
+          <button class="gel-btn" id="buyBtn">$4.99 &nbsp;·&nbsp; Buy App</button>
+          <div>
+            <div class="stars" id="ratingStars" role="radiogroup" aria-label="Rate Inkwell">
+              <button data-v="1" aria-label="1 star">&#9733;</button>
+              <button data-v="2" aria-label="2 stars">&#9733;</button>
+              <button data-v="3" aria-label="3 stars">&#9733;</button>
+              <button data-v="4" aria-label="4 stars">&#9733;</button>
+              <button data-v="5" aria-label="5 stars">&#9733;</button>
+            </div>
+            <div class="rating-label" id="ratingLabel">4.5 average · 12,408 ratings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- segmented tabs -->
+  <nav class="tabbar">
+    <div class="seg" role="tablist" aria-label="Inkwell sections">
+      <button class="on" id="seg-overview" role="tab" data-tab="panel-overview">Overview</button>
+      <button id="seg-library" role="tab" data-tab="panel-library">Library</button>
+      <button id="seg-reviews" role="tab" data-tab="panel-reviews">Reviews</button>
+    </div>
+  </nav>
+
+  <!-- OVERVIEW: linen -->
+  <section class="panel on linen" id="panel-overview" role="tabpanel">
+    <h3>Write like it matters</h3>
+    <p class="blurb">Inkwell turns your iPad into the finest journal you have ever owned. Real paper grain, a fountain pen that never runs dry, and shelves that fill up as your life does. Open it in the morning, close it at night — it just feels right in your hands.</p>
+    <div class="grouped">
+      <div class="row"><span class="k">Version</span><span class="v">2.1</span></div>
+      <div class="row"><span class="k">Size</span><span class="v">48.2 MB</span></div>
+      <div class="row"><span class="k">Requires</span><span class="v">iOS 6.0 or later</span></div>
+      <div class="row"><span class="k">Languages</span><span class="v">English, French, German</span></div>
+      <div class="row"><span class="k">Seller</span><span class="v">Inkwell Labs</span></div>
+    </div>
+  </section>
+
+  <!-- LIBRARY: wooden shelf -->
+  <section class="panel wood" id="panel-library" role="tabpanel">
+    <h3>Your shelf, so far</h3>
+    <div class="shelf">
+      <div class="book red"><b>Field Notes</b><small>142 pages</small></div>
+      <div class="book green"><b>Travel Log</b><small>88 pages</small></div>
+      <div class="book navy"><b>Sketchbook</b><small>203 pages</small></div>
+    </div>
+    <div class="ledge"></div>
+    <p class="note">Every journal lands on the shelf with a soft wooden thunk.</p>
+  </section>
+
+  <!-- REVIEWS: yellow notepads -->
+  <section class="panel reviews" id="panel-reviews" role="tabpanel">
+    <h3>From the App Store</h3>
+    <article class="notepad">
+      The paper feels real. I cancelled my paper journal subscription the same week.
+      <span class="who">— Margaret H., &#9733;&#9733;&#9733;&#9733;&#9733;</span>
+    </article>
+    <article class="notepad">
+      My grandfather keeps asking where I bought such a handsome leather book. It is an app, grandpa.
+      <span class="who">— Daniel R., &#9733;&#9733;&#9733;&#9733;&#9734;</span>
+    </article>
+    <article class="notepad">
+      The fountain pen sound when you write is worth the five dollars alone.
+      <span class="who">— Priya S., &#9733;&#9733;&#9733;&#9733;&#9733;</span>
+    </article>
+  </section>
+
+  <div class="divider"><div></div></div>
+
+  <!-- WORKSHOP: brushed metal -->
+  <section class="workshop">
+    <h3>Workshop</h3>
+    <p class="sub">Tune the machinery underneath the leather.</p>
+
+    <div class="pref">
+      <div class="label">iCloud Sync<small id="syncState">On — journals back up nightly</small></div>
+      <label class="ios6-switch">
+        <input type="checkbox" id="toggleSync" checked>
+        <span class="track"><span class="labels"><span>ON</span><span>OFF</span></span><span class="knob"></span></span>
+      </label>
+    </div>
+
+    <div class="pref">
+      <div class="label">Desk Lamp<small id="lampState">Off — page stays daylight</small></div>
+      <label class="ios6-switch">
+        <input type="checkbox" id="toggleLamp">
+        <span class="track"><span class="labels"><span>ON</span><span>OFF</span></span><span class="knob"></span></span>
+      </label>
+    </div>
+
+    <div class="slider-block">
+      <div class="cap"><span>Ink flow</span><span id="sliderValue">65%</span></div>
+      <div class="slider-track" id="sliderTrack">
+        <div class="slider-fill" id="sliderFill"></div>
+        <div class="slider-knob" id="sliderKnob"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><div></div></div>
+
+  <footer>
+    <div class="skill">Built from the skeuomorphism skill · design-skills</div>
+    <div>&copy; 2012 Inkwell Labs. Crafted for iOS 6. No pixels were flattened.</div>
+  </footer>
+</div>
+
+<!-- iOS 6 style alert -->
+<div class="alert-overlay" id="alertOverlay">
+  <div class="alert" role="alertdialog" aria-labelledby="alertTitle">
+    <h4 id="alertTitle">Buy Inkwell?</h4>
+    <p id="alertMsg">Inkwell 2.1 for $4.99 will be charged to your Apple ID. The leather is, regrettably, virtual.</p>
+    <div class="btns">
+      <button class="alert-btn" id="alertCancel">Cancel</button>
+      <button class="alert-btn blue" id="alertBuy">Buy</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---- status bar clock (kept at the classic 9:41 for nostalgia) ---- */
+  var statusTime = document.getElementById("statusTime");
+  statusTime.textContent = "9:41 AM";
+
+  /* ---- back button: gentle era-appropriate nudge ---- */
+  document.getElementById("backBtn").addEventListener("click", function () {
+    document.getElementById("panel-overview").scrollIntoView({ behavior: "smooth" });
+    selectTab("panel-overview");
+  });
+
+  /* ---- segmented tabs ---- */
+  var segBtns = Array.prototype.slice.call(document.querySelectorAll(".seg button"));
+  function selectTab(panelId) {
+    segBtns.forEach(function (b) {
+      b.classList.toggle("on", b.getAttribute("data-tab") === panelId);
+    });
+    ["panel-overview", "panel-library", "panel-reviews"].forEach(function (id) {
+      document.getElementById(id).classList.toggle("on", id === panelId);
+    });
+  }
+  segBtns.forEach(function (b) {
+    b.addEventListener("click", function () { selectTab(b.getAttribute("data-tab")); });
+  });
+
+  /* ---- iOS 6 toggles ---- */
+  var toggleSync = document.getElementById("toggleSync");
+  var toggleLamp = document.getElementById("toggleLamp");
+  var syncState = document.getElementById("syncState");
+  var lampState = document.getElementById("lampState");
+  function refreshSync() {
+    syncState.textContent = toggleSync.checked ? "On — journals back up nightly" : "Off — journals stay on this iPad";
+  }
+  function refreshLamp() {
+    lampState.textContent = toggleLamp.checked ? "On — warm lamplight on the page" : "Off — page stays daylight";
+  }
+  toggleSync.addEventListener("change", refreshSync);
+  toggleLamp.addEventListener("change", refreshLamp);
+  refreshSync(); refreshLamp();
+
+  /* ---- brushed-metal slider ---- */
+  var sliderTrack = document.getElementById("sliderTrack");
+  var sliderFill = document.getElementById("sliderFill");
+  var sliderKnob = document.getElementById("sliderKnob");
+  var sliderValue = document.getElementById("sliderValue");
+  var dragging = false;
+  function setSliderFromEvent(e) {
+    var rect = sliderTrack.getBoundingClientRect();
+    var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    var pct = Math.max(0, Math.min(100, Math.round((x / rect.width) * 100)));
+    sliderFill.style.width = pct + "%";
+    sliderKnob.style.left = pct + "%";
+    sliderValue.textContent = pct + "%";
+  }
+  sliderTrack.addEventListener("pointerdown", function (e) {
+    dragging = true;
+    sliderTrack.setPointerCapture(e.pointerId);
+    setSliderFromEvent(e);
+  });
+  sliderTrack.addEventListener("pointermove", function (e) {
+    if (dragging) setSliderFromEvent(e);
+  });
+  sliderTrack.addEventListener("pointerup", function () { dragging = false; });
+  sliderTrack.addEventListener("pointercancel", function () { dragging = false; });
+
+  /* ---- star rating ---- */
+  var starBtns = Array.prototype.slice.call(document.querySelectorAll("#ratingStars button"));
+  var ratingLabel = document.getElementById("ratingLabel");
+  var baseLabel = "4.5 average · 12,408 ratings";
+  function paintStars(n) {
+    starBtns.forEach(function (b, i) {
+      b.classList.toggle("dim", i >= n);
+    });
+  }
+  paintStars(5); /* show the 4.5-ish glow by default */
+  starBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var v = parseInt(b.getAttribute("data-v"), 10);
+      paintStars(v);
+      ratingLabel.textContent = "You rated it " + v + " of 5 — thanks!";
+    });
+  });
+  starBtns.forEach(function (b) {
+    b.addEventListener("mouseenter", function () {
+      paintStars(parseInt(b.getAttribute("data-v"), 10));
+    });
+  });
+  document.getElementById("ratingStars").addEventListener("mouseleave", function () {
+    paintStars(5);
+    ratingLabel.textContent = baseLabel;
+  });
+
+  /* ---- UIAlertView-style purchase modal ---- */
+  var alertOverlay = document.getElementById("alertOverlay");
+  document.getElementById("buyBtn").addEventListener("click", function () {
+    alertOverlay.classList.add("show");
+  });
+  document.getElementById("alertCancel").addEventListener("click", function () {
+    alertOverlay.classList.remove("show");
+  });
+  document.getElementById("alertBuy").addEventListener("click", function () {
+    document.getElementById("alertTitle").textContent = "Thank You";
+    document.getElementById("alertMsg").textContent = "Inkwell is downloading. Your shelf is being polished.";
+    document.getElementById("alertBuy").style.display = "none";
+    document.getElementById("alertCancel").textContent = "OK";
+  });
+  alertOverlay.addEventListener("click", function (e) {
+    if (e.target === alertOverlay) alertOverlay.classList.remove("show");
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") alertOverlay.classList.remove("show");
+  });
+})();
+</script>
+</body>
+</html>
