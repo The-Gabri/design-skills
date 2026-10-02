@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>swiss-international</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;900&family=Archivo:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFFFF;
+  --ink:#000000;
+  --red:#FF0000;
+  --u:8px;
+  --gutter:24px;
+  --font:"Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-body:"Archivo","Inter Tight","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+body{font-family:var(--font-body);background:var(--paper);color:var(--ink);
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3,.poster,.bignum,.edition{font-family:var(--font)}
+a{color:var(--ink)}
+.grid{max-width:1200px;margin:0 auto;padding-left:var(--gutter);padding-right:var(--gutter);
+  display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter)}
+.hair-top{border-top:1px solid var(--ink)}
+.hair-bottom{border-bottom:1px solid var(--ink)}
+
+/* ---- top bar ---- */
+.topbar{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 24px;border-bottom:1px solid var(--ink);
+  font-size:13px;font-weight:700;letter-spacing:.06em}
+.topbar .brand{font-weight:900;font-size:15px}
+.topbar nav{display:flex;gap:32px}
+.topbar nav a{text-decoration:none;font-weight:700;font-size:13px}
+.topbar nav a:hover{color:var(--red)}
+.tools{display:flex;gap:0}
+.tools button{font-family:var(--font);font-size:12px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--ink);
+  padding:8px 14px;cursor:pointer;margin-left:8px}
+.tools button:hover{background:var(--ink);color:var(--paper)}
+.tools button.active{background:var(--red);border-color:var(--red);color:var(--paper)}
+
+/* ---- masthead / poster ---- */
+.masthead{padding:80px 0 64px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  font-family:var(--font)}
+.poster{font-size:clamp(64px,11vw,170px);font-weight:900;line-height:.84;
+  letter-spacing:-.02em;text-transform:lowercase;margin-top:24px}
+.red-rule{height:12px;background:var(--red);margin:24px 0}
+.meta{font-size:15px;line-height:1.45}
+.edition{font-size:64px;font-weight:900;line-height:1;color:var(--red);margin-top:8px}
+
+/* ---- hero statement ---- */
+.hero{padding:96px 0}
+.hero-line{font-size:clamp(48px,7.5vw,116px);font-weight:900;line-height:.9;
+  letter-spacing:-.02em}
+.lede{font-size:20px;line-height:1.4;margin-top:40px;max-width:36ch}
+
+/* ---- timetable ---- */
+.section-head{display:flex;align-items:baseline;justify-content:space-between;
+  padding:16px 0;border-bottom:2px solid var(--ink);margin-bottom:0}
+.section-title{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.section-num{font-size:13px;font-weight:900;color:var(--red)}
+.daytabs{display:flex;border-bottom:1px solid var(--ink)}
+.daytabs button{font-family:var(--font);font-weight:900;font-size:22px;
+  background:none;border:none;border-right:1px solid var(--ink);
+  padding:18px 40px;cursor:pointer;color:var(--ink)}
+.daytabs button:last-child{border-right:none}
+.daytabs button.active{background:var(--red);color:var(--paper)}
+.timetable{width:100%;border-collapse:collapse;font-size:16px}
+.timetable th{font-family:var(--font);font-size:12px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;text-align:left;
+  border-bottom:2px solid var(--ink);padding:12px 16px 12px 0}
+.timetable td{border-bottom:1px solid var(--ink);padding:18px 16px 18px 0;vertical-align:top}
+.timetable tr:last-child td{border-bottom:2px solid var(--ink)}
+.tnum{font-family:var(--font);font-weight:900;font-variant-numeric:tabular-nums;
+  white-space:nowrap}
+.troom{font-weight:700}
+.tspeaker{font-weight:700}
+.tdesc{font-size:14px;line-height:1.45;color:var(--ink);max-width:52ch}
+.daypane{display:none}
+.daypane.active{display:block}
+
+/* ---- numerals band ---- */
+.numerals{padding:96px 0}
+.bignum{font-size:clamp(96px,13vw,200px);font-weight:900;line-height:.8;letter-spacing:-.03em}
+.bignum.red{color:var(--red)}
+.numeral-text h3{font-size:32px;font-weight:900;line-height:1;margin-bottom:16px}
+.numeral-text p{font-size:16px;line-height:1.5;max-width:40ch}
+
+/* ---- index of speakers ---- */
+.index{list-style:none;margin-top:32px}
+.index li{border-top:1px solid var(--ink);padding:20px 0;font-family:var(--font);
+  font-size:clamp(20px,3vw,30px);font-weight:700;display:flex;gap:24px;align-items:baseline}
+.index li:last-child{border-bottom:2px solid var(--ink)}
+.idx{color:var(--red);font-weight:900;font-size:14px;min-width:40px;letter-spacing:.05em}
+.tag{margin-left:auto;font-size:13px;font-weight:400;font-family:var(--font-body);text-align:right}
+
+/* ---- red panel + tickets ---- */
+.ticketrow{padding:96px 0}
+.red-panel{background:var(--red);color:var(--paper);padding:48px;
+  font-family:var(--font);font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.05}
+.red-panel small{display:block;font-size:14px;font-weight:500;margin-top:24px;line-height:1.5;
+  font-family:var(--font-body)}
+.swiss-btn{display:inline-block;background:var(--ink);color:var(--paper);
+  font-family:var(--font);font-weight:700;font-size:16px;padding:18px 36px;
+  text-decoration:none;margin-top:32px;margin-right:16px}
+.swiss-btn.red{background:var(--red)}
+.swiss-btn:hover{background:var(--red);color:var(--paper)}
+.swiss-btn.red:hover{background:var(--ink);color:var(--paper)}
+.price-list{font-size:16px;line-height:1.6}
+.price-list .row{display:flex;justify-content:space-between;border-bottom:1px solid var(--ink);
+  padding:14px 0}
+.price-list .row:first-child{border-top:1px solid var(--ink)}
+.price{font-family:var(--font);font-weight:900;font-variant-numeric:tabular-nums}
+
+/* ---- objective photo ---- */
+.photo-block{padding:0 0 96px}
+.photo-block img{width:100%;display:block;filter:grayscale(1) contrast(1.05)}
+.caption{font-size:13px;line-height:1.5;margin-top:12px;max-width:36ch}
+
+/* ---- colophon ---- */
+.colophon{padding:64px 0 24px;font-size:13px;line-height:1.6}
+.skill-footer{padding:0 0 48px;font-size:12px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase}
+
+/* ---- grid overlay (the Swiss party trick) ---- */
+#grid-overlay{position:fixed;inset:0;pointer-events:none;z-index:9999;display:none}
+#grid-overlay.on{display:block}
+#grid-overlay .cols{max-width:1200px;height:100%;margin:0 auto;
+  padding-left:var(--gutter);padding-right:var(--gutter);
+  display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gutter)}
+#grid-overlay .cols div{background:rgba(255,0,0,.08);border-left:1px solid rgba(255,0,0,.5);
+  border-right:1px solid rgba(255,0,0,.5)}
+
+/* ---- responsive ---- */
+@media (max-width:820px){
+  .grid{grid-template-columns:repeat(6,1fr)}
+  .masthead .m1{grid-column:1/7}
+  .masthead .m2{grid-column:1/7;margin-top:32px}
+  .hero .h1{grid-column:1/7}
+  .hero .h2{grid-column:1/7}
+  .numerals .n1{grid-column:1/4}
+  .numerals .n2{grid-column:1/7;margin-top:24px}
+  .ticketrow .t1{grid-column:1/7}
+  .ticketrow .t2{grid-column:1/7;margin-top:48px}
+  .colophon .c1{grid-column:1/7}
+  .colophon .c2{grid-column:1/7;margin-top:24px}
+  .daytabs button{font-size:17px;padding:14px 24px}
+  #grid-overlay .cols{grid-template-columns:repeat(6,1fr)}
+  .topbar nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="grid-overlay" aria-hidden="true"><div class="cols">
+  <div></div><div></div><div></div><div></div><div></div><div></div>
+  <div></div><div></div><div></div><div></div><div></div><div></div>
+</div></div>
+
+<div class="topbar">
+  <span class="brand">Rastersysteme</span>
+  <nav>
+    <a href="#programme">Programme</a>
+    <a href="#speakers">Speakers</a>
+    <a href="#tickets">Tickets</a>
+    <a href="#venue">Venue</a>
+  </nav>
+  <div class="tools">
+    <button id="grid-toggle" type="button">Grid</button>
+  </div>
+</div>
+
+<header class="grid masthead">
+  <div class="m1" style="grid-column:1/9">
+    <p class="kicker">International symposium on typographic design</p>
+    <h1 class="poster">Rastersysteme<br>2027</h1>
+  </div>
+  <div class="m2" style="grid-column:9/13">
+    <p class="edition">No. 09</p>
+    <div class="red-rule"></div>
+    <p class="meta">Turbinenhalle, Zürich<br>
+    14–16 May 2027<br>
+    Doors 08:30 daily</p>
+  </div>
+</header>
+
+<section class="grid hero hair-top hair-bottom">
+  <h2 class="h1 hero-line" style="grid-column:3/11">Typography<br>is image.</h2>
+  <p class="h2 lede" style="grid-column:3/7">Three days on grids, grotesques,
+  and the discipline of the objective poster. Seventy years after the style
+  was codified in Zürich and Basel, we return to the source: mathematics,
+  type, and nothing else.</p>
+</section>
+
+<section id="programme" class="grid" style="padding:96px 24px 0">
+  <div style="grid-column:1/13" class="section-head">
+    <span class="section-title">Programme</span>
+    <span class="section-num">01</span>
+  </div>
+  <div style="grid-column:1/13">
+    <div class="daytabs" role="tablist">
+      <button type="button" class="active" data-day="fri" role="tab">Fri 14</button>
+      <button type="button" data-day="sat" role="tab">Sat 15</button>
+      <button type="button" data-day="sun" role="tab">Sun 16</button>
+    </div>
+
+    <div class="daypane active" id="day-fri">
+      <table class="timetable">
+        <thead><tr><th>Time</th><th>Session</th><th>Room</th></tr></thead>
+        <tbody>
+          <tr><td class="tnum">09:00</td>
+            <td><span class="tspeaker">Opening.</span> The grid as contract — why the module still holds.</td>
+            <td class="troom">A</td></tr>
+          <tr><td class="tnum">10:30</td>
+            <td><span class="tspeaker">Akzidenz-Grotesk at 125.</span> The Berthold grotesque and the birth of the neutral voice.</td>
+            <td class="troom">A</td></tr>
+          <tr><td class="tnum">12:00</td>
+            <td><span class="tspeaker">Lunch.</span> Served in the hall. Seating is unassigned.</td>
+            <td class="troom">—</td></tr>
+          <tr><td class="tnum">14:00</td>
+            <td><span class="tspeaker">Workshop.</span> Set one poster, 12 columns, two type sizes. Bring nothing else.</td>
+            <td class="troom">B</td></tr>
+          <tr><td class="tnum">17:00</td>
+            <td><span class="tspeaker">Lecture.</span> Müller-Brockmann's Beethoven poster, measure by measure.</td>
+            <td class="troom">A</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="daypane" id="day-sat">
+      <table class="timetable">
+        <thead><tr><th>Time</th><th>Session</th><th>Room</th></tr></thead>
+        <tbody>
+          <tr><td class="tnum">09:00</td>
+            <td><span class="tspeaker">Univers, 1957.</span> Adrian Frutiger and the typeface designed as a system.</td>
+            <td class="troom">A</td></tr>
+          <tr><td class="tnum">10:30</td>
+            <td><span class="tspeaker">Objective photography.</span> Why the Swiss printed the thing itself, never a drawing of it.</td>
+            <td class="troom">A</td></tr>
+          <tr><td class="tnum">12:00</td>
+            <td><span class="tspeaker">Lunch.</span> Served in the hall. Seating is unassigned.</td>
+            <td class="troom">—</td></tr>
+          <tr><td class="tnum">14:00</td>
+            <td><span class="tspeaker">Workshop.</span> Flush left, ragged right. Rebuild a centered layout without moving the words.</td>
+            <td class="troom">B</td></tr>
+          <tr><td class="tnum">17:00</td>
+            <td><span class="tspeaker">Panel.</span> Helvetica at 70: neutral voice or visual cliché? A vote follows.</td>
+            <td class="troom">A</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="daypane" id="day-sun">
+      <table class="timetable">
+        <thead><tr><th>Time</th><th>Session</th><th>Room</th></tr></thead>
+        <tbody>
+          <tr><td class="tnum">09:00</td>
+            <td><span class="tspeaker">Hofmann in Basel.</span> Forty years of teaching the poster as sign.</td>
+            <td class="troom">A</td></tr>
+          <tr><td class="tnum">10:30</td>
+            <td><span class="tspeaker">White space.</span> The empty module as a compositional decision, not a leftover.</td>
+            <td class="troom">A</td></tr>
+          <tr><td class="tnum">12:00</td>
+            <td><span class="tspeaker">Closing.</span> The programme is final. No additions, no encores.</td>
+            <td class="troom">A</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="grid numerals">
+  <div class="n1" style="grid-column:1/5"><span class="bignum red">03</span></div>
+  <div class="n2 numeral-text" style="grid-column:5/11">
+    <h3>Days. One grid.</h3>
+    <p>Every session, meal, and poster is set on the same 12-column module.
+    The numerals are large because the numbers matter: 09:00 means 09:00.</p>
+  </div>
+</section>
+
+<section id="speakers" class="grid" style="padding:0 24px 96px">
+  <div style="grid-column:1/13" class="section-head">
+    <span class="section-title">Speakers</span>
+    <span class="section-num">02</span>
+  </div>
+  <ul class="index" style="grid-column:1/13">
+    <li><span class="idx">01</span>Ute Brunner <span class="tag">Grid systems</span></li>
+    <li><span class="idx">02</span>Marco Keller <span class="tag">Helvetica at 70</span></li>
+    <li><span class="idx">03</span>Anna Hofmann <span class="tag">The poster as sign</span></li>
+    <li><span class="idx">04</span>Dieter Rüegg <span class="tag">Objective photography</span></li>
+    <li><span class="idx">05</span>Lina Frutiger <span class="tag">Type as system</span></li>
+  </ul>
+</section>
+
+<section class="grid photo-block">
+  <div style="grid-column:1/13">
+    <svg viewBox="0 0 1200 480" role="img" aria-label="Black and white photograph of the Turbinenhalle interior"
+         style="width:100%;display:block">
+      <rect width="1200" height="480" fill="#0a0a0a"/>
+      <rect x="0" y="0" width="1200" height="480" fill="#fff" opacity="0"/>
+      <!-- rows of seats, objectively rendered -->
+      <g fill="#e8e8e8">
+        <rect x="60" y="300" width="1080" height="14"/>
+        <rect x="60" y="340" width="1080" height="14"/>
+        <rect x="60" y="380" width="1080" height="14"/>
+      </g>
+      <g fill="#2a2a2a">
+        <rect x="60" y="286" width="1080" height="10"/>
+        <rect x="60" y="326" width="1080" height="10"/>
+        <rect x="60" y="366" width="1080" height="10"/>
+      </g>
+      <!-- stage -->
+      <rect x="60" y="120" width="1080" height="120" fill="#f2f2f2"/>
+      <rect x="60" y="120" width="1080" height="8" fill="#FF0000"/>
+      <text x="60" y="200" font-family="Inter Tight,Helvetica,Arial,sans-serif"
+            font-size="64" font-weight="900" fill="#000" letter-spacing="-2">RASTERSYSTEME</text>
+      <text x="60" y="228" font-family="Inter Tight,Helvetica,Arial,sans-serif"
+            font-size="18" font-weight="700" fill="#000" letter-spacing="4">TURBINENHALLE · ZÜRICH</text>
+      <!-- girders -->
+      <g stroke="#4a4a4a" stroke-width="6">
+        <line x1="60" y1="0" x2="60" y2="120"/>
+        <line x1="330" y1="0" x2="330" y2="120"/>
+        <line x1="600" y1="0" x2="600" y2="120"/>
+        <line x1="870" y1="0" x2="870" y2="120"/>
+        <line x1="1140" y1="0" x2="1140" y2="120"/>
+        <line x1="0" y1="60" x2="1200" y2="60"/>
+      </g>
+    </svg>
+    <p class="caption">Turbinenhalle, Zürich. 1,400 seats. Photograph, unretouched.</p>
+  </div>
+</section>
+
+<section id="tickets" class="grid ticketrow">
+  <div class="t1" style="grid-column:1/7">
+    <div class="red-panel">
+      <p>Registrations close<br>30 April 2027.</p>
+      <small>Payment by bank transfer only. Confirmation within 5 working days. The programme is final.</small>
+    </div>
+  </div>
+  <div class="t2" style="grid-column:7/13">
+    <div class="price-list">
+      <div class="row"><span>Full, three days</span><span class="price">CHF 240</span></div>
+      <div class="row"><span>Student, with ID</span><span class="price">CHF 90</span></div>
+      <div class="row"><span>Single day</span><span class="price">CHF 100</span></div>
+    </div>
+    <a class="swiss-btn red" href="#tickets">Register — CHF 240</a>
+    <a class="swiss-btn" href="#tickets">Student — CHF 90</a>
+  </div>
+</section>
+
+<footer id="venue" class="grid colophon hair-top">
+  <div class="c1" style="grid-column:1/5">
+    <p>Set in Inter Tight.<br>
+    Grid: 12 columns, 24 px gutter.<br>
+    Printed in black and red.</p>
+  </div>
+  <div class="c2" style="grid-column:9/13">
+    <p>Rastersysteme 2027<br>
+    Turbinenhalle, Geroldstrasse 5<br>
+    8005 Zürich, Switzerland</p>
+  </div>
+</footer>
+
+<div class="grid skill-footer">
+  <div style="grid-column:1/13">Built from the swiss-international skill · design-skills</div>
+</div>
+
+<script>
+(function(){
+  // Grid overlay toggle — the construction, made visible.
+  var btn = document.getElementById('grid-toggle');
+  var overlay = document.getElementById('grid-overlay');
+  btn.addEventListener('click', function(){
+    var on = overlay.classList.toggle('on');
+    btn.classList.toggle('active', on);
+  });
+
+  // Day tabs — programme by day.
+  var tabs = document.querySelectorAll('.daytabs button');
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.classList.remove('active'); });
+      document.querySelectorAll('.daypane').forEach(function(p){ p.classList.remove('active'); });
+      tab.classList.add('active');
+      document.getElementById('day-' + tab.getAttribute('data-day')).classList.add('active');
+    });
+  });
+})();
+</script>
+</body>
+</html>
