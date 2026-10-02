@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>twitch</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --purple:#9146FF;--purple-hover:#772CE8;--purple-active:#5C16C5;
+  --purple-bright:#BF94FF;--purple-link:#A970FF;
+  --live:#EB0400;
+  --canvas:#0E0E10;--surface:#18181B;--surface2:#1F1F23;--divider:#2A2A2D;
+  --text:#EFEFF1;--muted:#ADADB8;
+}
+body{background:var(--canvas);color:var(--text);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+a{color:inherit}
+/* ============ NAV ============ */
+.nav{height:80px;display:flex;align-items:center;gap:20px;padding:0 16px;
+  background:var(--surface);border-bottom:1px solid #0a0a0c;
+  position:sticky;top:0;z-index:50}
+.brand svg{display:block}
+.nav-links{display:flex;gap:6px}
+.nav-links a{font-size:14px;font-weight:600;text-decoration:none;padding:8px 10px;
+  border-bottom:2px solid transparent}
+.nav-links a:hover{color:var(--purple-link)}
+.nav-links a.on{color:var(--purple-bright);border-bottom-color:var(--purple)}
+.search{flex:1;max-width:640px;margin:0 auto}
+.search input{width:100%;height:48px;background:var(--surface2);border:1px solid transparent;
+  border-radius:6px;color:var(--text);font-size:14px;padding:0 16px}
+.search input:focus{outline:none;border-color:var(--purple)}
+.search input::placeholder{color:var(--muted)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.nav-icon{position:relative;background:none;border:0;font-size:20px;cursor:pointer;padding:8px;border-radius:4px}
+.nav-icon:hover{background:var(--divider)}
+.dot{position:absolute;top:6px;right:6px;width:10px;height:10px;border-radius:50%;
+  background:var(--live);border:2px solid var(--surface)}
+.login{background:none;border:0;color:var(--text);font-size:13px;font-weight:600;
+  padding:8px 16px;border-radius:4px;cursor:pointer}
+.login:hover{background:var(--divider)}
+.signup{background:var(--purple);border:0;color:#fff;font-size:13px;font-weight:600;
+  border-radius:4px;padding:8px 16px;cursor:pointer}
+.signup:hover{background:var(--purple-hover)}
+/* ============ PAGE SHELL ============ */
+.page{display:flex;min-height:calc(100vh - 80px)}
+.rail{width:240px;flex:0 0 240px;background:var(--surface);border-right:1px solid var(--divider);
+  padding:16px 0}
+.rail h3{font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--text);
+  padding:0 16px 10px;text-transform:uppercase}
+.row{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;
+  padding:7px 16px;cursor:pointer;text-align:left;color:var(--text)}
+.row:hover{background:var(--surface2)}
+.row .ava{position:relative;width:32px;height:32px;border-radius:50%;flex:0 0 32px}
+.row .ava.live::after{content:"";position:absolute;inset:-3px;border-radius:50%;
+  border:2px solid var(--live)}
+.row .txt{display:flex;flex-direction:column;min-width:0;flex:1}
+.row .txt b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .txt i{font-style:normal;font-size:12px;color:var(--muted)}
+.row .v{font-size:12px;color:var(--muted)}
+.main{flex:1;padding:24px 24px 48px;min-width:0}
+/* ============ HERO (stream + chat) ============ */
+.hero{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--divider);border-radius:4px;overflow:hidden}
+.player{flex:1;position:relative;aspect-ratio:16/9;min-width:0}
+.player .screen{position:absolute;inset:0;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:18px}
+.player .screen h2{font-size:26px;font-weight:500;letter-spacing:-.01em}
+.player .screen p{font-size:14px;color:#d9d9e0;margin-top:6px;max-width:60ch}
+.pv{position:absolute;top:14px;left:14px;background:var(--live);color:#fff;font-size:11px;
+  font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:2px;
+  animation:livepulse 2s ease-in-out infinite}
+.pvv{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.6);color:#fff;
+  font-size:12px;padding:4px 10px;border-radius:4px}
+@keyframes livepulse{0%,100%{opacity:1}50%{opacity:.72}}
+.hero-info{background:#000;padding:16px 18px;border-top:1px solid var(--divider);
+  display:flex;align-items:center;gap:14px}
+.hero-ava{width:56px;height:56px;border-radius:50%;flex:0 0 56px;position:relative;
+  background:linear-gradient(135deg,#3a1a6e,#9146FF)}
+.hero-ava::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--live)}
+.hero-meta{flex:1;min-width:0}
+.hero-meta b{font-size:16px;font-weight:600}
+.hero-meta span{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.follow{background:var(--purple);color:#fff;border:0;border-radius:9000px;
+  font-size:13px;font-weight:600;padding:9px 22px;cursor:pointer;white-space:nowrap}
+.follow:hover{background:var(--purple-hover)}
+.follow:active{background:var(--purple-active)}
+.follow.on{background:var(--surface2);color:var(--text)}
+.follow.on:hover{background:var(--divider)}
+/* chat */
+.chat{display:flex;flex-direction:column;width:340px;flex:0 0 340px;background:var(--surface);
+  border-left:1px solid var(--divider);max-height:640px}
+.chat-head{display:flex;align-items:center;justify-content:space-between;font-size:12px;
+  font-weight:600;letter-spacing:.06em;padding:12px 16px;border-bottom:1px solid var(--divider)}
+.chat-head button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px}
+.chat-scroll{flex:1;overflow-y:auto;padding:12px 16px}
+.msg{font-size:13px;line-height:1.55;margin:0 0 7px;overflow-wrap:anywhere}
+.msg b{font-weight:700;margin-right:2px}
+.badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;color:#fff;
+  border-radius:2px;padding:1px 6px;margin-right:6px;vertical-align:1px}
+.badge.sub{background:var(--purple)}.badge.mod{background:#00C853}.badge.vip{background:#EAB308;color:#0E0E10}
+.sys{font-size:12px;color:var(--muted);font-style:italic;margin:0 0 7px}
+.chat-form{padding:12px 16px;border-top:1px solid var(--divider);display:flex;gap:8px}
+.chat-form input{flex:1;background:var(--surface2);border:1px solid transparent;border-radius:6px;
+  color:var(--text);font-size:13px;padding:10px 12px;min-width:0}
+.chat-form input:focus{outline:none;border-color:var(--purple)}
+.chat-form input::placeholder{color:var(--muted)}
+.chat-form button{background:var(--purple);color:#fff;border:0;border-radius:4px;font-size:13px;
+  font-weight:600;padding:0 16px;cursor:pointer}
+.chat-form button:hover{background:var(--purple-hover)}
+/* ============ PILLS ============ */
+.pills{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.pills button{background:var(--surface2);color:var(--text);border:0;border-radius:9000px;
+  font-size:13px;padding:7px 16px;cursor:pointer}
+.pills button:hover{background:var(--divider)}
+.pills button.on{background:var(--purple);color:#fff;font-weight:600}
+/* ============ GRID ============ */
+.sec-head{font-size:18px;font-weight:500;letter-spacing:-.01em;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px 8px}
+.card{display:block;text-decoration:none;color:var(--text);margin-bottom:18px}
+.thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:4px;
+  border:2px solid transparent;transition:border-color .15s}
+.card:hover .thumb{border-color:var(--purple)}
+.live{position:absolute;top:8px;left:8px;background:var(--live);color:#fff;font-size:10px;
+  font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:2px;
+  animation:livepulse 2s ease-in-out infinite}
+.viewers{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;
+  font-size:12px;padding:3px 8px;border-radius:4px}
+.art{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:24px;letter-spacing:.08em;color:rgba(255,255,255,.88)}
+.meta{display:flex;gap:10px;margin-top:10px}
+.ava{flex:0 0 40px;width:40px;height:40px;border-radius:50%}
+.ctext{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ctitle{font-size:14px;font-weight:600;line-height:1.3;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.cname,.ccat{font-size:13px;color:var(--muted)}
+.cname:hover{color:var(--purple-link)}
+.tags{display:flex;gap:6px;margin-top:4px}
+.tags i{font-style:normal;font-size:11px;color:var(--muted);background:var(--surface2);
+  border-radius:9000px;padding:2px 10px}
+/* ============ TOAST ============ */
+.toast{position:fixed;right:20px;bottom:20px;display:none;align-items:center;gap:12px;
+  background:var(--surface2);border-left:3px solid var(--purple);border-radius:4px;
+  padding:12px 16px;max-width:380px;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:100}
+.toast.show{display:flex;animation:slideup .25s ease-out}
+@keyframes slideup{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+.toast .ico{width:32px;height:32px;border-radius:50%;background:var(--purple);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 32px}
+.toast p{font-size:13px;flex:1}
+.toast button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px}
+/* ============ FOOTER ============ */
+footer{padding:32px 24px;color:var(--muted);font-size:13px;border-top:1px solid var(--divider)}
+footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;max-width:900px;margin-bottom:20px}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer .sig{font-size:12px}
+/* ============ RESPONSIVE ============ */
+@media (max-width:1100px){.chat{display:none}.rail{width:72px;flex-basis:72px}
+  .rail h3,.rail .txt,.rail .v{display:none}.row{justify-content:center;padding:8px 0}}
+@media (max-width:700px){.nav-links,.search{display:none}.hero{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="#" aria-label="Home">
+    <svg viewBox="0 0 24 24" width="30" height="30" fill="#9146FF" aria-hidden="true"><path d="M4 2 2.5 6v14h5v3h3l3-3h4l5-5V2H4zm16 11-3 3h-4l-3 3v-3H6V4h14v9zM17 7h-2v5h2V7zm-5 0h-2v5h2V7z"/></svg>
+  </a>
+  <div class="nav-links">
+    <a href="#" class="on">Following</a>
+    <a href="#">Browse</a>
+  </div>
+  <div class="search"><input placeholder="Search" aria-label="Search"></div>
+  <div class="nav-right">
+    <button class="nav-icon" aria-label="Notifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EFEFF1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot"></span></button>
+    <button class="login">Log In</button>
+    <button class="signup">Sign Up</button>
+  </div>
+</nav>
+
+<div class="page">
+  <aside class="rail" aria-label="Followed channels">
+    <h3>Followed channels</h3>
+    <button class="row"><span class="ava live" style="background:linear-gradient(135deg,#9146FF,#5C16C5)"></span><span class="txt"><b>VexLuna</b><i>Starfall Odyssey</i></span><span class="v">24.1K</span></button>
+    <button class="row"><span class="ava live" style="background:linear-gradient(135deg,#0e7a4f,#00C853)"></span><span class="txt"><b>Grimmbyte</b><i>Neon Siege</i></span><span class="v">8.2K</span></button>
+    <button class="row"><span class="ava" style="background:linear-gradient(135deg,#2A2A2D,#18181B)"></span><span class="txt"><b>NovaForge</b><i>Offline</i></span><span class="v"></span></button>
+    <button class="row"><span class="ava live" style="background:linear-gradient(135deg,#c2520e,#EAB308)"></span><span class="txt"><b>RiftRunner</b><i>Just Chatting</i></span><span class="v">3.7K</span></button>
+  </aside>
+
+  <main class="main">
+    <div class="hero">
+      <div style="flex:1;min-width:0">
+        <div class="player">
+          <div class="screen" style="background:
+            linear-gradient(0deg,rgba(0,0,0,.85) 0%,rgba(0,0,0,.2) 45%,transparent 70%),
+            linear-gradient(135deg,#2b0f54 0%,#5C16C5 45%,#1a1a22 100%)">
+            <span class="pv">LIVE</span>
+            <span class="pvv">24,108 viewers</span>
+            <h2>STARFALL ODYSSEY — World First Raid Attempt</h2>
+            <p>VexLuna and the crew go for the world-first clear of the Shattered Citadel. Wipes are guaranteed, glory is not.</p>
+          </div>
+        </div>
+        <div class="hero-info">
+          <span class="hero-ava"></span>
+          <div class="hero-meta">
+            <b>VexLuna</b>
+            <span>Starfall Odyssey · English · 241K followers</span>
+          </div>
+          <button class="follow" id="heroFollow">Follow</button>
+        </div>
+      </div>
+      <aside class="chat" aria-label="Stream chat">
+        <header class="chat-head">STREAM CHAT <button aria-label="Chat settings"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ADADB8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></header>
+        <div class="chat-scroll" id="chatScroll">
+          <p class="sys">Welcome to the chat room!</p>
+          <p class="msg"><span class="badge mod">MOD</span><b style="color:#1E90FF">NovaMod</b>: raid train starts in 5 — hype check in chat</p>
+          <p class="msg"><span class="badge sub">SUB</span><b style="color:#FF6961">EmberFox</b>: world first LET'S GO POGGERS</p>
+          <p class="msg"><b style="color:#BF94FF">glitch_fan</b>: the emote wall is going off KEKW</p>
+          <p class="msg"><span class="badge vip">VIP</span><b style="color:#00C853">ByteKing</b>: third pull, new strat — they got this</p>
+          <p class="msg"><b style="color:#EAB308">PixelDrifter</b>: that dodge at 12% was INSANE</p>
+          <p class="sys">EmberFox subscribed for 14 months in a row!</p>
+          <p class="msg"><b style="color:#FF8AD8">NovaStar</b>: W raid lead, W chat, everything W</p>
+          <p class="msg"><b style="color:#1E90FF">RiftRunner</b>: clipping that for the highlight reel GG</p>
+        </div>
+        <form class="chat-form" id="chatForm">
+          <input id="chatInput" placeholder="Send a message" aria-label="Send a message" maxlength="200" autocomplete="off">
+          <button type="submit">Chat</button>
+        </form>
+      </aside>
+    </div>
+
+    <div class="pills" id="pills">
+      <button class="on" data-cat="all">All</button>
+      <button data-cat="games">Games</button>
+      <button data-cat="irl">IRL</button>
+      <button data-cat="music">Music</button>
+      <button data-cat="esports">Esports</button>
+    </div>
+
+    <h2 class="sec-head">Live channels we think you'll like</h2>
+    <div class="grid" id="grid">
+
+      <a class="card" href="#" data-cat="games">
+        <span class="thumb" style="background:linear-gradient(135deg,#0d5c46,#00C853)">
+          <span class="live">LIVE</span><span class="viewers">8,214 viewers</span><span class="art">GRIMMBYTE</span>
+        </span>
+        <span class="meta"><span class="ava" style="background:linear-gradient(135deg,#0e7a4f,#00C853)"></span>
+        <span class="ctext"><b class="ctitle">RANKED GRIND — no tilt, only wins</b><span class="cname">Grimmbyte</span><span class="ccat">Neon Siege</span>
+        <span class="tags"><i>English</i><i>Ranked</i></span></span></span>
+      </a>
+
+      <a class="card" href="#" data-cat="games">
+        <span class="thumb" style="background:linear-gradient(135deg,#7a1010,#E91916)">
+          <span class="live">LIVE</span><span class="viewers">5,942 viewers</span><span class="art">PIXELNOVA</span>
+        </span>
+        <span class="meta"><span class="ava" style="background:linear-gradient(135deg,#7a1010,#E91916)"></span>
+        <span class="ctext"><b class="ctitle">GRANDMASTER CLIMB — no breaks until Diamond</b><span class="cname">PixelNova</span><span class="ccat">Dragonforge</span>
+        <span class="tags"><i>English</i><i>Esports</i></span></span></span>
+      </a>
+
+      <a class="card" href="#" data-cat="irl">
+        <span class="thumb" style="background:linear-gradient(135deg,#7a4a0e,#EAB308)">
+          <span class="live">LIVE</span><span class="viewers">3,711 viewers</span><span class="art">RIFTRUNNER</span>
+        </span>
+        <span class="meta"><span class="ava" style="background:linear-gradient(135deg,#c2520e,#EAB308)"></span>
+        <span class="ctext"><b class="ctitle">Late-night shop talk + Q&amp;A</b><span class="cname">RiftRunner</span><span class="ccat">Just Chatting</span>
+        <span class="tags"><i>English</i></span></span></span>
+      </a>
+
+      <a class="card" href="#" data-cat="music">
+        <span class="thumb" style="background:linear-gradient(135deg,#1a3a7a,#3aa8ff)">
+          <span class="live">LIVE</span><span class="viewers">2,308 viewers</span><span class="art">SYNTHFAY</span>
+        </span>
+        <span class="meta"><span class="ava" style="background:linear-gradient(135deg,#1a3a7a,#3aa8ff)"></span>
+        <span class="ctext"><b class="ctitle">Synthwave production session — new EP track 4</b><span class="cname">SynthFay</span><span class="ccat">Music</span>
+        <span class="tags"><i>English</i><i>Production</i></span></span></span>
+      </a>
+
+      <a class="card" href="#" data-cat="esports">
+        <span class="thumb" style="background:linear-gradient(135deg,#4a0e5e,#a24bff)">
+          <span class="live">LIVE</span><span class="viewers">19,845 viewers</span><span class="art">NEON CUP</span>
+        </span>
+        <span class="meta"><span class="ava" style="background:linear-gradient(135deg,#4a0e5e,#a24bff)"></span>
+        <span class="ctext"><b class="ctitle">Neon Cup Semifinals — Orbit vs. Static</b><span class="cname">ArenaOfficial</span><span class="ccat">Neon Siege</span>
+        <span class="tags"><i>English</i><i>Esports</i><i>Tournament</i></span></span></span>
+      </a>
+
+      <a class="card" href="#" data-cat="games">
+        <span class="thumb" style="background:linear-gradient(135deg,#0e3a5c,#00c8af)">
+          <span class="live">LIVE</span><span class="viewers">1,566 viewers</span><span class="art">BYTEKING</span>
+        </span>
+        <span class="meta"><span class="ava" style="background:linear-gradient(135deg,#0e3a5c,#00c8af)"></span>
+        <span class="ctext"><b class="ctitle">100% speedrun attempts — new route tech</b><span class="cname">ByteKing</span><span class="ccat">Retro Arcade Run</span>
+        <span class="tags"><i>English</i><i>Speedrun</i></span></span></span>
+      </a>
+
+      <a class="card" href="#" data-cat="irl">
+        <span class="thumb" style="background:linear-gradient(135deg,#5c2a0e,#ff7a3a)">
+          <span class="live">LIVE</span><span class="viewers">976 viewers</span><span class="art">EMBERFOX</span>
+        </span>
+        <span class="meta"><span class="ava" style="background:linear-gradient(135deg,#5c2a0e,#ff7a3a)"></span>
+        <span class="ctext"><b class="ctitle">Street food crawl — chat picks the next stop</b><span class="cname">EmberFox</span><span class="ccat">Travel &amp; Outdoors</span>
+        <span class="tags"><i>English</i></span></span></span>
+      </a>
+
+      <a class="card" href="#" data-cat="games">
+        <span class="thumb" style="background:linear-gradient(135deg,#123a12,#46d369)">
+          <span class="live">LIVE</span><span class="viewers">4,120 viewers</span><span class="art">NOCNOVA</span>
+        </span>
+        <span class="meta"><span class="ava" style="background:linear-gradient(135deg,#123a12,#46d369)"></span>
+        <span class="ctext"><b class="ctitle">First playthrough — blind, no guides, no mercy</b><span class="cname">NocNova</span><span class="ccat">Starfall Odyssey</span>
+        <span class="tags"><i>English</i><i>First Playthrough</i></span></span></span>
+      </a>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status">
+  <span class="ico">★</span>
+  <p id="toastText"></p>
+  <button aria-label="Dismiss" id="toastClose">✕</button>
+</div>
+
+<footer>
+  <div class="cols">
+    <a href="#">About</a><a href="#">Blog</a><a href="#">Safety Center</a><a href="#">Community Guidelines</a>
+    <a href="#">Help</a><a href="#">Terms</a><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a>
+    <a href="#">Ads</a><a href="#">Jobs</a><a href="#">Developers</a><a href="#">Press</a>
+  </div>
+  <p class="sig">Built from the twitch skill · design-skills</p>
+</footer>
+
+<script>
+const toast = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+let toastTimer;
+function showToast(html){
+  toastText.innerHTML = html;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove('show'), 4000);
+}
+document.getElementById('toastClose').addEventListener('click',()=>toast.classList.remove('show'));
+
+// Follow toggle on the hero
+const heroFollow = document.getElementById('heroFollow');
+heroFollow.addEventListener('click',()=>{
+  const on = heroFollow.classList.toggle('on');
+  heroFollow.textContent = on ? 'Following' : 'Follow';
+  if(on) showToast('<b>You</b> just followed <b>VexLuna</b>. Welcome to the raid train!');
+});
+
+// Category filter
+const pills = document.getElementById('pills');
+const cards = [...document.querySelectorAll('.card')];
+pills.addEventListener('click',e=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  pills.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const cat = btn.dataset.cat;
+  cards.forEach(c=>{ c.style.display = (cat==='all'||c.dataset.cat===cat) ? '' : 'none'; });
+});
+
+// Chat: post messages + simulated chatters
+const chatScroll = document.getElementById('chatScroll');
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const colors = ['#FF6961','#1E90FF','#BF94FF','#00C853','#EAB308','#FF8AD8','#FF7A3A','#46D369'];
+const canned = [
+  ['<span class="badge sub">SUB</span><b style="color:#FF6961">EmberFox</b>','this boss is DONE for POGGERS'],
+  ['<b style="color:#BF94FF">glitch_fan</b>','clip it clip it CLIP IT'],
+  ['<b style="color:#1E90FF">RiftRunner</b>','world first pace lets goooo'],
+  ['<span class="badge mod">MOD</span><b style="color:#1E90FF">NovaMod</b>','keep it kind in chat please'],
+  ['<b style="color:#00C853">ByteKing</b>','that was the cleanest phase 2 KEKW'],
+  ['<span class="badge vip">VIP</span><b style="color:#EAB308">PixelDrifter</b>','GG only, the raid comp is stacked']
+];
+function addMsg(html){
+  const p = document.createElement('p');
+  p.className = 'msg';
+  p.innerHTML = html;
+  chatScroll.appendChild(p);
+  chatScroll.scrollTop = chatScroll.scrollHeight;
+}
+chatForm.addEventListener('submit',e=>{
+  e.preventDefault();
+  const v = chatInput.value.trim();
+  if(!v) return;
+  const c = colors[Math.floor(Math.random()*colors.length)];
+  const esc = v.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  addMsg('<b style="color:'+c+'">You</b>: '+esc);
+  chatInput.value = '';
+});
+// a little simulated chatter every ~7s
+setInterval(()=>{
+  const [user,text] = canned[Math.floor(Math.random()*canned.length)];
+  addMsg(user+': '+text);
+},7000);
+// viewer counts tick while live
+setInterval(()=>{
+  document.querySelectorAll('.viewers').forEach(el=>{
+    const n = parseInt(el.textContent.replace(/[^\d]/g,''),10);
+    if(isNaN(n)) return;
+    const d = Math.floor(Math.random()*41)-20;
+    el.textContent = Math.max(0,n+d).toLocaleString('en-US')+' viewers';
+  });
+},5000);
+</script>
+</body>
+</html>

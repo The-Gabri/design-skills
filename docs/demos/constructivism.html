@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>constructivism</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ECE2C8;
+  --ink:#141414;
+  --red:#C8102E;
+  --field:#1E1A16;
+  --rule:4px solid var(--ink);
+  --display:"Anton","Arial Narrow","Impact",sans-serif;
+  --head:"Oswald","Arial Narrow",sans-serif;
+  --body:"Archivo",Arial,Helvetica,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);overflow-x:hidden}
+::selection{background:var(--red);color:var(--paper)}
+
+/* ---------- utility strip ---------- */
+.strip{background:var(--ink);color:var(--paper);display:flex;justify-content:space-between;
+  padding:8px 24px;font:600 11px/1 var(--head);letter-spacing:.2em;text-transform:uppercase}
+.strip .red{color:var(--red)}
+
+/* ---------- masthead ---------- */
+.masthead{display:flex;align-items:center;gap:18px;padding:16px 32px;
+  background:var(--paper);border-bottom:var(--rule);position:sticky;top:0;z-index:50}
+.mark{width:44px;height:44px;flex:none}
+.wordmark{font:400 26px/1 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.wordmark em{font-style:normal;color:var(--red)}
+.nav-links{margin-left:auto;display:flex;gap:28px;align-items:center}
+.nav-links a{font:600 14px/1 var(--head);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;padding:6px 2px}
+.nav-links a:hover{background:var(--red);color:var(--paper)}
+.nav-cta{background:var(--ink)!important;color:var(--paper)!important;padding:10px 18px!important}
+.nav-cta:hover{background:var(--red)!important}
+.nav-toggle{display:none;background:var(--red);color:var(--paper);border:var(--rule);
+  font:400 18px/1 var(--display);padding:10px 14px;cursor:pointer;margin-left:auto}
+
+/* ---------- hero ---------- */
+.hero{background:var(--field);color:var(--paper);display:grid;
+  grid-template-columns:1fr 1.25fr;align-items:center;gap:32px;
+  padding:88px 48px;overflow:hidden;position:relative}
+.hero::after{content:"";position:absolute;left:-10%;bottom:18%;width:130%;height:22px;
+  background:var(--red);transform:rotate(-4deg);opacity:.9;pointer-events:none}
+.wedge-art{width:100%;max-width:460px;justify-self:center;position:relative;z-index:1}
+.hero-copy{position:relative;z-index:1}
+.kicker{font:600 13px/1 var(--head);letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:20px}
+.hero-copy h1{font:400 clamp(58px,8.5vw,132px)/0.92 var(--display);text-transform:uppercase;
+  transform:rotate(-4deg);margin-bottom:28px}
+.hero-copy h1 .r{color:var(--red)}
+.lede{font:400 18px/1.55 var(--body);max-width:40ch;margin-bottom:36px}
+.hero-ctas{display:flex;gap:24px;flex-wrap:wrap}
+.btn{display:inline-block;font:400 22px/1 var(--display);text-transform:uppercase;letter-spacing:.04em;
+  color:var(--paper);background:var(--red);padding:18px 34px;text-decoration:none;
+  box-shadow:8px 8px 0 var(--ink);transform:rotate(-1.5deg);cursor:pointer;border:none}
+.btn:hover{background:var(--ink);box-shadow:8px 8px 0 var(--red)}
+.btn:active{transform:rotate(-1.5deg) translate(4px,4px);box-shadow:4px 4px 0 var(--ink)}
+.btn.black{background:var(--ink);box-shadow:8px 8px 0 var(--red)}
+.btn.black:hover{background:var(--red);box-shadow:8px 8px 0 var(--ink)}
+
+/* ---------- agit marquee ---------- */
+.agit{background:var(--ink);color:var(--paper);overflow:hidden;border-top:var(--rule);border-bottom:var(--rule)}
+.agit-track{display:flex;gap:64px;padding:14px 0;white-space:nowrap;width:max-content;animation:agit 20s linear infinite}
+.agit-track span{font:400 30px/1 var(--display);text-transform:uppercase}
+.agit-track span:nth-child(even){color:var(--red)}
+@keyframes agit{to{transform:translateX(-50%)}}
+
+/* ---------- manifesto ---------- */
+.manifesto{background:var(--red);color:var(--paper);padding:96px 48px;position:relative;overflow:hidden}
+.manifesto blockquote{font:400 clamp(42px,6vw,92px)/0.95 var(--display);text-transform:uppercase;
+  transform:rotate(-2deg);max-width:17ch;margin-bottom:40px}
+.manifesto blockquote .ink{color:var(--ink)}
+.tenets{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:var(--rule);background:var(--paper);color:var(--ink)}
+.tenet{padding:32px;border-right:var(--rule)}
+.tenet:last-child{border-right:none}
+.tenet h3{font:400 30px/1 var(--display);text-transform:uppercase;margin-bottom:12px;transform:rotate(-1.5deg)}
+.tenet h3 .r{color:var(--red)}
+.tenet p{font:400 15px/1.6 var(--body)}
+.manif-sign{font:600 13px/1 var(--head);letter-spacing:.18em;text-transform:uppercase;margin-top:36px}
+
+/* ---------- section headers ---------- */
+.sec-head{display:flex;align-items:center;gap:20px;padding:64px 48px 8px;overflow:hidden}
+.sec-no{font:400 58px/1 var(--display);color:var(--red);transform:rotate(-6deg)}
+.sec-head h2{font:400 46px/1 var(--display);text-transform:uppercase}
+.sec-bar{flex:1;height:14px;background:var(--red);transform:rotate(-2deg);min-width:60px}
+
+/* ---------- programme: tabs ---------- */
+.tabs{display:flex;gap:0;padding:24px 48px 0}
+.tab-btn{font:400 20px/1 var(--display);text-transform:uppercase;letter-spacing:.04em;
+  background:var(--paper);color:var(--ink);border:var(--rule);border-right:none;
+  padding:16px 30px;cursor:pointer;transform:rotate(-1deg);margin-right:-6px}
+.tab-btn:last-child{border-right:var(--rule)}
+.tab-btn.active{background:var(--red);color:var(--paper)}
+.tab-btn:hover:not(.active){background:var(--ink);color:var(--paper)}
+.panel{display:none;padding:32px 48px 8px}
+.panel.active{display:block}
+
+/* ---------- programme: day filter ---------- */
+.day-filter{display:flex;gap:12px;padding:24px 48px 0;align-items:center}
+.day-filter .lbl{font:600 13px/1 var(--head);letter-spacing:.18em;text-transform:uppercase}
+.day-btn{font:600 13px/1 var(--head);letter-spacing:.1em;background:var(--paper);color:var(--ink);
+  border:3px solid var(--ink);padding:10px 16px;cursor:pointer;text-transform:uppercase}
+.day-btn.active{background:var(--ink);color:var(--paper)}
+.day-btn:hover:not(.active){background:var(--red);border-color:var(--red);color:var(--paper)}
+.rows{list-style:none;margin:0;padding:16px 48px 8px}
+.rows li{display:flex;align-items:baseline;gap:20px;padding:22px 0;border-bottom:3px solid var(--ink)}
+.rows li.hidden{display:none}
+.when{font:600 13px/1.4 var(--head);letter-spacing:.1em;background:var(--ink);color:var(--paper);
+  padding:8px 12px;transform:rotate(-2deg);flex:none;white-space:nowrap}
+.rows strong{font:400 26px/1.1 var(--display);text-transform:uppercase}
+.rows em{margin-left:auto;font:500 14px/1.4 var(--body);font-style:normal;flex:none}
+.rows .tag{font:600 11px/1 var(--head);letter-spacing:.14em;color:var(--red);text-transform:uppercase;
+  border:2px solid var(--red);padding:6px 10px;flex:none;transform:rotate(2deg)}
+
+/* ---------- tickets ---------- */
+.tickets{background:var(--field);color:var(--paper);padding:24px 48px 96px;display:grid;
+  grid-template-columns:repeat(3,1fr);gap:40px}
+.poster{background:var(--paper);color:var(--ink);border:var(--rule);padding:30px 28px 34px;
+  position:relative;display:flex;flex-direction:column}
+.poster:nth-child(2){transform:rotate(1.5deg)}
+.poster:nth-child(1){transform:rotate(-1.5deg)}
+.poster-ribbon{position:absolute;top:18px;right:-16px;background:var(--red);color:var(--paper);
+  font:600 13px/1 var(--head);letter-spacing:.14em;padding:10px 16px;transform:rotate(4deg);text-transform:uppercase}
+.poster-kicker{font:600 12px/1 var(--head);letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:14px}
+.poster h3{font:400 46px/0.95 var(--display);text-transform:uppercase;margin-bottom:16px;transform:rotate(-2deg)}
+.poster .price{font:400 60px/1 var(--display);color:var(--red);margin:8px 0 4px}
+.poster ul{list-style:none;margin:16px 0 28px;border-top:var(--rule)}
+.poster li{font:500 15px/1.5 var(--body);padding:10px 0;border-bottom:2px solid var(--ink)}
+.poster .btn{margin-top:auto;text-align:center}
+
+/* ---------- archive / montage ---------- */
+.archive{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding:24px 48px 96px;align-items:center}
+.montage{background:var(--paper);border:var(--rule)}
+.montage svg{display:block;width:100%;height:auto}
+.archive-copy h3{font:400 54px/0.95 var(--display);text-transform:uppercase;transform:rotate(-2deg);margin-bottom:20px}
+.archive-copy h3 .r{color:var(--red)}
+.archive-copy p{font:400 16px/1.65 var(--body);max-width:44ch;margin-bottom:16px}
+.archive-copy .kicker{margin-bottom:16px}
+
+/* ---------- footer ---------- */
+footer{background:var(--ink);color:var(--paper);padding:0 0 40px;overflow:hidden}
+.foot-bar{height:18px;background:var(--red);transform:rotate(-1.5deg);width:110%;margin-left:-5%;margin-bottom:40px}
+.foot-inner{display:flex;justify-content:space-between;gap:32px;padding:0 48px;flex-wrap:wrap}
+.foot-inner h4{font:400 34px/1 var(--display);text-transform:uppercase;margin-bottom:12px}
+.foot-inner h4 .r{color:var(--red)}
+.foot-inner p{font:400 14px/1.7 var(--body);max-width:34ch}
+.foot-meta{font:600 12px/1.8 var(--head);letter-spacing:.14em;text-transform:uppercase;color:var(--paper);opacity:.75}
+.foot-base{padding:32px 48px 0;font:600 12px/1 var(--head);letter-spacing:.14em;text-transform:uppercase;opacity:.6}
+
+/* ---------- responsive ---------- */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding:64px 28px}
+  .manifesto{padding:64px 28px}
+  .tenets{grid-template-columns:1fr}
+  .tenet{border-right:none;border-bottom:var(--rule)}
+  .tenet:last-child{border-bottom:none}
+  .tickets{grid-template-columns:1fr;padding:24px 28px 64px}
+  .archive{grid-template-columns:1fr;padding:24px 28px 64px}
+  .sec-head,.tabs,.panel,.day-filter,.rows{padding-left:28px;padding-right:28px}
+  .rows li{flex-wrap:wrap}
+  .rows em{margin-left:0}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--paper);
+    flex-direction:column;align-items:stretch;padding:16px 32px 24px;border-bottom:var(--rule);gap:8px}
+  .nav-links.open{display:flex}
+  .nav-toggle{display:block}
+  .strip{padding:8px 16px}
+  .foot-inner{padding:0 28px}
+  .foot-base{padding:32px 28px 0}
+}
+@media(prefers-reduced-motion:reduce){
+  .agit-track{animation:none}
+  *{transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="strip">
+  <span>Festival of the new art · <span class="red">Nº 07</span></span>
+  <span>Moscow — Berlin — Paris · 09–11 Oct</span>
+</div>
+
+<header class="masthead">
+  <svg class="mark" viewBox="0 0 44 44" aria-hidden="true">
+    <rect x="2" y="2" width="40" height="40" fill="#141414"/>
+    <polygon points="8,36 30,8 36,12 14,40" fill="#C8102E"/>
+    <circle cx="29" cy="29" r="7" fill="#ECE2C8"/>
+  </svg>
+  <span class="wordmark">The Red <em>Wedge</em></span>
+  <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">MENU</button>
+  <nav class="nav-links" id="navLinks">
+    <a href="#manifesto">Manifesto</a>
+    <a href="#programme">Programme</a>
+    <a href="#tickets">Tickets</a>
+    <a href="#archive">Archive</a>
+    <a class="nav-cta" href="#tickets">Join!</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <svg class="wedge-art" viewBox="0 0 460 460" role="img" aria-label="Red wedge piercing a cream circle">
+    <rect x="0" y="0" width="460" height="460" fill="none"/>
+    <circle cx="290" cy="230" r="140" fill="#ECE2C8"/>
+    <circle cx="290" cy="230" r="140" fill="none" stroke="#141414" stroke-width="6"/>
+    <polygon points="60,400 300,60 350,110 110,450" fill="#C8102E"/>
+    <polygon points="330,360 430,260 445,275 345,375" fill="#C8102E"/>
+    <rect x="30" y="90" width="120" height="18" fill="#C8102E" transform="rotate(24 90 99)"/>
+    <rect x="330" y="380" width="80" height="12" fill="#141414" transform="rotate(24 370 386)"/>
+    <text x="52" y="140" font-family="Anton, sans-serif" font-size="30" fill="#ECE2C8" transform="rotate(24 90 99)">1919</text>
+  </svg>
+  <div class="hero-copy">
+    <p class="kicker">Exhibition · Cinema · Workshops — three days</p>
+    <h1>Art is<br>a <span class="r">weapon!</span></h1>
+    <p class="lede">One hundred years after the red wedge pierced the old world, the festival returns: posters that shout, films that march, workshops where you build instead of watch.</p>
+    <div class="hero-ctas">
+      <a class="btn" href="#tickets">Get tickets</a>
+      <a class="btn black" href="#manifesto">Read the manifesto</a>
+    </div>
+  </div>
+</section>
+
+<div class="agit" aria-hidden="true"><div class="agit-track" id="agitTrack">
+  <span>Down with decoration!</span><span>Art into life!</span><span>The poster shouts!</span><span>Build, don't admire!</span>
+  <span>Down with decoration!</span><span>Art into life!</span><span>The poster shouts!</span><span>Build, don't admire!</span>
+</div></div>
+
+<section class="manifesto" id="manifesto">
+  <p class="manif-kicker" style="font:600 13px/1 var(--head);letter-spacing:.2em;text-transform:uppercase;margin-bottom:28px">From the manifesto</p>
+  <blockquote>The poster is <span class="ink">not</span> decoration.<br>The poster is an order!</blockquote>
+  <div class="tenets">
+    <div class="tenet">
+      <h3><span class="r">01</span> The diagonal</h3>
+      <p>Level lines are for ledgers. Our compositions ride one sharp diagonal — type, bars and wedges all charge the same way. Movement is meaning.</p>
+    </div>
+    <div class="tenet">
+      <h3><span class="r">02</span> Three inks</h3>
+      <p>Red for energy, black for structure, paper for the ground. Flat, violent, legible. Any fourth color must earn its place or leave.</p>
+    </div>
+    <div class="tenet">
+      <h3><span class="r">03</span> The shout</h3>
+      <p>Short orders, not descriptions. The exclamation mark is a structural element. If the wall doesn't answer back, start over.</p>
+    </div>
+  </div>
+  <p class="manif-sign">— Workers' Art Committee, October 1925 · reprinted 2026</p>
+</section>
+
+<div class="sec-head" id="programme">
+  <span class="sec-no">02</span><h2>Programme</h2><span class="sec-bar"></span>
+</div>
+
+<div class="tabs" role="tablist">
+  <button class="tab-btn active" id="tab-exhibition" data-tab="exhibition" role="tab" aria-selected="true" aria-controls="panel-exhibition">Exhibition</button>
+  <button class="tab-btn" id="tab-cinema" data-tab="cinema" role="tab" aria-selected="false" aria-controls="panel-cinema">Cinema</button>
+  <button class="tab-btn" id="tab-workshops" data-tab="workshops" role="tab" aria-selected="false" aria-controls="panel-workshops">Workshops</button>
+</div>
+
+<div class="panel active" id="panel-exhibition" role="tabpanel" aria-labelledby="tab-exhibition">
+  <div class="day-filter">
+    <span class="lbl">Day:</span>
+    <button class="day-btn active" data-day="all">All</button>
+    <button class="day-btn" data-day="fri">Fri 09</button>
+    <button class="day-btn" data-day="sat">Sat 10</button>
+    <button class="day-btn" data-day="sun">Sun 11</button>
+  </div>
+  <ul class="rows" id="rows-exhibition">
+    <li data-day="fri"><span class="when">Fri 09 · 19:00</span><strong>Opening rally: the wedge returns</strong><span class="tag">Free</span><em>Hall A</em></li>
+    <li data-day="fri"><span class="when">Fri 09 · 20:30</span><strong>Books (please)! — the Lengiz posters of 1924</strong><em>Gallery 1</em></li>
+    <li data-day="sat"><span class="when">Sat 10 · 11:00</span><strong>Beat the Whites: Lissitzky and the red wedge</strong><em>Gallery 1</em></li>
+    <li data-day="sat"><span class="when">Sat 10 · 15:00</span><strong>Klutsis: the photomontage machine</strong><span class="tag">Guided</span><em>Gallery 2</em></li>
+    <li data-day="sun"><span class="when">Sun 11 · 12:00</span><strong>Stepanova &amp; Rodchenko: the LEF years</strong><em>Gallery 1</em></li>
+    <li data-day="sun"><span class="when">Sun 11 · 17:00</span><strong>Closing: the wall of a thousand posters</strong><span class="tag">Free</span><em>Courtyard</em></li>
+  </ul>
+</div>
+
+<div class="panel" id="panel-cinema" role="tabpanel" aria-labelledby="tab-cinema">
+  <div class="day-filter">
+    <span class="lbl">Day:</span>
+    <button class="day-btn active" data-day="all">All</button>
+    <button class="day-btn" data-day="fri">Fri 09</button>
+    <button class="day-btn" data-day="sat">Sat 10</button>
+    <button class="day-btn" data-day="sun">Sun 11</button>
+  </div>
+  <ul class="rows" id="rows-cinema">
+    <li data-day="fri"><span class="when">Fri 09 · 21:00</span><strong>Man with a movie camera — live score</strong><span class="tag">Premiere</span><em>Hall B</em></li>
+    <li data-day="sat"><span class="when">Sat 10 · 18:00</span><strong>Cinema-Eye: Vertov's newsreels</strong><em>Hall B</em></li>
+    <li data-day="sun"><span class="when">Sun 11 · 14:00</span><strong>The new Babylon: Eisenstein's city</strong><em>Hall B</em></li>
+  </ul>
+</div>
+
+<div class="panel" id="panel-workshops" role="tabpanel" aria-labelledby="tab-workshops">
+  <div class="day-filter">
+    <span class="lbl">Day:</span>
+    <button class="day-btn active" data-day="all">All</button>
+    <button class="day-btn" data-day="fri">Fri 09</button>
+    <button class="day-btn" data-day="sat">Sat 10</button>
+    <button class="day-btn" data-day="sun">Sun 11</button>
+  </div>
+  <ul class="rows" id="rows-workshops">
+    <li data-day="sat"><span class="when">Sat 10 · 10:00</span><strong>Cut &amp; shout: photomontage atelier</strong><span class="tag">Hands-on</span><em>Workshop 2</em></li>
+    <li data-day="sat"><span class="when">Sat 10 · 13:00</span><strong>Letter like Rodchenko: poster type</strong><span class="tag">Hands-on</span><em>Workshop 1</em></li>
+    <li data-day="sun"><span class="when">Sun 11 · 10:00</span><strong>Print your own agit-card</strong><span class="tag">Take home</span><em>Workshop 2</em></li>
+  </ul>
+</div>
+
+<div class="sec-head" id="tickets">
+  <span class="sec-no">03</span><h2>Tickets</h2><span class="sec-bar"></span>
+</div>
+
+<section class="tickets">
+  <article class="poster">
+    <div class="poster-ribbon">Most taken</div>
+    <p class="poster-kicker">Single day</p>
+    <h3>One day<br>of noise</h3>
+    <p class="price">€12</p>
+    <ul>
+      <li>Any one festival day</li>
+      <li>All exhibitions + one screening</li>
+      <li>Agit-card to take home</li>
+    </ul>
+    <a class="btn" href="#tickets" data-plan="day">Take it!</a>
+  </article>
+  <article class="poster">
+    <div class="poster-ribbon">Full charge</div>
+    <p class="poster-kicker">Three days</p>
+    <h3>The whole<br>offensive</h3>
+    <p class="price">€28</p>
+    <ul>
+      <li>All three days, everything</li>
+      <li>All workshops included</li>
+      <li>Poster tube at the exit</li>
+    </ul>
+    <a class="btn" href="#tickets" data-plan="full">Take it!</a>
+  </article>
+  <article class="poster">
+    <p class="poster-kicker">Under 18 · students</p>
+    <h3>Young<br>guard</h3>
+    <p class="price">€6</p>
+    <ul>
+      <li>Any one festival day</li>
+      <li>All exhibitions</li>
+      <li>Bring a comrade free on Sunday</li>
+    </ul>
+    <a class="btn" href="#tickets" data-plan="young">Take it!</a>
+  </article>
+</section>
+
+<div class="sec-head" id="archive">
+  <span class="sec-no">04</span><h2>Archive</h2><span class="sec-bar"></span>
+</div>
+
+<section class="archive">
+  <div class="montage">
+    <svg viewBox="0 0 600 420" role="img" aria-label="Constructivist photomontage collage">
+      <defs>
+        <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse">
+          <circle cx="8" cy="8" r="3.4" fill="#141414"/>
+        </pattern>
+      </defs>
+      <rect x="30" y="40" width="240" height="240" fill="url(#dots)"/>
+      <circle cx="440" cy="210" r="115" fill="#C8102E"/>
+      <polygon points="300,400 520,40 560,80 340,440" fill="#141414"/>
+      <rect x="90" y="150" width="260" height="44" fill="#ECE2C8" transform="rotate(-12 220 172)"/>
+      <text x="112" y="184" font-family="Anton, sans-serif" font-size="32" fill="#141414" transform="rotate(-12 220 172)">SHOUT!</text>
+      <rect x="380" y="320" width="150" height="20" fill="#C8102E" transform="rotate(-12 455 330)"/>
+      <circle cx="120" cy="340" r="34" fill="none" stroke="#C8102E" stroke-width="10"/>
+    </svg>
+  </div>
+  <div class="archive-copy">
+    <p class="kicker">The method</p>
+    <h3>Cut. Paste.<br><span class="r">Agitate!</span></h3>
+    <p>Klutsis and Rodchenko never painted a poster when they could build one. A cropped photograph, a red disc, a bar of type on the diagonal — fact plus force on a single plane.</p>
+    <p>The festival archive holds 200 reproductions: Lengiz book posters, LEF magazine covers, cinema placards. Every one of them shouts. None of them whispers.</p>
+    <a class="btn black" href="#archive" id="archiveBtn">Enter the archive</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-bar"></div>
+  <div class="foot-inner">
+    <div>
+      <h4>The Red <span class="r">Wedge</span></h4>
+      <p>Festival of the new art. Three days of posters, film and workshops. Art leaves the museum and takes the street.</p>
+    </div>
+    <div class="foot-meta">
+      09–11 Oct · Hall A / Hall B / Courtyard<br>
+      Doors 18:00 · First shout 19:00<br>
+      tickets@redwedge.example
+    </div>
+  </div>
+  <p class="foot-base">Built from the constructivism skill · design-skills</p>
+</footer>
+
+<script>
+// Mobile nav toggle
+(function(){
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  toggle.addEventListener('click', function(){
+    var open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  links.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      links.classList.remove('open');
+      toggle.setAttribute('aria-expanded','false');
+    });
+  });
+})();
+
+// Programme tabs
+(function(){
+  var tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){
+        t.classList.remove('active');
+        t.setAttribute('aria-selected','false');
+      });
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected','true');
+      var panel = document.getElementById('panel-' + tab.getAttribute('data-tab'));
+      if (panel) panel.classList.add('active');
+    });
+  });
+})();
+
+// Day filters (one per panel; "all/fri/sat/sun" buttons filter sibling .rows)
+(function(){
+  document.querySelectorAll('.panel').forEach(function(panel){
+    var btns = panel.querySelectorAll('.day-btn');
+    var rows = panel.querySelectorAll('.rows li');
+    btns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        btns.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var day = btn.getAttribute('data-day');
+        rows.forEach(function(row){
+          var show = (day === 'all') || (row.getAttribute('data-day') === day);
+          row.classList.toggle('hidden', !show);
+        });
+      });
+    });
+  });
+})();
+
+// Ticket buttons: confirm the plan out loud (no checkout in a demo)
+(function(){
+  document.querySelectorAll('[data-plan]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      var plan = btn.getAttribute('data-plan');
+      var names = { day:'ONE DAY OF NOISE (€12)', full:'THE WHOLE OFFENSIVE (€28)', young:'YOUNG GUARD (€6)' };
+      btn.textContent = 'TAKEN!';
+      setTimeout(function(){ btn.textContent = 'TAKE IT!'; }, 1600);
+      var note = document.getElementById('ticketNote');
+      if (!note){
+        note = document.createElement('p');
+        note.id = 'ticketNote';
+        note.style.cssText = 'font:600 13px/1.6 Oswald,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#ECE2C8;margin-top:24px';
+        btn.closest('.tickets').appendChild(note);
+      }
+      note.textContent = 'Enlisted: ' + (names[plan] || plan) + ' — the wedge waits for no one!';
+    });
+  });
+})();
+
+// Archive button: one hard cut of feedback
+(function(){
+  var b = document.getElementById('archiveBtn');
+  b.addEventListener('click', function(e){
+    e.preventDefault();
+    var orig = b.textContent;
+    b.textContent = '200 POSTERS. ZERO WHISPERS.';
+    setTimeout(function(){ b.textContent = orig; }, 1800);
+  });
+})();
+</script>
+</body>
+</html>
