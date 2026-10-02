@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cyberpunk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#050507;
+  --void2:#0a0a0f;
+  --panel:#0d0d14;
+  --line:#1e1e2a;
+  --seam:#2b1e45;
+  --acc:#fcee0a;          /* the one hot accent: yellow */
+  --cyan:#00f0ff;         /* data / interactive */
+  --mag:#ff2a6d;          /* glitch / danger only */
+  --red:#ff3c3c;
+  --green:#05ffa1;
+  --ink:#ededf2;
+  --dim:#8a8a99;
+  --glow:0 0 6px rgba(252,238,10,.9),0 0 22px rgba(252,238,10,.45),0 0 60px rgba(252,238,10,.18);
+  --glow-cyan:0 0 6px rgba(0,240,255,.9),0 0 22px rgba(0,240,255,.4);
+  --font-display:"Orbitron","Eurostile","Bank Gothic","Arial Narrow","Helvetica Neue",Impact,sans-serif;
+  --font-mono:"Share Tech Mono","JetBrains Mono","Cascadia Code",Consolas,"Courier New",monospace;
+  --font-body:"Segoe UI","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--font-body);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+/* hairline grid ground */
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,240,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,240,255,.05) 1px,transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 20%,black 25%,transparent 78%);
+          mask-image:radial-gradient(ellipse at 50% 20%,black 25%,transparent 78%);
+}
+/* scanlines — the whisper */
+#scanlines{
+  position:fixed;inset:0;z-index:80;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.28) 2px 4px);
+  opacity:.22;
+}
+::selection{background:var(--acc);color:#0a0a0f}
+a{color:var(--cyan)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ============ BOOT OVERLAY ============ */
+#boot-overlay{
+  position:fixed;inset:0;z-index:100;background:#020204;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .35s ease;
+}
+#boot-overlay.done{opacity:0;pointer-events:none}
+#boot-box{width:min(640px,90vw);font-family:var(--font-mono);font-size:.85rem}
+#boot-lines{white-space:pre-wrap;color:var(--green);min-height:172px}
+#boot-lines .y{color:var(--acc)} #boot-lines .c{color:var(--cyan)} #boot-lines .m{color:var(--mag)}
+#boot-progress{height:3px;background:var(--line);margin-top:14px;overflow:hidden}
+#boot-progress i{display:block;height:100%;width:0;background:var(--acc);box-shadow:var(--glow);transition:width .18s linear}
+#boot-skip{
+  margin-top:14px;background:none;border:1px solid var(--acc);color:var(--acc);
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.2em;padding:10px 18px;cursor:pointer;
+}
+#boot-skip:hover{background:var(--acc);color:#0a0a0f}
+#boot-hint{font-size:.66rem;letter-spacing:.18em;color:var(--dim);margin-top:8px}
+.cursor{display:inline-block;width:.6em;height:1.1em;background:var(--green);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ============ STATUS BAR / NAV ============ */
+#statusbar{
+  position:sticky;top:0;z-index:50;background:rgba(5,5,7,.92);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(6px);
+}
+#statusbar .wrap{display:flex;align-items:center;gap:20px;padding-top:12px;padding-bottom:12px}
+.logo{
+  font-family:var(--font-display);font-weight:800;font-size:1.15rem;letter-spacing:.12em;
+  color:var(--ink);text-decoration:none;transform:skewX(-6deg);white-space:nowrap;
+}
+.logo b{color:var(--acc);font-weight:800}
+.logo .ver{font-family:var(--font-mono);font-weight:400;font-size:.62rem;color:var(--dim);letter-spacing:.2em;display:block;transform:skewX(6deg)}
+#clock{font-family:var(--font-mono);font-size:.72rem;color:var(--dim);letter-spacing:.14em;margin-left:auto;white-space:nowrap}
+#clock .live-dot{color:var(--green);animation:blink 1.6s steps(2) infinite}
+nav#nav-links{display:flex;gap:26px}
+nav#nav-links a{
+  font-family:var(--font-mono);font-size:.74rem;letter-spacing:.18em;text-decoration:none;
+  color:var(--dim);text-transform:uppercase;
+}
+nav#nav-links a:hover{color:var(--cyan);text-shadow:var(--glow-cyan)}
+#nav-toggle{display:none;background:none;border:1px solid var(--line);color:var(--ink);
+  font-family:var(--font-mono);font-size:.8rem;padding:8px 12px;cursor:pointer}
+
+/* ============ BUTTONS ============ */
+.cta{
+  --cut:12px;display:inline-block;background:var(--acc);color:#0a0a0f;
+  font-family:var(--font-display);font-weight:800;font-size:.85rem;letter-spacing:.18em;
+  text-transform:uppercase;text-decoration:none;padding:16px 36px;
+  clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));
+  transition:filter .15s ease,transform .15s ease;
+}
+.cta:hover{filter:drop-shadow(0 0 12px rgba(252,238,10,.7));transform:translateY(-1px)}
+.cta.ghost{background:transparent;color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan)}
+.cta.ghost:hover{filter:drop-shadow(0 0 10px rgba(0,240,255,.6))}
+
+/* ============ HERO ============ */
+#hero{padding:96px 0 64px;position:relative}
+.kicker{
+  font-family:var(--font-mono);font-size:.74rem;letter-spacing:.3em;color:var(--cyan);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker::before{content:">> ";color:var(--acc)}
+.glitch{position:relative;display:inline-block}
+#hero-glitch{
+  font-family:var(--font-display);font-weight:900;
+  font-size:clamp(3rem,9vw,6.5rem);line-height:.95;letter-spacing:.04em;
+  color:var(--acc);text-shadow:var(--glow);transform:skewX(-6deg);
+  margin:0 0 8px;
+}
+#hero-glitch::before,#hero-glitch::after{
+  content:attr(data-text);position:absolute;inset:0;opacity:0;transform:skewX(0);
+}
+#hero-glitch::before{color:var(--mag)}
+#hero-glitch::after{color:var(--cyan)}
+#hero-glitch:hover::before,#hero-glitch.glitching::before{
+  opacity:1;animation:gl-a .32s steps(2) both;text-shadow:-2px 0 var(--mag);
+  clip-path:inset(10% 0 55% 0);
+}
+#hero-glitch:hover::after,#hero-glitch.glitching::after{
+  opacity:1;animation:gl-b .32s steps(2) both;text-shadow:2px 0 var(--cyan);
+  clip-path:inset(60% 0 5% 0);
+}
+@keyframes gl-a{50%{transform:translate(-8px,3px);clip-path:inset(55% 0 12% 0)}}
+@keyframes gl-b{50%{transform:translate(8px,-3px);clip-path:inset(8% 0 70% 0)}}
+.hero-sub{
+  font-family:var(--font-display);font-weight:700;font-size:clamp(1.1rem,2.6vw,1.6rem);
+  letter-spacing:.12em;color:var(--ink);text-transform:uppercase;margin-bottom:18px;
+  transform:skewX(-6deg);
+}
+.hero-sub .dim{color:var(--dim);font-weight:400}
+#hero p.lede{max-width:56ch;color:var(--dim);font-size:1.02rem;margin-bottom:32px}
+#hero p.lede strong{color:var(--ink);font-weight:600}
+.hero-ctas{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:44px}
+.telemetry{
+  display:flex;gap:28px;flex-wrap:wrap;font-family:var(--font-mono);
+  font-size:.72rem;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:12px 0;
+}
+.telemetry b{color:var(--cyan);font-weight:400}
+.telemetry .ok{color:var(--green)}
+
+/* ============ TICKER ============ */
+#ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:var(--void2);overflow:hidden;white-space:nowrap}
+#ticker .track{display:inline-block;padding:10px 0;animation:tick 40s linear infinite;
+  font-family:var(--font-mono);font-size:.74rem;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+#ticker .track span{margin:0 26px}
+#ticker .y{color:var(--acc)} #ticker .c{color:var(--cyan)} #ticker .m{color:var(--mag)} #ticker .g{color:var(--green)}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ============ SECTIONS ============ */
+section.block{padding:88px 0}
+.sec-head{margin-bottom:40px}
+.sec-head .kicker{margin-bottom:10px}
+.sec-head h2{
+  font-family:var(--font-display);font-weight:800;font-size:clamp(1.8rem,4vw,2.6rem);
+  letter-spacing:.06em;text-transform:uppercase;transform:skewX(-6deg);
+}
+.sec-head h2 .y{color:var(--acc)}
+.sec-head p{color:var(--dim);max-width:62ch;margin-top:10px}
+
+/* corner-bracket panels */
+.bracket{position:relative;background:var(--panel);padding:30px 28px}
+.bracket::before,.bracket::after{content:"";position:absolute;width:20px;height:20px;border:2px solid var(--acc)}
+.bracket::before{top:-2px;left:-2px;border-right:0;border-bottom:0}
+.bracket::after{bottom:-2px;right:-2px;border-left:0;border-top:0}
+.bracket.cyan::before,.bracket.cyan::after{border-color:var(--cyan)}
+.bracket .meta{
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.18em;color:var(--dim);
+  text-transform:uppercase;margin-bottom:12px;
+}
+.bracket h3{font-family:var(--font-display);font-weight:700;font-size:1.25rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.bracket p{color:var(--dim);font-size:.94rem}
+
+/* ============ TABS / MODULES ============ */
+#tabs{display:flex;gap:0;border:1px solid var(--line);margin-bottom:0;background:var(--void2)}
+.tab-btn{
+  flex:1;background:none;border:0;border-right:1px solid var(--line);color:var(--dim);
+  font-family:var(--font-mono);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:16px 10px;cursor:pointer;position:relative;
+}
+.tab-btn:last-child{border-right:0}
+.tab-btn:hover{color:var(--ink)}
+.tab-btn[aria-selected="true"]{color:#0a0a0f;background:var(--acc);font-weight:700}
+.tab-btn[aria-selected="true"]::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--acc);
+  box-shadow:var(--glow);
+}
+.tab-panels{border:1px solid var(--line);border-top:0;background:var(--panel)}
+.tab-panel{display:none;padding:34px 30px}
+.tab-panel.active{display:block}
+.tab-panel h3{font-family:var(--font-display);font-size:1.4rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.tab-panel h3 .y{color:var(--acc)}
+.tab-panel p{color:var(--dim);max-width:64ch;margin-bottom:18px}
+.spec{font-family:var(--font-mono);font-size:.76rem;color:var(--dim);letter-spacing:.08em}
+.spec li{list-style:none;padding:8px 0;border-bottom:1px dashed var(--line);display:flex;justify-content:space-between;gap:16px}
+.spec li b{color:var(--cyan);font-weight:400}
+.spec li .tag-ok{color:var(--green)}
+.spec li .tag-warn{color:var(--acc)}
+
+/* trace bar */
+.trace{position:relative;height:26px;background:var(--void2);border:1px solid var(--line);
+  overflow:hidden;margin:22px 0 6px;
+  clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.trace-fill{width:var(--p,50%);height:100%;
+  background:repeating-linear-gradient(-55deg,var(--acc) 0 8px,#a89e08 8px 16px);
+  box-shadow:var(--glow)}
+.trace span{position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--font-mono);font-weight:700;font-size:.7rem;letter-spacing:.24em;color:#fff;text-shadow:0 1px 2px #000}
+.trace-cap{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+
+/* ============ TERMINAL ============ */
+.term{background:#020204;border:1px solid var(--line);max-width:760px;
+  box-shadow:0 0 0 1px #000,0 24px 60px rgba(0,0,0,.55)}
+.term-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;
+  border-bottom:1px solid var(--line);font-family:var(--font-mono);font-size:.7rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.term-bar .dots{display:flex;gap:6px}
+.term-bar .dots i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}
+.term-bar .dots i:first-child{background:var(--red)}
+.term-bar .dots i:nth-child(2){background:var(--acc)}
+.term-bar .dots i:last-child{background:var(--green)}
+#term-body{padding:18px;font-family:var(--font-mono);font-size:.86rem;line-height:1.75;
+  min-height:280px;max-height:380px;overflow-y:auto;color:var(--ink);cursor:text}
+#term-body .in{color:var(--cyan)} #term-body .ok{color:var(--green)}
+#term-body .warn{color:var(--acc)} #term-body .err{color:var(--mag)}
+#term-body .dim{color:var(--dim)}
+#term-form{display:flex;border-top:1px solid var(--line)}
+#term-form .prompt{font-family:var(--font-mono);color:var(--acc);padding:12px 0 12px 14px;font-size:.86rem}
+#term-input{flex:1;background:none;border:0;outline:0;color:var(--ink);
+  font-family:var(--font-mono);font-size:.86rem;padding:12px 14px 12px 8px;caret-color:var(--acc)}
+.term-hint{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;color:var(--dim);margin-top:12px}
+.term-hint b{color:var(--cyan);font-weight:400}
+
+/* ============ TOGGLES ============ */
+.toggles{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:36px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:var(--panel);border:1px solid var(--line);padding:18px 20px}
+.toggle-row .t-meta .t-name{font-family:var(--font-display);font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;font-size:.95rem}
+.toggle-row .t-meta .t-desc{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.1em;
+  color:var(--dim);text-transform:uppercase;margin-top:4px}
+.switch{position:relative;width:58px;height:30px;flex:none;cursor:pointer}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0}
+.switch .track{position:absolute;inset:0;background:var(--void2);border:1px solid var(--line);
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);transition:background .15s}
+.switch .thumb{position:absolute;top:4px;left:6px;width:22px;height:22px;background:var(--dim);
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);transition:left .15s,background .15s,box-shadow .15s}
+.switch input:checked + .track{background:#141408;border-color:var(--acc)}
+.switch input:checked + .track + .thumb{left:30px;background:var(--acc);box-shadow:var(--glow)}
+.switch input:focus-visible + .track{outline:2px solid var(--cyan);outline-offset:2px}
+
+/* stealth + overdrive body states */
+body.stealth{--acc:#00f0ff;--glow:0 0 6px rgba(0,240,255,.9),0 0 22px rgba(0,240,255,.4)}
+body.stealth #hero-glitch{text-shadow:var(--glow)}
+body.overdrive #ticker{animation:none}
+body.overdrive .trace-fill{animation:stripes .6s linear infinite}
+@keyframes stripes{to{background-position:22px 0}}
+
+/* ============ TIERS ============ */
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.tier{padding:34px 30px;display:flex;flex-direction:column;gap:14px}
+.tier .tier-name{font-family:var(--font-display);font-weight:800;font-size:1.3rem;letter-spacing:.1em;text-transform:uppercase}
+.tier .price{font-family:var(--font-mono);font-size:2rem;color:var(--acc)}
+.tier .price small{font-size:.72rem;color:var(--dim);letter-spacing:.14em}
+.tier ul{list-style:none;font-size:.9rem;color:var(--dim);display:flex;flex-direction:column;gap:8px;margin:6px 0 12px}
+.tier ul li::before{content:"▸ ";color:var(--cyan)}
+.tier.hot{background:#12120a;border:1px solid var(--acc)}
+.tier .flag{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.22em;color:#0a0a0f;
+  background:var(--acc);align-self:flex-start;padding:4px 10px;text-transform:uppercase}
+
+/* filament divider */
+hr.filament{border:0;height:1px;margin:0;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
+
+/* ============ MANUAL / FAQ-ish ============ */
+.manual{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.manual .bracket h3 .q{color:var(--cyan)}
+@media(max-width:760px){.manual{grid-template-columns:1fr}}
+
+/* ============ FOOTER ============ */
+footer{border-top:1px solid var(--line);background:var(--void2);padding:40px 0}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+footer .f-logo{font-family:var(--font-display);font-weight:800;letter-spacing:.14em;color:var(--ink);transform:skewX(-6deg)}
+footer .f-logo b{color:var(--acc)}
+
+/* responsive */
+@media(max-width:860px){
+  nav#nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:#050507;
+    flex-direction:column;padding:18px 24px;gap:14px;border-bottom:1px solid var(--line)}
+  nav#nav-links.open{display:flex}
+  #nav-toggle{display:block;margin-left:auto}
+  #clock{display:none}
+  #hero{padding:64px 0 48px}
+  section.block{padding:60px 0}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  #ticker .track{animation:none}
+  #hero-glitch:hover::before,#hero-glitch:hover::after{animation:none;opacity:.85}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<div id="scanlines" aria-hidden="true"></div>
+
+<!-- BOOT -->
+<div id="boot-overlay" role="status" aria-label="boot sequence">
+  <div id="boot-box">
+    <div id="boot-lines"></div><span class="cursor" aria-hidden="true"></span>
+    <div id="boot-progress" aria-hidden="true"><i></i></div>
+    <div><button id="boot-skip" type="button">SKIP &gt;&gt;</button></div>
+    <p id="boot-hint">ESC to skip</p>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<header id="statusbar">
+  <div class="wrap">
+    <a class="logo" href="#hero">GHOST<b>LINK</b><span class="ver">netrunner console · v4.2.077</span></a>
+    <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">MENU</button>
+    <nav id="nav-links" aria-label="primary">
+      <a href="#modules">Modules</a>
+      <a href="#console">Console</a>
+      <a href="#tiers">Tiers</a>
+      <a href="#manual">Manual</a>
+    </nav>
+    <span id="clock"><span class="live-dot">●</span> <span id="clock-time">--:--:--</span> NRT</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="wrap">
+    <p class="kicker">unauthorized access toolkit · night city grid</p>
+    <div class="glitch">
+      <h1 id="hero-glitch" class="glitching" data-text="GHOSTLINK">GHOSTLINK</h1>
+    </div>
+    <p class="hero-sub">breach drills · live ice maps · exfil routes <span class="dim">// zero noise</span></p>
+    <p class="lede">Your rig, their network. <strong>Ghostlink</strong> sits between them and makes you
+    invisible — a netrunner console that maps hostile ICE in real time, rehearses the breach
+    before you commit, and walks your payload out through the quietest route on the grid.
+    The corps built the walls. We built the door.</p>
+    <div class="hero-ctas">
+      <a class="cta" href="#console">Jack in</a>
+      <a class="cta ghost" href="#modules">View modules</a>
+    </div>
+    <div class="telemetry" aria-label="live telemetry">
+      <span>uptime <b id="tel-uptime">99.98%</b></span>
+      <span>latency <b id="tel-lat">4ms</b></span>
+      <span>nodes <b id="tel-nodes">1,204</b></span>
+      <span>grid <b>night-city / sector 7</b></span>
+      <span class="ok">● link established</span>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div id="ticker" aria-hidden="true">
+  <div class="track" id="ticker-track">
+    <span><span class="y">BREACH</span> arasaka subnet 7 · 2.4s · no alarms</span>
+    <span><span class="c">ICE MAP</span> sector 7 refreshed · 14 new signatures</span>
+    <span><span class="g">EXFIL</span> 44.2 GB via quiet route · checksum ok</span>
+    <span><span class="m">ALERT</span> black ice reported on hop 4 · re-routing</span>
+    <span><span class="y">DRILL</span> militech vault sim · score 98.2</span>
+    <span><span class="c">NODE</span> 0xA4F2 handshake · 12ms</span>
+    <span><span class="y">BREACH</span> arasaka subnet 7 · 2.4s · no alarms</span>
+    <span><span class="c">ICE MAP</span> sector 7 refreshed · 14 new signatures</span>
+    <span><span class="g">EXFIL</span> 44.2 GB via quiet route · checksum ok</span>
+    <span><span class="m">ALERT</span> black ice reported on hop 4 · re-routing</span>
+    <span><span class="y">DRILL</span> militech vault sim · score 98.2</span>
+    <span><span class="c">NODE</span> 0xA4F2 handshake · 12ms</span>
+  </div>
+</div>
+
+<!-- MODULES / TABS -->
+<section id="modules" class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">loadout</p>
+      <h2>Three modules. <span class="y">One console.</span></h2>
+      <p>Every run follows the same doctrine: recon the target, rehearse the breach, walk out quiet.
+      Pick a module to inspect its spec sheet.</p>
+    </div>
+    <div id="tabs" role="tablist" aria-label="modules">
+      <button class="tab-btn" type="button" role="tab" id="tabbtn-recon" data-tab="tab-recon" aria-selected="true" aria-controls="tab-recon">01 · Recon</button>
+      <button class="tab-btn" type="button" role="tab" id="tabbtn-breach" data-tab="tab-breach" aria-selected="false" aria-controls="tab-breach">02 · Breach</button>
+      <button class="tab-btn" type="button" role="tab" id="tabbtn-exfil" data-tab="tab-exfil" aria-selected="false" aria-controls="tab-exfil">03 · Exfil</button>
+    </div>
+    <div class="tab-panels">
+      <div class="tab-panel active" id="tab-recon" role="tabpanel" aria-labelledby="tabbtn-recon">
+        <h3>Recon <span class="y">// map before you move</span></h3>
+        <p>Passive grid survey. Ghostlink listens to a target subnet for 90 seconds and returns a
+        live ICE map — patrol patterns, daemon signatures, quiet windows — without sending a
+        single packet the target can log.</p>
+        <ul class="spec">
+          <li><span>scan mode</span><b>passive · zero-packet</b></li>
+          <li><span>ice signature db</span><b>14,208 entries <span class="tag-ok">● current</span></b></li>
+          <li><span>quiet window forecast</span><b>±40s accuracy</b></li>
+          <li><span>detection risk</span><b><span class="tag-warn">0.02% per sweep</span></b></li>
+        </ul>
+      </div>
+      <div class="tab-panel" id="tab-breach" role="tabpanel" aria-labelledby="tabbtn-breach">
+        <h3>Breach <span class="y">// rehearse, then commit</span></h3>
+        <p>A full-fidelity simulator of the target's ICE. Run the breach a hundred times against the
+        sim, tune your daemon loadout, then execute once — for real — with the exact timing the
+        drill proved.</p>
+        <ul class="spec">
+          <li><span>sim fidelity</span><b>98.2% vs live ice</b></li>
+          <li><span>daemon slots</span><b>8 concurrent</b></li>
+          <li><span>avg breach time</span><b>2.4s <span class="tag-ok">● record</span></b></li>
+          <li><span>alarm rate</span><b><span class="tag-warn">1 in 340 runs</span></b></li>
+        </ul>
+        <div class="trace" aria-label="last drill trace"><div class="trace-fill" style="--p:82%"></div><span>DRILL TRACE 82%</span></div>
+        <p class="trace-cap">last drill · militech vault sim · no alarms</p>
+      </div>
+      <div class="tab-panel" id="tab-exfil" role="tabpanel" aria-labelledby="tabbtn-exfil">
+        <h3>Exfil <span class="y">// leave no heat</span></h3>
+        <p>Payload routing across the quietest available path. Ghostlink fragments, encrypts and
+        staggers your exfil across decoy nodes, then verifies checksums and burns the route
+        behind you.</p>
+        <ul class="spec">
+          <li><span>throughput</span><b>44.2 GB per run</b></li>
+          <li><span>decoy nodes</span><b>12 per payload</b></li>
+          <li><span>route burn</span><b>automatic <span class="tag-ok">● verified</span></b></li>
+          <li><span>residue</span><b>zero forensic footprint</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TOGGLES -->
+    <div class="toggles">
+      <div class="toggle-row">
+        <div class="t-meta">
+          <div class="t-name">Overdrive</div>
+          <div class="t-desc">push neon output past safe levels</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="toggle-overdrive"><span class="track"></span><span class="thumb"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="t-meta">
+          <div class="t-name">Stealth</div>
+          <div class="t-desc">kill the yellow · run cyan-only</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="toggle-stealth"><span class="track"></span><span class="thumb"></span></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="filament">
+
+<!-- CONSOLE / TERMINAL -->
+<section id="console" class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">live demo</p>
+      <h2>The console <span class="y">is real.</span></h2>
+      <p>A working slice of the Ghostlink shell, running in your browser. Type
+      <b style="color:var(--cyan);font-weight:400">help</b> and poke it — it answers.</p>
+    </div>
+    <div class="term">
+      <div class="term-bar"><span>ghostlink — secure shell</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
+      <div id="term-body" aria-live="polite"></div>
+      <form id="term-form" autocomplete="off">
+        <span class="prompt" aria-hidden="true">ghost@grid:~$</span>
+        <input id="term-input" type="text" aria-label="terminal input" spellcheck="false" placeholder="type 'help'…">
+      </form>
+    </div>
+    <p class="term-hint">TRY: <b>help</b> · <b>status</b> · <b>scan</b> · <b>trace</b> · <b>whoami</b> · <b>clear</b></p>
+  </div>
+</section>
+
+<hr class="filament">
+
+<!-- TIERS -->
+<section id="tiers" class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">deploy tiers</p>
+      <h2>Pick your <span class="y">clearance.</span></h2>
+      <p>No subscriptions to the corps. One payment, yours forever, updates over dead drops.</p>
+    </div>
+    <div class="tiers">
+      <div class="bracket tier">
+        <div class="tier-name">Street Kit</div>
+        <div class="price">0 <small>€$ / FOREVER</small></div>
+        <ul>
+          <li>Recon module, 3 sweeps a day</li>
+          <li>Community ICE signature db</li>
+          <li>Single rig license</li>
+        </ul>
+        <a class="cta ghost" href="#console">Take it</a>
+      </div>
+      <div class="bracket tier hot">
+        <span class="flag">most jacked-in</span>
+        <div class="tier-name">Fixer</div>
+        <div class="price">49 <small>€$ / ONE-TIME</small></div>
+        <ul>
+          <li>All three modules, unlimited runs</li>
+          <li>Breach simulator + drill scoring</li>
+          <li>Live ICE map, 14k signatures</li>
+          <li>Three rig licenses</li>
+        </ul>
+        <a class="cta" href="#console">Jack in</a>
+      </div>
+      <div class="bracket tier">
+        <div class="tier-name">Legend</div>
+        <div class="price">149 <small>€$ / ONE-TIME</small></div>
+        <ul>
+          <li>Everything in Fixer</li>
+          <li>Zero-day daemon drops, monthly</li>
+          <li>Private exfil routes, burned after use</li>
+          <li>Direct line to the dev crew</li>
+        </ul>
+        <a class="cta ghost" href="#console">Go legend</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="filament">
+
+<!-- MANUAL -->
+<section id="manual" class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker">field manual · excerpt</p>
+      <h2>Read before <span class="y">you run.</span></h2>
+    </div>
+    <div class="manual">
+      <div class="bracket cyan">
+        <p class="meta">rule 01 // patience</p>
+        <h3><span class="q">Q —</span> How long should recon run?</h3>
+        <p>Ninety seconds minimum. The grid lies to anyone in a hurry — patrol patterns only
+        reveal themselves to runners who watch a full rotation before moving.</p>
+      </div>
+      <div class="bracket cyan">
+        <p class="meta">rule 02 // noise</p>
+        <h3><span class="q">Q —</span> What trips the ICE fastest?</h3>
+        <p>Retries. One clean breach attempt beats ten noisy ones. If the drill scores under 95,
+        you are not ready — run it again in the sim, not on the target.</p>
+      </div>
+      <div class="bracket cyan">
+        <p class="meta">rule 03 // exit</p>
+        <h3><span class="q">Q —</span> When do I burn the route?</h3>
+        <p>Always. Every exfil route is single-use. Ghostlink burns it automatically and verifies
+        the ash — a route you reuse is a trail you left.</p>
+      </div>
+      <div class="bracket cyan">
+        <p class="meta">rule 04 // crew</p>
+        <h3><span class="q">Q —</span> Can the corps trace Ghostlink itself?</h3>
+        <p>The console runs local, signs nothing, phones home never. There is no account, no
+        cloud, no log with your name on it. That is the whole point.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="f-logo">GHOST<b>LINK</b></span>
+    <span>night city · sector 7 · grid status nominal</span>
+    <span>Built from the cyberpunk skill · design-skills</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- clock ---------- */
+  function tickClock(){
+    var d = new Date(), p = function(n){ return (n<10?"0":"")+n; };
+    $("clock-time").textContent = p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds());
+  }
+  tickClock(); setInterval(tickClock, 1000);
+
+  /* ---------- telemetry drift ---------- */
+  var nodes = 1204;
+  setInterval(function(){
+    nodes += Math.floor(Math.random()*7)-3;
+    if (nodes < 1190) nodes = 1190;
+    $("tel-nodes").textContent = nodes.toLocaleString("en-US");
+    $("tel-lat").textContent = (3 + Math.floor(Math.random()*5)) + "ms";
+    $("tel-uptime").textContent = (99.9 + Math.random()*0.09).toFixed(2) + "%";
+  }, 2400);
+
+  /* ---------- boot sequence ---------- */
+  var bootLines = [
+    ["GHOSTLINK v4.2.077 — secure boot", "g"],
+    ["[OK] handshake 0xA4F2 · 12ms", "ok"],
+    ["[OK] ice db 14,208 signatures · current", "ok"],
+    ["[!!] corp patrol — re-routing via quiet corridor", "m"],
+    ["[OK] link established · zero noise", "ok"],
+    ["welcome back, ghost.", "y"]
+  ];
+  var bootBox = $("boot-lines"), bootBar = document.querySelector("#boot-progress i");
+  var bi = 0, ci = 0, cur = null, curCls = "";
+  var bootDone = false;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function hideBoot(){
+    var ov = $("boot-overlay");
+    ov.classList.add("done");
+    ov.style.display = "none"; /* belt and suspenders: never trap the user */
+  }
+  function finishBoot(){
+    if (bootDone) return;
+    bootDone = true;
+    hideBoot();
+    var h = $("hero-glitch");
+    h.classList.add("glitching");
+    setTimeout(function(){ h.classList.remove("glitching"); }, 700);
+  }
+  function typeBoot(){
+    if (bootDone) return;
+    if (bi >= bootLines.length){ finishBoot(); return; }
+    if (!cur){
+      cur = bootLines[bi][0]; curCls = bootLines[bi][1];
+      var line = document.createElement("div");
+      if (curCls === "y") line.className = "y";
+      else if (curCls === "c") line.className = "c";
+      else if (curCls === "m") line.className = "m";
+      bootBox.appendChild(line);
+      bootBox._line = line; ci = 0;
+    }
+    var line = bootBox._line;
+    if (reduced){ line.textContent = cur; bi++; cur = null; typeBoot(); return; }
+    line.textContent = cur.slice(0, ++ci);
+    if (ci >= cur.length){
+      bi++; cur = null;
+      bootBar.style.width = Math.round(bi / bootLines.length * 100) + "%";
+      setTimeout(typeBoot, 60);
+    }
+    else setTimeout(typeBoot, 8 + Math.random()*14);
+  }
+  $("boot-skip").addEventListener("click", finishBoot);
+  window.addEventListener("keydown", function(e){
+    if (e.key === "Escape" || e.key === "Enter") finishBoot();
+  });
+  typeBoot();
+  /* hard failsafe: force-hide no later than 8s, no matter what */
+  setTimeout(function(){ finishBoot(); }, 8000);
+
+  /* ---------- mobile nav ---------- */
+  var navT = $("nav-toggle"), navL = $("nav-links");
+  navT.addEventListener("click", function(){
+    var open = navL.classList.toggle("open");
+    navT.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  navL.addEventListener("click", function(e){
+    if (e.target.tagName === "A"){ navL.classList.remove("open"); navT.setAttribute("aria-expanded","false"); }
+  });
+
+  /* ---------- tabs ---------- */
+  var tabBtns = document.querySelectorAll(".tab-btn");
+  tabBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      tabBtns.forEach(function(b){ b.setAttribute("aria-selected","false"); });
+      document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.remove("active"); });
+      btn.setAttribute("aria-selected","true");
+      document.getElementById(btn.getAttribute("data-tab")).classList.add("active");
+    });
+  });
+
+  /* ---------- toggles ---------- */
+  $("toggle-overdrive").addEventListener("change", function(e){
+    document.body.classList.toggle("overdrive", e.target.checked);
+  });
+  $("toggle-stealth").addEventListener("change", function(e){
+    document.body.classList.toggle("stealth", e.target.checked);
+  });
+
+  /* ---------- terminal ---------- */
+  var termBody = $("term-body"), termForm = $("term-form"), termInput = $("term-input");
+  function print(html, cls){
+    var div = document.createElement("div");
+    if (cls) div.className = cls;
+    div.innerHTML = html;
+    termBody.appendChild(div);
+    termBody.scrollTop = termBody.scrollHeight;
+  }
+  function printDelay(html, cls, ms){
+    setTimeout(function(){ print(html, cls); }, ms);
+  }
+  print('<span class="dim">GHOSTLINK secure shell — v4.2.077</span>');
+  print('<span class="dim">type <span class="in">help</span> for commands. everything stays local.</span>');
+  var CMDS = {
+    help: function(){
+      print('<span class="in">help</span> <span class="dim">— this list</span>');
+      print('<span class="in">status</span> <span class="dim">— link + rig status</span>');
+      print('<span class="in">scan</span> <span class="dim">— passive sweep of sector 7</span>');
+      print('<span class="in">trace</span> <span class="dim">— trace the last breach route</span>');
+      print('<span class="in">whoami</span> <span class="dim">— identity check</span>');
+      print('<span class="in">clear</span> <span class="dim">— wipe the screen</span>');
+    },
+    status: function(){
+      print('<span class="ok">[OK]</span> link ............ established · 4ms');
+      print('<span class="ok">[OK]</span> ice db ........... 14,208 signatures · current');
+      print('<span class="ok">[OK]</span> exit node ........ 0xA4F2 · rotating');
+      print('<span class="warn">[!]</span> corp patrol ..... active in sector 7 — running quiet');
+    },
+    scan: function(){
+      print('<span class="dim">sweeping sector 7 — passive, zero packets…</span>');
+      printDelay('<span class="ok">[OK]</span> 3 subnets mapped · 0 alarms raised', "", 700);
+      printDelay('<span class="warn">[!]</span> black ice signature on hop 4 — flagged, avoided', "", 1300);
+      printDelay('<span class="dim">quiet window opens in 00:41 — mark it.</span>', "", 1900);
+    },
+    trace: function(){
+      print('<span class="dim">tracing last breach route…</span>');
+      printDelay('<span class="ok">TRACE COMPLETE</span> — 2.4s · 12 hops · <span class="ok">no alarms</span>', "", 1200);
+      printDelay('<span class="dim">route burned after use. as always.</span>', "", 1800);
+    },
+    whoami: function(){
+      print('ghost — clearance level 4 · no corp affiliation on record');
+    },
+    clear: function(){ termBody.innerHTML = ""; }
+  };
+  termForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    var raw = termInput.value.trim();
+    if (!raw) return;
+    print('<span class="in">ghost@grid:~$</span> ' + raw.replace(/</g,"&lt;"));
+    var cmd = raw.toLowerCase().split(/\s+/)[0];
+    if (CMDS[cmd]) CMDS[cmd]();
+    else print('<span class="err">ERR // unknown command "' + cmd.replace(/</g,"&lt;") + '" — try \'help\'</span>');
+    termInput.value = "";
+    termBody.scrollTop = termBody.scrollHeight;
+  });
+  /* click anywhere in the terminal body focuses the input */
+  termBody.addEventListener("click", function(){ termInput.focus(); });
+})();
+</script>
+
+</body>
+</html>
