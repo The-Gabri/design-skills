@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>art-deco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --onyx:#0D0C0A; --lacquer:#171310; --ivory:#F2EAD8;
+  --gold:#D4AF37; --brass:#A98F4E; --fade:#5C4B22; --emerald:#0F4C3F;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--onyx);color:var(--ivory);
+  font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(212,175,55,.35);color:var(--ivory)}
+h1,h2,h3,h4,.disp{font-family:'Cinzel','Times New Roman',serif;font-weight:600}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.eyebrow{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.42em;
+  text-transform:uppercase;color:var(--brass)}
+
+/* ---------- ticket band ---------- */
+.ticket{display:flex;justify-content:center;align-items:center;gap:22px;
+  border-bottom:1px solid var(--fade);padding:11px 16px;
+  font-family:'Cinzel',serif;letter-spacing:.22em;font-size:11px;text-transform:uppercase}
+.ticket b{color:var(--gold);font-weight:600}
+.ticket span{color:var(--brass)}
+
+/* ---------- nav ---------- */
+.nav{border-bottom:1px solid var(--fade)}
+.nav-in{max-width:1100px;margin:0 auto;padding:22px 24px;display:flex;
+  align-items:center;justify-content:center;gap:40px;position:relative}
+.nav-links{display:flex;gap:34px}
+.nav-links a{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--ivory);text-decoration:none;
+  transition:color .3s ease}
+.nav-links a:hover{color:var(--gold)}
+.mono{width:64px;height:64px;flex:none;border-radius:50%;border:2px solid var(--gold);
+  color:var(--gold);display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:28px;font-weight:700;
+  box-shadow:inset 0 0 0 4px var(--onyx),inset 0 0 0 5px var(--fade);
+  background:radial-gradient(circle,#1e1813 55%,var(--onyx))}
+
+/* ---------- hero ---------- */
+.hero{text-align:center;padding:84px 24px 64px;position:relative;overflow:hidden}
+.sun{width:min(420px,72vw);height:auto;display:block;margin:0 auto -70px}
+.hero h1{font-size:clamp(44px,8vw,96px);letter-spacing:.22em;text-indent:.22em;
+  color:var(--ivory);line-height:1.15;margin:0}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero .sub{font-size:clamp(18px,2.4vw,24px);font-style:italic;color:var(--brass);margin:14px 0 0}
+.btn{display:inline-block;font-family:'Cinzel',serif;font-size:13px;font-weight:600;
+  letter-spacing:.32em;text-indent:.32em;text-transform:uppercase;color:var(--onyx);
+  background:var(--gold);padding:17px 44px 15px;text-decoration:none;
+  border:1px solid var(--brass);transition:all .35s ease;margin-top:34px}
+.btn:hover{background:var(--onyx);color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+
+/* ---------- divider ---------- */
+.deco-divider{display:flex;align-items:center;gap:14px;max-width:560px;margin:56px auto}
+.deco-divider span{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--brass),transparent)}
+.deco-divider i{width:9px;height:9px;background:var(--onyx);border:2px solid var(--gold);transform:rotate(45deg)}
+
+/* ---------- sections ---------- */
+section{padding:40px 0}
+.sec-head{text-align:center;margin-bottom:48px}
+.sec-head h2{font-size:clamp(26px,4vw,40px);letter-spacing:.24em;text-indent:.24em;
+  text-transform:uppercase;color:var(--ivory);margin:14px 0 10px}
+.sec-head p{font-style:italic;color:var(--brass);max-width:560px;margin:0 auto}
+
+/* ---------- suite tabs ---------- */
+.tabs{display:flex;justify-content:center;gap:0;margin-bottom:0;flex-wrap:wrap}
+.tab{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--brass);background:transparent;border:1px solid var(--fade);
+  border-left:0;padding:15px 28px;cursor:pointer;transition:all .3s ease}
+.tab:first-child{border-left:1px solid var(--fade)}
+.tab:hover{color:var(--gold)}
+.tab.on{color:var(--onyx);background:var(--gold);border-color:var(--gold)}
+.suite{border:1px solid var(--brass);border-top:0;background:var(--lacquer);
+  position:relative;padding:52px 48px}
+.suite::before{content:"";position:absolute;inset:8px;border:1px solid var(--fade);pointer-events:none}
+.suite-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.suite h3{font-size:clamp(24px,3.4vw,34px);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);margin:12px 0 16px}
+.suite p{color:var(--ivory);max-width:44ch}
+.price{font-family:'Cinzel',serif;font-size:15px;letter-spacing:.2em;color:var(--brass);
+  margin-top:22px;text-transform:uppercase}
+.price b{color:var(--gold);font-size:30px;font-weight:700;letter-spacing:0;margin-right:8px}
+.feat{list-style:none;margin-top:6px}
+.feat li{padding:12px 0;border-bottom:1px solid rgba(169,143,78,.25);
+  display:flex;justify-content:space-between;gap:16px}
+.feat li:last-child{border-bottom:0}
+.feat li span:first-child{color:var(--ivory)}
+.feat li span:last-child{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.22em;
+  color:var(--gold);text-transform:uppercase;white-space:nowrap}
+
+/* ---------- stepped cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.step-card{background:var(--lacquer);border:1px solid var(--brass);padding:36px 30px;
+  text-align:center;position:relative;transition:border-color .35s ease;
+  clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,0 100%)}
+.step-card:hover{border-color:var(--gold)}
+.step-card .num{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.4em;color:var(--fade)}
+.step-card h3{font-size:18px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:14px 0 12px}
+.step-card p{font-size:16px;color:var(--ivory)}
+
+/* ---------- chevron / flute bands ---------- */
+.chevron{height:14px;
+  background:repeating-linear-gradient(135deg,var(--brass) 0 2px,transparent 2px 12px),
+             repeating-linear-gradient(45deg,var(--brass) 0 2px,transparent 2px 12px);
+  opacity:.8}
+.flute{height:30px;background:repeating-linear-gradient(90deg,var(--fade) 0 1px,transparent 1px 16px);opacity:.7}
+
+/* ---------- reservation ---------- */
+.res{background:var(--emerald);border-top:1px solid var(--brass);border-bottom:1px solid var(--brass);
+  padding:72px 0}
+.res .panel{max-width:760px;margin:0 auto;background:var(--onyx);
+  border:2px solid var(--brass);padding:52px 56px;position:relative}
+.res .panel::before{content:"";position:absolute;inset:8px;border:1px solid var(--fade);pointer-events:none}
+.res h2{font-size:clamp(22px,3.4vw,32px);letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold);text-align:center;margin:12px 0 8px}
+.res .lede{text-align:center;font-style:italic;color:var(--brass);margin-bottom:36px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.field label{display:block;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--brass);margin-bottom:8px}
+.field input,.field select{width:100%;background:transparent;border:1px solid var(--fade);
+  color:var(--ivory);font-family:'Cormorant Garamond',serif;font-size:17px;padding:13px 14px;outline:none}
+.field input:focus,.field select:focus{border-color:var(--gold)}
+.field select option{background:var(--onyx)}
+.field.full{grid-column:1/-1}
+.confirm{display:none;text-align:center;padding:28px 0 8px}
+.confirm .mono{margin:0 auto 18px}
+.confirm h3{font-size:20px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+
+/* ---------- footer ---------- */
+footer{padding:56px 24px 40px;text-align:center}
+footer .fine{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--fade);margin-top:28px}
+
+/* ---------- responsive ---------- */
+@media(max-width:820px){
+  .suite-grid{grid-template-columns:1fr;gap:32px}
+  .cards{grid-template-columns:1fr}
+  .fields{grid-template-columns:1fr}
+  .res .panel,.suite{padding:36px 26px}
+  .nav-links{display:none}
+  .ticket{gap:12px;font-size:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="ticket" role="note">
+  <span>Tonight</span><b>Paul Whiteman &amp; His Orchestra</b><span>9 O'Clock Sharp</span>
+</div>
+
+<nav class="nav">
+  <div class="nav-in">
+    <div class="nav-links">
+      <a href="#suites">Suites</a>
+      <a href="#evenings">Evenings</a>
+    </div>
+    <div class="mono" aria-hidden="true">M</div>
+    <div class="nav-links">
+      <a href="#reserve">Reservations</a>
+      <a href="#reserve">Dining</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <svg class="sun" id="sunburst" viewBox="0 0 400 240" aria-hidden="true"></svg>
+  <h1>THE <em>MERIDIAN</em></h1>
+  <p class="eyebrow">Grand Hotel &middot; New York &middot; MCMXXVIII</p>
+  <p class="sub">An evening above the clouds — dinner, dancing, and the finest orchestra in town.</p>
+  <a class="btn" href="#reserve">Reserve Your Evening</a>
+</header>
+
+<div class="deco-divider" aria-hidden="true"><span></span><i></i><span></span></div>
+
+<section id="suites">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Rooms &amp; Suites</p>
+      <h2>Choose Your Residence</h2>
+      <p>Three floors of quiet luxury, each room facing the Manhattan skyline.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Suites">
+      <button class="tab on" role="tab" data-suite="0">The Broadway Suite</button>
+      <button class="tab" role="tab" data-suite="1">The Chrysler Corner</button>
+      <button class="tab" role="tab" data-suite="2">The Penthouse</button>
+    </div>
+    <div class="suite">
+      <div class="suite-grid">
+        <div>
+          <p class="eyebrow" id="suite-kicker">Suite the First</p>
+          <h3 id="suite-name">The Broadway Suite</h3>
+          <p id="suite-desc">A corner of the theatre district brought indoors: lacquered walnut, a sunburst mirror above the mantel, and a private balcony over the lights of Forty-Second Street.</p>
+          <p class="price"><b id="suite-price">$18</b> per night, breakfast included</p>
+        </div>
+        <ul class="feat" id="suite-feats">
+          <li><span>Private bath in marble</span><span>Included</span></li>
+          <li><span>Valet &amp; pressing, daily</span><span>Included</span></li>
+          <li><span>Champagne on arrival</span><span>Included</span></li>
+          <li><span>Orchestra seats, Friday gala</span><span>Reserved</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="chevron" aria-hidden="true"></div>
+
+<section id="evenings">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Below the Lobby</p>
+      <h2>Evenings at the Meridian</h2>
+      <p>Champagne is served from six. The orchestra tunes at eight.</p>
+    </div>
+    <div class="cards">
+      <div class="step-card">
+        <p class="num">No. I</p>
+        <h3>The Gilded Bar</h3>
+        <p>Old-fashioneds stirred, never shaken. The bartender has poured for two mayors and one prince.</p>
+      </div>
+      <div class="step-card">
+        <p class="num">No. II</p>
+        <h3>The Palm Court</h3>
+        <p>Dinner beneath a ceiling of gold leaf, string quartet at seven, the city's softest lighting.</p>
+      </div>
+      <div class="step-card">
+        <p class="num">No. III</p>
+        <h3>The Skyline Ballroom</h3>
+        <p>Dancing till two beneath the Chrysler's crown. Black tie; the band takes no requests, only applause.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="flute" aria-hidden="true"></div>
+
+<section class="res" id="reserve">
+  <div class="wrap">
+    <div class="panel">
+      <p class="eyebrow" style="text-align:center">Reservations</p>
+      <h2>Your Evening Awaits</h2>
+      <p class="lede">Table twelve, nine o'clock sharp — or a suite for the whole weekend.</p>
+      <form id="resform">
+        <div class="fields">
+          <div class="field">
+            <label for="rname">Name</label>
+            <input id="rname" name="name" type="text" placeholder="Eleanor Vance" required>
+          </div>
+          <div class="field">
+            <label for="rdate">Evening of</label>
+            <input id="rdate" name="date" type="date" value="1928-12-31" required>
+          </div>
+          <div class="field">
+            <label for="rsuite">Suite</label>
+            <select id="rsuite" name="suite">
+              <option>The Broadway Suite — $18</option>
+              <option>The Chrysler Corner — $26</option>
+              <option>The Penthouse — $45</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rguests">Guests</label>
+            <select id="rguests" name="guests">
+              <option>Two guests</option>
+              <option>Four guests</option>
+              <option>A party of eight</option>
+            </select>
+          </div>
+          <div class="field full" style="text-align:center;margin-top:8px">
+            <button class="btn" type="submit" style="border:0;cursor:pointer">Confirm Reservation</button>
+          </div>
+        </div>
+      </form>
+      <div class="confirm" id="confirm" role="status">
+        <div class="mono" aria-hidden="true">M</div>
+        <h3>Reservation Confirmed</h3>
+        <p id="confirm-text"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="deco-divider" aria-hidden="true" style="margin:0 auto 28px"><span></span><i></i><span></span></div>
+  <p class="eyebrow">The Meridian &middot; Fifth Avenue &middot; New York</p>
+  <p class="fine">Built from the art-deco skill · design-skills</p>
+</footer>
+
+<script>
+// Sunburst: rays fan upward from a hub, symmetric about the vertical axis
+(function(){
+  var svg=document.getElementById('sunburst'), NS='http://www.w3.org/2000/svg';
+  var cx=200, cy=200, g=document.createElementNS(NS,'g');
+  g.setAttribute('stroke','#D4AF37'); g.setAttribute('stroke-width','2');
+  for(var i=0;i<17;i++){
+    var a=Math.PI*(200+i*10)/180, len=i%2?150:185; // alternate long/short rays
+    var x2=cx+len*Math.cos(a), y2=cy+len*Math.sin(a);
+    var l=document.createElementNS(NS,'line');
+    l.setAttribute('x1',cx); l.setAttribute('y1',cy);
+    l.setAttribute('x2',x2.toFixed(1)); l.setAttribute('y2',y2.toFixed(1));
+    g.appendChild(l);
+  }
+  svg.appendChild(g);
+  var hub=document.createElementNS(NS,'circle');
+  hub.setAttribute('cx',cx); hub.setAttribute('cy',cy); hub.setAttribute('r',26);
+  hub.setAttribute('fill','#0D0C0A'); hub.setAttribute('stroke','#D4AF37'); hub.setAttribute('stroke-width','2');
+  svg.appendChild(hub);
+  var dot=document.createElementNS(NS,'circle');
+  dot.setAttribute('cx',cx); dot.setAttribute('cy',cy); dot.setAttribute('r',12); dot.setAttribute('fill','#D4AF37');
+  svg.appendChild(dot);
+})();
+
+// Suite tabs
+var suites=[
+  {kicker:'Suite the First', name:'The Broadway Suite', price:'$18',
+   desc:'A corner of the theatre district brought indoors: lacquered walnut, a sunburst mirror above the mantel, and a private balcony over the lights of Forty-Second Street.',
+   feats:[['Private bath in marble','Included'],['Valet & pressing, daily','Included'],['Champagne on arrival','Included'],['Orchestra seats, Friday gala','Reserved']]},
+  {kicker:'Suite the Second', name:'The Chrysler Corner', price:'$26',
+   desc:'Twelve windows of setback skyline, a writing desk of black lacquer, and breakfast served on silver at whatever hour you rise.',
+   feats:[['Corner view, twelfth floor','Included'],['Silver breakfast service','Included'],['Private telephone line','Included'],['Chauffeur on call','Arranged']]},
+  {kicker:'Suite the Third', name:'The Penthouse', price:'$45',
+   desc:'The crown of the Meridian: a private terrace above the city, a grand piano, and a staff that appears before you ask.',
+   feats:[['Private roof terrace','Included'],['Grand piano, tuned weekly','Included'],['Dedicated valet & maid','Included'],['Ballroom box, Saturday','Reserved']]}
+];
+var tabs=document.querySelectorAll('.tab');
+tabs.forEach(function(t){
+  t.addEventListener('click',function(){
+    tabs.forEach(function(x){x.classList.remove('on')});
+    t.classList.add('on');
+    var s=suites[+t.dataset.suite];
+    document.getElementById('suite-kicker').textContent=s.kicker;
+    document.getElementById('suite-name').textContent=s.name;
+    document.getElementById('suite-desc').textContent=s.desc;
+    document.getElementById('suite-price').textContent=s.price;
+    document.getElementById('suite-feats').innerHTML=s.feats.map(function(f){
+      return '<li><span>'+f[0]+'</span><span>'+f[1]+'</span></li>';
+    }).join('');
+  });
+});
+
+// Reservation confirmation
+document.getElementById('resform').addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=document.getElementById('rname').value.trim()||'Our Honored Guest';
+  var date=document.getElementById('rdate').value||'New Year\u2019s Eve';
+  var suite=document.getElementById('rsuite').value;
+  document.getElementById('confirm-text').textContent=
+    name+', '+suite.split(' \u2014')[0]+' is held for the evening of '+date+'. The doorman has been told to expect you.';
+  var c=document.getElementById('confirm');
+  c.style.display='block';
+  c.scrollIntoView({behavior:'smooth',block:'center'});
+});
+</script>
+</body>
+</html>
