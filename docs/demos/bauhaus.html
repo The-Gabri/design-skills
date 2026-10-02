@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>bauhaus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #F7F4EC;
+  --ink: #1A1A1A;
+  --white: #FFFFFF;
+  --red: #D02020;
+  --blue: #1040C0;
+  --yellow: #F0C020;
+  --rule: 3px solid var(--ink);
+  --font: "Jost", "Archivo", "Futura", "Century Gothic", "Trebuchet MS", sans-serif;
+  --body-font: "Archivo", "Jost", "Futura", "Century Gothic", sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body-font); font-size: 16px; line-height: 1.5; }
+
+/* ---------- nav ---------- */
+.nav { display: flex; align-items: center; gap: 16px; padding: 14px 48px; border-bottom: var(--rule); background: var(--paper); position: sticky; top: 0; z-index: 50; }
+.mark { display: inline-flex; align-items: flex-end; }
+.mark i { display: inline-block; margin-right: -7px; }
+.mark .c { width: 24px; height: 24px; background: var(--red); border-radius: 50%; }
+.mark .s { width: 24px; height: 24px; background: var(--blue); }
+.mark .t { width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 22px solid var(--yellow); }
+.word { font-family: var(--font); font-weight: 800; font-size: 22px; text-transform: lowercase; letter-spacing: -.01em; }
+.word sup { font-size: 11px; font-weight: 600; }
+.links { margin-left: auto; display: flex; gap: 28px; }
+.links a { color: var(--ink); text-decoration: none; font-family: var(--font); font-weight: 600; font-size: 15px; text-transform: lowercase; padding: 4px 8px; }
+.links a:hover { background: var(--yellow); }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; padding: 96px 48px 80px; border-bottom: var(--rule); align-items: center; }
+.hero h1 { font-family: var(--font); font-weight: 800; font-size: clamp(52px, 8vw, 120px); line-height: .9; letter-spacing: -.02em; text-transform: lowercase; }
+.hero h1 .l-red { color: var(--red); }
+.hero p.lede { font-size: 19px; max-width: 44ch; margin: 28px 0 36px; }
+.composition { position: relative; height: 340px; border: var(--rule); background: var(--white); overflow: hidden; }
+.comp-circle { position: absolute; width: 200px; height: 200px; background: var(--red); border-radius: 50%; left: 8%; top: 10%; }
+.comp-square { position: absolute; width: 170px; height: 170px; background: var(--blue); right: 6%; bottom: 8%; }
+.comp-triangle { position: absolute; width: 0; height: 0; border-left: 110px solid transparent; border-right: 110px solid transparent; border-bottom: 190px solid var(--yellow); left: 38%; top: 22%; }
+.comp-rule { position: absolute; width: 130%; height: 8px; background: var(--ink); left: -15%; top: 55%; transform: rotate(-8deg); }
+.comp-label { position: absolute; left: 12px; bottom: 8px; font-family: var(--font); font-weight: 700; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+
+/* ---------- buttons as primitives ---------- */
+.btn { font-family: var(--font); font-weight: 800; font-size: 17px; text-transform: lowercase; text-decoration: none; color: var(--white); display: inline-flex; align-items: center; justify-content: center; border: var(--rule); cursor: pointer; background: none; }
+.btn-circle { width: 128px; height: 128px; border-radius: 50%; background: var(--red); }
+.btn-square { width: 128px; height: 128px; background: var(--blue); }
+.btn-triangle { position: relative; width: 148px; height: 128px; border: none; }
+.btn-triangle::before { content: ""; position: absolute; inset: 0; background: var(--yellow); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.btn-triangle span { position: relative; color: var(--ink); }
+.btn:hover, .btn:focus-visible { outline: var(--rule); outline-offset: 5px; }
+.hero-cta { display: flex; gap: 40px; align-items: center; }
+
+/* ---------- section heads ---------- */
+.sec { padding: 72px 48px; border-bottom: var(--rule); }
+.sec-head { display: flex; align-items: baseline; gap: 20px; border-bottom: var(--rule); padding-bottom: 12px; margin-bottom: 32px; }
+.sec-no { font-family: var(--font); font-weight: 800; font-size: 44px; color: var(--red); line-height: 1; }
+.sec-label { font-family: var(--font); font-weight: 700; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
+
+/* ---------- exhibition tabs ---------- */
+.tabs { display: flex; gap: 0; margin-bottom: 32px; flex-wrap: wrap; }
+.tab { font-family: var(--font); font-weight: 700; font-size: 16px; text-transform: lowercase; padding: 14px 28px; border: var(--rule); border-left: none; background: var(--paper); cursor: pointer; }
+.tab:first-child { border-left: var(--rule); }
+.tab.active { color: var(--white); }
+.tab[data-panel="a"].active { background: var(--red); }
+.tab[data-panel="b"].active { background: var(--blue); }
+.tab[data-panel="c"].active { background: var(--yellow); color: var(--ink); }
+.panel { display: none; }
+.panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.panel h3 { font-family: var(--font); font-weight: 800; font-size: clamp(32px, 4vw, 56px); line-height: 1; letter-spacing: -.02em; text-transform: lowercase; margin-bottom: 16px; }
+.panel p { max-width: 48ch; margin-bottom: 12px; }
+.panel-meta { font-family: var(--font); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; border-top: var(--rule); padding-top: 12px; margin-top: 20px; display: inline-block; }
+.poster { border: var(--rule); background: var(--white); padding: 24px; max-width: 360px; justify-self: end; }
+.poster .bar { height: 14px; margin: -24px -24px 24px; }
+.poster.a .bar { background: var(--red); }
+.poster.b .bar { background: var(--blue); }
+.poster.c .bar { background: var(--yellow); }
+.poster .no { font-family: var(--font); font-weight: 700; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+.poster h4 { font-family: var(--font); font-weight: 800; font-size: 36px; line-height: 1; text-transform: lowercase; margin: 12px 0 16px; }
+.poster .shapes { display: flex; gap: 12px; align-items: flex-end; margin-top: 16px; }
+
+/* ---------- color block ---------- */
+.block { padding: 96px 48px; background: var(--blue); color: var(--white); border-bottom: var(--rule); }
+.block h2 { font-family: var(--font); font-weight: 800; font-size: clamp(40px, 6vw, 84px); line-height: .95; letter-spacing: -.02em; text-transform: lowercase; margin-bottom: 24px; }
+.block p { font-size: 19px; max-width: 46ch; }
+
+/* ---------- rows ---------- */
+.rows { list-style: none; }
+.rows li { display: flex; align-items: center; gap: 18px; padding: 18px 0; border-bottom: 2px solid var(--ink); }
+.rows .dot { width: 18px; height: 18px; border-radius: 50%; flex: none; }
+.rows .dot.r { background: var(--red); } .rows .dot.b { background: var(--blue); } .rows .dot.y { background: var(--yellow); }
+.rows strong { font-family: var(--font); font-size: 22px; font-weight: 700; text-transform: lowercase; }
+.rows em { margin-left: auto; font-style: normal; font-size: 14px; text-align: right; }
+
+/* ---------- shape composer ---------- */
+.composer { display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start; }
+.controls { border: var(--rule); background: var(--white); padding: 24px; }
+.controls h3 { font-family: var(--font); font-weight: 800; font-size: 20px; text-transform: lowercase; margin-bottom: 16px; }
+.ctrl-row { margin-bottom: 16px; }
+.ctrl-row > span { display: block; font-family: var(--font); font-weight: 700; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+.shape-btns, .color-btns { display: flex; gap: 10px; }
+.shape-btn, .color-btn { width: 44px; height: 44px; border: var(--rule); cursor: pointer; background: var(--paper); }
+.shape-btn.selected { outline: var(--rule); outline-offset: 3px; }
+.shape-btn.circle { border-radius: 50%; }
+.shape-btn.square { border-radius: 0; }
+.shape-btn.triangle { border: none; background: none; width: 0; height: 0; padding: 0; border-left: 22px solid transparent; border-right: 22px solid transparent; border-bottom: 40px solid var(--ink); }
+.color-btn.red { background: var(--red); } .color-btn.blue { background: var(--blue); } .color-btn.yellow { background: var(--yellow); }
+.color-btn.selected { outline: var(--rule); outline-offset: 3px; }
+.clear-btn { width: 100%; margin-top: 8px; font-family: var(--font); font-weight: 700; font-size: 14px; text-transform: lowercase; padding: 12px; border: var(--rule); background: var(--ink); color: var(--paper); cursor: pointer; }
+.clear-btn:hover { background: var(--red); }
+.canvas { border: var(--rule); background: var(--white); height: 420px; position: relative; overflow: hidden; cursor: crosshair; }
+.canvas .hint { position: absolute; left: 16px; top: 12px; font-family: var(--font); font-weight: 600; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .55; pointer-events: none; }
+.placed { position: absolute; transform: translate(-50%, -50%); pointer-events: none; }
+.placed.c { border-radius: 50%; }
+.placed.t { width: 0 !important; height: 0 !important; border-left: 50px solid transparent; border-right: 50px solid transparent; }
+
+/* ---------- footer ---------- */
+.foot { background: var(--ink); color: var(--paper); padding: 48px; font-family: var(--font); }
+.foot p { text-transform: lowercase; margin: 0; }
+.foot strong { font-weight: 800; }
+.foot .note { font-size: 14px; margin-top: 10px; opacity: .7; }
+
+@media (max-width: 820px) {
+  .nav, .hero, .sec, .block, .foot { padding-left: 20px; padding-right: 20px; }
+  .hero { grid-template-columns: 1fr; padding-top: 64px; }
+  .composition { height: 260px; }
+  .panel.active { grid-template-columns: 1fr; }
+  .poster { justify-self: start; }
+  .composer { grid-template-columns: 1fr; }
+  .hero-cta { flex-wrap: wrap; gap: 24px; }
+  .links { gap: 14px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="mark"><i class="c"></i><i class="s"></i><i class="t"></i></span>
+  <span class="word">werkstatt<sup>26</sup></span>
+  <span class="links">
+    <a href="#exhibitions">exhibitions</a>
+    <a href="#manifesto">manifesto</a>
+    <a href="#workshops">workshops</a>
+    <a href="#compose">compose</a>
+  </span>
+</nav>
+
+<header class="hero">
+  <div>
+    <h1>form<br>follows<br><span class="l-red">function</span></h1>
+    <p class="lede">werkstatt is a fictional school for building, making and thinking. we teach design as construction: three shapes, three colours, and the discipline to use nothing else.</p>
+    <div class="hero-cta">
+      <a class="btn btn-circle" href="#exhibitions">visit</a>
+      <a class="btn btn-square" href="#workshops">learn</a>
+      <button class="btn btn-triangle" onclick="document.getElementById('compose').scrollIntoView()"><span>build</span></button>
+    </div>
+  </div>
+  <div class="composition" aria-hidden="true">
+    <span class="comp-circle"></span>
+    <span class="comp-triangle"></span>
+    <span class="comp-square"></span>
+    <span class="comp-rule"></span>
+    <span class="comp-label">komposition nº 7 — circle / triangle / square</span>
+  </div>
+</header>
+
+<section class="sec" id="exhibitions">
+  <div class="sec-head"><span class="sec-no">01</span><span class="sec-label">exhibitions</span></div>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-panel="a" role="tab">geometry</button>
+    <button class="tab" data-panel="b" role="tab">material</button>
+    <button class="tab" data-panel="c" role="tab">movement</button>
+  </div>
+  <div class="panel active" id="panel-a">
+    <div>
+      <h3>geometry of the everyday</h3>
+      <p>one hundred objects reduced to their essentials. a chair is a square that holds weight. a lamp is a circle that gives light. the exhibition traces how primary forms solved real problems — no decoration, only decisions.</p>
+      <p>every piece on display was made by students in their first year. the rule was simple: build it from circles, squares and triangles, or do not build it at all.</p>
+      <span class="panel-meta">14 — 28 oct · hall a · free entry</span>
+    </div>
+    <article class="poster a">
+      <div class="bar"></div>
+      <p class="no">nº 01</p>
+      <h4>geometry of the everyday</h4>
+      <p style="font-size:14px">first-year work. circles, squares, triangles.</p>
+      <div class="shapes"><span style="width:44px;height:44px;background:var(--red);border-radius:50%"></span><span style="width:44px;height:44px;background:var(--blue)"></span><span style="width:0;height:0;border-left:24px solid transparent;border-right:24px solid transparent;border-bottom:42px solid var(--yellow)"></span></div>
+    </article>
+  </div>
+  <div class="panel" id="panel-b">
+    <div>
+      <h3>honest material</h3>
+      <p>steel is shown as steel. wood is shown as wood. nothing is painted to imitate something it is not. this exhibition collects workshop pieces where the material makes the argument and the finish gets out of the way.</p>
+      <p>bauhaus trained metalworkers, weavers and potters in the same building as painters. material honesty was not a style choice — it was the curriculum.</p>
+      <span class="panel-meta">02 — 16 nov · hall b · free entry</span>
+    </div>
+    <article class="poster b">
+      <div class="bar"></div>
+      <p class="no">nº 02</p>
+      <h4>honest material</h4>
+      <p style="font-size:14px">metal · wood · glass · clay. nothing hidden.</p>
+      <div class="shapes"><span style="width:44px;height:44px;background:var(--blue)"></span><span style="width:44px;height:44px;background:var(--red);border-radius:50%"></span><span style="width:0;height:0;border-left:24px solid transparent;border-right:24px solid transparent;border-bottom:42px solid var(--yellow)"></span></div>
+    </article>
+  </div>
+  <div class="panel" id="panel-c">
+    <div>
+      <h3>stage and movement</h3>
+      <p>costumes built from geometry, bodies moving through constructed space. the stage workshop treated the human figure as a shape among shapes — precise, mechanical, and strangely joyful.</p>
+      <p>performances run every friday at seven. the doors open at six. come early; the hall fills fast.</p>
+      <span class="panel-meta">fridays · 19:00 · main stage</span>
+    </div>
+    <article class="poster c">
+      <div class="bar"></div>
+      <p class="no">nº 03</p>
+      <h4>stage and movement</h4>
+      <p style="font-size:14px">the body as a shape among shapes.</p>
+      <div class="shapes"><span style="width:0;height:0;border-left:24px solid transparent;border-right:24px solid transparent;border-bottom:42px solid var(--yellow)"></span><span style="width:44px;height:44px;background:var(--red);border-radius:50%"></span><span style="width:44px;height:44px;background:var(--blue)"></span></div>
+    </article>
+  </div>
+</section>
+
+<section class="block" id="manifesto">
+  <h2>art + technology:<br>a new unity</h2>
+  <p>we do not decorate. we construct. three shapes, three colours, one function — and a building that believes making things well is the same as thinking well.</p>
+</section>
+
+<section class="sec" id="workshops">
+  <div class="sec-head"><span class="sec-no">02</span><span class="sec-label">workshops</span></div>
+  <ul class="rows">
+    <li><span class="dot r"></span><strong>metal workshop</strong><em>steel · form · structure</em></li>
+    <li><span class="dot b"></span><strong>weaving workshop</strong><em>thread · grid · pattern</em></li>
+    <li><span class="dot y"></span><strong>stage workshop</strong><em>body · space · rhythm</em></li>
+    <li><span class="dot b"></span><strong>typography workshop</strong><em>lowercase · geometry · clarity</em></li>
+    <li><span class="dot r"></span><strong>pottery workshop</strong><em>clay · circle · function</em></li>
+  </ul>
+</section>
+
+<section class="sec" id="compose">
+  <div class="sec-head"><span class="sec-no">03</span><span class="sec-label">the shape composer</span></div>
+  <div class="composer">
+    <div class="controls">
+      <h3>build a komposition</h3>
+      <div class="ctrl-row">
+        <span>shape</span>
+        <div class="shape-btns">
+          <button class="shape-btn circle selected" data-shape="circle" aria-label="circle"></button>
+          <button class="shape-btn square" data-shape="square" aria-label="square"></button>
+          <button class="shape-btn triangle" data-shape="triangle" aria-label="triangle"></button>
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <span>colour</span>
+        <div class="color-btns">
+          <button class="color-btn red selected" data-color="red" aria-label="red"></button>
+          <button class="color-btn blue" data-color="blue" aria-label="blue"></button>
+          <button class="color-btn yellow" data-color="yellow" aria-label="yellow"></button>
+        </div>
+      </div>
+      <button class="clear-btn">clear the canvas</button>
+      <p style="margin-top:16px;font-size:14px">click the canvas to place your chosen shape. there are no wrong answers — only compositions.</p>
+    </div>
+    <div class="canvas" id="canvas">
+      <span class="hint">click to compose</span>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <p><strong>werkstatt school of building</strong> — a fictional exhibition site. dessau, hall a.</p>
+  <p class="note">Built from the bauhaus skill · design-skills</p>
+</footer>
+
+<script>
+/* tabs */
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  });
+});
+
+/* shape composer */
+var state = { shape: 'circle', color: 'red' };
+var colors = { red: '#D02020', blue: '#1040C0', yellow: '#F0C020' };
+document.querySelectorAll('.shape-btn').forEach(function(b) {
+  b.addEventListener('click', function() {
+    document.querySelectorAll('.shape-btn').forEach(function(x) { x.classList.remove('selected'); });
+    b.classList.add('selected');
+    state.shape = b.dataset.shape;
+  });
+});
+document.querySelectorAll('.color-btn').forEach(function(b) {
+  b.addEventListener('click', function() {
+    document.querySelectorAll('.color-btn').forEach(function(x) { x.classList.remove('selected'); });
+    b.classList.add('selected');
+    state.color = b.dataset.color;
+  });
+});
+var canvas = document.getElementById('canvas');
+canvas.addEventListener('click', function(e) {
+  var rect = canvas.getBoundingClientRect();
+  var el = document.createElement('span');
+  el.className = 'placed ' + state.shape.charAt(0);
+  var size = 60 + Math.floor(Math.random() * 50);
+  if (state.shape === 'triangle') {
+    el.style.borderBottom = size + 'px solid ' + colors[state.color];
+  } else {
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.background = colors[state.color];
+  }
+  el.style.left = (e.clientX - rect.left) + 'px';
+  el.style.top = (e.clientY - rect.top) + 'px';
+  canvas.appendChild(el);
+  var hint = canvas.querySelector('.hint');
+  if (hint) hint.remove();
+});
+document.querySelector('.clear-btn').addEventListener('click', function() {
+  canvas.querySelectorAll('.placed').forEach(function(el) { el.remove(); });
+});
+</script>
+</body>
+</html>
