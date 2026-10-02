@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>minimalism</title>
+<style>
+  :root {
+    --paper: #FAFAF8;
+    --ink: #161513;
+    --faint: #8A877F;
+    --hairline: #E2E0D9;
+    --wash: #F1EFEA;
+  }
+  html[data-theme="dark"] {
+    --paper: #141311;
+    --ink: #ECE9E2;
+    --faint: #8F8C83;
+    --hairline: #2B2A26;
+    --wash: #1C1B18;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Helvetica Neue", Helvetica, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 200ms ease-out, color 200ms ease-out;
+  }
+  a { color: inherit; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 40px; }
+
+  /* ---------- nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--paper);
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 24px 40px;
+    border-bottom: 1px solid transparent;
+    font-size: 14px;
+    transition: border-bottom-color 200ms ease-out, background-color 200ms ease-out;
+  }
+  .nav.scrolled { border-bottom-color: var(--hairline); }
+  .wordmark { font-weight: 500; letter-spacing: 0.14em; text-decoration: none; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { text-decoration: none; }
+  .nav-links a:hover { color: var(--faint); }
+  .nav-right { display: flex; align-items: center; gap: 24px; }
+  .bag-btn {
+    font: inherit; background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink);
+  }
+  .bag-btn:hover { color: var(--faint); }
+
+  /* quiet toggle: position alone signals state */
+  .toggle {
+    width: 44px; height: 24px; border: 1px solid var(--ink); border-radius: 999px;
+    background: transparent; cursor: pointer; padding: 0; position: relative; flex: none;
+  }
+  .toggle-knob {
+    position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+    border-radius: 50%; background: var(--ink);
+    transition: transform 200ms ease-out;
+  }
+  .toggle[aria-checked="true"] .toggle-knob { transform: translateX(20px); }
+
+  /* ---------- hero / product ---------- */
+  .product { padding: 160px 0 200px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: end; }
+  .product-index { font-size: 13px; letter-spacing: 0.08em; color: var(--faint); margin: 0 0 24px; }
+  .product-name {
+    font-size: clamp(37px, 6vw, 67px); font-weight: 400; letter-spacing: -0.02em;
+    line-height: 1.05; margin: 0 0 32px;
+  }
+  .product-line { font-size: 17px; color: var(--faint); max-width: 44ch; margin: 0 0 40px; }
+  .product-price { font-size: 17px; margin: 0 0 48px; }
+
+  .btn {
+    font: inherit; font-size: 15px;
+    color: var(--ink); background: transparent;
+    border: 1px solid var(--ink);
+    padding: 14px 40px; border-radius: 0; cursor: pointer;
+    transition: background-color 200ms ease-out, color 200ms ease-out;
+  }
+  .btn:hover { background: var(--ink); color: var(--paper); }
+  .btn:active { opacity: 0.85; }
+
+  .vessel { justify-self: center; }
+  .vessel svg { display: block; width: 220px; height: auto; }
+  .vessel figcaption { font-size: 13px; color: var(--faint); text-align: center; margin-top: 24px; }
+
+  /* ---------- rules & sections ---------- */
+  .rule { border: 0; border-top: 1px solid var(--hairline); margin: 0; }
+  .section { padding: 160px 0; }
+
+  /* ---------- accordion ---------- */
+  .detail { border-top: 1px solid var(--hairline); }
+  .detail:last-of-type { border-bottom: 1px solid var(--hairline); }
+  .detail-head {
+    width: 100%; display: flex; justify-content: space-between; align-items: baseline;
+    background: none; border: 0; padding: 20px 0; cursor: pointer;
+    font: inherit; font-size: 15px; color: var(--ink); text-align: left;
+  }
+  .detail-mark { color: var(--faint); font-size: 18px; line-height: 1; }
+  .detail-panel p { margin: 0 0 28px; color: var(--faint); font-size: 15px; max-width: 60ch; }
+
+  /* ---------- ethos ---------- */
+  .kicker { font-size: 12px; letter-spacing: 0.1em; color: var(--faint); margin: 0 0 32px; }
+  .ethos-statement {
+    font-size: clamp(28px, 4vw, 50px); font-weight: 400; letter-spacing: -0.02em;
+    line-height: 1.1; margin: 0 0 40px; max-width: 20ch;
+  }
+  .ethos-body { font-size: 17px; color: var(--faint); max-width: 56ch; margin: 0; }
+
+  /* ---------- notify ---------- */
+  .field { display: block; max-width: 360px; }
+  .field-label { display: block; font-size: 13px; color: var(--faint); margin-bottom: 8px; }
+  .field-input {
+    width: 100%; font: inherit; font-size: 16px; color: var(--ink);
+    background: transparent; border: 0; border-bottom: 1px solid var(--hairline);
+    border-radius: 0; padding: 8px 0; outline: none;
+    transition: border-bottom-color 200ms ease-out;
+  }
+  .field-input:focus { border-bottom-color: var(--ink); }
+  .field-msg { font-size: 13px; color: var(--faint); min-height: 20px; margin: 12px 0 0; }
+  .notify-row { display: flex; gap: 32px; align-items: flex-end; flex-wrap: wrap; }
+  .text-btn {
+    font: inherit; color: var(--ink); background: none; border: 0;
+    padding: 8px 0; cursor: pointer; text-decoration: underline;
+    text-underline-offset: 4px; text-decoration-color: var(--hairline);
+    transition: text-decoration-color 200ms ease-out;
+  }
+  .text-btn:hover { text-decoration-color: var(--ink); }
+
+  /* ---------- footer ---------- */
+  .footer-row {
+    display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 16px;
+    padding: 32px 0 24px; font-size: 13px; color: var(--faint);
+  }
+  .footer-row nav { display: flex; gap: 24px; }
+  .footer-row a { color: var(--faint); text-decoration: none; }
+  .footer-row a:hover { color: var(--ink); }
+  .skill-line { font-size: 12px; color: var(--faint); padding: 0 0 48px; margin: 0; }
+
+  @media (max-width: 760px) {
+    .nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .wrap { padding: 0 24px; }
+    .product { grid-template-columns: 1fr; padding: 96px 0 120px; gap: 80px; }
+    .vessel { justify-self: start; }
+    .section { padding: 96px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav" id="site-nav">
+  <a class="wordmark" href="#">MONO</a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#object">Object</a>
+    <a href="#ethos">Ethos</a>
+    <a href="#notify">Stockists</a>
+  </nav>
+  <div class="nav-right">
+    <button class="toggle" id="theme-toggle" role="switch" aria-checked="false" aria-label="Dark mode">
+      <span class="toggle-knob"></span>
+    </button>
+    <button class="bag-btn" id="bag-button">Bag (<span id="bag-count">0</span>)</button>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="product" id="object" aria-label="Object 01">
+      <div>
+        <p class="product-index">01</p>
+        <h1 class="product-name">Object 01 — Carafe</h1>
+        <p class="product-line">One litre of glazed stoneware. One colour. Made to be used daily and kept for decades.</p>
+        <p class="product-price">€120</p>
+        <button class="btn" id="add-to-bag">Add to bag</button>
+      </div>
+      <figure class="vessel">
+        <svg viewBox="0 0 200 320" role="img" aria-label="Line drawing of the Object 01 carafe">
+          <g fill="none" stroke="currentColor" stroke-width="1.5">
+            <ellipse cx="100" cy="26" rx="22" ry="7"/>
+            <path d="M78 26 L78 70 C78 112 40 122 40 172 L40 288 L160 288 L160 172 C160 122 122 112 122 70 L122 26"/>
+          </g>
+        </svg>
+        <figcaption>Glazed stoneware, matte white</figcaption>
+      </figure>
+    </section>
+  </div>
+
+  <hr class="rule">
+
+  <div class="wrap">
+    <section class="section" aria-label="Details">
+      <div class="detail">
+        <button class="detail-head" id="detail-btn-1" aria-expanded="false" aria-controls="detail-panel-1">
+          <span>Materials</span><span class="detail-mark" aria-hidden="true">+</span>
+        </button>
+        <div class="detail-panel" id="detail-panel-1" hidden>
+          <p>Glazed stoneware, fired once and glazed inside and out. No decoration, no logo on the object itself.</p>
+        </div>
+      </div>
+      <div class="detail">
+        <button class="detail-head" id="detail-btn-2" aria-expanded="false" aria-controls="detail-panel-2">
+          <span>Dimensions</span><span class="detail-mark" aria-hidden="true">+</span>
+        </button>
+        <div class="detail-panel" id="detail-panel-2" hidden>
+          <p>Height 28 cm, diameter 14 cm. Holds exactly one litre. Weight 900 g.</p>
+        </div>
+      </div>
+      <div class="detail">
+        <button class="detail-head" id="detail-btn-3" aria-expanded="false" aria-controls="detail-panel-3">
+          <span>Shipping &amp; returns</span><span class="detail-mark" aria-hidden="true">+</span>
+        </button>
+        <div class="detail-panel" id="detail-panel-3" hidden>
+          <p>Ships in 5 working days, plastic-free packaging. Returns within 30 days, no questions asked.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <hr class="rule">
+
+  <div class="wrap">
+    <section class="section" id="ethos" aria-label="Ethos">
+      <p class="kicker">ETHOS</p>
+      <h2 class="ethos-statement">As little design as possible.</h2>
+      <p class="ethos-body">We make one object at a time. Each one is reduced until removing anything else would make it worse. If it does not need to be here, it is not here — in the object, and on this page.</p>
+    </section>
+  </div>
+
+  <hr class="rule">
+
+  <div class="wrap">
+    <section class="section" id="notify" aria-label="Restock notices">
+      <p class="kicker">RESTOCK</p>
+      <p class="ethos-body" style="margin-bottom: 48px;">Object 01 is made in small batches. Leave an email and we will write once when the next batch is ready. Nothing else.</p>
+      <form class="notify-row" id="notify-form" novalidate>
+        <label class="field">
+          <span class="field-label">Email for restock notices</span>
+          <input class="field-input" type="email" id="notify-email" placeholder="you@example.com" autocomplete="email">
+        </label>
+        <button class="text-btn" type="submit">Notify me</button>
+      </form>
+      <p class="field-msg" id="notify-msg" role="status"></p>
+    </section>
+  </div>
+
+  <hr class="rule">
+
+  <div class="wrap">
+    <footer>
+      <div class="footer-row">
+        <span>© 2026 MONO</span>
+        <nav aria-label="Footer">
+          <a href="#">Contact</a>
+          <a href="#">Shipping</a>
+          <a href="#">Returns</a>
+        </nav>
+      </div>
+      <p class="skill-line">Built from the minimalism skill · design-skills</p>
+    </footer>
+  </div>
+</main>
+
+<script>
+(function () {
+  // 1. Nav gains a hairline on scroll — the only scroll effect.
+  var nav = document.getElementById('site-nav');
+  function onScroll() {
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // 2. Quiet theme toggle: position alone signals state.
+  var toggle = document.getElementById('theme-toggle');
+  toggle.addEventListener('click', function () {
+    var dark = document.documentElement.getAttribute('data-theme') !== 'dark';
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    toggle.setAttribute('aria-checked', String(dark));
+  });
+
+  // 3. Add to bag: the single action on the page.
+  var count = 0;
+  var bagCount = document.getElementById('bag-count');
+  var bagButton = document.getElementById('bag-button');
+  document.getElementById('add-to-bag').addEventListener('click', function () {
+    count += 1;
+    bagCount.textContent = String(count);
+  });
+  bagButton.addEventListener('click', function () {
+    bagButton.blur();
+  });
+
+  // 4. Accordions: one open at a time, content fades via instant show (no slide).
+  var heads = [
+    document.getElementById('detail-btn-1'),
+    document.getElementById('detail-btn-2'),
+    document.getElementById('detail-btn-3')
+  ];
+  function closeAll(except) {
+    heads.forEach(function (head) {
+      if (head === except) return;
+      head.setAttribute('aria-expanded', 'false');
+      document.getElementById(head.getAttribute('aria-controls')).hidden = true;
+      head.querySelector('.detail-mark').textContent = '+';
+    });
+  }
+  heads.forEach(function (head) {
+    head.addEventListener('click', function () {
+      var panel = document.getElementById(head.getAttribute('aria-controls'));
+      var open = head.getAttribute('aria-expanded') === 'true';
+      closeAll(head);
+      head.setAttribute('aria-expanded', String(!open));
+      panel.hidden = open;
+      head.querySelector('.detail-mark').textContent = open ? '+' : '−';
+    });
+  });
+
+  // 5. Notify form: validate quietly, confirm in one sentence.
+  var form = document.getElementById('notify-form');
+  var email = document.getElementById('notify-email');
+  var msg = document.getElementById('notify-msg');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var value = email.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      msg.textContent = 'Please enter a valid email address.';
+      email.focus();
+      return;
+    }
+    msg.textContent = 'Noted. We will write once.';
+    form.reset();
+  });
+})();
+</script>
+</body>
+</html>

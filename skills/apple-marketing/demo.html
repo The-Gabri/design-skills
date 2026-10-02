@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>apple-marketing</title>
+<style>
+  :root{
+    --white:#ffffff;
+    --soft:#fbfbfd;
+    --stage:#f5f5f7;
+    --ink:#1d1d1f;
+    --gray:#86868b;
+    --fine:#6e6e73;
+    --rule:#d2d2d7;
+    --blue:#0071e3;
+    --blue-link:#0066cc;
+    --blue-dark:#2997ff;
+    --black:#000000;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"SF Pro Display","SF Pro Text",-apple-system,BlinkMacSystemFont,
+      "Segoe UI","Helvetica Neue",Arial,sans-serif;
+    color:var(--ink);background:var(--white);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  img,svg{display:block;max-width:100%}
+  a{text-decoration:none}
+
+  /* ---------- global nav ---------- */
+  .anav{
+    position:sticky;top:0;z-index:60;height:48px;
+    display:flex;align-items:center;justify-content:center;gap:34px;
+    background:rgba(22,22,23,.8);color:#f5f5f7;font-size:12px;
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+  }
+  .anav a{color:#f5f5f7;opacity:.8;letter-spacing:-.01em}
+  .anav a:hover{opacity:1}
+  .anav .wordmark{font-weight:600;opacity:1;font-size:14px}
+  @media (max-width:720px){ .anav{gap:18px;overflow-x:auto;padding:0 16px;justify-content:flex-start} }
+
+  /* ---------- product sub-nav ---------- */
+  .asubnav{
+    position:sticky;top:48px;z-index:50;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 28px;
+    background:rgba(251,251,253,.72);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-bottom:1px solid var(--rule);
+  }
+  .asubnav .pname{font-size:21px;font-weight:600;letter-spacing:-.01em}
+  .asubnav .links{display:flex;gap:24px;align-items:center;font-size:12px}
+  .asubnav .links a{color:var(--ink);opacity:.8}
+  .asubnav .links a:hover{opacity:1}
+
+  /* ---------- buttons / links ---------- */
+  .apill{
+    display:inline-block;background:var(--blue);color:#fff!important;
+    font-size:15px;line-height:1;padding:10px 24px;border-radius:980px;border:0;cursor:pointer;
+  }
+  .apill:hover{background:#0077ed}
+  .apill.small{font-size:12px;padding:6px 14px}
+  .alearn{color:var(--blue-link);font-size:17px}
+  .alearn:hover{text-decoration:underline}
+  .alearn .chev{font-size:.8em}
+  .dark .alearn{color:var(--blue-dark)}
+
+  /* ---------- hero ---------- */
+  .ahero{background:var(--soft);text-align:center;padding:88px 24px 40px}
+  .ahero .kicker{font-size:14px;font-weight:600;color:#b64400;letter-spacing:.02em;margin-bottom:10px}
+  .ahero h1{
+    font-size:clamp(3.5rem,9vw,6.5rem);
+    font-weight:600;letter-spacing:-.022em;line-height:1.05;color:var(--ink);
+  }
+  .ahero .tagline{font-size:clamp(1.3rem,3vw,1.75rem);color:var(--gray);font-weight:400;
+    letter-spacing:-.01em;margin:14px 0 30px}
+  .cta-row{display:flex;gap:30px;justify-content:center;align-items:center;margin-bottom:24px}
+  .apicker{display:flex;gap:14px;justify-content:center;margin:34px 0 10px}
+  .aswatch{width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;background:var(--sw);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)}
+  .aswatch.is-on{box-shadow:0 0 0 2px var(--soft),0 0 0 4px var(--blue)}
+  .apicker-name{font-size:14px;color:var(--gray);margin-bottom:8px;min-height:20px}
+  .render-wrap{max-width:640px;margin:0 auto;padding:16px 0 8px}
+  .price-note{font-size:14px;color:var(--gray);margin-top:6px}
+
+  /* headphone render: finish via CSS vars */
+  .render{--shell:#2e2e33;--cushion:#17171a;--sheen:#4a4a52}
+  .render .band{stroke:var(--shell)}
+  .render .bandpad{stroke:var(--cushion)}
+  .render .cup{fill:var(--shell)}
+  .render .cuppad{fill:var(--cushion)}
+  .render .sheen{fill:var(--sheen);opacity:.55}
+  .render .detail{fill:var(--sheen)}
+
+  /* ---------- sticky scenes ---------- */
+  .ascene{position:relative}
+  .ascene.tall{min-height:260vh}
+  .apin{position:sticky;top:0;height:100vh;overflow:hidden;
+    display:grid;place-items:center;text-align:center}
+  .apin .copy{position:absolute;left:0;right:0;bottom:9vh;padding:0 24px;z-index:2}
+  .apin h2{font-size:clamp(2.75rem,6.5vw,4.5rem);font-weight:600;
+    letter-spacing:-.02em;line-height:1.08;margin-bottom:14px}
+  .apin .sub{font-size:clamp(1.05rem,2.4vw,1.3rem);max-width:620px;margin:0 auto;line-height:1.45}
+  .ascene.dark{background:var(--black);color:#f5f5f7}
+  .ascene.dark .sub{color:#a1a1a6}
+  .ascene.stage{background:var(--stage);color:var(--ink)}
+  .ascene.stage .sub{color:var(--gray)}
+  .ascene.plain{background:var(--white);color:var(--ink)}
+  .ascene.plain .sub{color:var(--gray)}
+  .apin svg{width:min(72vw,560px);height:auto;transition:transform .2s linear}
+  .scene-stat{font-size:clamp(4rem,10vw,7rem);font-weight:600;letter-spacing:-.03em;line-height:1}
+  .scene-stat small{font-size:.35em;font-weight:400;letter-spacing:-.01em;color:var(--gray)}
+
+  /* ---------- bento ---------- */
+  .bento-band{background:var(--white);padding:110px 24px 40px;text-align:center}
+  .band-h{font-size:clamp(2rem,5vw,3.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.08;margin-bottom:12px}
+  .band-sub{font-size:21px;color:var(--gray);margin-bottom:56px}
+  .abento{display:grid;gap:20px;max-width:1200px;margin:0 auto;
+    grid-template-columns:repeat(6,1fr);text-align:left}
+  .atile{border-radius:28px;padding:48px;background:var(--white);border:1px solid transparent;min-height:280px;
+    display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;position:relative}
+  .bento-band .atile{background:var(--stage)}
+  .atile h3{font-size:32px;font-weight:600;letter-spacing:-.015em;line-height:1.12;margin-bottom:10px}
+  .atile p{font-size:17px;color:var(--gray);line-height:1.45}
+  .atile .bignum{font-size:64px;font-weight:600;letter-spacing:-.03em;line-height:1;margin-bottom:12px}
+  .tile-a{grid-column:span 4;background:var(--ink)!important;color:#f5f5f7}
+  .tile-a p{color:#a1a1a6}
+  .tile-b{grid-column:span 2}
+  .tile-c{grid-column:span 2}
+  .tile-d{grid-column:span 2}
+  .tile-e{grid-column:span 2}
+  .tile-f{grid-column:span 4;background:var(--ink)!important;color:#f5f5f7}
+  .tile-f p{color:#a1a1a6}
+  @media (max-width:820px){
+    .atile{grid-column:span 6!important;min-height:220px;padding:36px}
+  }
+
+  /* ---------- specs ---------- */
+  .specs-band{background:var(--stage);padding:110px 24px 90px;margin-top:90px}
+  .specs-inner{max-width:980px;margin:0 auto}
+  .aspecs{width:100%;border-collapse:collapse;margin-top:40px}
+  .aspecs th,.aspecs td{text-align:left;padding:20px 8px;border-bottom:1px solid var(--rule);
+    font-size:17px;vertical-align:top}
+  .aspecs th{font-weight:600;width:34%}
+  .aspecs sup{color:var(--blue-link)}
+
+  /* ---------- buy band ---------- */
+  .buy-band{background:var(--white);text-align:center;padding:110px 24px}
+  .buy-band .price{font-size:28px;font-weight:600;letter-spacing:-.01em;margin:18px 0 6px}
+  .buy-band .or{font-size:14px;color:var(--gray);margin-bottom:30px}
+
+  /* ---------- footnotes ---------- */
+  .afootnotes{max-width:980px;margin:0 auto;padding:36px 24px;font-size:12px;line-height:1.33;color:var(--fine)}
+  .afootnotes ol{padding-left:18px;margin-bottom:14px}
+  .afootnotes li{margin-bottom:8px}
+  .afootnotes p{margin-bottom:8px}
+
+  /* ---------- footer ---------- */
+  .afooter{background:var(--stage);padding:36px 24px 60px;font-size:12px;color:#424245}
+  .acols{max-width:980px;margin:0 auto 28px;display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:28px}
+  .acols h4{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:10px}
+  .acols a{display:block;color:#424245;margin-bottom:9px}
+  .acols a:hover{text-decoration:underline}
+  .alegal{max-width:980px;margin:0 auto;border-top:1px solid var(--rule);padding-top:18px;color:var(--fine)}
+  .alegal .row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:10px}
+  .alegal a{color:var(--fine)}
+  .skill-credit{max-width:980px;margin:18px auto 0;color:var(--fine)}
+
+  /* ---------- reveal ---------- */
+  .rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,0,0,1),transform .9s cubic-bezier(.2,0,0,1)}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .rv{opacity:1;transform:none;transition:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<nav class="anav" aria-label="Global">
+  <a class="wordmark" href="#">nimbus</a>
+  <a href="#">Headphones</a><a href="#">Earbuds</a><a href="#">Speakers</a>
+  <a href="#">Accessories</a><a href="#">Support</a>
+</nav>
+
+<div class="asubnav">
+  <span class="pname">Nimbus One</span>
+  <div class="links">
+    <a href="#overview">Overview</a>
+    <a href="#techspecs">Tech Specs</a>
+    <a href="#compare">Compare</a>
+    <a href="#buy" class="apill small">Buy</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="ahero" id="overview">
+  <p class="kicker">New</p>
+  <h1>Nimbus One</h1>
+  <p class="tagline">Hear everything. Miss nothing.</p>
+  <div class="cta-row">
+    <a href="#buy" class="apill">Buy</a>
+    <a href="#techspecs" class="alearn">Learn more <span class="chev">&gt;</span></a>
+  </div>
+
+  <div class="render-wrap">
+    <svg class="render" id="heroRender" viewBox="0 0 600 520" role="img" aria-label="Nimbus One over-ear headphones">
+      <path class="band" d="M120 300 C120 118 480 118 480 300" fill="none" stroke-width="58" stroke-linecap="round"/>
+      <path class="bandpad" d="M150 296 C158 190 200 150 300 150 C400 150 442 190 450 296" fill="none" stroke-width="26" stroke-linecap="round"/>
+      <rect x="104" y="286" width="34" height="60" rx="12" class="cup"/>
+      <rect x="462" y="286" width="34" height="60" rx="12" class="cup"/>
+      <rect x="52" y="330" width="140" height="150" rx="70" class="cup"/>
+      <rect x="408" y="330" width="140" height="150" rx="70" class="cup"/>
+      <rect x="76" y="354" width="92" height="102" rx="46" class="cuppad"/>
+      <rect x="432" y="354" width="92" height="102" rx="46" class="cuppad"/>
+      <ellipse class="sheen" cx="110" cy="380" rx="20" ry="40"/>
+      <ellipse class="sheen" cx="466" cy="380" rx="20" ry="40"/>
+      <circle class="detail" cx="520" cy="440" r="7"/>
+      <circle class="detail" cx="520" cy="462" r="7"/>
+    </svg>
+  </div>
+
+  <div class="apicker" role="radiogroup" aria-label="Choose a finish">
+    <button class="aswatch is-on" style="--sw:#2e2e33" data-name="Midnight"
+      data-shell="#2e2e33" data-cushion="#17171a" data-sheen="#4a4a52" aria-label="Midnight"></button>
+    <button class="aswatch" style="--sw:#e3e4e6" data-name="Silver"
+      data-shell="#e3e4e6" data-cushion="#c9cacd" data-sheen="#ffffff" aria-label="Silver"></button>
+    <button class="aswatch" style="--sw:#a7c1d9" data-name="Sky"
+      data-shell="#a7c1d9" data-cushion="#7f9cbd" data-sheen="#d7e6f5" aria-label="Sky"></button>
+    <button class="aswatch" style="--sw:#e8dcc8" data-name="Starlight"
+      data-shell="#e8dcc8" data-cushion="#cdbd9f" data-sheen="#fff8ea" aria-label="Starlight"></button>
+  </div>
+  <p class="apicker-name" id="finishName">Midnight</p>
+  <p class="price-note">From $349 or $14.54/mo. for 24 mo.<sup>2</sup></p>
+</header>
+
+<!-- SCENE 1 : silence -->
+<section class="ascene dark tall">
+  <div class="apin">
+    <svg class="render" viewBox="0 0 600 520" style="--shell:#3a3a40;--cushion:#1b1b1f;--sheen:#55555e" aria-hidden="true">
+      <path class="band" d="M120 300 C120 118 480 118 480 300" fill="none" stroke-width="58" stroke-linecap="round"/>
+      <rect x="52" y="330" width="140" height="150" rx="70" class="cup"/>
+      <rect x="408" y="330" width="140" height="150" rx="70" class="cup"/>
+      <rect x="76" y="354" width="92" height="102" rx="46" class="cuppad"/>
+      <rect x="432" y="354" width="92" height="102" rx="46" class="cuppad"/>
+      <ellipse class="sheen" cx="110" cy="380" rx="20" ry="40"/>
+      <ellipse class="sheen" cx="466" cy="380" rx="20" ry="40"/>
+    </svg>
+    <div class="copy">
+      <h2>Silence,<br>engineered.</h2>
+      <p class="sub">Adaptive noise cancellation samples the world 48,000 times a second — and erases it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 2 : battery -->
+<section class="ascene stage tall">
+  <div class="apin">
+    <div class="scene-stat rv">40<small> hours</small></div>
+    <div class="copy">
+      <h2>A battery you<br>can&rsquo;t outrun.</h2>
+      <p class="sub">One charge. A week of commutes. Ten minutes plugged in buys five more hours.<sup>1</sup></p>
+      <p style="margin-top:22px"><a href="#techspecs" class="alearn">Learn more about battery <span class="chev">&gt;</span></a></p>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE 3 : design -->
+<section class="ascene plain tall">
+  <div class="apin">
+    <svg class="render" viewBox="0 0 600 520" style="--shell:#e3e4e6;--cushion:#c9cacd;--sheen:#ffffff" aria-hidden="true">
+      <path class="band" d="M120 300 C120 118 480 118 480 300" fill="none" stroke-width="58" stroke-linecap="round"/>
+      <path class="bandpad" d="M150 296 C158 190 200 150 300 150 C400 150 442 190 450 296" fill="none" stroke-width="26" stroke-linecap="round"/>
+      <rect x="52" y="330" width="140" height="150" rx="70" class="cup"/>
+      <rect x="408" y="330" width="140" height="150" rx="70" class="cup"/>
+      <rect x="76" y="354" width="92" height="102" rx="46" class="cuppad"/>
+      <rect x="432" y="354" width="92" height="102" rx="46" class="cuppad"/>
+      <ellipse class="sheen" cx="110" cy="380" rx="20" ry="40"/>
+      <ellipse class="sheen" cx="466" cy="380" rx="20" ry="40"/>
+    </svg>
+    <div class="copy">
+      <h2>218 grams.<br>All day.</h2>
+      <p class="sub">A feather frame, memory-foam cushions, and a fit that disappears.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BENTO -->
+<section class="bento-band" id="compare">
+  <h2 class="band-h rv">Get the highlights.</h2>
+  <p class="band-sub rv">Everything that matters. Nothing that doesn&rsquo;t.</p>
+  <div class="abento">
+    <div class="atile tile-a rv">
+      <div class="bignum">48,000<span style="font-size:.4em">/s</span></div>
+      <h3>Adaptive ANC</h3>
+      <p>Eight microphones sample your surroundings 48,000 times a second and tune cancellation in real time.</p>
+    </div>
+    <div class="atile tile-b rv">
+      <h3>Studio drivers</h3>
+      <p>Custom 40&nbsp;mm beryllium-coated drivers. Bass you feel, detail you didn&rsquo;t know was there.</p>
+    </div>
+    <div class="atile tile-c rv">
+      <h3>N1 chip</h3>
+      <p>Our first audio chip. 10&times; the processing of the last generation.</p>
+    </div>
+    <div class="atile tile-d rv">
+      <h3>Feather frame</h3>
+      <p>218&nbsp;g of anodized aluminum and knit mesh.</p>
+    </div>
+    <div class="atile tile-e rv">
+      <h3>Find My built in</h3>
+      <p>Misplaced them? Ping them from your phone.<sup>3</sup></p>
+    </div>
+    <div class="atile tile-f rv">
+      <h3>Fast charge</h3>
+      <p>Ten minutes plugged in. Five hours of listening. A full charge in under an hour.<sup>1</sup></p>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs-band" id="techspecs">
+  <div class="specs-inner">
+    <h2 class="band-h rv">Tech Specs</h2>
+    <table class="aspecs rv">
+      <tr><th>Driver</th><td>40&nbsp;mm dynamic, beryllium-coated diaphragm</td></tr>
+      <tr><th>Noise control</th><td>Adaptive Active Noise Cancellation, Transparency, Off</td></tr>
+      <tr><th>Chip</th><td>Nimbus N1 audio chip</td></tr>
+      <tr><th>Battery</th><td>Up to 40 hours listening (ANC on)<sup>1</sup>; up to 55 hours (ANC off)</td></tr>
+      <tr><th>Charging</th><td>USB-C; 10 min = 5 hours playback<sup>1</sup></td></tr>
+      <tr><th>Wireless</th><td>Bluetooth 5.4, multipoint, lossless over USB-C</td></tr>
+      <tr><th>Weight</th><td>218&nbsp;g</td></tr>
+      <tr><th>Finishes</th><td>Midnight, Silver, Sky, Starlight</td></tr>
+      <tr><th>In the box</th><td>Nimbus One, USB-C cable (1&nbsp;m), travel case</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- BUY -->
+<section class="buy-band" id="buy">
+  <h2 class="band-h rv">Nimbus One</h2>
+  <p class="band-sub rv">Hear everything. Miss nothing.</p>
+  <p class="price rv">$349</p>
+  <p class="or rv">or $14.54/mo. for 24 mo.<sup>2</sup></p>
+  <div class="cta-row rv">
+    <a href="#" class="apill">Buy</a>
+    <a href="#techspecs" class="alearn">Compare models <span class="chev">&gt;</span></a>
+  </div>
+</section>
+
+<!-- FOOTNOTES -->
+<section class="afootnotes">
+  <ol>
+    <li>Battery life varies by use and configuration. Testing conducted by Nimbus Audio in August 2026 using preproduction Nimbus One units and software, with ANC enabled at 50% volume, paired to a smartphone over Bluetooth. Fast-charge testing used the included USB-C cable and a 20W adapter (sold separately).</li>
+    <li>Monthly pricing is available to qualified customers and requires 0% APR, 24-month installment financing. Terms apply.</li>
+    <li>Find My network requires a compatible smartphone with location services enabled. Precision finding available in select regions.</li>
+  </ol>
+  <p>Copyright &copy; 2026 Nimbus Audio Inc. All rights reserved.</p>
+  <p>Or call 1-800-555-0199 to talk to a product specialist.</p>
+  <p>Nimbus One is a fictional product created to demonstrate a design style. Not affiliated with Apple Inc.</p>
+</section>
+
+<!-- FOOTER -->
+<footer class="afooter">
+  <div class="acols">
+    <div><h4>Shop</h4><a href="#">Nimbus One</a><a href="#">Earbuds</a><a href="#">Speakers</a><a href="#">Accessories</a></div>
+    <div><h4>Services</h4><a href="#">Nimbus Care</a><a href="#">Trade In</a><a href="#">Financing</a></div>
+    <div><h4>Support</h4><a href="#">Manuals</a><a href="#">Warranty</a><a href="#">Contact</a></div>
+    <div><h4>Company</h4><a href="#">About</a><a href="#">Careers</a><a href="#">Newsroom</a><a href="#">Sustainability</a></div>
+  </div>
+  <div class="alegal">
+    <div class="row">
+      <span>Copyright &copy; 2026 Nimbus Audio Inc. All rights reserved.</span>
+      <span><a href="#">Privacy Policy</a> &nbsp;|&nbsp; <a href="#">Terms of Use</a> &nbsp;|&nbsp; <a href="#">Sales Policy</a> &nbsp;|&nbsp; <a href="#">Site Map</a></span>
+    </div>
+  </div>
+  <p class="skill-credit">Built from the apple-marketing skill &middot; design-skills</p>
+</footer>
+
+<script>
+(function(){
+  // Finish picker: swap hero render colors + finish name
+  var render = document.getElementById('heroRender');
+  var nameEl = document.getElementById('finishName');
+  var swatches = document.querySelectorAll('.aswatch');
+  swatches.forEach(function(sw){
+    sw.addEventListener('click', function(){
+      swatches.forEach(function(s){ s.classList.remove('is-on'); });
+      sw.classList.add('is-on');
+      render.style.setProperty('--shell', sw.dataset.shell);
+      render.style.setProperty('--cushion', sw.dataset.cushion);
+      render.style.setProperty('--sheen', sw.dataset.sheen);
+      nameEl.textContent = sw.dataset.name;
+    });
+  });
+
+  // Scroll reveals
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce && 'IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {threshold: .18});
+    document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // Sticky scenes: subtle scale on the render as you scroll through the pin
+  var scenes = document.querySelectorAll('.ascene.tall');
+  function onScroll(){
+    scenes.forEach(function(sec){
+      var pin = sec.querySelector('.apin svg, .apin .scene-stat');
+      if(!pin) return;
+      var r = sec.getBoundingClientRect();
+      var total = sec.offsetHeight - window.innerHeight;
+      var p = Math.min(1, Math.max(0, -r.top / total));
+      var s = 1 - p * 0.12;
+      pin.style.transform = 'scale(' + s.toFixed(3) + ')';
+    });
+  }
+  if(!reduce){
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+  }
+})();
+</script>
+</body>
+</html>
