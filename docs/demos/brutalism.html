@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>brutalism</title>
+<style>
+  /* ~60 lines of CSS. That is the whole point. */
+  body {
+    background: #FFFFFF;
+    color: #000000;
+    font-family: Times New Roman, Times, serif;
+    max-width: 72ch;
+    margin: 0 auto;
+    padding: 16px;
+    line-height: 1.5;
+  }
+  .mono, nav, table, pre, code, marquee, input, button, textarea, footer {
+    font-family: Courier New, Courier, monospace;
+  }
+  a { color: #0000EE; }
+  a:visited { color: #551A8B; }
+  a:active { color: #FF0000; }
+  hr { border: 0; border-top: 1px solid #000; margin: 16px 0; }
+  nav a { margin-right: 1em; }
+  marquee { border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px 0; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #000; padding: 4px 8px; text-align: left; }
+  th { background: #C0C0C0; }
+  pre { background: #C0C0C0; padding: 8px; overflow-x: auto; }
+  .sticker { background: #FFFF00; padding: 4px 8px; font-weight: bold; display: inline-block; }
+  fieldset { border: 1px solid #000; }
+  #src { display: none; white-space: pre-wrap; background: #000; color: #00FF00; padding: 8px; }
+  #src.on { display: block; }
+  input[type=text] { border: 1px solid #000; padding: 4px; font-size: 1em; width: 100%; box-sizing: border-box; }
+  button { border: 1px solid #000; background: #C0C0C0; padding: 4px 12px; font-size: 1em; cursor: pointer; }
+  .hidden { display: none; }
+  @media (max-width: 600px) {
+    body { padding: 8px; font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#">INDEX</a> <a href="#posts">POSTS</a> <a href="#projects">PROJECTS</a> <a href="#contact">CONTACT</a>
+</nav>
+<hr>
+
+<header>
+  <h1>NULL POINTER</h1>
+  <p>notes on software, by someone who reads the source. no cookies, no tracking,
+  no framework. the stylesheet is 60 lines.</p>
+</header>
+<hr>
+
+<marquee>NEW POST EVERY SUNDAY &#183; NO COOKIES &#183; NO TRACKING &#183; NO WEBFONTS &#183; TOTAL PAGE WEIGHT: 9 KB &#183;</marquee>
+<hr>
+
+<p><span class="sticker">LAST UPDATED: 2026-10-02</span></p>
+
+<h2 id="posts">Posts</h2>
+<ul>
+  <li><a href="#">Why your framework is a liability</a> &mdash; 2026-09-28<br>
+    400 lines of dependencies to render a form. I rewrote it in 40.</li>
+  <li><a href="#">I deleted 4,000 lines of CSS</a> &mdash; 2026-09-14<br>
+    Nothing changed except the load time. Nobody noticed the CSS was gone.</li>
+  <li><a href="#">The browser is already a design system</a> &mdash; 2026-08-30<br>
+    Blue links, gray buttons, Times New Roman. Thirty years of usability testing,
+    free of charge.</li>
+  <li><a href="#">Against smooth scrolling</a> &mdash; 2026-08-09<br>
+    Your page should not move like pudding. Instant jumps respect my time.</li>
+</ul>
+<hr>
+
+<h2 id="projects">Projects</h2>
+<p>Filter the index. It runs on 12 lines of JavaScript. Most sites ship more code
+for their cookie banner.</p>
+<p><input type="text" id="filter" placeholder="type to filter: c, rust, done, broken..."></p>
+<table id="index">
+  <tr><th>project</th><th>language</th><th>status</th><th>note</th></tr>
+  <tr data-tags="c done tinydns"><td><a href="#">tinydns</a></td><td>C</td><td>done</td><td>a DNS server in 900 lines</td></tr>
+  <tr data-tags="rust broken rawsock"><td><a href="#">rawsock</a></td><td>Rust</td><td>broken</td><td>works on my machine only</td></tr>
+  <tr data-tags="python done logscrape"><td><a href="#">logscrape</a></td><td>Python</td><td>done</td><td>grep with opinions</td></tr>
+  <tr data-tags="shell done dotfiles"><td><a href="#">dotfiles</a></td><td>shell</td><td>done</td><td>12 years of cruft, public</td></tr>
+  <tr data-tags="c wip tinystack"><td><a href="#">tinystack</a></td><td>C</td><td>wip</td><td>a TCP stack for no reason</td></tr>
+  <tr data-tags="rust abandoned ferriswheel"><td><a href="#">ferriswheel</a></td><td>Rust</td><td>abandoned</td><td>borrow checker won</td></tr>
+</table>
+<hr>
+
+<h2>Snippets</h2>
+<p>The entire build pipeline:</p>
+<pre><code>#!/bin/sh
+cp index.html /var/www/
+echo "deployed"</code></pre>
+<hr>
+
+<h2 id="contact">Contact</h2>
+<form onsubmit="alert('Message not sent. There is no backend. This is the point.'); return false;">
+  <label>email:<br><input type="text" size="30"></label><br><br>
+  <label>message:<br><textarea rows="4" cols="40"></textarea></label><br><br>
+  <button type="submit">SEND</button>
+</form>
+<hr>
+
+<fieldset>
+  <legend>archive</legend>
+  <a href="#">2026</a> &middot; <a href="#">2025</a> &middot; <a href="#">2024</a> &middot; <a href="#">older</a>
+</fieldset>
+<hr>
+
+<p>
+  <button type="button" onclick="document.getElementById('src').classList.toggle('on')">VIEW SOURCE</button>
+</p>
+<div id="src">You are looking at it. &lt;html&gt;, &lt;table&gt;, &lt;hr&gt;, &lt;marquee&gt;.
+60 lines of CSS. 12 lines of JavaScript. No build step, no bundler,
+no node_modules. If you want animations, there are three thousand
+other websites.</div>
+<hr>
+
+<footer>
+  <p>no cookies. no tracking. page weight: 9 KB. <a href="#">view source</a> (it's short).<br>
+  Built from the brutalism skill &middot; design-skills</p>
+</footer>
+
+<script>
+  // 12 lines of JavaScript. The filter.
+  var input = document.getElementById('filter');
+  var rows = document.querySelectorAll('#index tr[data-tags]');
+  input.addEventListener('input', function () {
+    var q = input.value.toLowerCase();
+    rows.forEach(function (r) {
+      r.classList.toggle('hidden', r.getAttribute('data-tags').indexOf(q) === -1);
+    });
+  });
+</script>
+
+</body>
+</html>

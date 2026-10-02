@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>arc-browser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAF6EF;
+  --ink:#231F1A;
+  --ink-soft:#6E6459;
+  --ink-faint:#9A9187;
+  --hair:rgba(35,31,26,.10);
+  --hair-soft:rgba(35,31,26,.06);
+  --card:#FFFFFF;
+  --spring:cubic-bezier(.34,1.35,.4,1);
+  --ease:cubic-bezier(.16,1,.3,1);
+  --space:#FF7A66; /* active space color */
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:"Nunito",-apple-system,"SF Pro Text","Segoe UI",system-ui,sans-serif;
+  background:
+    radial-gradient(900px 420px at 12% -10%, rgba(255,107,87,.10), transparent 60%),
+    radial-gradient(800px 420px at 88% 112%, rgba(77,150,255,.10), transparent 60%),
+    var(--paper);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:32px 20px 20px;
+}
+::selection{background:rgba(255,107,87,.28)}
+button{font-family:inherit}
+
+/* ---------- page head ---------- */
+.page-head{text-align:center;margin-bottom:22px;max-width:720px}
+.page-head h1{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.02em}
+.page-head h1 .arc-word{
+  background:linear-gradient(100deg,#FF6B57,#FFB340 30%,#7BC96F 55%,#4D96FF 80%,#9D7BFF);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.page-head p{color:var(--ink-soft);font-size:15.5px;margin-top:8px;font-weight:500}
+kbd.k{display:inline-block;font:700 11px/1 inherit;background:rgba(35,31,26,.08);
+  border:1px solid rgba(35,31,26,.12);border-bottom-width:2px;border-radius:6px;
+  padding:4px 7px;vertical-align:1px}
+
+/* ---------- window ---------- */
+.window{
+  width:min(1220px,100%);height:min(720px,calc(100vh - 230px));min-height:560px;
+  display:flex;border-radius:22px;overflow:hidden;position:relative;
+  background:#fff;border:1px solid var(--hair);
+  box-shadow:0 32px 80px rgba(35,31,26,.14), 0 2px 6px rgba(35,31,26,.08);
+}
+.traffic{position:absolute;top:0;left:0;right:0;height:44px;z-index:5;
+  display:flex;align-items:center;gap:8px;padding:0 18px;pointer-events:none}
+.traffic i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
+.traffic i:nth-child(1){background:#FF5F57}
+.traffic i:nth-child(2){background:#FEBC2E}
+.traffic i:nth-child(3){background:#28C840}
+.win-title{position:absolute;top:0;left:0;right:0;height:44px;display:flex;
+  align-items:center;justify-content:center;font-size:13px;font-weight:700;
+  color:var(--ink-soft);pointer-events:none;z-index:4}
+.win-title b{color:var(--ink)}
+
+/* ---------- sidebar ---------- */
+.sidebar{
+  --wash:var(--space);
+  width:276px;flex:none;display:flex;flex-direction:column;gap:18px;
+  padding:58px 14px 14px;overflow-y:auto;overflow-x:hidden;
+  background:linear-gradient(168deg,
+    color-mix(in srgb, var(--wash) 24%, #F5EFE3),
+    color-mix(in srgb, var(--wash) 9%,  #F5EFE3) 55%,
+    #F5EFE3);
+  border-right:1px solid var(--hair-soft);
+  transition:background .45s var(--ease), width .3s var(--spring);
+}
+.sidebar .urlpill{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  background:rgba(255,255,255,.75);border:1px solid var(--hair);
+  border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:600;cursor:pointer;
+  transition:transform .15s var(--spring), box-shadow .15s ease;
+}
+.sidebar .urlpill:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(35,31,26,.10)}
+.urlpill .lock{width:14px;height:14px;flex:none}
+.urlpill .site{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.urlpill kbd{margin-left:auto;font:700 10.5px/1 inherit;color:var(--ink-faint);
+  background:rgba(35,31,26,.07);padding:4px 7px;border-radius:6px;flex:none}
+
+.sec-label{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);padding:0 6px 8px}
+
+.favs{display:flex;gap:8px;flex-wrap:wrap}
+.fav{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
+  background:color-mix(in srgb, var(--c) 20%, #fff);font-weight:800;font-size:13px;
+  text-decoration:none;color:var(--ink);border:1px solid var(--hair-soft);
+  transition:transform .18s var(--spring)}
+.fav:hover{transform:translateY(-3px) scale(1.05)}
+.fav-add{background:transparent;border:1.5px dashed rgba(35,31,26,.25);
+  color:var(--ink-soft);font-size:18px;cursor:pointer}
+
+.tabs{display:flex;flex-direction:column;gap:5px}
+.tab{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;
+  background:rgba(255,255,255,.7);border:1px solid var(--hair-soft);
+  font-size:13.5px;font-weight:600;cursor:pointer;text-align:left;width:100%;
+  transition:transform .15s var(--spring), background .15s ease}
+.tab:hover{transform:translateX(2px)}
+.tab.active{background:#fff;border-color:var(--hair);
+  box-shadow:0 4px 12px rgba(35,31,26,.08)}
+.tab .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.tab .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab .x{margin-left:auto;border:0;background:none;color:var(--ink-faint);
+  cursor:pointer;font-size:15px;line-height:1;padding:2px}
+.tab .x:hover{color:var(--ink)}
+.tab.today{background:transparent;border-color:transparent;font-weight:500;color:var(--ink-soft)}
+.tab.today .archive-note{margin-left:auto;font-size:10.5px;color:var(--ink-faint);flex:none}
+
+.tidy{font-size:12px;font-weight:600;color:var(--ink-soft);
+  background:rgba(61,220,151,.14);border:1px dashed rgba(46,180,120,.55);
+  border-radius:12px;padding:9px 13px;line-height:1.45}
+
+.lib{display:flex;flex-direction:column;gap:2px}
+.lib button{display:flex;align-items:center;gap:10px;padding:8px 10px;border:0;
+  border-radius:10px;font-size:13px;font-weight:600;background:transparent;
+  cursor:pointer;color:var(--ink);text-align:left}
+.lib button:hover{background:rgba(255,255,255,.7)}
+.lib .li{width:22px;height:22px;border-radius:7px;flex:none;display:grid;place-items:center}
+.lib .li svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.lib .cnt{margin-left:auto;font-size:11px;font-weight:700;color:var(--ink-faint);
+  background:rgba(35,31,26,.07);padding:2px 8px;border-radius:999px}
+
+.spaces{margin-top:auto;display:flex;gap:9px;align-items:center;
+  padding-top:14px;border-top:1px solid var(--hair)}
+.sp{width:40px;height:40px;border-radius:50%;border:2px solid transparent;
+  background:var(--c);color:#fff;font-weight:800;font-size:13px;cursor:pointer;
+  transition:transform .2s var(--spring), border-color .15s ease, box-shadow .15s ease;
+  display:grid;place-items:center}
+.sp:hover{transform:scale(1.12)}
+.sp.on{border-color:var(--ink);box-shadow:0 0 0 2.5px rgba(255,255,255,.85)}
+.sp-new{background:transparent;border:2px dashed rgba(35,31,26,.3);color:var(--ink-soft)}
+.space-name{font-size:12.5px;font-weight:800;margin-left:2px;white-space:nowrap}
+
+.collapse-btn{position:absolute;left:288px;top:52px;z-index:6;width:28px;height:28px;
+  border-radius:50%;border:1px solid var(--hair);background:#fff;cursor:pointer;
+  display:grid;place-items:center;color:var(--ink-soft);
+  transition:left .3s var(--spring), transform .15s ease}
+.collapse-btn:hover{transform:scale(1.1)}
+.collapse-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;
+  stroke-linecap:round;stroke-linejoin:round;transition:transform .3s var(--spring)}
+body.sb-collapsed .sidebar{width:76px}
+body.sb-collapsed .collapse-btn{left:88px}
+body.sb-collapsed .collapse-btn svg{transform:rotate(180deg)}
+body.sb-collapsed .urlpill .site,
+body.sb-collapsed .urlpill kbd,
+body.sb-collapsed .sec-label,
+body.sb-collapsed .tab .t, body.sb-collapsed .tab .x, body.sb-collapsed .tab .archive-note,
+body.sb-collapsed .lib button span, body.sb-collapsed .lib .cnt,
+body.sb-collapsed .tidy, body.sb-collapsed .space-name{display:none}
+body.sb-collapsed .favs{flex-direction:column;align-items:center}
+body.sb-collapsed .spaces{flex-direction:column}
+
+/* ---------- content ---------- */
+.content{flex:1;overflow-y:auto;padding:64px 40px 40px;position:relative;min-width:0}
+.crumbs{font-size:12px;font-weight:700;color:var(--ink-faint);letter-spacing:.04em;
+  text-transform:uppercase;margin-bottom:10px}
+.page h2{font-size:clamp(26px,3vw,38px);font-weight:800;letter-spacing:-.02em;
+  line-height:1.15;margin-bottom:10px;max-width:640px}
+.page h2 .hl{color:var(--space);transition:color .45s var(--ease)}
+.page .lede{font-size:16px;color:var(--ink-soft);font-weight:500;max-width:620px;line-height:1.6}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:14px;margin-top:26px;max-width:860px}
+.card{background:var(--card);border:1px solid var(--hair-soft);border-radius:16px;
+  padding:18px;box-shadow:0 6px 18px rgba(35,31,26,.05);
+  transition:transform .18s var(--spring), box-shadow .18s ease}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(35,31,26,.10)}
+.card .tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.08em;
+  text-transform:uppercase;color:#fff;background:var(--space);border-radius:999px;
+  padding:4px 10px;margin-bottom:10px;transition:background .45s var(--ease)}
+.card h3{font-size:15.5px;font-weight:800;margin-bottom:6px}
+.card p{font-size:13.5px;color:var(--ink-soft);line-height:1.55;font-weight:500}
+.checklist{margin-top:26px;max-width:640px;display:flex;flex-direction:column;gap:8px}
+.check{display:flex;align-items:center;gap:12px;background:var(--card);
+  border:1px solid var(--hair-soft);border-radius:14px;padding:13px 16px;font-size:14px;font-weight:600}
+.check .box{width:20px;height:20px;border-radius:7px;flex:none;
+  border:2px solid color-mix(in srgb, var(--space) 60%, #fff);display:grid;place-items:center;
+  color:#fff;font-size:13px;transition:background .2s ease}
+.check.done .box{background:var(--space);border-color:var(--space)}
+.check.done .txt{text-decoration:line-through;color:var(--ink-faint)}
+.steps{display:grid;gap:10px;margin-top:26px;max-width:680px;counter-reset:step}
+.step{background:var(--card);border:1px solid var(--hair-soft);border-radius:14px;
+  padding:16px 18px 16px 60px;position:relative;font-size:14px;font-weight:500;line-height:1.55}
+.step::before{counter-increment:step;content:counter(step);position:absolute;left:16px;top:15px;
+  width:28px;height:28px;border-radius:50%;background:var(--space);color:#fff;
+  font-weight:800;font-size:13px;display:grid;place-items:center;transition:background .45s var(--ease)}
+.easel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;margin-top:26px;max-width:860px}
+.easel{background:#fff;border:1px solid var(--hair);border-radius:16px;padding:12px;
+  box-shadow:0 8px 22px rgba(35,31,26,.06);transition:transform .18s var(--spring)}
+.easel:hover{transform:rotate(-1deg) scale(1.01)}
+.easel svg{width:100%;height:110px;background:var(--paper);border-radius:10px;display:block}
+.easel p{font-size:13px;font-weight:800;margin:10px 4px 0}
+.easel span{display:block;font-size:11.5px;font-weight:500;color:var(--ink-faint)}
+.dl-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;
+  background:var(--card);border:1px solid var(--hair-soft);margin-top:10px;max-width:640px}
+.dl-row .fi{width:36px;height:36px;border-radius:11px;flex:none;display:grid;place-items:center}
+.dl-row .fi svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.dl-row b{display:block;font-size:13.5px;font-weight:700}
+.dl-row span{font-size:12px;color:var(--ink-faint);font-weight:500}
+.dl-row .ok{margin-left:auto;color:#2EB478;font-weight:800}
+.action-row{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 26px;border-radius:14px;
+  font-weight:800;font-size:14.5px;text-decoration:none;cursor:pointer;border:0;color:var(--ink);
+  background:linear-gradient(120deg,#FFB340,#FF7A66 55%,#FF6B57);
+  box-shadow:0 8px 22px rgba(255,107,87,.35), inset 0 1px 0 rgba(255,255,255,.45);
+  transition:transform .16s var(--spring), box-shadow .16s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,107,87,.45)}
+.btn.ghost{background:#fff;border:1px solid var(--hair);box-shadow:none}
+.btn.ghost:hover{box-shadow:0 8px 20px rgba(35,31,26,.10)}
+
+/* ---------- command bar ---------- */
+.cmd-overlay{position:fixed;inset:0;background:rgba(35,31,26,.28);
+  backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;
+  padding-top:16vh;z-index:50}
+.cmd-overlay.open{display:flex}
+.cmd{width:min(580px,92vw);background:#fff;border-radius:20px;overflow:hidden;
+  border:1px solid var(--hair);box-shadow:0 40px 90px rgba(35,31,26,.3);
+  transform:translateY(12px) scale(.98);opacity:0;transition:transform .22s var(--spring), opacity .18s ease}
+.cmd-overlay.open .cmd{transform:none;opacity:1}
+.cmd input{width:100%;border:0;border-bottom:1px solid var(--hair-soft);
+  padding:19px 22px;font-size:16px;font-weight:600;outline:none;background:transparent;color:var(--ink)}
+.cmd-list{max-height:330px;overflow-y:auto;padding:8px}
+.cmd-row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;
+  font-size:14px;font-weight:600;color:var(--ink-soft);cursor:pointer}
+.cmd-row .kdot{width:8px;height:8px;border-radius:50%;flex:none}
+.cmd-row.on{background:color-mix(in srgb, var(--space) 12%, #fff);color:var(--ink)}
+.cmd-row kbd{margin-left:auto;font:700 11px/1 inherit;color:var(--ink-faint);
+  background:rgba(35,31,26,.07);padding:5px 8px;border-radius:6px;flex:none}
+.cmd-empty{padding:26px;text-align:center;color:var(--ink-faint);font-size:13.5px;font-weight:600}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;bottom:28px;left:50%;transform:translate(-50%,20px);
+  background:var(--ink);color:#fff;font-size:13.5px;font-weight:700;
+  padding:12px 20px;border-radius:999px;opacity:0;pointer-events:none;
+  transition:opacity .25s ease, transform .25s var(--spring);z-index:60;
+  box-shadow:0 12px 30px rgba(35,31,26,.3)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+footer{margin-top:18px;font-size:12.5px;color:var(--ink-faint);font-weight:600}
+.hint{margin-top:14px;font-size:13px;color:var(--ink-soft);font-weight:600;text-align:center}
+
+/* ---------- responsive ---------- */
+.hamburger{display:none}
+@media (max-width:860px){
+  body{padding:16px 10px 12px}
+  .window{height:calc(100vh - 210px);min-height:480px}
+  .sidebar{position:absolute;left:0;top:0;bottom:0;z-index:20;
+    transform:translateX(-105%);transition:transform .32s var(--ease), background .45s var(--ease);
+    box-shadow:20px 0 50px rgba(35,31,26,.15)}
+  body.sb-open .sidebar{transform:none}
+  body.sb-collapsed .sidebar{width:276px}
+  .collapse-btn{display:none}
+  .hamburger{display:grid;position:absolute;left:14px;top:52px;z-index:21;
+    width:36px;height:36px;border-radius:12px;border:1px solid var(--hair);
+    background:#fff;place-items:center;cursor:pointer;color:var(--ink)}
+  .hamburger svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round}
+  .content{padding:64px 20px 30px}
+  .page-head p{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <h1>A little <span class="arc-word">Arc</span>, for your corner of the internet</h1>
+  <p>A playful re-imagining of the Arc browser window — sidebar-first, one color per Space,
+  and a command bar that does the heavy lifting. Press <kbd class="k">⌘T</kbd> (or
+  <kbd class="k">Ctrl T</kbd>) to open it.</p>
+</header>
+
+<button class="hamburger" id="hamburger" aria-label="Toggle sidebar">
+  <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+</button>
+
+<div class="window" id="window">
+  <div class="traffic"><i></i><i></i><i></i></div>
+  <div class="win-title"><b>Arc</b>&nbsp;·&nbsp;<span id="winSpace">Work</span></div>
+
+  <aside class="sidebar" id="sidebar">
+    <button class="urlpill" id="urlpill">
+      <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="#6E6459" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      <span class="site" id="pillSite">lisbon.travel/itinerary</span>
+      <kbd>⌘L</kbd>
+    </button>
+
+    <div>
+      <div class="sec-label">Favorites</div>
+      <div class="favs" id="favs"></div>
+    </div>
+
+    <div>
+      <div class="sec-label">Pinned</div>
+      <div class="tabs" id="pinned"></div>
+    </div>
+
+    <div>
+      <div class="sec-label">Today</div>
+      <div class="tabs" id="today"></div>
+    </div>
+
+    <p class="tidy" id="tidy"></p>
+
+    <div>
+      <div class="sec-label">Library</div>
+      <div class="lib" id="lib"></div>
+    </div>
+
+    <div class="spaces">
+      <button class="sp on" data-space="work" style="--c:#FF7A66" title="Work">W</button>
+      <button class="sp" data-space="research" style="--c:#4D96FF" title="Research">R</button>
+      <button class="sp" data-space="play" style="--c:#3DDC97" title="Play">P</button>
+      <button class="sp sp-new" id="newSpace" title="New space">+</button>
+      <span class="space-name" id="spaceName">Work</span>
+    </div>
+  </aside>
+
+  <button class="collapse-btn" id="collapseBtn" aria-label="Collapse sidebar">
+    <svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6"/></svg>
+  </button>
+
+  <main class="content" id="content"></main>
+</div>
+
+<p class="hint">Click Space dots to re-theme the window · click tabs to peek · <kbd class="k">⌘T</kbd> for the command bar</p>
+
+<!-- command bar -->
+<div class="cmd-overlay" id="cmdOverlay">
+  <div class="cmd" role="dialog" aria-label="Arc command bar">
+    <input id="cmdInput" placeholder="Type a command or search…" autocomplete="off">
+    <div class="cmd-list" id="cmdList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>Built from the arc-browser skill · design-skills</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var FAVS = [
+    {n:"Mail", c:"#FF6B57", i:"M"},
+    {n:"Calendar", c:"#4D96FF", i:"C"},
+    {n:"Notes", c:"#3DDC97", i:"N"},
+    {n:"Music", c:"#FFC53D", i:"Mu"},
+    {n:"Read", c:"#9D7BFF", i:"R"}
+  ];
+
+  var SPACES = {
+    work: {
+      name:"Work", color:"#FF7A66",
+      greeting:"Your workday, already tidy.",
+      lede:"Everything for the 9-to-5 lives here. Unpinned tabs fade away on their own — what matters stays pinned and calm.",
+      tabs:[
+        {t:"Trip to Lisbon — itinerary", s:"lisbon.travel/itinerary", c:"#FF6B57",
+         body:'<div class="crumbs">Pinned tab · Travel</div><h2>Four days in Lisbon, <span class="hl">no tabs left open.</span></h2><p class="lede">The plan is pinned here, so the forty research tabs that built it could finally rest.</p><div class="checklist"><div class="check done"><span class="box">✓</span><span class="txt">Book the flight — done before coffee</span></div><div class="check done"><span class="box">✓</span><span class="txt">Reserve the Alfama apartment</span></div><div class="check"><span class="box"></span><span class="txt">Sunset at Miradouro da Graça</span></div><div class="check"><span class="box"></span><span class="txt">Day trip to Sintra, leave at 8:40</span></div></div>'},
+        {t:"Q3 roadmap — Figma", s:"figma.com/board/q3", c:"#9D7BFF",
+         body:'<div class="crumbs">Pinned tab · Design</div><h2>The roadmap, <span class="hl">drawn not written.</span></h2><p class="lede">Sticky notes beat spreadsheets. The big bets for next quarter, arranged on one very colorful board.</p><div class="cardgrid"><div class="card"><span class="tag">Now</span><h3>Command bar v2</h3><p>Faster fuzzy search, smarter actions, fewer keystrokes between thought and done.</p></div><div class="card"><span class="tag">Next</span><h3>Space templates</h3><p>One click: a fresh Space with your tabs, Easels, and theme, ready for the next project.</p></div><div class="card"><span class="tag">Later</span><h3>Shared Easels</h3><p>Draw together in real time. Arguably the most fun way to plan a launch.</p></div></div>'},
+        {t:"Inbox zero — Mail", s:"mail/today", c:"#4D96FF",
+         body:'<div class="crumbs">Pinned tab · Mail</div><h2>Inbox zero, <span class="hl">achieved before lunch.</span></h2><p class="lede">Three emails needed you. The rest were newsletters you will never read — archived with love.</p><div class="checklist"><div class="check done"><span class="box">✓</span><span class="txt">Reply to Mara — launch date confirmed</span></div><div class="check done"><span class="box">✓</span><span class="txt">Approve the invoice from the studio</span></div><div class="check"><span class="box"></span><span class="txt">Draft the Friday update (keep it short)</span></div></div>'}
+      ],
+      today:[
+        {t:"Flight price tracker", s:"flights/search", c:"#FFC53D"},
+        {t:"Alfama apartment reviews", s:"stays/reviews", c:"#FFC53D"}
+      ],
+      tidy:5
+    },
+    research: {
+      name:"Research", color:"#4D96FF",
+      greeting:"Down the rabbit hole — notes kept.",
+      lede:"The curious Space. Tabs pile up here while you learn things, then archive themselves when the curiosity fades.",
+      tabs:[
+        {t:"Sourdough starter guide", s:"bake.guide/starter", c:"#FFC53D",
+         body:'<div class="crumbs">Pinned tab · Baking</div><h2>A starter is a pet <span class="hl">you can eat.</span></h2><p class="lede">Day-by-day: flour, water, patience. By day seven you will name it, and by day ten you will be insufferable about bread.</p><div class="steps"><div class="step"><b>Day 1–2.</b> Mix equal parts whole-wheat flour and water. Leave it alone. It is doing more than you are.</div><div class="step"><b>Day 3–5.</b> Feed it twice a day. Discard half, or drown in starter — your call.</div><div class="step"><b>Day 6–7.</b> It doubles in four hours? It is alive. Bake something and take full credit.</div></div>'},
+        {t:"Keyboard deep-dive — thread", s:"forum/keyboards", c:"#3DDC97",
+         body:'<div class="crumbs">Pinned tab · Hobby</div><h2>Thock, clack, <span class="hl">and other sacred sounds.</span></h2><p class="lede">A 400-reply thread on switches, distilled: linear for work, tactile for joy, and yes, the keycaps matter more than you think.</p><div class="cardgrid"><div class="card"><span class="tag">Verdict</span><h3>Start with a 65%</h3><p>Arrows, no numpad, no regrets. The gateway layout.</p></div><div class="card"><span class="tag">Wisdom</span><h3>Lube the stabilizers</h3><p>The single biggest sound upgrade. Twenty minutes, cotton swabs, glory.</p></div></div>'},
+        {t:"Paper: attention is all you need", s:"arxiv.org/abs/1706.03762", c:"#9D7BFF",
+         body:'<div class="crumbs">Pinned tab · Reading</div><h2>Eight pages that <span class="hl">rebuilt the decade.</span></h2><p class="lede">The 2017 paper, still worth the read. Skip the math on first pass; the diagrams tell the whole story.</p><div class="steps"><div class="step"><b>Read the abstract twice.</b> It is four sentences and contains the entire idea.</div><div class="step"><b>Stare at Figure 1.</b> The transformer, in one beautiful symmetric diagram.</div><div class="step"><b>Skim the experiments.</b> BLEU scores aside, note how small the model was.</div></div>'}
+      ],
+      today:[
+        {t:"Best flour for high hydration", s:"bake.guide/flour", c:"#FFC53D"},
+        {t:"Desk mat roundup 2026", s:"gear/desk-mats", c:"#FFC53D"}
+      ],
+      tidy:9
+    },
+    play: {
+      name:"Play", color:"#3DDC97",
+      greeting:"Off the clock. The fun Space is open.",
+      lede:"No deadlines in here. Games, gigs, and weekend plans — a Space that smells faintly of popcorn.",
+      tabs:[
+        {t:"Cozy games to finish", s:"games/backlog", c:"#9D7BFF",
+         body:'<div class="crumbs">Pinned tab · Games</div><h2>The backlog, <span class="hl">ranked by coziness.</span></h2><p class="lede">Eleven games started, two finished. This Space exists so the guilt stays organized.</p><div class="checklist"><div class="check done"><span class="box">✓</span><span class="txt">Stardew Valley — 100% (we do not talk about the hours)</span></div><div class="check"><span class="box"></span><span class="txt">Outer Wilds — bring tissues</span></div><div class="check"><span class="box"></span><span class="txt">A Short Hike — a perfect Sunday</span></div></div>'},
+        {t:"Concert tickets — June", s:"tickets/june", c:"#FF6B57",
+         body:'<div class="crumbs">Pinned tab · Music</div><h2>June, <span class="hl">front row.</span></h2><p class="lede">Three shows, one festival, zero regrets. Tickets pinned here so they survive the tab apocalypse.</p><div class="cardgrid"><div class="card"><span class="tag">Jun 12</span><h3>Rooftop session</h3><p>Acoustic set, sunset slot. Bring the light jacket.</p></div><div class="card"><span class="tag">Jun 21</span><h3>Summer festival</h3><p>Two stages, one very questionable food truck strategy.</p></div><div class="card"><span class="tag">Jun 28</span><h3>Small club night</h3><p>200 people, no phones, best sound in the city.</p></div></div>'},
+        {t:"Weekend hike route", s:"trails/ridge-loop", c:"#3DDC97",
+         body:'<div class="crumbs">Pinned tab · Outdoors</div><h2>Twelve kilometers, <span class="hl">one great sandwich.</span></h2><p class="lede">The ridge loop: up through the pines, lunch at the viewpoint, down before the light goes.</p><div class="steps"><div class="step"><b>Trailhead, 9:00.</b> Park at the north lot — it fills by ten.</div><div class="step"><b>The climb.</b> Steady, shaded, with exactly one false summit to keep you humble.</div><div class="step"><b>The viewpoint.</b> Sandwich o\u2019clock. Stay for the clouds.</div></div>'}
+      ],
+      today:[
+        {t:"Festival lineup rumors", s:"music/rumors", c:"#FFC53D"},
+        {t:"Trail weather Saturday", s:"weather/trails", c:"#FFC53D"}
+      ],
+      tidy:3
+    }
+  };
+
+  var DOWNLOADS = [
+    {n:"lisbon-itinerary.pdf", m:"2.4 MB · finished just now", c:"#4D96FF"},
+    {n:"starter-feeding-schedule.png", m:"1.1 MB · finished 2h ago", c:"#3DDC97"},
+    {n:"festival-poster-final-v3.pdf", m:"8.7 MB · finished yesterday", c:"#FF6B57"}
+  ];
+
+  var state = { space:"work", tab:0, activeList:"pinned" };
+
+  var $ = function(id){ return document.getElementById(id); };
+  var sidebar = $("sidebar"), content = $("content"), pillSite = $("pillSite");
+
+  /* ---------- toast ---------- */
+  var toastTimer = null;
+  function toast(msg){
+    var el = $("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove("show"); }, 2400);
+  }
+
+  /* ---------- renderers ---------- */
+  function renderFavs(){
+    var html = FAVS.map(function(f){
+      return '<a class="fav" style="--c:'+f.c+'" title="'+f.n+'">'+f.i+"</a>";
+    }).join("");
+    $("favs").innerHTML = html + '<button class="fav fav-add" id="favAdd" title="Pin a favorite">+</button>';
+    $("favAdd").addEventListener("click", function(){
+      toast("Favorites stay pinned across every Space.");
+    });
+  }
+
+  function renderTabs(){
+    var sp = SPACES[state.space];
+    $("pinned").innerHTML = sp.tabs.map(function(t,i){
+      var on = (state.activeList==="pinned" && state.tab===i) ? " active" : "";
+      return '<button class="tab'+on+'" data-kind="pinned" data-i="'+i+'">'+
+        '<i class="dot" style="background:'+t.c+'"></i>'+
+        '<span class="t">'+t.t+'</span>'+
+        '<span class="x" data-x="'+i+'" title="Close tab">×</span></button>';
+    }).join("");
+    $("today").innerHTML = sp.today.map(function(t,i){
+      return '<button class="tab today" data-kind="today" data-i="'+i+'">'+
+        '<i class="dot" style="background:'+t.c+'"></i>'+
+        '<span class="t">'+t.t+'</span>'+
+        '<span class="archive-note">auto-archives tonight</span></button>';
+    }).join("");
+    $("tidy").textContent = sp.tidy + " tabs auto-archived today — your sidebar stays tidy.";
+
+    var btns = document.querySelectorAll(".tab");
+    for(var k=0;k<btns.length;k++){
+      (function(btn){
+        btn.addEventListener("click", function(e){
+          var x = e.target.getAttribute("data-x");
+          if(x !== null){
+            e.stopPropagation();
+            toast("Pinned tabs survive. That one is safe with us.");
+            return;
+          }
+          var kind = btn.getAttribute("data-kind");
+          var i = parseInt(btn.getAttribute("data-i"),10);
+          if(kind === "pinned"){
+            state.activeList = "pinned"; state.tab = i;
+            var t = SPACES[state.space].tabs[i];
+            pillSite.textContent = t.s;
+            renderContent(); renderTabs();
+          } else {
+            state.activeList = "today";
+            pillSite.textContent = SPACES[state.space].today[i].s;
+            renderPeek(SPACES[state.space].today[i]);
+            renderTabs();
+          }
+        });
+      })(btns[k]);
+    }
+  }
+
+  function renderPeek(t){
+    content.innerHTML = '<div class="page">'+
+      '<div class="crumbs">Peek · unpinned tab</div>'+
+      '<h2>'+t.t+'</h2>'+
+      '<p class="lede">A quick peek — this tab is still in the Today pile and will auto-archive tonight. '+
+      'Pin it to keep it, or let the browser tidy up after you.</p>'+
+      '<div class="action-row"><button class="btn" id="peekPin">Pin this tab</button>'+
+      '<button class="btn ghost" id="peekClose">Let it archive</button></div></div>';
+    $("peekPin").addEventListener("click", function(){
+      toast("Pinned. It now lives above the fold, forever.");
+    });
+    $("peekClose").addEventListener("click", function(){
+      toast("Archived. Find it anytime in the Library.");
+      state.activeList = "pinned";
+      renderContent(); renderTabs();
+    });
+  }
+
+  function spaceHome(){
+    var sp = SPACES[state.space];
+    return '<div class="page">'+
+      '<div class="crumbs">'+sp.name+' Space</div>'+
+      '<h2>'+sp.greeting+'</h2>'+
+      '<p class="lede">'+sp.lede+'</p>'+
+      '<div class="cardgrid">'+
+      '<div class="card"><span class="tag">Pinned</span><h3>'+sp.tabs.length+' tabs that matter</h3><p>Kept above the fold. Everything else earns its place or archives itself.</p></div>'+
+      '<div class="card"><span class="tag">Today</span><h3>'+sp.today.length+' tabs in the pile</h3><p>Unpinned and unbothered. They will quietly archive tonight.</p></div>'+
+      '<div class="card"><span class="tag">Archived</span><h3>'+sp.tidy+' tabs tidied today</h3><p>Gone from the sidebar, not from your life. The Library remembers.</p></div>'+
+      '</div>'+
+      '<div class="action-row"><button class="btn" id="homeCmd">Open the command bar</button>'+
+      '<button class="btn ghost" id="homeEasel">Make an Easel</button></div></div>';
+  }
+
+  function renderContent(){
+    var sp = SPACES[state.space];
+    if(state.activeList === "pinned"){
+      content.innerHTML = '<div class="page">' + sp.tabs[state.tab].body + '</div>';
+    } else {
+      content.innerHTML = '<div class="page">' + spaceHome() + '</div>';
+    }
+    var hc = $("homeCmd");
+    if(hc) hc.addEventListener("click", openCmd);
+    var he = $("homeEasel");
+    if(he) he.addEventListener("click", openEasels);
+  }
+
+  function openEasels(){
+    state.activeList = "easels";
+    content.innerHTML = '<div class="page">'+
+      '<div class="crumbs">Easels & Notes · '+SPACES[state.space].name+'</div>'+
+      '<h2>Draw the idea <span class="hl">before it evaporates.</span></h2>'+
+      '<p class="lede">Easels are little whiteboards that live in your sidebar — half sketch, half note, all yours.</p>'+
+      '<div class="easel-grid">'+
+      '<div class="easel"><svg viewBox="0 0 240 110"><path d="M12 84 C 60 20, 100 100, 150 40 S 210 70, 228 24" fill="none" stroke="#FF6B57" stroke-width="6" stroke-linecap="round"/><circle cx="150" cy="40" r="7" fill="none" stroke="#4D96FF" stroke-width="5"/></svg><p>Weekend trip ideas<span>edited 2h ago</span></p></div>'+
+      '<div class="easel"><svg viewBox="0 0 240 110"><rect x="30" y="24" width="70" height="60" rx="10" fill="none" stroke="#3DDC97" stroke-width="6"/><path d="M120 80 L 200 80 M120 58 L 190 58 M120 36 L 170 36" stroke="#FFC53D" stroke-width="6" stroke-linecap="round"/></svg><p>Desk setup v4<span>edited yesterday</span></p></div>'+
+      '</div>'+
+      '<div class="action-row"><button class="btn" id="newEaselBtn">New Easel</button></div></div>';
+    $("newEaselBtn").addEventListener("click", function(){
+      toast("New Easel ready — draw something brilliant.");
+    });
+    renderTabs();
+  }
+
+  function openDownloads(){
+    state.activeList = "downloads";
+    content.innerHTML = '<div class="page">'+
+      '<div class="crumbs">Library · Downloads</div>'+
+      '<h2>Fresh off the internet, <span class="hl">tidily listed.</span></h2>'+
+      '<p class="lede">Every download, in one calm place. No more digging through a downloads folder from 2019.</p>'+
+      DOWNLOADS.map(function(d){
+        return '<div class="dl-row"><span class="fi" style="background:'+d.c+'">'+
+          '<svg viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></span>'+
+          '<div><b>'+d.n+'</b><span>'+d.m+'</span></div><span class="ok">✓</span></div>';
+      }).join("") + '</div>';
+    renderTabs();
+  }
+
+  function renderLib(){
+    var items = [
+      {n:"Media", c:"#4D96FF", cnt:"3", icon:'<path d="M4 16l5-5 4 4 3-3 4 4"/><rect x="3" y="5" width="18" height="14" rx="3"/>'},
+      {n:"Downloads", c:"#3DDC97", cnt:"2", icon:'<path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/>'},
+      {n:"Easels & Notes", c:"#FFC53D", cnt:"", icon:'<path d="M4 20l4-1L19 8a2.1 2.1 0 0 0-3-3L5 16l-1 4z"/>'},
+      {n:"Boosts", c:"#9D7BFF", cnt:"", icon:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>'},
+      {n:"Archived tabs", c:"#FF7A66", cnt:"12", icon:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 9h16"/>'}
+    ];
+    $("lib").innerHTML = items.map(function(it,i){
+      return '<button data-lib="'+i+'"><span class="li" style="background:'+it.c+'">'+
+        '<svg viewBox="0 0 24 24">'+it.icon+'</svg></span>'+
+        '<span>'+it.n+'</span>'+(it.cnt?'<span class="cnt">'+it.cnt+'</span>':"")+'</button>';
+    }).join("");
+    var btns = document.querySelectorAll("[data-lib]");
+    for(var k=0;k<btns.length;k++){
+      (function(btn){
+        btn.addEventListener("click", function(){
+          var n = btn.querySelector("span:nth-child(2)").textContent;
+          if(n === "Easels & Notes") openEasels();
+          else if(n === "Downloads") openDownloads();
+          else if(n === "Archived tabs") toast("12 tabs resting here — search them from the command bar.");
+          else if(n === "Boosts") toast("Boosts restyle any site. The internet, but your font.");
+          else toast("Media from your recent tabs, all in one shelf.");
+          document.body.classList.remove("sb-open");
+        });
+      })(btns[k]);
+    }
+  }
+
+  /* ---------- spaces ---------- */
+  function setSpace(key){
+    if(!SPACES[key]) return;
+    state.space = key;
+    state.activeList = "pinned"; state.tab = 0;
+    var sp = SPACES[key];
+    document.documentElement.style.setProperty("--space", sp.color);
+    $("spaceName").textContent = sp.name;
+    $("winSpace").textContent = sp.name;
+    var dots = document.querySelectorAll(".sp[data-space]");
+    for(var i=0;i<dots.length;i++) dots[i].classList.toggle("on", dots[i].getAttribute("data-space")===key);
+    pillSite.textContent = sp.tabs[0].s;
+    renderTabs(); renderContent();
+    document.body.classList.remove("sb-open");
+  }
+  var spBtns = document.querySelectorAll(".sp[data-space]");
+  for(var s=0;s<spBtns.length;s++){
+    (function(btn){
+      btn.addEventListener("click", function(){ setSpace(btn.getAttribute("data-space")); });
+    })(spBtns[s]);
+  }
+  $("newSpace").addEventListener("click", function(){
+    toast("New Space: pick a color, give it a name, start fresh.");
+  });
+
+  /* ---------- sidebar toggles ---------- */
+  $("collapseBtn").addEventListener("click", function(){
+    document.body.classList.toggle("sb-collapsed");
+  });
+  $("hamburger").addEventListener("click", function(){
+    document.body.classList.toggle("sb-open");
+  });
+
+  /* ---------- command bar ---------- */
+  var overlay = $("cmdOverlay"), input = $("cmdInput"), list = $("cmdList");
+  var items = [], selIdx = 0;
+
+  function buildItems(){
+    items = [];
+    items.push({label:"New tab", hint:"⌘T", color:"#FF7A66", run:function(){ toast("A fresh, unbothered tab."); }});
+    items.push({label:"New space", hint:"⌘⇧N", color:"#9D7BFF", run:function(){ toast("New Space: pick a color, give it a name, start fresh."); }});
+    items.push({label:"Archive all today tabs", hint:"⌘⇧A", color:"#3DDC97", run:function(){ toast("Today pile archived. Breathe."); }});
+    items.push({label:"Make an Easel", hint:"⌘⇧E", color:"#FFC53D", run:openEasels});
+    items.push({label:"Open Downloads", hint:"", color:"#4D96FF", run:openDownloads});
+    items.push({label:"Toggle sidebar", hint:"⌘S", color:"#6E6459", run:function(){
+      document.body.classList.toggle("sb-collapsed");
+    }});
+    Object.keys(SPACES).forEach(function(key){
+      var sp = SPACES[key];
+      items.push({label:"Switch to "+sp.name+" space", hint:"", color:sp.color, run:function(){ setSpace(key); }});
+      sp.tabs.forEach(function(t){
+        (function(tt){
+          items.push({label:"Go to tab — "+tt.t, hint:"⏎", color:tt.c, run:function(){
+            setSpaceSilent(key);
+            state.activeList = "pinned";
+            state.tab = sp.tabs.indexOf(tt);
+            pillSite.textContent = tt.s;
+            renderTabs(); renderContent();
+          }});
+        })(t);
+      });
+    });
+  }
+
+  function setSpaceSilent(key){
+    state.space = key; state.tab = 0;
+    var sp = SPACES[key];
+    document.documentElement.style.setProperty("--space", sp.color);
+    $("spaceName").textContent = sp.name;
+    $("winSpace").textContent = sp.name;
+    var dots = document.querySelectorAll(".sp[data-space]");
+    for(var i=0;i<dots.length;i++) dots[i].classList.toggle("on", dots[i].getAttribute("data-space")===key);
+  }
+
+  function renderCmdList(){
+    var q = input.value.trim().toLowerCase();
+    var filtered = items.filter(function(it){
+      return it.label.toLowerCase().indexOf(q) !== -1;
+    });
+    selIdx = Math.min(selIdx, Math.max(filtered.length-1, 0));
+    if(filtered.length === 0){
+      list.innerHTML = '<div class="cmd-empty">Nothing found — but your tabs are already tidy.</div>';
+      list._rows = [];
+      return;
+    }
+    list.innerHTML = filtered.map(function(it,i){
+      return '<div class="cmd-row'+(i===selIdx?" on":"")+'">'+
+        '<span class="kdot" style="background:'+it.color+'"></span>'+
+        '<span>'+it.label+'</span>'+
+        (it.hint?'<kbd>'+it.hint+'</kbd>':"")+'</div>';
+    }).join("");
+    list._rows = filtered;
+    var rows = list.querySelectorAll(".cmd-row");
+    for(var r=0;r<rows.length;r++){
+      (function(row, idx){
+        row.addEventListener("click", function(){ runCmd(idx); });
+        row.addEventListener("mousemove", function(){ selIdx = idx; paintSel(); });
+      })(rows[r], r);
+    }
+  }
+  function paintSel(){
+    var rows = list.querySelectorAll(".cmd-row");
+    for(var i=0;i<rows.length;i++) rows[i].classList.toggle("on", i===selIdx);
+  }
+  function runCmd(idx){
+    var rows = list._rows || [];
+    if(rows[idx]){ closeCmd(); rows[idx].run(); }
+  }
+  function openCmd(){
+    overlay.classList.add("open");
+    selIdx = 0; input.value = "";
+    renderCmdList();
+    setTimeout(function(){ input.focus(); }, 60);
+  }
+  function closeCmd(){ overlay.classList.remove("open"); input.blur(); }
+
+  $("urlpill").addEventListener("click", openCmd);
+  overlay.addEventListener("click", function(e){ if(e.target === overlay) closeCmd(); });
+  input.addEventListener("input", function(){ selIdx = 0; renderCmdList(); });
+  input.addEventListener("keydown", function(e){
+    var rows = list._rows || [];
+    if(e.key === "ArrowDown"){ e.preventDefault(); selIdx = Math.min(selIdx+1, rows.length-1); paintSel(); }
+    else if(e.key === "ArrowUp"){ e.preventDefault(); selIdx = Math.max(selIdx-1, 0); paintSel(); }
+    else if(e.key === "Enter"){ runCmd(selIdx); }
+    else if(e.key === "Escape"){ closeCmd(); }
+  });
+  document.addEventListener("keydown", function(e){
+    var mod = e.metaKey || e.ctrlKey;
+    if(mod && (e.key.toLowerCase() === "t" || e.key.toLowerCase() === "l")){
+      e.preventDefault();
+      overlay.classList.contains("open") ? closeCmd() : openCmd();
+    } else if(e.key === "Escape" && overlay.classList.contains("open")){
+      closeCmd();
+    }
+  });
+
+  /* ---------- init ---------- */
+  buildItems();
+  renderFavs();
+  renderTabs();
+  renderLib();
+  renderContent();
+})();
+</script>
+</body>
+</html>
