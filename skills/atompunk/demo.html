@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>atompunk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700&family=Bungee&family=Racing+Sans+One&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FFF6DE; --paper:#FBEECB; --teal:#1E9A96; --teal-deep:#0F6E6B;
+  --rocket:#E63B2A; --mustard:#F2B234; --chrome:#C7CDD4;
+  --ink:#22303A; --navy:#152B3C; --neon:#FF5C39; --phosphor:#7DFF9E;
+  --display:'Bungee',system-ui,'Segoe UI',Arial,sans-serif;
+  --script:'Racing Sans One',cursive,system-ui,sans-serif;
+  --mono:'Space Mono',ui-monospace,'Courier New',monospace;
+  --body:'Archivo',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:var(--body);line-height:1.6;overflow-x:hidden}
+img,svg{max-width:100%}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.kicker{font-family:var(--display);font-size:.85rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal-deep)}
+
+/* ---- neon ticker ---- */
+.ticker{background:var(--navy);border-top:4px solid var(--neon);border-bottom:4px solid var(--neon);overflow:hidden;white-space:nowrap}
+.ticker-track{display:inline-block;animation:tick 22s linear infinite;color:var(--phosphor);font-family:var(--mono);font-size:.85rem;padding:10px 0}
+.ticker-track span{padding-right:60px}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ---- nav ---- */
+nav{background:var(--cream);border-bottom:3px solid var(--ink);position:sticky;top:0;z-index:50}
+.nav-inner{display:flex;align-items:center;gap:20px;padding:12px 24px;max-width:1100px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.brand .mini-burst{width:52px;height:52px;background:var(--rocket);flex:none;display:grid;place-items:center;color:var(--cream);
+  clip-path:polygon(50% 0%,61% 12%,76% 6%,80% 20%,95% 20%,93% 35%,107% 42%,99% 55%,107% 68%,93% 71%,95% 86%,80% 82%,76% 96%,61% 88%,50% 100%,39% 88%,24% 96%,20% 82%,5% 86%,7% 71%,-7% 68%,1% 55%,-7% 42%,7% 35%,5% 20%,20% 18%,24% 6%,39% 12%);
+  transform:rotate(-10deg);font-family:var(--display);font-size:.8rem;line-height:1;text-align:center}
+.brand strong{font-family:var(--display);font-size:1.05rem;letter-spacing:.04em}
+.nav-links{margin-left:auto;display:flex;gap:22px;align-items:center}
+.nav-links a{color:var(--ink);text-decoration:none;font-weight:700;font-size:.9rem;text-transform:uppercase;letter-spacing:.1em}
+.nav-links a:hover{color:var(--rocket)}
+.ticket-btn{display:inline-block;background:var(--teal);color:var(--cream);font-family:var(--display);font-size:.85rem;
+  padding:12px 24px;border-radius:999px;text-decoration:none;border:3px solid var(--ink);box-shadow:0 5px 0 var(--ink);
+  transition:transform .12s ease,box-shadow .12s ease}
+.ticket-btn:hover{transform:translateY(-2px) rotate(-1deg)}
+.ticket-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+
+/* ---- hero ---- */
+.hero{position:relative;padding:80px 0 60px;overflow:hidden;
+  background:radial-gradient(var(--ink) 1.3px,transparent 1.4px) 0 0/14px 14px,linear-gradient(180deg,var(--cream),var(--paper))}
+.hero-rays{position:absolute;top:-120px;right:-120px;width:520px;height:520px;opacity:.16;pointer-events:none;transform:rotate(15deg);
+  background:repeating-conic-gradient(from 0deg,var(--mustard) 0deg 8deg,transparent 8deg 24deg);
+  -webkit-mask:radial-gradient(circle,#000 0 40%,transparent 70%);mask:radial-gradient(circle,#000 0 40%,transparent 70%)}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+.hero h1{font-family:var(--display);font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.02;letter-spacing:-.01em;margin:14px 0 10px}
+.hero h1 .pop{color:var(--rocket)}
+.hero .scriptline{font-family:var(--script);font-size:clamp(1.3rem,3vw,1.9rem);color:var(--teal-deep);margin-bottom:16px}
+.hero p.lead{font-size:1.1rem;max-width:34em;margin-bottom:26px}
+.hero-cta{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.ghost-btn{display:inline-block;padding:14px 28px;border-radius:999px;border:3px solid var(--ink);background:transparent;
+  color:var(--ink);font-family:var(--display);font-size:.85rem;text-decoration:none}
+.ghost-btn:hover{background:var(--mustard)}
+.rocket-stage{position:relative;text-align:center}
+.rocket-stage svg{width:min(300px,70%);height:auto;filter:drop-shadow(10px 12px 0 rgba(34,48,58,.18))}
+.hero .badge-spin{position:absolute;top:6%;left:2%;width:120px;height:120px;background:var(--mustard);display:grid;place-items:center;color:var(--ink);
+  clip-path:polygon(50% 0%,61% 12%,76% 6%,80% 20%,95% 20%,93% 35%,107% 42%,99% 55%,107% 68%,93% 71%,95% 86%,80% 82%,76% 96%,61% 88%,50% 100%,39% 88%,24% 96%,20% 82%,5% 86%,7% 71%,-7% 68%,1% 55%,-7% 42%,7% 35%,5% 20%,20% 18%,24% 6%,39% 12%);
+  transform:rotate(-10deg);font-family:var(--display);font-size:.78rem;line-height:1.15;text-align:center}
+
+/* ---- countdown band ---- */
+.countdown{background:var(--navy);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);padding:34px 0;color:var(--cream)}
+.count-inner{display:flex;align-items:center;gap:30px;flex-wrap:wrap;justify-content:center}
+.count-inner .kicker{color:var(--mustard)}
+#countdown{display:flex;gap:14px}
+#countdown .cell{background:var(--navy);border:3px solid var(--chrome);border-radius:10px;min-width:86px;padding:10px 6px;text-align:center}
+#countdown .num{font-family:var(--mono);font-weight:700;font-size:1.9rem;color:var(--phosphor)}
+#countdown .lbl{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--chrome)}
+
+/* ---- boomerang divider ---- */
+.boomerang{display:block;width:min(600px,80%);margin:0 auto;height:60px}
+
+/* ---- sections ---- */
+section.block{padding:70px 0}
+section.block h2{font-family:var(--display);font-size:clamp(1.8rem,4vw,2.6rem);margin:10px 0 8px}
+section.block .sub{max-width:42em;margin-bottom:30px}
+
+/* ---- tabs ---- */
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+.tab-btn{font-family:var(--display);font-size:.85rem;padding:12px 22px;border-radius:999px;border:3px solid var(--ink);
+  background:var(--paper);color:var(--ink);cursor:pointer;transition:transform .12s ease}
+.tab-btn[aria-selected="true"]{background:var(--rocket);color:var(--cream);transform:rotate(-2deg)}
+.tab-btn:hover{transform:translateY(-2px)}
+.tab-panel{display:none;background:var(--paper);border:3px solid var(--ink);border-radius:16px;padding:30px;
+  box-shadow:8px 8px 0 rgba(34,48,58,.15)}
+.tab-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+.tab-panel h3{font-family:var(--display);font-size:1.4rem;margin-bottom:10px;color:var(--teal-deep)}
+.tab-panel .pulp-art{height:190px;border-radius:10px;border:3px solid var(--ink)}
+
+/* ---- pulp cards ---- */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:10px}
+.pulp{background:var(--paper);border:3px solid var(--ink);border-radius:14px;padding:18px;transition:transform .15s ease}
+.pulp:hover{transform:translateY(-4px) rotate(-.6deg)}
+.pulp-art{height:150px;border-radius:8px;border:2px solid var(--ink);margin-bottom:14px}
+.art-a{background:radial-gradient(circle at 70% 28%,var(--mustard) 0 26px,transparent 27px),radial-gradient(circle at 22% 70%,var(--teal) 0 42px,transparent 43px),radial-gradient(var(--ink) 1.2px,transparent 1.3px) 0 0/12px 12px,linear-gradient(160deg,var(--rocket),var(--mustard))}
+.art-b{background:radial-gradient(circle at 50% 40%,var(--cream) 0 30px,transparent 31px),repeating-conic-gradient(from 0deg at 50% 40%,var(--teal) 0deg 12deg,transparent 12deg 30deg),linear-gradient(180deg,var(--navy),var(--teal-deep))}
+.art-c{background:radial-gradient(circle at 30% 30%,var(--mustard) 0 20px,transparent 21px),radial-gradient(circle at 68% 62%,var(--rocket) 0 34px,transparent 35px),linear-gradient(140deg,var(--teal),var(--cream))}
+.pulp h3{font-family:var(--display);font-size:1.05rem;margin-bottom:6px}
+.pulp .tag{display:inline-block;font-family:var(--mono);font-size:.7rem;background:var(--mustard);border:2px solid var(--ink);
+  border-radius:999px;padding:3px 12px;margin-bottom:10px;transform:rotate(-4deg)}
+.pulp p{font-size:.95rem}
+
+/* ---- booking ---- */
+#book{background:var(--navy);color:var(--cream);clip-path:polygon(0 0,100% 4vw,100% 100%,0 100%)}
+#book .wrap{padding-top:calc(4vw + 40px)}
+#book h2{color:var(--mustard)}
+#book .kicker{color:var(--teal)}
+.book-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;margin-top:24px}
+.ticket-row{display:flex;align-items:center;gap:16px;background:rgba(255,246,222,.06);border:2px solid var(--chrome);
+  border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.ticket-row .info{flex:1}
+.ticket-row .info strong{font-family:var(--display);font-size:1rem;display:block}
+.ticket-row .info small{color:var(--chrome)}
+.qty{display:flex;align-items:center;gap:10px}
+.qty button{width:38px;height:38px;border-radius:50%;border:2px solid var(--cream);background:transparent;color:var(--cream);
+  font-size:1.3rem;cursor:pointer;line-height:1}
+.qty button:hover{background:var(--teal)}
+.qty .n{font-family:var(--mono);font-size:1.2rem;min-width:2ch;text-align:center}
+.summary{background:var(--cream);color:var(--ink);border:3px solid var(--chrome);border-radius:14px;padding:24px;
+  box-shadow:0 0 0 6px var(--navy),0 0 34px rgba(255,92,57,.35)}
+.summary h3{font-family:var(--display);font-size:1.2rem;margin-bottom:12px}
+.summary .line{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.95rem;padding:6px 0}
+.summary .total{border-top:3px dashed var(--ink);margin-top:8px;padding-top:10px;font-weight:700;font-size:1.15rem}
+#reserve{margin-top:18px;width:100%;font-size:1rem;padding:16px}
+#book-confirm{display:none;margin-top:16px;background:#123;border:3px solid var(--phosphor);color:var(--phosphor);
+  font-family:var(--mono);border-radius:10px;padding:16px}
+#book-confirm strong{color:var(--cream)}
+
+/* ---- shelter band ---- */
+.shelter-wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.shelter{background:var(--navy);color:var(--phosphor);border:4px solid var(--phosphor);border-radius:8px;
+  padding:22px;display:flex;gap:18px;align-items:center}
+.shelter-mark{border:3px solid var(--phosphor);border-radius:50%;width:64px;height:64px;display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:1.2rem;flex:none}
+.shelter strong{font-family:var(--mono);letter-spacing:.12em;font-size:1.25rem}
+.shelter p{font-family:var(--mono);font-size:.9rem;margin-top:6px}
+.radar{width:200px;height:200px;border-radius:50%;position:relative;margin:0 auto;
+  background:radial-gradient(circle,var(--teal-deep) 0%,var(--navy) 75%);
+  border:8px solid var(--chrome);box-shadow:0 0 0 3px var(--ink);overflow:hidden}
+.radar::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:repeating-radial-gradient(circle at center,transparent 0 30px,rgba(125,255,158,.28) 30px 32px)}
+.radar::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(0deg,transparent 49.5%,rgba(125,255,158,.28) 50%,transparent 50.5%),
+             linear-gradient(90deg,transparent 49.5%,rgba(125,255,158,.28) 50%,transparent 50.5%)}
+.sweep{position:absolute;inset:0;border-radius:50%;z-index:2;
+  background:conic-gradient(from 0deg,rgba(125,255,158,.95),transparent 22%);animation:sweep 3.4s linear infinite}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.radar-caption{text-align:center;font-family:var(--mono);font-size:.8rem;color:var(--teal-deep);margin-top:10px}
+
+footer{background:var(--navy);color:var(--chrome);padding:34px 0;font-family:var(--mono);font-size:.85rem}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (prefers-reduced-motion:reduce){
+  .sweep,.ticker-track{animation:none}
+  html{scroll-behavior:auto}
+}
+@media (max-width:860px){
+  .hero-grid,.tab-panel.active,.book-grid,.shelter-wrap{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr}
+  .nav-links a:not(.ticket-btn){display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>ATOMIC HARBOR EXPO &star; WORLD OF TOMORROW FAIR &star; OPENS JULY 4TH &star; FREE PARKING FOR FLYING CARS &star; ROCKET-BUS RIDES EVERY 20 MINUTES &star;</span>
+    <span>ATOMIC HARBOR EXPO &star; WORLD OF TOMORROW FAIR &star; OPENS JULY 4TH &star; FREE PARKING FOR FLYING CARS &star; ROCKET-BUS RIDES EVERY 20 MINUTES &star;</span>
+  </div>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <span class="mini-burst">AH<br>58</span>
+      <strong>ATOMIC HARBOR</strong>
+    </a>
+    <div class="nav-links">
+      <a href="#exhibits">Exhibits</a>
+      <a href="#attractions">Attractions</a>
+      <a href="#shelter">Shelter Info</a>
+      <a class="ticket-btn" href="#book">Get Tickets!</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-rays"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge-spin">BRAND<br>NEW!<br>1958</span>
+      <p class="kicker">The Atomic Tourism Board presents</p>
+      <h1>BLAST OFF<br>TO THE <span class="pop">WORLD<br>OF TOMORROW!</span></h1>
+      <p class="scriptline">Atomic Harbor Expo &mdash; July 4th, one glorious day only-ish</p>
+      <p class="lead">One hundred acres of rocket fins, radar domes and chrome-plated wonder on the harborfront.
+      Ride the Space Highway, dine in the Atomic Kitchen, and shake hands with a real, genuine robot.
+      The future is friendly &mdash; and it opens at nine sharp!</p>
+      <div class="hero-cta">
+        <a class="ticket-btn" href="#book">Get Your Tickets!</a>
+        <a class="ghost-btn" href="#exhibits">See the Exhibits</a>
+      </div>
+    </div>
+    <div class="rocket-stage">
+      <svg viewBox="0 0 200 320" role="img" aria-label="A chrome rocket with red fins and a porthole">
+        <defs>
+          <linearGradient id="chromeBody" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#8f979e"/><stop offset=".45" stop-color="#e8edf1"/>
+            <stop offset=".55" stop-color="#e8edf1"/><stop offset="1" stop-color="#8f979e"/>
+          </linearGradient>
+        </defs>
+        <path d="M100 8 C150 60 165 120 165 190 L165 230 L35 230 L35 190 C35 120 50 60 100 8 Z" fill="url(#chromeBody)" stroke="#22303A" stroke-width="5"/>
+        <path d="M35 230 L8 300 L35 292 Z" fill="#E63B2A" stroke="#22303A" stroke-width="5"/>
+        <path d="M165 230 L192 300 L165 292 Z" fill="#E63B2A" stroke="#22303A" stroke-width="5"/>
+        <circle cx="100" cy="120" r="30" fill="#1E9A96" stroke="#22303A" stroke-width="5"/>
+        <circle cx="100" cy="120" r="30" fill="none" stroke="#C7CDD4" stroke-width="4" stroke-dasharray="6 8" opacity=".7"/>
+        <rect x="70" y="185" width="60" height="12" rx="6" fill="#F2B234" stroke="#22303A" stroke-width="4"/>
+        <path d="M88 300 q-6 14 -16 16 M112 300 q6 14 16 16" stroke="#F2B234" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M100 8 l0 -6" stroke="#22303A" stroke-width="5"/>
+        <circle cx="100" cy="2" r="5" fill="#E63B2A" stroke="#22303A" stroke-width="3"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<div class="countdown">
+  <div class="wrap count-inner">
+    <p class="kicker">Gates open in</p>
+    <div id="countdown" role="timer" aria-live="off">
+      <div class="cell"><div class="num" id="cd-days">--</div><div class="lbl">Days</div></div>
+      <div class="cell"><div class="num" id="cd-hours">--</div><div class="lbl">Hours</div></div>
+      <div class="cell"><div class="num" id="cd-mins">--</div><div class="lbl">Mins</div></div>
+      <div class="cell"><div class="num" id="cd-secs">--</div><div class="lbl">Secs</div></div>
+    </div>
+    <p class="kicker">Do not be late. The robot will notice.</p>
+  </div>
+</div>
+
+<svg class="boomerang" viewBox="0 0 600 60" aria-hidden="true">
+  <path d="M10 45 Q300 -10 590 45" stroke="#E63B2A" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <circle cx="300" cy="20" r="13" fill="#F2B234" stroke="#22303A" stroke-width="4"/>
+  <circle cx="120" cy="30" r="7" fill="#1E9A96"/>
+  <circle cx="480" cy="30" r="7" fill="#1E9A96"/>
+</svg>
+
+<section class="block" id="exhibits">
+  <div class="wrap">
+    <p class="kicker">Three pavilions of pure wonder</p>
+    <h2>SEE THE EXHIBITS!</h2>
+    <p class="sub">Every hall is air-conditioned by science and staffed by smiling guides in chrome helmets.
+    Pick a pavilion to peek inside.</p>
+
+    <div class="tabs" role="tablist" aria-label="Exhibit halls">
+      <button class="tab-btn" id="tab-aero" role="tab" aria-selected="true" aria-controls="panel-aero">Aerospace Hall</button>
+      <button class="tab-btn" id="tab-atom" role="tab" aria-selected="false" aria-controls="panel-atom">Atomics Hall</button>
+      <button class="tab-btn" id="tab-home" role="tab" aria-selected="false" aria-controls="panel-home">Home of Tomorrow</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-aero" role="tabpanel" aria-labelledby="tab-aero">
+      <div>
+        <h3>Touch a Real Nose Cone!</h3>
+        <p>Recovered from a genuine suborbital hop, our Mercury-style capsule sits open for climbing inside
+        (children under twelve must be accompanied by an adult with a camera). Wind-tunnel demos every hour,
+        on the hour, with complimentary earplugs.</p>
+      </div>
+      <div class="pulp-art art-b" aria-hidden="true"></div>
+    </div>
+    <div class="tab-panel" id="panel-atom" role="tabpanel" aria-labelledby="tab-atom">
+      <div>
+        <h3>The Friendly Atom!</h3>
+        <p>Our 40-foot glowing atom model splits — harmlessly, we promise — six times daily. Learn how
+        uranium keeps your toast warm, powers your vacuum cleaner, and will absolutely, positively never
+        be used for anything upsetting. Brought to you by the Consolidated Cheerful Atom Company.</p>
+      </div>
+      <div class="pulp-art art-a" aria-hidden="true"></div>
+    </div>
+    <div class="tab-panel" id="panel-home" role="tabpanel" aria-labelledby="tab-home">
+      <div>
+        <h3>Live Like It's 1975!</h3>
+        <p>Tour the push-button kitchen where dinner cooks itself in 30 seconds flat. Marvel at the
+        picture-phone, the robot vacuum named "Dusty," and a television so large it has its own zip code.
+        Housewives faint daily at 2 p.m. — be there!</p>
+      </div>
+      <div class="pulp-art art-c" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="attractions" style="padding-top:0">
+  <div class="wrap">
+    <p class="kicker">Do not miss</p>
+    <h2>THRILLS! CHILLS! ROCKET FUEL!</h2>
+    <p class="sub">Three can't-miss attractions, each scientifically proven to widen eyes.</p>
+    <div class="cards">
+      <article class="pulp">
+        <div class="pulp-art art-a" aria-hidden="true"></div>
+        <span class="tag">RIDE</span>
+        <h3>Ride the Space Highway!</h3>
+        <p>Rocket-buses leave the North Terminal every 20 minutes for a thrilling 40-second trip to "orbit"
+        (a parking lot with excellent stars painted on it). Seatbelts are chrome.</p>
+      </article>
+      <article class="pulp">
+        <div class="pulp-art art-b" aria-hidden="true"></div>
+        <span class="tag">SHOW</span>
+        <h3>The Radar Dome Revue!</h3>
+        <p>A rotating stage, a 200-piece theremin orchestra, and our famous sweeping radar that finds
+        absolutely nothing — because the skies are friendly! Matinees daily.</p>
+      </article>
+      <article class="pulp">
+        <div class="pulp-art art-c" aria-hidden="true"></div>
+        <span class="tag">DINE</span>
+        <h3>Dine at the Atomic Diner!</h3>
+        <p>Boomerang tables, starburst napkins, and a milkshake so thick it requires a uranium straw.
+        Try the "Fallout Float" — it glows, but only a little, and only at night.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="book">
+  <div class="wrap">
+    <p class="kicker">Admission is a bargain!</p>
+    <h2>RESERVE YOUR TICKETS!</h2>
+    <p class="sub" style="color:var(--chrome)">Children under 3 ride free in the nose cone (one per adult).
+    All sales final — the future waits for no one.</p>
+    <div class="book-grid">
+      <div>
+        <div class="ticket-row">
+          <div class="info"><strong>Adult Admission</strong><small>Full access, all three pavilions</small></div>
+          <div class="qty"><button id="minus-adult" aria-label="Fewer adult tickets">&minus;</button><span class="n" id="qty-adult">2</span><button id="plus-adult" aria-label="More adult tickets">+</button></div>
+        </div>
+        <div class="ticket-row">
+          <div class="info"><strong>Junior Cadet</strong><small>Ages 4–12, includes chrome helmet</small></div>
+          <div class="qty"><button id="minus-junior" aria-label="Fewer junior tickets">&minus;</button><span class="n" id="qty-junior">1</span><button id="plus-junior" aria-label="More junior tickets">+</button></div>
+        </div>
+        <div class="ticket-row">
+          <div class="info"><strong>Rocket-Bus Pass</strong><small>Unlimited Space Highway rides</small></div>
+          <div class="qty"><button id="minus-pass" aria-label="Fewer rocket-bus passes">&minus;</button><span class="n" id="qty-pass">0</span><button id="plus-pass" aria-label="More rocket-bus passes">+</button></div>
+        </div>
+      </div>
+      <div class="summary">
+        <h3>Your Order</h3>
+        <div class="line"><span>Adult &times; <span id="sum-adult">2</span></span><span id="price-adult">$5.00</span></div>
+        <div class="line"><span>Junior &times; <span id="sum-junior">1</span></span><span id="price-junior">$1.50</span></div>
+        <div class="line"><span>Rocket-Bus &times; <span id="sum-pass">0</span></span><span id="price-pass">$0.00</span></div>
+        <div class="line total"><span>TOTAL</span><span id="price-total">$6.50</span></div>
+        <button class="ticket-btn" id="reserve">Reserve My Seats!</button>
+        <div id="book-confirm" role="status">
+          <strong>CONFIRMED!</strong> Your party is on the manifest.
+          Confirmation code: <span id="confirm-code">AH-0000</span>.
+          Present this code at the chrome gate. The future thanks you!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="shelter">
+  <div class="wrap shelter-wrap">
+    <div>
+      <p class="kicker">A note from Civil Defense</p>
+      <h2>KNOW YOUR SHELTER!</h2>
+      <p class="sub">In the cheerful-but-unlikely event of anything un-cheerful, the Expo's lower level
+      doubles as a certified fallout shelter. Please remain cheerful.</p>
+      <div class="shelter">
+        <span class="shelter-mark">CD</span>
+        <div>
+          <strong>FALLOUT SHELTER</strong>
+          <p>CAPACITY 250 &middot; RATIONS 14 DAYS<br>DOORS CLOSE 1800 HRS &middot; PLEASE REMAIN CHEERFUL</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="radar" aria-hidden="true"><div class="sweep"></div></div>
+      <p class="radar-caption">SKY SCAN: ALL CLEAR — NO BOGIES, ONLY FRIENDS</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Built from the atompunk skill &middot; design-skills</span>
+    <span>Atomic Harbor Tourism Board &middot; Est. 1958 &middot; The future is friendly!</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- countdown to opening day (July 4, next occurrence) ---------- */
+  function nextOpening(){
+    var now = new Date();
+    var y = now.getFullYear();
+    var d = new Date(y, 6, 4, 9, 0, 0); // July 4, 9:00 local
+    if (d <= now) d = new Date(y + 1, 6, 4, 9, 0, 0);
+    return d;
+  }
+  var target = nextOpening();
+  var cdDays = document.getElementById('cd-days');
+  var cdHours = document.getElementById('cd-hours');
+  var cdMins = document.getElementById('cd-mins');
+  var cdSecs = document.getElementById('cd-secs');
+  function pad(n){ return String(n).padStart(2, '0'); }
+  function tick(){
+    var ms = Math.max(0, target - new Date());
+    var s = Math.floor(ms / 1000);
+    cdDays.textContent = pad(Math.floor(s / 86400));
+    cdHours.textContent = pad(Math.floor(s % 86400 / 3600));
+    cdMins.textContent = pad(Math.floor(s % 3600 / 60));
+    cdSecs.textContent = pad(s % 60);
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  /* ---------- exhibit tabs ---------- */
+  var tabs = [
+    { btn: 'tab-aero', panel: 'panel-aero' },
+    { btn: 'tab-atom', panel: 'panel-atom' },
+    { btn: 'tab-home', panel: 'panel-home' }
+  ];
+  tabs.forEach(function(t){
+    var btn = document.getElementById(t.btn);
+    btn.addEventListener('click', function(){
+      tabs.forEach(function(o){
+        document.getElementById(o.btn).setAttribute('aria-selected', o === t ? 'true' : 'false');
+        document.getElementById(o.panel).classList.toggle('active', o === t);
+      });
+    });
+    btn.addEventListener('keydown', function(e){
+      var i = tabs.findIndex(function(o){ return o.btn === t.btn; });
+      var n = null;
+      if (e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+      if (e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+      if (n !== null){ e.preventDefault(); document.getElementById(tabs[n].btn).focus(); document.getElementById(tabs[n].btn).click(); }
+    });
+  });
+
+  /* ---------- ticket booking mock ---------- */
+  var PRICES = { adult: 2.50, junior: 1.50, pass: 1.00 };
+  var state = { adult: 2, junior: 1, pass: 0 };
+  function money(n){ return '$' + n.toFixed(2); }
+  function render(){
+    ['adult','junior','pass'].forEach(function(k){
+      document.getElementById('qty-' + k).textContent = state[k];
+      document.getElementById('sum-' + k).textContent = state[k];
+      document.getElementById('price-' + k).textContent = money(state[k] * PRICES[k]);
+    });
+    var total = state.adult * PRICES.adult + state.junior * PRICES.junior + state.pass * PRICES.pass;
+    document.getElementById('price-total').textContent = money(total);
+  }
+  ['adult','junior','pass'].forEach(function(k){
+    document.getElementById('minus-' + k).addEventListener('click', function(){
+      state[k] = Math.max(0, state[k] - 1); render();
+    });
+    document.getElementById('plus-' + k).addEventListener('click', function(){
+      state[k] = Math.min(20, state[k] + 1); render();
+    });
+  });
+  document.getElementById('reserve').addEventListener('click', function(){
+    var total = state.adult + state.junior + state.pass;
+    var box = document.getElementById('book-confirm');
+    if (total === 0){
+      box.style.display = 'block';
+      box.innerHTML = '<strong>HOLD ON, PARTNER!</strong> You have selected zero tickets. The rocket leaves with or without you — add at least one!';
+      return;
+    }
+    var code = 'AH-' + Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('confirm-code').textContent = code;
+    box.style.display = 'block';
+    box.setAttribute('tabindex', '-1');
+    box.focus({ preventScroll: false });
+  });
+  render();
+})();
+</script>
+</body>
+</html>
