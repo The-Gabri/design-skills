@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mid-century</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5ECD7;
+    --mustard: #E5A535;
+    --teal: #1FBFB8;
+    --burnt-orange: #E8601C;
+    --charcoal: #3D3D3D;
+    --walnut: #5E4633;
+    --olive: #5E6B3A;
+    --avocado: #6B8F3C;
+    --brick: #B5403A;
+    --rule: #d8c9a8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .script { font-family: "Pacifico", "Brush Script MT", cursive; font-weight: 400; }
+
+  /* ---------- NAV ---------- */
+  .topnav {
+    background: var(--walnut);
+    display: flex; align-items: center; gap: 28px;
+    padding: 14px 32px; border-bottom: 3px solid var(--charcoal);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .wordmark { font-family: "Pacifico", "Brush Script MT", cursive; font-size: 30px; color: var(--cream); text-decoration: none; white-space: nowrap; }
+  .wordmark small { font-family: "Archivo", sans-serif; font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--mustard); display: block; line-height: 1; }
+  .navlinks { display: flex; gap: 26px; }
+  .navlinks a { color: var(--cream); text-decoration: none; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; transition: color 180ms ease-out; }
+  .navlinks a:hover { color: var(--mustard); }
+
+  /* ---------- BUTTONS ---------- */
+  .btn {
+    display: inline-block; font-weight: 700; font-size: 14px; letter-spacing: .08em;
+    text-transform: uppercase; text-decoration: none; color: var(--charcoal);
+    padding: 14px 28px; border: 2px solid var(--charcoal); border-radius: 3px;
+    transition: transform 180ms ease-out, box-shadow 180ms ease-out, background 180ms ease-out, color 180ms ease-out;
+    cursor: pointer; background: transparent;
+  }
+  .btn-primary { background: var(--mustard); box-shadow: 4px 4px 0 var(--charcoal); }
+  .btn-primary:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--charcoal); }
+  .btn-outline:hover { background: var(--charcoal); color: var(--cream); }
+  .btn-nav { padding: 10px 18px; margin-left: auto; box-shadow: 3px 3px 0 var(--charcoal); font-size: 12px; }
+
+  /* ---------- HERO ---------- */
+  .hero { position: relative; overflow: hidden; padding: 88px 32px 96px; }
+  .hero-inner { max-width: 1120px; margin: 0 auto; position: relative; z-index: 2; }
+  .kicker { font-size: 13px; letter-spacing: .28em; font-weight: 700; text-transform: uppercase; margin-bottom: 18px; }
+  .kicker .script { font-size: 1.5em; color: var(--burnt-orange); letter-spacing: 0; text-transform: none; }
+  .hero h1 { font-size: clamp(42px, 6vw, 76px); font-weight: 800; line-height: 1.02; letter-spacing: -0.01em; margin-bottom: 20px; }
+  .hero h1 em { font-style: normal; color: var(--burnt-orange); }
+  .lede { font-size: 19px; max-width: 520px; margin-bottom: 32px; }
+  .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+  .hero .burst {
+    position: absolute; right: -60px; top: 50%; width: min(420px, 46vw);
+    transform: translateY(-50%); z-index: 1; opacity: .92;
+    animation: slowspin 60s linear infinite;
+  }
+  @keyframes slowspin { to { transform: translateY(-50%) rotate(360deg); } }
+
+  /* ---------- WALNUT BAND ---------- */
+  .band { background: var(--walnut); border-top: 3px solid var(--charcoal); border-bottom: 3px solid var(--charcoal); color: var(--cream); }
+  .band-inner { max-width: 1120px; margin: 0 auto; padding: 22px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .band p { font-size: 13px; letter-spacing: .22em; text-transform: uppercase; font-weight: 700; }
+  .band p b { color: var(--mustard); }
+
+  /* ---------- SECTIONS ---------- */
+  .section { max-width: 1120px; margin: 0 auto; padding: 80px 32px 40px; }
+  .section-label { font-size: 13px; letter-spacing: .26em; font-weight: 700; text-transform: uppercase; color: var(--olive); display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .section h2 { font-size: clamp(30px, 4vw, 44px); font-weight: 800; margin-bottom: 14px; }
+  .section h2 .script { color: var(--burnt-orange); font-size: 1.15em; }
+  .section-sub { font-size: 17px; max-width: 640px; margin-bottom: 36px; }
+
+  .atomic-divider { display: flex; align-items: center; gap: 16px; max-width: 1120px; margin: 40px auto 0; padding: 0 32px; }
+  .atomic-divider .rule { flex: 1; height: 2px; background: var(--charcoal); }
+
+  /* ---------- TABS ---------- */
+  .tabs { display: inline-flex; border: 2px solid var(--charcoal); border-radius: 3px; overflow: hidden; margin-bottom: 32px; flex-wrap: wrap; }
+  .tab { font-family: inherit; font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    background: var(--cream); color: var(--charcoal); border: 0; border-right: 2px solid var(--charcoal);
+    padding: 12px 22px; cursor: pointer; transition: background 160ms ease-out; }
+  .tab:last-child { border-right: 0; }
+  .tab:hover { background: var(--mustard); }
+  .tab.is-active { background: var(--teal); }
+
+  /* ---------- PRODUCT GRID ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 28px; }
+  .card { background: #fffdf7; border: 2px solid var(--charcoal); border-radius: 4px; overflow: hidden;
+    transition: transform 180ms ease-out, box-shadow 180ms ease-out; }
+  .card:hover { transform: translateY(-4px); box-shadow: 6px 6px 0 var(--charcoal); }
+  .card-art { padding: 28px 24px 20px; display: grid; place-items: center; position: relative; border-bottom: 2px solid var(--charcoal); }
+  .card-art svg { width: 170px; height: 128px; }
+  .badge { position: absolute; top: 12px; right: 12px; background: var(--burnt-orange); color: var(--cream);
+    font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+    padding: 7px 12px; border: 2px solid var(--charcoal); border-radius: 3px; transform: rotate(-4deg); }
+  .card-body { padding: 20px 20px 24px; }
+  .card-no { font-size: 12px; letter-spacing: .22em; font-weight: 700; color: var(--burnt-orange); text-transform: uppercase; }
+  .card h3 { font-size: 21px; font-weight: 800; margin: 6px 0 8px; }
+  .card-desc { font-size: 15px; margin-bottom: 16px; }
+  .card-row { display: flex; justify-content: space-between; align-items: center; }
+  .price { font-size: 23px; font-weight: 800; }
+  .btn-small { padding: 10px 18px; font-size: 12px; background: var(--mustard); box-shadow: 3px 3px 0 var(--charcoal); }
+  .btn-small:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--charcoal); }
+
+  /* ---------- SPECS ---------- */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .specs { border-top: 2px solid var(--charcoal); }
+  .spec { display: grid; grid-template-columns: 150px 1fr; gap: 16px; padding: 15px 0; border-bottom: 1px solid var(--rule); }
+  .spec dt { font-size: 12px; letter-spacing: .2em; font-weight: 700; text-transform: uppercase; color: var(--olive); }
+  .spec dd { margin: 0; font-size: 16px; }
+  .quote { background: var(--walnut); color: var(--cream); border: 2px solid var(--charcoal); border-radius: 4px; padding: 36px; box-shadow: 6px 6px 0 var(--charcoal); }
+  .quote blockquote { font-family: "Pacifico", "Brush Script MT", cursive; font-size: 26px; line-height: 1.5; margin-bottom: 14px; }
+  .quote figcaption { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--mustard); font-weight: 700; }
+  .guarantee { margin-top: 24px; display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 600; }
+
+  /* ---------- CATALOG CTA ---------- */
+  .catalog-band { background: var(--mustard); border-top: 3px solid var(--charcoal); border-bottom: 3px solid var(--charcoal); margin-top: 80px; }
+  .catalog-inner { max-width: 1120px; margin: 0 auto; padding: 72px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .catalog-inner h2 { font-size: clamp(30px, 4vw, 44px); font-weight: 800; margin-bottom: 12px; }
+  .catalog-inner h2 .script { color: var(--brick); font-size: 1.15em; }
+  .catalog-inner p { font-size: 17px; margin-bottom: 24px; }
+  .catalog-form { display: flex; gap: 0; border: 2px solid var(--charcoal); border-radius: 3px; overflow: hidden; background: #fffdf7; }
+  .catalog-form input { flex: 1; border: 0; padding: 14px 18px; font-family: inherit; font-size: 15px; background: transparent; color: var(--charcoal); }
+  .catalog-form input:focus { outline: 2px solid var(--teal); outline-offset: -2px; }
+  .catalog-form button { border: 0; border-left: 2px solid var(--charcoal); background: var(--charcoal); color: var(--cream);
+    font-family: inherit; font-weight: 700; font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 0 26px; cursor: pointer; transition: background 160ms ease-out; }
+  .catalog-form button:hover { background: var(--burnt-orange); }
+  .form-note { font-size: 14px; font-weight: 700; margin-top: 14px; display: none; }
+  .form-note.show { display: block; }
+  .form-note .script { color: var(--brick); font-size: 1.3em; }
+
+  /* ---------- FOOTER ---------- */
+  .sitefoot { background: var(--charcoal); color: var(--cream); text-align: center; padding: 60px 24px 40px; }
+  .sitefoot svg { margin-bottom: 18px; }
+  .footline { font-size: 14px; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; color: var(--mustard); margin-bottom: 8px; }
+  .footsub { font-size: 14px; opacity: .85; margin-bottom: 24px; }
+  .skill-line { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: .6; }
+
+  @media (max-width: 860px) {
+    .navlinks { display: none; }
+    .hero .burst { width: 220px; right: -40px; opacity: .5; }
+    .split, .catalog-inner { grid-template-columns: 1fr; }
+    .spec { grid-template-columns: 110px 1fr; }
+    .band-inner { justify-content: center; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="wordmark" href="#">Hartwell<small>&amp; Rowe</small></a>
+  <div class="navlinks">
+    <a href="#collection">Collection</a>
+    <a href="#craft">Our Craft</a>
+    <a href="#catalog">Catalog</a>
+    <a href="#showrooms">Showrooms</a>
+  </div>
+  <a class="btn btn-primary btn-nav" href="#catalog">Order the catalog</a>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="kicker"><span class="script">New for&nbsp;</span> THE '59 COLLECTION</p>
+    <h1>Furniture for the way<br>you live <em>now.</em></h1>
+    <p class="lede">Solid American walnut. Molded plywood. Wool you can sink into.
+      Designed in Grand Rapids, built to outlive the mortgage.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#collection">Browse the collection</a>
+      <a class="btn btn-outline" href="#craft">Our craft</a>
+    </div>
+  </div>
+  <svg class="burst" viewBox="0 0 200 200" aria-hidden="true">
+    <g fill="#E5A535">
+      <polygon points="100,0 108,78 92,78"/><polygon points="100,200 108,122 92,122"/>
+      <polygon points="0,100 78,108 78,92"/><polygon points="200,100 122,108 122,92"/>
+      <polygon points="29,29 96,88 88,96"/><polygon points="171,171 104,112 112,104"/>
+      <polygon points="171,29 104,96 112,88"/><polygon points="29,171 96,104 88,112"/>
+      <polygon points="65,6 102,80 86,82"/><polygon points="135,194 98,120 114,118"/>
+      <polygon points="6,65 80,102 82,86"/><polygon points="194,135 120,98 118,114"/>
+    </g>
+    <circle cx="100" cy="100" r="26" fill="#E8601C"/>
+    <circle cx="100" cy="100" r="12" fill="#F5ECD7"/>
+  </svg>
+</header>
+
+<div class="band">
+  <div class="band-inner">
+    <p>Since <b>1954</b></p>
+    <p><b>40</b> showrooms coast to coast</p>
+    <p><b>Lifetime</b> guarantee on every frame</p>
+    <p>Free delivery over <b>$99</b></p>
+  </div>
+</div>
+
+<main>
+  <section class="section" id="collection">
+    <p class="section-label"><svg viewBox="0 0 40 40" width="18" height="18" aria-hidden="true"><g fill="#E8601C"><polygon points="20,0 23,15 17,15"/><polygon points="20,40 23,25 17,25"/><polygon points="0,20 15,23 15,17"/><polygon points="40,20 25,23 25,17"/><polygon points="6,6 19,17 17,19"/><polygon points="34,34 21,23 23,21"/><polygon points="34,6 21,17 23,19"/><polygon points="6,34 19,23 17,21"/></g><circle cx="20" cy="20" r="6" fill="#E8601C"/></svg> Nº 1 — The Collection</p>
+    <h2>Six <span class="script">star</span> pieces for the modern home</h2>
+    <p class="section-sub">Every piece is drawn from the '59 line and ready to ship.
+      Pick a room below, or browse the whole collection the way your mother browsed the catalog.</p>
+
+    <div class="tabs" role="tablist" aria-label="Filter collection">
+      <button class="tab is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+      <button class="tab" data-filter="seating" role="tab" aria-selected="false">Seating</button>
+      <button class="tab" data-filter="tables" role="tab" aria-selected="false">Tables</button>
+      <button class="tab" data-filter="lighting" role="tab" aria-selected="false">Lighting</button>
+      <button class="tab" data-filter="storage" role="tab" aria-selected="false">Storage</button>
+    </div>
+
+    <div class="grid" id="productGrid">
+
+      <article class="card" data-cat="seating">
+        <div class="card-art" style="background:#1FBFB8">
+          <span class="badge">New for '59</span>
+          <svg viewBox="0 0 160 120" aria-label="Astral lounge chair illustration">
+            <polygon points="56,66 48,110 56,110 64,66" fill="#3D3D3D"/>
+            <polygon points="104,66 96,110 104,110 112,66" fill="#3D3D3D"/>
+            <rect x="48" y="18" width="64" height="46" rx="10" fill="#5E4633"/>
+            <rect x="56" y="26" width="48" height="30" rx="6" fill="#E5A535"/>
+            <rect x="38" y="60" width="84" height="16" rx="8" fill="#5E4633"/>
+            <rect x="30" y="42" width="14" height="34" rx="7" fill="#5E4633"/>
+            <rect x="116" y="42" width="14" height="34" rx="7" fill="#5E4633"/>
+            <polygon points="42,76 32,110 40,110 50,76" fill="#3D3D3D"/>
+            <polygon points="118,76 108,110 116,110 126,76" fill="#3D3D3D"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="card-no">Nº 402</p>
+          <h3>The Astral Lounge Chair</h3>
+          <p class="card-desc">Molded walnut shell, mustard wool bouclé cushion, splayed brass-tipped legs. The best seat in the house — guests will fight over it.</p>
+          <div class="card-row"><span class="price">$289</span><a class="btn btn-small" href="#">Add to cart</a></div>
+        </div>
+      </article>
+
+      <article class="card" data-cat="tables">
+        <div class="card-art" style="background:#E5A535">
+          <svg viewBox="0 0 160 120" aria-label="Boomerang coffee table illustration">
+            <ellipse cx="80" cy="50" rx="58" ry="15" fill="#5E4633"/>
+            <ellipse cx="80" cy="47" rx="58" ry="14" fill="#6d563f"/>
+            <polygon points="52,60 44,110 52,110 60,60" fill="#3D3D3D"/>
+            <polygon points="108,60 100,110 108,110 116,60" fill="#3D3D3D"/>
+            <polygon points="44,60 34,110 42,110 52,60" fill="#3D3D3D"/>
+            <polygon points="116,60 106,110 114,110 124,60" fill="#3D3D3D"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="card-no">Nº 207</p>
+          <h3>Boomerang Coffee Table</h3>
+          <p class="card-desc">Kidney-shaped walnut top with a live edge feel and four splayed legs. Coffee rings wipe right off — we checked.</p>
+          <div class="card-row"><span class="price">$149</span><a class="btn btn-small" href="#">Add to cart</a></div>
+        </div>
+      </article>
+
+      <article class="card" data-cat="lighting">
+        <div class="card-art" style="background:#E8601C">
+          <svg viewBox="0 0 160 120" aria-label="Sputnik chandelier illustration">
+            <line x1="80" y1="0" x2="80" y2="42" stroke="#3D3D3D" stroke-width="4"/>
+            <circle cx="80" cy="48" r="8" fill="#5E4633"/>
+            <g stroke="#3D3D3D" stroke-width="3">
+              <line x1="80" y1="48" x2="40" y2="24"/><line x1="80" y1="48" x2="120" y2="24"/>
+              <line x1="80" y1="48" x2="34" y2="60"/><line x1="80" y1="48" x2="126" y2="60"/>
+              <line x1="80" y1="48" x2="46" y2="92"/><line x1="80" y1="48" x2="114" y2="92"/>
+              <line x1="80" y1="48" x2="80" y2="14"/><line x1="80" y1="48" x2="80" y2="102"/>
+            </g>
+            <g fill="#F5ECD7" stroke="#3D3D3D" stroke-width="2">
+              <circle cx="40" cy="24" r="7"/><circle cx="120" cy="24" r="7"/>
+              <circle cx="34" cy="60" r="7"/><circle cx="126" cy="60" r="7"/>
+              <circle cx="46" cy="92" r="7"/><circle cx="114" cy="92" r="7"/>
+              <circle cx="80" cy="14" r="7"/><circle cx="80" cy="102" r="7"/>
+            </g>
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="card-no">Nº 610</p>
+          <h3>Sputnik Chandelier</h3>
+          <p class="card-desc">Twelve brass arms, twelve milk-glass globes, one very jealous neighbor. The ceiling fixture the Space Age ordered.</p>
+          <div class="card-row"><span class="price">$219</span><a class="btn btn-small" href="#">Add to cart</a></div>
+        </div>
+      </article>
+
+      <article class="card" data-cat="storage">
+        <div class="card-art" style="background:#5E6B3A">
+          <svg viewBox="0 0 160 120" aria-label="Starlite sideboard illustration">
+            <rect x="26" y="34" width="108" height="44" rx="4" fill="#5E4633"/>
+            <rect x="32" y="40" width="48" height="32" rx="2" fill="#6d563f"/>
+            <rect x="84" y="40" width="44" height="32" rx="2" fill="#6d563f"/>
+            <line x1="80" y1="40" x2="80" y2="72" stroke="#3D3D3D" stroke-width="3"/>
+            <circle cx="74" cy="56" r="3.5" fill="#E5A535"/><circle cx="90" cy="56" r="3.5" fill="#E5A535"/>
+            <polygon points="36,78 30,110 38,110 44,78" fill="#3D3D3D"/>
+            <polygon points="60,78 54,110 62,110 68,78" fill="#3D3D3D"/>
+            <polygon points="100,78 94,110 102,110 108,78" fill="#3D3D3D"/>
+            <polygon points="124,78 118,110 126,110 132,78" fill="#3D3D3D"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="card-no">Nº 118</p>
+          <h3>Starlite Sideboard</h3>
+          <p class="card-desc">Six feet of book-matched walnut with sliding doors and tapered legs. Hides the record player, the hi-fi, and the clutter.</p>
+          <div class="card-row"><span class="price">$449</span><a class="btn btn-small" href="#">Add to cart</a></div>
+        </div>
+      </article>
+
+      <article class="card" data-cat="tables">
+        <div class="card-art" style="background:#6B8F3C">
+          <svg viewBox="0 0 160 120" aria-label="Orbit dining table illustration">
+            <ellipse cx="80" cy="46" rx="52" ry="13" fill="#5E4633"/>
+            <ellipse cx="80" cy="43" rx="52" ry="12" fill="#6d563f"/>
+            <polygon points="74,56 62,104 70,104 80,56" fill="#3D3D3D"/>
+            <polygon points="86,56 80,104 88,104 96,56" fill="#3D3D3D"/>
+            <polygon points="62,104 48,112 62,112 70,104" fill="#3D3D3D"/>
+            <polygon points="98,104 84,112 98,112 110,104" fill="#3D3D3D"/>
+            <circle cx="80" cy="30" r="5" fill="#E8601C" stroke="#3D3D3D" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="card-no">Nº 330</p>
+          <h3>Orbit Dining Table</h3>
+          <p class="card-desc">Round walnut top on a cast-iron tulip base — seats six, spins compliments. Chairs sold separately, arguments included free.</p>
+          <div class="card-row"><span class="price">$599</span><a class="btn btn-small" href="#">Add to cart</a></div>
+        </div>
+      </article>
+
+      <article class="card" data-cat="seating">
+        <div class="card-art" style="background:#E5A535">
+          <svg viewBox="0 0 160 120" aria-label="Comet rocker illustration">
+            <path d="M34 108 Q 80 122 126 108" fill="none" stroke="#3D3D3D" stroke-width="6" stroke-linecap="round"/>
+            <polygon points="70,72 64,104 72,104 78,72" fill="#3D3D3D"/>
+            <polygon points="96,72 90,104 98,104 104,72" fill="#3D3D3D"/>
+            <rect x="52" y="66" width="56" height="12" rx="6" fill="#5E4633"/>
+            <polygon points="54,68 34,22 46,20 64,66" fill="#5E4633"/>
+            <rect x="38" y="28" width="52" height="14" rx="7" fill="#5E4633" transform="rotate(-16 64 35)"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <p class="card-no">Nº 455</p>
+          <h3>The Comet Rocker</h3>
+          <p class="card-desc">Steam-bent walnut rockers with a cane back. Rocks smooth as a Sunday drive down Route 66.</p>
+          <div class="card-row"><span class="price">$199</span><a class="btn btn-small" href="#">Add to cart</a></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <div class="atomic-divider" aria-hidden="true">
+    <span class="rule"></span>
+    <svg viewBox="0 0 40 40" width="40" height="40"><g fill="#E5A535"><polygon points="20,0 23,15 17,15"/><polygon points="20,40 23,25 17,25"/><polygon points="0,20 15,23 15,17"/><polygon points="40,20 25,23 25,17"/><polygon points="6,6 19,17 17,19"/><polygon points="34,34 21,23 23,21"/><polygon points="34,6 21,17 23,19"/><polygon points="6,34 19,23 17,21"/></g><circle cx="20" cy="20" r="6" fill="#E8601C"/></svg>
+    <span class="rule"></span>
+  </div>
+
+  <section class="section" id="craft">
+    <p class="section-label">Nº 2 — Our Craft</p>
+    <h2>Built like they <span class="script">mean</span> it</h2>
+    <p class="section-sub">We don't do veneer pretending to be walnut. Every Hartwell &amp; Rowe piece
+      leaves Grand Rapids with a signed inspection card and a frame guaranteed for life.</p>
+    <div class="split">
+      <dl class="specs">
+        <div class="spec"><dt>Frame</dt><dd>Solid American walnut, kiln-dried</dd></div>
+        <div class="spec"><dt>Joinery</dt><dd>Mortise-and-tenon, glued and doweled</dd></div>
+        <div class="spec"><dt>Upholstery</dt><dd>Wool bouclé &amp; top-grain leather</dd></div>
+        <div class="spec"><dt>Finish</dt><dd>Hand-rubbed oil, three coats</dd></div>
+        <div class="spec"><dt>Assembly</dt><dd>None — arrives ready to sit on</dd></div>
+        <div class="spec"><dt>Guarantee</dt><dd>Lifetime on every frame</dd></div>
+      </dl>
+      <div>
+        <figure class="quote">
+          <blockquote>"The Astral chair is the best seat in our house. Guests fight over it."</blockquote>
+          <figcaption>— Mrs. D. Calloway, Palm Springs</figcaption>
+        </figure>
+        <div class="guarantee">
+          <svg viewBox="0 0 40 40" width="36" height="36" aria-hidden="true"><g fill="#E5A535"><polygon points="20,0 23,15 17,15"/><polygon points="20,40 23,25 17,25"/><polygon points="0,20 15,23 15,17"/><polygon points="40,20 25,23 25,17"/><polygon points="6,6 19,17 17,19"/><polygon points="34,34 21,23 23,21"/><polygon points="34,6 21,17 23,19"/><polygon points="6,34 19,23 17,21"/></g><circle cx="20" cy="20" r="6" fill="#E8601C"/></svg>
+          <span>Signed inspection card in every box. If a leg ever wobbles, we fix it free.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="catalog-band" id="catalog">
+  <div class="catalog-inner">
+    <div>
+      <h2>The <span class="script">free</span> '59 catalog</h2>
+      <p>64 pages of walnut, wool, and chrome — prices, fabrics, and floor plans for every room.
+        Mailed anywhere in the country, postage paid.</p>
+      <form class="catalog-form" id="catalogForm">
+        <input type="email" id="catalogEmail" placeholder="Your mailing address… email, we mean" required aria-label="Email address">
+        <button type="submit">Send it</button>
+      </form>
+      <p class="form-note" id="formNote" role="status"></p>
+    </div>
+    <div>
+      <svg viewBox="0 0 200 160" width="100%" aria-label="Catalog cover illustration">
+        <rect x="60" y="10" width="80" height="120" fill="#F5ECD7" stroke="#3D3D3D" stroke-width="3"/>
+        <rect x="60" y="10" width="80" height="34" fill="#E8601C"/>
+        <text x="100" y="33" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="800" font-size="13" fill="#F5ECD7" letter-spacing="2">'59</text>
+        <g fill="#E5A535">
+          <polygon points="100,48 104,66 96,66"/><polygon points="100,104 104,86 96,86"/>
+          <polygon points="72,76 90,80 90,72"/><polygon points="128,76 110,80 110,72"/>
+          <polygon points="80,56 94,70 90,74"/><polygon points="120,96 106,82 110,78"/>
+          <polygon points="120,56 106,70 110,74"/><polygon points="80,96 94,82 90,78"/>
+        </g>
+        <circle cx="100" cy="76" r="10" fill="#1FBFB8" stroke="#3D3D3D" stroke-width="2"/>
+        <rect x="72" y="112" width="56" height="6" fill="#3D3D3D"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<footer class="sitefoot" id="showrooms">
+  <svg viewBox="0 0 40 40" width="52" height="52" aria-hidden="true"><g fill="#E5A535"><polygon points="20,0 23,15 17,15"/><polygon points="20,40 23,25 17,25"/><polygon points="0,20 15,23 15,17"/><polygon points="40,20 25,23 25,17"/><polygon points="6,6 19,17 17,19"/><polygon points="34,34 21,23 23,21"/><polygon points="34,6 21,17 23,19"/><polygon points="6,34 19,23 17,21"/></g><circle cx="20" cy="20" r="6" fill="#E8601C"/></svg>
+  <p class="footline">Hartwell &amp; Rowe Furniture Co. — Grand Rapids, Michigan</p>
+  <p class="footsub">Crafted since 1954 · Free delivery on orders over $99 · Showrooms in 40 cities</p>
+  <p class="skill-line">Built from the mid-century skill · design-skills</p>
+</footer>
+
+<script>
+  // Collection filter tabs
+  const tabs = document.querySelectorAll('.tab');
+  const cards = document.querySelectorAll('#productGrid .card');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => { t.classList.remove('is-active'); t.setAttribute('aria-selected', 'false'); });
+      tab.classList.add('is-active');
+      tab.setAttribute('aria-selected', 'true');
+      const f = tab.dataset.filter;
+      cards.forEach(card => {
+        const show = f === 'all' || card.dataset.cat === f;
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+
+  // Catalog form — period-flavored confirmation
+  const form = document.getElementById('catalogForm');
+  const note = document.getElementById('formNote');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = document.getElementById('catalogEmail').value.trim();
+    note.innerHTML = '<span class="script">Splendid!</span> The \'59 catalog is on its way to <b></b> — check your mailbox, friend.';
+    note.querySelector('b').textContent = email;
+    note.classList.add('show');
+    form.reset();
+  });
+</script>
+</body>
+</html>

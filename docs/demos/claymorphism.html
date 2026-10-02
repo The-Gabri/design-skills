@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>claymorphism</title>
+<style>
+  :root{
+    --bg:#F0EEFB;
+    --surface:#FBFAFF;
+    --ink:#2E2A45;
+    --muted:#8A82A8;
+    --violet:#7C5CFC;
+    --pink:#FFD6E8;
+    --mint:#C8F4DE;
+    --amber:#FFE8B3;
+    --lav:#D6CCFF;
+    --peach:#FDBCB4;
+    --mold:#E9E4FA;
+    --bounce:cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"ui-rounded","SF Pro Rounded","Segoe UI Rounded","Quicksand","Nunito",system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.55;
+    overflow-x:hidden;
+  }
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky;top:16px;z-index:50;
+    max-width:1120px;margin:16px auto 0;padding:12px 24px;
+    display:flex;align-items:center;gap:28px;
+    background:var(--surface);border-radius:999px;
+    box-shadow:8px 8px 20px rgba(76,58,160,.16),
+      inset -4px -4px 10px rgba(76,58,160,.08),
+      inset 4px 4px 10px rgba(255,255,255,.9);
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.25rem;text-decoration:none;color:var(--ink)}
+  .logo-ball{width:38px;height:38px;border-radius:44% 56% 58% 42%/46% 44% 56% 54%;
+    background:var(--violet);
+    box-shadow:4px 4px 10px rgba(124,92,252,.4),
+      inset -3px -3px 8px rgba(60,30,160,.3),
+      inset 3px 3px 8px rgba(255,255,255,.5);}
+  .nav-links{display:flex;gap:22px;margin-left:auto}
+  .nav-links a{color:var(--muted);text-decoration:none;font-weight:700;font-size:.95rem;transition:color .2s}
+  .nav-links a:hover{color:var(--ink)}
+  .btn{
+    border:0;border-radius:999px;padding:14px 32px;font-weight:800;font-size:1rem;cursor:pointer;
+    font-family:inherit;color:#fff;background:var(--violet);text-decoration:none;display:inline-block;
+    box-shadow:0 12px 20px rgba(124,92,252,.35),
+      inset -4px -4px 10px rgba(60,30,160,.25),
+      inset 4px 4px 10px rgba(255,255,255,.45);
+    transition:transform 180ms var(--bounce),box-shadow 180ms ease;
+  }
+  .btn:hover{transform:translateY(-2px) scale(1.02)}
+  .btn:active{transform:scale(.96);
+    box-shadow:0 4px 10px rgba(124,92,252,.3),
+      inset 4px 4px 10px rgba(60,30,160,.35),
+      inset -4px -4px 10px rgba(255,255,255,.3);}
+  .btn-soft{background:var(--surface);color:var(--ink);
+    box-shadow:6px 6px 14px rgba(76,58,160,.18),
+      inset -3px -3px 8px rgba(76,58,160,.1),
+      inset 3px 3px 8px rgba(255,255,255,.9);}
+  .btn-soft:active{box-shadow:inset 4px 4px 10px rgba(76,58,160,.2),
+      inset -3px -3px 8px rgba(255,255,255,.8);}
+
+  main{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* ---------- hero ---------- */
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:72px 0 56px}
+  .eyebrow{display:inline-block;background:var(--amber);border-radius:999px;padding:8px 20px;font-weight:800;font-size:.85rem;
+    box-shadow:4px 4px 10px rgba(180,130,40,.3),
+      inset -2px -2px 6px rgba(150,100,20,.2),
+      inset 2px 2px 6px rgba(255,255,255,.6);}
+  .hero h1{font-size:clamp(2.4rem,5vw,3.6rem);line-height:1.1;margin:20px 0 16px;font-weight:800;letter-spacing:-.01em}
+  .hero h1 .puffy{color:var(--violet)}
+  .hero p{color:var(--muted);font-size:1.12rem;max-width:44ch}
+  .hero-cta{display:flex;gap:16px;margin-top:28px;flex-wrap:wrap}
+  .stats{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 20px;font-weight:800;font-size:.95rem}
+
+  /* ---------- phone mockup ---------- */
+  .phone-wrap{display:flex;justify-content:center;position:relative}
+  .blob-bg{position:absolute;width:120%;height:110%;top:-5%;left:-10%;z-index:0;
+    border-radius:42% 58% 55% 45%/50% 44% 56% 50%;background:var(--lav);opacity:.55;filter:blur(2px)}
+  .phone{position:relative;z-index:1;width:280px;background:var(--surface);border-radius:44px;padding:22px 18px;
+    box-shadow:14px 14px 34px rgba(76,58,160,.28),
+      inset -8px -8px 18px rgba(76,58,160,.1),
+      inset 8px 8px 18px rgba(255,255,255,.9);}
+  .phone-notch{width:110px;height:22px;background:var(--mold);border-radius:999px;margin:0 auto 18px;
+    box-shadow:inset 3px 3px 6px rgba(46,42,69,.18),inset -2px -2px 5px rgba(255,255,255,.9)}
+  .phone h3{font-size:1rem;margin-bottom:12px}
+  .streak-card{border-radius:22px;padding:16px;margin-bottom:12px;background:var(--amber);
+    box-shadow:5px 5px 12px rgba(170,120,30,.28),
+      inset -3px -3px 8px rgba(150,100,20,.18),
+      inset 3px 3px 8px rgba(255,255,255,.6);}
+  .streak-card .num{font-size:1.9rem;font-weight:800}
+  .streak-card .lbl{font-size:.8rem;font-weight:700;color:#6b5a2e}
+  .habit-row{display:flex;align-items:center;gap:10px;border-radius:18px;padding:12px;margin-bottom:10px;background:var(--mint);
+    box-shadow:4px 4px 10px rgba(60,150,100,.25),
+      inset -3px -3px 7px rgba(40,120,80,.15),
+      inset 3px 3px 7px rgba(255,255,255,.55);}
+  .habit-row.pink{background:var(--pink);
+    box-shadow:4px 4px 10px rgba(200,90,140,.25),
+      inset -3px -3px 7px rgba(180,60,110,.15),
+      inset 3px 3px 7px rgba(255,255,255,.55);}
+  .habit-row .dot{width:26px;height:26px;border-radius:50%;background:var(--surface);flex:none;
+    box-shadow:3px 3px 6px rgba(46,42,69,.2),inset 2px 2px 4px rgba(255,255,255,.9);
+    display:grid;place-items:center}
+  .habit-row span{font-weight:700;font-size:.9rem}
+  .progress{height:20px;border-radius:999px;background:var(--mold);overflow:hidden;margin:6px 0 4px;
+    box-shadow:inset 4px 4px 8px rgba(46,42,69,.16),inset -3px -3px 6px rgba(255,255,255,.85)}
+  .progress>i{display:block;height:100%;width:72%;border-radius:999px;background:var(--violet);
+    box-shadow:inset 3px 3px 6px rgba(255,255,255,.5),inset -3px -3px 6px rgba(60,30,160,.3)}
+  .squish-btn{width:100%;margin-top:14px}
+
+  /* ---------- cards section ---------- */
+  section{padding:56px 0}
+  .sec-head{text-align:center;margin-bottom:40px}
+  .sec-head h2{font-size:2.1rem;font-weight:800;margin-bottom:8px}
+  .sec-head p{color:var(--muted);max-width:52ch;margin:0 auto}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  .card{border-radius:28px;padding:32px 28px;transition:transform 200ms var(--bounce),box-shadow 200ms ease}
+  .card:hover{transform:translateY(-4px) scale(1.01)}
+  .card.pink{background:var(--pink);
+    box-shadow:8px 8px 24px rgba(255,143,177,.35),
+      inset -6px -6px 14px rgba(200,60,110,.2),
+      inset 6px 6px 14px rgba(255,255,255,.6);}
+  .card.mint{background:var(--mint);
+    box-shadow:8px 8px 24px rgba(80,190,130,.35),
+      inset -6px -6px 14px rgba(40,120,80,.2),
+      inset 6px 6px 14px rgba(255,255,255,.6);}
+  .card.lav{background:var(--lav);
+    box-shadow:8px 8px 24px rgba(140,120,255,.35),
+      inset -6px -6px 14px rgba(90,60,200,.22),
+      inset 6px 6px 14px rgba(255,255,255,.6);}
+  .card h3{font-size:1.25rem;margin:18px 0 8px}
+  .card p{font-size:.98rem;color:#3d3857}
+  .icon-blob{width:64px;height:64px;border-radius:42% 58% 61% 39%/45% 42% 58% 55%;
+    background:var(--surface);display:grid;place-items:center;
+    box-shadow:5px 5px 12px rgba(46,42,69,.2),
+      inset -3px -3px 8px rgba(46,42,69,.1),
+      inset 3px 3px 8px rgba(255,255,255,.9);}
+
+  /* ---------- pricing ---------- */
+  .tabs{display:flex;justify-content:center;margin-bottom:36px}
+  .clay-tabs{display:inline-flex;gap:6px;padding:8px;border-radius:999px;background:var(--mold);
+    box-shadow:inset 4px 4px 10px rgba(46,42,69,.15),inset -3px -3px 8px rgba(255,255,255,.85)}
+  .clay-tab{border:0;border-radius:999px;padding:12px 30px;font-weight:800;font-family:inherit;font-size:1rem;
+    background:transparent;color:var(--muted);cursor:pointer;
+    transition:all 220ms var(--bounce)}
+  .clay-tab[aria-selected="true"]{background:var(--surface);color:var(--ink);
+    box-shadow:4px 4px 10px rgba(46,42,69,.18),
+      inset 3px 3px 6px rgba(255,255,255,.9),
+      inset -3px -3px 6px rgba(46,42,69,.08)}
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;align-items:stretch}
+  .plan{border-radius:28px;padding:34px 30px;text-align:center;background:var(--surface);
+    box-shadow:8px 8px 24px rgba(76,58,160,.18),
+      inset -6px -6px 14px rgba(76,58,160,.08),
+      inset 6px 6px 14px rgba(255,255,255,.9);
+    transition:transform 200ms var(--bounce)}
+  .plan:hover{transform:translateY(-4px)}
+  .plan.featured{background:var(--amber);
+    box-shadow:10px 10px 28px rgba(190,140,40,.35),
+      inset -6px -6px 14px rgba(150,100,20,.2),
+      inset 6px 6px 14px rgba(255,255,255,.6);
+    transform:scale(1.04)}
+  .plan.featured:hover{transform:scale(1.04) translateY(-4px)}
+  .plan h3{font-size:1.1rem;margin-bottom:6px}
+  .price{font-size:2.6rem;font-weight:800;margin:8px 0}
+  .price small{font-size:1rem;font-weight:700;color:var(--muted)}
+  .plan ul{list-style:none;margin:20px 0 26px;text-align:left}
+  .plan li{padding:8px 0;font-weight:600;font-size:.95rem;color:#3d3857;display:flex;gap:10px;align-items:center}
+  .plan li svg{flex:none}
+
+  /* ---------- pokes / interactive playground ---------- */
+  .playground{border-radius:32px;background:var(--lav);padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+    box-shadow:12px 12px 30px rgba(120,100,220,.32),
+      inset -8px -8px 18px rgba(90,60,200,.22),
+      inset 8px 8px 18px rgba(255,255,255,.55)}
+  .playground h2{font-size:1.9rem;margin-bottom:10px}
+  .playground p{color:#4a4470}
+  .controls{display:flex;flex-direction:column;gap:22px}
+  .control-row{display:flex;align-items:center;justify-content:space-between;gap:18px;
+    background:var(--surface);border-radius:22px;padding:18px 22px;
+    box-shadow:6px 6px 14px rgba(90,60,200,.2),
+      inset -4px -4px 10px rgba(90,60,200,.08),
+      inset 4px 4px 10px rgba(255,255,255,.9)}
+  .control-row .txt strong{display:block;font-size:1.02rem}
+  .control-row .txt small{color:var(--muted);font-weight:600}
+  .clay-toggle{width:76px;height:42px;border-radius:999px;background:var(--mold);flex:none;position:relative;cursor:pointer;
+    box-shadow:inset 4px 4px 10px rgba(46,42,69,.2),inset -3px -3px 8px rgba(255,255,255,.85);
+    transition:background 200ms ease}
+  .clay-toggle .knob{position:absolute;top:5px;left:5px;width:32px;height:32px;border-radius:50%;background:var(--surface);
+    box-shadow:3px 3px 8px rgba(46,42,69,.25),inset 3px 3px 6px rgba(255,255,255,.95);
+    transition:left 220ms var(--bounce),transform 220ms var(--bounce)}
+  .clay-toggle[aria-checked="true"]{background:var(--violet)}
+  .clay-toggle[aria-checked="true"] .knob{left:39px;transform:scale(1.06)}
+  .counter-chip{display:inline-flex;align-items:center;gap:10px;border-radius:999px;background:var(--mint);
+    padding:12px 22px;font-weight:800;font-size:1.1rem;
+    box-shadow:5px 5px 12px rgba(60,150,100,.3),
+      inset -3px -3px 8px rgba(40,120,80,.18),
+      inset 3px 3px 8px rgba(255,255,255,.6)}
+  .mini-btn{border:0;border-radius:999px;padding:12px 22px;font-weight:800;font-family:inherit;cursor:pointer;
+    background:var(--peach);color:var(--ink);
+    box-shadow:0 8px 14px rgba(240,150,130,.4),
+      inset -3px -3px 8px rgba(200,100,80,.25),
+      inset 3px 3px 8px rgba(255,255,255,.55);
+    transition:transform 180ms var(--bounce),box-shadow 180ms ease}
+  .mini-btn:hover{transform:translateY(-2px)}
+  .mini-btn:active{transform:scale(.94);
+    box-shadow:inset 4px 4px 10px rgba(200,100,80,.4),inset -3px -3px 8px rgba(255,255,255,.4)}
+
+  /* ---------- quotes ---------- */
+  .quotes{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .quote{border-radius:28px;padding:30px;background:var(--surface);
+    box-shadow:8px 8px 22px rgba(76,58,160,.16),
+      inset -6px -6px 14px rgba(76,58,160,.08),
+      inset 6px 6px 14px rgba(255,255,255,.9)}
+  .quote p{font-size:1.05rem;font-weight:600}
+  .quote .who{display:flex;align-items:center;gap:12px;margin-top:18px}
+  .who .avatar{width:48px;height:48px;border-radius:46% 54% 57% 43%/48% 45% 55% 52%;background:var(--peach);
+    box-shadow:4px 4px 10px rgba(240,150,130,.35),
+      inset -3px -3px 7px rgba(200,100,80,.2),
+      inset 3px 3px 7px rgba(255,255,255,.55)}
+  .who small{color:var(--muted);font-weight:600;display:block}
+
+  /* ---------- newsletter ---------- */
+  .newsletter{border-radius:32px;background:var(--mint);padding:52px;text-align:center;
+    box-shadow:12px 12px 30px rgba(80,190,130,.32),
+      inset -8px -8px 18px rgba(40,120,80,.2),
+      inset 8px 8px 18px rgba(255,255,255,.55)}
+  .newsletter h2{font-size:2rem;margin-bottom:10px}
+  .newsletter p{color:#2f5b43;font-weight:600;margin-bottom:26px}
+  .nl-form{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .clay-input{border:0;border-radius:999px;padding:16px 26px;font-size:1rem;font-family:inherit;
+    background:var(--mold);color:var(--ink);width:min(340px,100%);
+    box-shadow:inset 5px 5px 12px rgba(46,42,69,.16),inset -4px -4px 10px rgba(255,255,255,.85);
+    outline:none;transition:box-shadow 200ms ease}
+  .clay-input:focus{box-shadow:inset 3px 3px 8px rgba(46,42,69,.12),inset -3px -3px 8px rgba(255,255,255,.85),
+      0 0 0 4px rgba(124,92,252,.25)}
+  .clay-input::placeholder{color:var(--muted)}
+  .nl-ok{display:none;margin-top:18px;font-weight:800}
+
+  footer{max-width:1120px;margin:0 auto;padding:40px 24px 56px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+  footer .skill-line{color:var(--muted);font-weight:600;font-size:.9rem}
+
+  @media (max-width:900px){
+    .hero{grid-template-columns:1fr;text-align:center}
+    .hero p{margin:0 auto}
+    .hero-cta,.stats{justify-content:center}
+    .cards,.plans,.quotes{grid-template-columns:1fr}
+    .playground{grid-template-columns:1fr;padding:36px 28px}
+    .nav-links{display:none}
+    nav{justify-content:space-between}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#"><span class="logo-ball"></span>Mellow</a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#stories">Stories</a>
+  </div>
+  <a class="btn" href="#pricing">Get Mellow</a>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <span class="eyebrow">New: Squish Mode 2.0 is here</span>
+      <h1>Build habits that feel <span class="puffy">soft to keep</span>.</h1>
+      <p>Mellow is the habit tracker molded like clay: big squishy check-ins, gentle streaks, and zero guilt. Tap a habit, feel the squish, watch your week puff up.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#pricing">Start free</a>
+        <a class="btn btn-soft" href="#features">See how it squishes</a>
+      </div>
+      <div class="stats">
+        <span class="chip" style="background:var(--amber);box-shadow:5px 5px 12px rgba(180,130,40,.3),inset -3px -3px 8px rgba(150,100,20,.2),inset 3px 3px 8px rgba(255,255,255,.6)">4.9 rating</span>
+        <span class="chip" style="background:var(--pink);box-shadow:5px 5px 12px rgba(255,143,177,.35),inset -3px -3px 8px rgba(200,60,110,.2),inset 3px 3px 8px rgba(255,255,255,.6)">2M squishers</span>
+        <span class="chip" style="background:var(--mint);box-shadow:5px 5px 12px rgba(80,190,130,.35),inset -3px -3px 8px rgba(40,120,80,.2),inset 3px 3px 8px rgba(255,255,255,.6)">Free forever plan</span>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="blob-bg"></div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <h3>Today's squishes</h3>
+        <div class="streak-card">
+          <div class="num">12 days</div>
+          <div class="lbl">streak &mdash; extra puffy today</div>
+          <div class="progress"><i></i></div>
+        </div>
+        <div class="habit-row">
+          <span class="dot"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2.5 7.5 5.5 10.5 11.5 3.5" fill="none" stroke="#2E7D52" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>Read 20 pages</span>
+        </div>
+        <div class="habit-row pink">
+          <span class="dot"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2.5 7.5 5.5 10.5 11.5 3.5" fill="none" stroke="#C23C6E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>Water the plants</span>
+        </div>
+        <button class="btn squish-btn" id="squishBtn">Squish today's habits</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="sec-head">
+      <h2>Why it feels different</h2>
+      <p>Most habit apps are spreadsheets with alarms. Mellow is a toy box: every interaction is soft, round, and a little bit bouncy.</p>
+    </div>
+    <div class="cards">
+      <div class="card pink">
+        <div class="icon-blob">
+          <svg width="32" height="32" viewBox="0 0 32 32"><path d="M16 29C9 22.5 4 17.6 4 11.8 4 7.6 7.3 4.5 11.3 4.5c2.6 0 4.2 1.5 4.7 2.3.5-.8 2.1-2.3 4.7-2.3 4 0 7.3 3.1 7.3 7.3 0 5.8-5 10.7-12 17.2z" fill="#C23C6E"/></svg>
+        </div>
+        <h3>Squish to check in</h3>
+        <p>Checking off a habit feels like poking dough. The button dips in, the habit pops out, and your brain gets the little reward it was waiting for.</p>
+      </div>
+      <div class="card mint">
+        <div class="icon-blob">
+          <svg width="32" height="32" viewBox="0 0 32 32"><path d="M16 4c5 0 8.5 3.4 8.5 7.6 0 5-4.4 6.9-4.4 12.4 0 2.5-1.8 4-4.1 4s-4.1-1.5-4.1-4c0-5.5-4.4-7.4-4.4-12.4C7.5 7.4 11 4 16 4z" fill="#2E7D52"/><rect x="14.5" y="20" width="3" height="6" rx="1.5" fill="#2E7D52"/></svg>
+        </div>
+        <h3>Streaks that grow</h3>
+        <p>Your streak isn't a number — it's a blob that gets puffier every day you show up. Miss a day and it just naps. No red. No shame.</p>
+      </div>
+      <div class="card lav">
+        <div class="icon-blob">
+          <svg width="32" height="32" viewBox="0 0 32 32"><path d="M8 26V15a3 3 0 0 1 6 0v11zM14 26V9a3 3 0 0 1 6 0v17zM20 26v-7a3 3 0 0 1 6 0v7z" fill="#5B45C9" stroke-linecap="round"/><rect x="5" y="24" width="22" height="3.4" rx="1.7" fill="#5B45C9"/></svg>
+        </div>
+        <h3>Gentle insights</h3>
+        <p>See which habits stick and which wobble, in soft charts that nudge instead of nag. Mellow celebrates tries, not just perfection.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING with tabs -->
+  <section id="pricing">
+    <div class="sec-head">
+      <h2>Pick your puff</h2>
+      <p>Start free, upgrade when your streak gets serious. Flip the switch to see yearly pricing.</p>
+    </div>
+    <div class="tabs">
+      <div class="clay-tabs" role="tablist" aria-label="Billing period">
+        <button class="clay-tab" id="tabMonthly" role="tab" aria-selected="true">Monthly</button>
+        <button class="clay-tab" id="tabYearly" role="tab" aria-selected="false">Yearly &mdash; save 20%</button>
+      </div>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Squish</h3>
+        <div class="price" id="priceSquish">$0<small>/mo</small></div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#C8F4DE"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#2E7D52" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>3 habits, unlimited squish</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#C8F4DE"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#2E7D52" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>7-day streak blob</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#C8F4DE"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#2E7D52" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Daily gentle pokes</li>
+        </ul>
+        <button class="btn btn-soft">Start free</button>
+      </div>
+      <div class="plan featured">
+        <h3>Puff &mdash; most loved</h3>
+        <div class="price" id="pricePuff">$6<small>/mo</small></div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#fff"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#B8860B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited habits &amp; blobs</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#fff"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#B8860B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Growing streak creatures</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#fff"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#B8860B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Share streaks with friends</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#fff"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#B8860B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom squish sounds</li>
+        </ul>
+        <button class="btn">Go Puff</button>
+      </div>
+      <div class="plan">
+        <h3>Dough</h3>
+        <div class="price" id="priceDough">$12<small>/mo</small></div>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#D6CCFF"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#5B45C9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Puff</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#D6CCFF"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#5B45C9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Family blob village (5 seats)</li>
+          <li><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="9" fill="#D6CCFF"/><path d="M5.5 9.3 8 11.8 12.8 6.6" fill="none" stroke="#5B45C9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Coach check-ins, monthly</li>
+        </ul>
+        <button class="btn btn-soft">Talk to us</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAYGROUND: toggle + counter -->
+  <section>
+    <div class="playground">
+      <div>
+        <h2>Poke the clay</h2>
+        <p>This whole page is squishy. Flip the pokes on, and tap the button to squish your counter — the blob grows with every poke.</p>
+      </div>
+      <div class="controls">
+        <div class="control-row">
+          <div class="txt"><strong>Daily pokes</strong><small>Gentle nudges, never nagging</small></div>
+          <div class="clay-toggle" id="pokeToggle" role="switch" aria-checked="false" tabindex="0" aria-label="Daily pokes"><span class="knob"></span></div>
+        </div>
+        <div class="control-row">
+          <div class="txt"><strong>Squishes today</strong><small id="counterNote">Give it a tap &mdash; it loves that</small></div>
+          <span class="counter-chip"><span id="squishCount">0</span></span>
+        </div>
+        <div><button class="mini-btn" id="pokeBtn">Poke the blob</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORIES -->
+  <section id="stories">
+    <div class="sec-head">
+      <h2>Soft words from squishers</h2>
+      <p>Real reviews from people who traded their scary red streak apps for something kinder.</p>
+    </div>
+    <div class="quotes">
+      <div class="quote">
+        <p>&ldquo;I used to dread my habit app. Now I open Mellow just to squish the blob. 40 days and my plants are alive.&rdquo;</p>
+        <div class="who"><span class="avatar"></span><div><strong>Maya R.</strong><small>Plant rescuer, 40-day streak</small></div></div>
+      </div>
+      <div class="quote">
+        <p>&ldquo;The streak creature gets puffier the longer I keep going. I cannot let the little guy down. Reading every night now.&rdquo;</p>
+        <div class="who"><span class="avatar" style="background:var(--lav)"></span><div><strong>Tomás E.</strong><small>Reformed doom-scroller</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section>
+    <div class="newsletter">
+      <h2>Get the Squishletter</h2>
+      <p>One soft email a month: new blobs, gentle habit science, zero spam. Promise.</p>
+      <form class="nl-form" id="nlForm">
+        <input class="clay-input" id="nlEmail" type="email" placeholder="you@example.com" required aria-label="Email address">
+        <button class="btn" type="submit">Squish me in</button>
+      </form>
+      <div class="nl-ok" id="nlOk">Yay &mdash; you're in! First squish lands soon.</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="skill-line">Built from the claymorphism skill &middot; design-skills</span>
+  <span class="skill-line">Mellow is a fictional product &middot; made of 100% recycled pixels</span>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- pricing tabs ---- */
+  var tabMonthly = document.getElementById('tabMonthly');
+  var tabYearly  = document.getElementById('tabYearly');
+  var pricePuff  = document.getElementById('pricePuff');
+  var priceDough = document.getElementById('priceDough');
+
+  function setBilling(mode){
+    var monthly = mode === 'monthly';
+    tabMonthly.setAttribute('aria-selected', monthly ? 'true' : 'false');
+    tabYearly.setAttribute('aria-selected', monthly ? 'false' : 'true');
+    pricePuff.innerHTML  = monthly ? '$6<small>/mo</small>'  : '$4.80<small>/mo, billed yearly</small>';
+    priceDough.innerHTML = monthly ? '$12<small>/mo</small>' : '$9.60<small>/mo, billed yearly</small>';
+  }
+  tabMonthly.addEventListener('click', function(){ setBilling('monthly'); });
+  tabYearly.addEventListener('click',  function(){ setBilling('yearly');  });
+
+  /* ---- squishy toggle ---- */
+  var pokeToggle = document.getElementById('pokeToggle');
+  function flipToggle(){
+    var on = pokeToggle.getAttribute('aria-checked') === 'true';
+    pokeToggle.setAttribute('aria-checked', on ? 'false' : 'true');
+  }
+  pokeToggle.addEventListener('click', flipToggle);
+  pokeToggle.addEventListener('keydown', function(e){
+    if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); flipToggle(); }
+  });
+
+  /* ---- squish counter ---- */
+  var squishCount = document.getElementById('squishCount');
+  var counterNote = document.getElementById('counterNote');
+  var pokeBtn     = document.getElementById('pokeBtn');
+  var squishBtn   = document.getElementById('squishBtn');
+  var count = 0;
+  function bump(){
+    count += 1;
+    squishCount.textContent = count;
+    if(count === 1)      counterNote.textContent = 'One squish! Keep poking.';
+    else if(count === 10) counterNote.textContent = 'Ten! The blob is getting puffy.';
+    else if(count === 25) counterNote.textContent = 'Twenty-five. Certified blob whisperer.';
+  }
+  pokeBtn.addEventListener('click', bump);
+  squishBtn.addEventListener('click', bump);
+
+  /* ---- newsletter ---- */
+  var nlForm  = document.getElementById('nlForm');
+  var nlEmail = document.getElementById('nlEmail');
+  var nlOk    = document.getElementById('nlOk');
+  nlForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(nlEmail.value && nlEmail.checkValidity()){
+      nlForm.style.display = 'none';
+      nlOk.style.display = 'block';
+    }
+  });
+})();
+</script>
+</body>
+</html>
