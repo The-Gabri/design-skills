@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>art-nouveau</title>
+<style>
+  :root{
+    --parchment:#F3E7CB;
+    --cream:#FBF4E2;
+    --gold:#C9962E;
+    --gold-soft:#D9B45C;
+    --ochre:#B26A2E;
+    --olive:#7A7444;
+    --sage:#9AA46B;
+    --rose:#C98A7D;
+    --cobalt:#2F4B7C;
+    --ink:#33291F;
+    --brown:#6B4A2F;
+    --serif:"Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:#E4D5B2;
+    font-family:var(--serif);
+    color:var(--ink);
+    line-height:1.6;
+    padding:clamp(8px,2vw,24px);
+  }
+
+  /* ---------- ornamental page frame ---------- */
+  .frame{border:3px double var(--gold);background:var(--parchment);position:relative;max-width:1280px;margin:0 auto}
+  .frame-inner{border:1px solid var(--gold);margin:10px;padding:clamp(1.5rem,4vw,3.5rem) clamp(1rem,4vw,3rem);position:relative}
+  .corner{position:absolute;width:72px;height:72px;pointer-events:none;z-index:2}
+  .corner.tl{top:18px;left:18px}
+  .corner.tr{top:18px;right:18px;transform:scaleX(-1)}
+  .corner.bl{bottom:18px;left:18px;transform:scaleY(-1)}
+  .corner.br{bottom:18px;right:18px;transform:scale(-1)}
+
+  /* ---------- header ---------- */
+  header.masthead{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.5rem 0 1.5rem;border-bottom:1px solid var(--gold)}
+  .brand{display:flex;align-items:center;gap:.9rem}
+  .brand .monogram{
+    width:58px;height:58px;flex:0 0 58px;border:2px solid var(--ink);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.6rem;color:var(--ink);background:var(--cream);outline:1px solid var(--gold);outline-offset:3px;
+  }
+  .brand h1{font-size:1.35rem;letter-spacing:.28em;text-transform:uppercase;font-weight:400}
+  .brand small{display:block;font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--brown);font-style:italic}
+  nav.site{display:flex;gap:1.6rem;flex-wrap:wrap}
+  nav.site a{color:var(--ink);text-decoration:none;text-transform:uppercase;letter-spacing:.2em;font-size:.78rem;position:relative;padding-bottom:2px}
+  nav.site a::after{content:"";position:absolute;left:0;bottom:-4px;height:2px;width:0;background:var(--gold);transition:width .4s ease}
+  nav.site a:hover::after{width:100%}
+
+  /* ---------- buttons ---------- */
+  .nouv-btn{
+    display:inline-block;font-family:var(--serif);text-transform:uppercase;letter-spacing:.22em;font-size:.78rem;
+    text-decoration:none;color:var(--parchment);background:var(--ink);padding:1rem 2.2rem;border-radius:999px;
+    outline:1px solid var(--gold);outline-offset:4px;cursor:pointer;border:none;
+    transition:background .35s ease,outline-color .35s ease,transform .35s ease;
+  }
+  .nouv-btn:hover{background:var(--brown);outline-color:var(--gold-soft);transform:translateY(-1px)}
+  .nouv-btn--ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+  .nouv-btn--ghost:hover{background:#D9B45C33;outline-color:var(--ink)}
+
+  /* ---------- hero ---------- */
+  .hero{display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:clamp(2rem,5vw,4rem);align-items:center;padding:3.5rem 0 2rem}
+  .arch-panel{
+    border:2px solid var(--ink);outline:1px solid var(--gold);outline-offset:7px;
+    border-radius:999px 999px 0 0;overflow:hidden;background:var(--cream);max-width:380px;justify-self:start;
+  }
+  .arch-panel svg{display:block;width:100%;height:auto}
+  .arch-panel figcaption{
+    text-align:center;letter-spacing:.24em;text-transform:uppercase;font-size:.72rem;
+    padding:1rem;border-top:1px solid var(--gold);background:var(--cream);
+  }
+  .eyebrow{font-style:italic;color:var(--brown);letter-spacing:.12em;margin-bottom:.8rem}
+  .hero h2{font-size:clamp(2.4rem,5.5vw,4.2rem);font-weight:400;letter-spacing:.06em;line-height:1.12;margin-bottom:1.2rem}
+  .hero h2 em{font-style:italic;color:var(--ochre)}
+  .hero p.lede{font-size:1.08rem;max-width:34rem;margin-bottom:2rem;color:#4a3d2e}
+  .hero-cta{display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center}
+  .hero-meta{display:flex;gap:2.2rem;margin-top:2.4rem;flex-wrap:wrap}
+  .hero-meta div{text-align:left}
+  .hero-meta .num{font-size:1.5rem;color:var(--ochre)}
+  .hero-meta .lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.24em;color:var(--brown)}
+
+  /* ---------- whiplash divider ---------- */
+  .whiplash{margin:2.5rem auto;max-width:900px}
+  .whiplash svg{display:block;width:100%;height:54px}
+
+  /* ---------- section titles ---------- */
+  .section-head{text-align:center;margin-bottom:2.2rem}
+  .section-head .kicker{font-size:.72rem;text-transform:uppercase;letter-spacing:.34em;color:var(--brown);margin-bottom:.6rem}
+  .section-head h2{font-size:clamp(1.8rem,3.6vw,2.6rem);font-weight:400;letter-spacing:.08em}
+  .section-head p{font-style:italic;color:var(--brown);max-width:36rem;margin:.6rem auto 0}
+
+  /* ---------- arch tabs ---------- */
+  .arch-tabs{display:flex;justify-content:center;gap:.4rem;flex-wrap:wrap;margin-bottom:-1px;position:relative;z-index:1}
+  .arch-tab{
+    font-family:var(--serif);text-transform:uppercase;letter-spacing:.2em;font-size:.78rem;color:var(--ink);
+    background:transparent;border:1.5px solid var(--olive);border-bottom:none;border-radius:999px 999px 0 0;
+    padding:.85rem 1.9rem .75rem;cursor:pointer;transition:background .35s ease,color .35s ease;
+  }
+  .arch-tab:hover:not(.is-active){background:#D9B45C33}
+  .arch-tab.is-active{background:var(--ink);color:var(--parchment);border-color:var(--ink)}
+  .tab-stage{border-top:1.5px solid var(--ink);padding-top:2.4rem}
+  .tab-panel{display:none;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;justify-items:center}
+  .tab-panel.is-visible{display:grid;animation:bloom .6s ease}
+  @keyframes bloom{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+
+  /* ---------- vignette cards ---------- */
+  .vignette{text-align:center;max-width:250px}
+  .vignette-arch{border:1.5px solid var(--ink);border-radius:999px 999px 0 0;background:var(--cream);aspect-ratio:3/4;overflow:hidden;outline:1px solid var(--gold);outline-offset:5px}
+  .vignette-arch svg{display:block;width:100%;height:100%}
+  .vignette h3{font-weight:400;letter-spacing:.16em;text-transform:uppercase;margin:1.1rem 0 .3rem;font-size:1rem}
+  .vignette .notes{font-style:italic;color:var(--brown);font-size:.88rem}
+  .vignette .price{letter-spacing:.1em;margin-top:.5rem}
+  .vignette .price span{color:var(--brown);font-size:.78rem}
+
+  /* ---------- atelier / gallery ---------- */
+  .atelier{display:grid;grid-template-columns:1fr minmax(280px,360px);gap:clamp(2rem,5vw,4rem);align-items:start;padding:1rem 0}
+  .flacon-arch{
+    border:2px solid var(--ink);outline:1px solid var(--gold);outline-offset:7px;
+    border-radius:999px 999px 0 0;overflow:hidden;background:var(--cream);transition:background .6s ease;
+  }
+  .flacon-arch svg{display:block;width:100%;height:auto}
+  .swatches{display:flex;gap:.9rem;justify-content:center;margin:1.4rem 0;flex-wrap:wrap}
+  .swatch{
+    width:44px;height:44px;border-radius:50%;border:2px solid var(--ink);cursor:pointer;padding:0;
+    outline:1px solid transparent;outline-offset:3px;transition:outline-color .3s ease,transform .3s ease;
+  }
+  .swatch:hover{transform:translateY(-2px)}
+  .swatch.is-active{outline-color:var(--gold)}
+  .flacon-copy h3{font-size:1.7rem;font-weight:400;letter-spacing:.06em;margin-bottom:.4rem}
+  .flacon-copy .latin{font-style:italic;color:var(--brown);margin-bottom:1rem}
+  .flacon-copy p{margin-bottom:1.6rem;color:#4a3d2e}
+
+  /* ---------- quote frame ---------- */
+  .quote-frame{
+    border:1.5px solid var(--ink);outline:1px solid var(--gold);outline-offset:6px;
+    background:var(--cream);padding:2.6rem clamp(1.5rem,4vw,3.5rem);text-align:center;max-width:760px;margin:1rem auto;
+  }
+  .quote-frame blockquote{font-size:clamp(1.15rem,2.4vw,1.5rem);font-style:italic;line-height:1.7}
+  .quote-frame cite{display:block;margin-top:1rem;font-style:normal;text-transform:uppercase;letter-spacing:.28em;font-size:.72rem;color:var(--brown)}
+
+  /* ---------- visit columns ---------- */
+  .visit{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-top:2.5rem}
+  .visit-col{border-top:2px solid var(--gold);padding-top:1.2rem}
+  .visit-col h4{text-transform:uppercase;letter-spacing:.26em;font-size:.78rem;font-weight:400;margin-bottom:.7rem;color:var(--ochre)}
+  .visit-col p{font-size:.94rem;color:#4a3d2e}
+  #reserve-note{display:none;margin-top:1.2rem;font-style:italic;color:var(--brown);animation:bloom .5s ease}
+  #reserve-note.is-visible{display:block}
+
+  /* ---------- footer ---------- */
+  footer.site{margin-top:3.5rem;border-top:3px double var(--gold);padding-top:1.6rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center}
+  footer.site .f-brand{letter-spacing:.26em;text-transform:uppercase;font-size:.8rem}
+  footer.site p{font-size:.8rem;color:var(--brown);font-style:italic}
+  footer.site .skill-line{font-size:.75rem;color:var(--brown);letter-spacing:.06em}
+
+  @media (max-width:820px){
+    .hero{grid-template-columns:1fr}
+    .arch-panel{justify-self:center}
+    .atelier{grid-template-columns:1fr}
+    nav.site{gap:1rem}
+    .corner{width:52px;height:52px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="frame-inner">
+
+    <!-- corner flourishes -->
+    <svg class="corner tl" viewBox="0 0 80 80" aria-hidden="true">
+      <path d="M4 76 V28 Q4 4 28 4 H76" fill="none" stroke="#C9962E" stroke-width="2.5"/>
+      <path d="M12 76 V34 Q12 12 34 12 H76" fill="none" stroke="#C9962E" stroke-width="1"/>
+      <circle cx="28" cy="28" r="5" fill="none" stroke="#C9962E" stroke-width="1.5"/>
+      <path d="M28 23 q10 -12 22 -14 q-12 4 -14 16 q6 -8 16 -9 q-10 3 -12 12 Z" fill="#7A7444"/>
+      <circle cx="46" cy="46" r="2.5" fill="#C9962E"/>
+    </svg>
+    <svg class="corner tr" viewBox="0 0 80 80" aria-hidden="true">
+      <path d="M4 76 V28 Q4 4 28 4 H76" fill="none" stroke="#C9962E" stroke-width="2.5"/>
+      <path d="M12 76 V34 Q12 12 34 12 H76" fill="none" stroke="#C9962E" stroke-width="1"/>
+      <circle cx="28" cy="28" r="5" fill="none" stroke="#C9962E" stroke-width="1.5"/>
+      <path d="M28 23 q10 -12 22 -14 q-12 4 -14 16 q6 -8 16 -9 q-10 3 -12 12 Z" fill="#7A7444"/>
+      <circle cx="46" cy="46" r="2.5" fill="#C9962E"/>
+    </svg>
+    <svg class="corner bl" viewBox="0 0 80 80" aria-hidden="true">
+      <path d="M4 76 V28 Q4 4 28 4 H76" fill="none" stroke="#C9962E" stroke-width="2.5"/>
+      <path d="M12 76 V34 Q12 12 34 12 H76" fill="none" stroke="#C9962E" stroke-width="1"/>
+      <circle cx="28" cy="28" r="5" fill="none" stroke="#C9962E" stroke-width="1.5"/>
+      <path d="M28 23 q10 -12 22 -14 q-12 4 -14 16 q6 -8 16 -9 q-10 3 -12 12 Z" fill="#7A7444"/>
+      <circle cx="46" cy="46" r="2.5" fill="#C9962E"/>
+    </svg>
+    <svg class="corner br" viewBox="0 0 80 80" aria-hidden="true">
+      <path d="M4 76 V28 Q4 4 28 4 H76" fill="none" stroke="#C9962E" stroke-width="2.5"/>
+      <path d="M12 76 V34 Q12 12 34 12 H76" fill="none" stroke="#C9962E" stroke-width="1"/>
+      <circle cx="28" cy="28" r="5" fill="none" stroke="#C9962E" stroke-width="1.5"/>
+      <path d="M28 23 q10 -12 22 -14 q-12 4 -14 16 q6 -8 16 -9 q-10 3 -12 12 Z" fill="#7A7444"/>
+      <circle cx="46" cy="46" r="2.5" fill="#C9962E"/>
+    </svg>
+
+    <!-- ================= masthead ================= -->
+    <header class="masthead">
+      <div class="brand">
+        <span class="monogram">M</span>
+        <h1>Maison Lilas<small>Atelier de Parfum · Paris · Est. 1897</small></h1>
+      </div>
+      <nav class="site" aria-label="Primary">
+        <a href="#collection">Collection</a>
+        <a href="#flacon">The Flacon</a>
+        <a href="#visit">Visit</a>
+      </nav>
+      <a class="nouv-btn" href="#visit">Reserve a Sample</a>
+    </header>
+
+    <!-- ================= hero ================= -->
+    <section class="hero" aria-label="Introduction">
+      <figure class="arch-panel">
+        <svg viewBox="0 0 200 260" role="img" aria-label="Stylised lily rising beneath a golden sunburst halo">
+          <rect width="200" height="260" fill="#FBF4E2"/>
+          <!-- halo -->
+          <circle cx="100" cy="88" r="64" fill="none" stroke="#C9962E" stroke-width="2"/>
+          <circle cx="100" cy="88" r="56" fill="none" stroke="#C9962E" stroke-width="1" stroke-dasharray="2 5"/>
+          <g stroke="#D9B45C" stroke-width="1.6">
+            <line x1="100" y1="14" x2="100" y2="30"/><line x1="100" y1="146" x2="100" y2="162"/>
+            <line x1="26" y1="88" x2="42" y2="88"/><line x1="158" y1="88" x2="174" y2="88"/>
+            <line x1="48" y1="36" x2="59" y2="47"/><line x1="141" y1="129" x2="152" y2="140"/>
+            <line x1="152" y1="36" x2="141" y2="47"/><line x1="59" y1="129" x2="48" y2="140"/>
+          </g>
+          <circle cx="100" cy="88" r="40" fill="#F3E7CB" stroke="#C9962E" stroke-width="1"/>
+          <!-- lily stem: whiplash curves -->
+          <path d="M100 240 C 88 200, 118 170, 104 128 C 96 104, 92 96, 100 88" fill="none" stroke="#7A7444" stroke-width="4" stroke-linecap="round"/>
+          <path d="M100 210 C 70 200, 60 180, 52 168" fill="none" stroke="#7A7444" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M102 190 C 132 182, 140 162, 150 152" fill="none" stroke="#7A7444" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- leaves -->
+          <ellipse cx="60" cy="184" rx="14" ry="5" fill="#9AA46B" transform="rotate(-24 60 184)"/>
+          <ellipse cx="142" cy="168" rx="14" ry="5" fill="#9AA46B" transform="rotate(24 142 168)"/>
+          <ellipse cx="84" cy="220" rx="12" ry="4.5" fill="#9AA46B" transform="rotate(-18 84 220)"/>
+          <!-- lily blossom -->
+          <g>
+            <path d="M100 88 C 86 70, 78 56, 82 40 C 94 48, 100 62, 100 74 C 100 62, 106 48, 118 40 C 122 56, 114 70, 100 88 Z" fill="#C98A7D" stroke="#33291F" stroke-width="1.4"/>
+            <path d="M100 88 C 84 84, 68 84, 56 92 C 70 96, 86 94, 98 90 Z" fill="#D9B45C" stroke="#33291F" stroke-width="1.2"/>
+            <path d="M100 88 C 116 84, 132 84, 144 92 C 130 96, 114 94, 102 90 Z" fill="#D9B45C" stroke="#33291F" stroke-width="1.2"/>
+            <circle cx="100" cy="80" r="3.5" fill="#C9962E" stroke="#33291F" stroke-width="1"/>
+          </g>
+          <!-- buds -->
+          <circle cx="52" cy="166" r="6" fill="#C98A7D" stroke="#33291F" stroke-width="1.2"/>
+          <circle cx="150" cy="150" r="6" fill="#C98A7D" stroke="#33291F" stroke-width="1.2"/>
+          <!-- mosaic base band -->
+          <rect x="20" y="222" width="160" height="22" fill="#2F4B7C"/>
+          <g fill="#D9B45C">
+            <rect x="30" y="228" width="8" height="10"/><rect x="46" y="228" width="8" height="10"/>
+            <rect x="62" y="228" width="8" height="10"/><rect x="78" y="228" width="8" height="10"/>
+            <rect x="94" y="228" width="8" height="10"/><rect x="110" y="228" width="8" height="10"/>
+            <rect x="126" y="228" width="8" height="10"/><rect x="142" y="228" width="8" height="10"/>
+          </g>
+        </svg>
+        <figcaption>Lys de Minuit · N° IV</figcaption>
+      </figure>
+
+      <div>
+        <p class="eyebrow">The Autumn Collection · MCMXXVI</p>
+        <h2>Perfume, pressed <em>like flowers</em> between the pages of the year.</h2>
+        <p class="lede">For one hundred and twenty-nine years our copper stills have coaxed scent from petal, root, and resin. Each flacon is filled by hand, rested twelve weeks in oak, and sealed beneath the lilac signet.</p>
+        <div class="hero-cta">
+          <a class="nouv-btn" href="#collection">Browse the Collection</a>
+          <a class="nouv-btn nouv-btn--ghost" href="#flacon">Admire the Flacon</a>
+        </div>
+        <div class="hero-meta">
+          <div><div class="num">129</div><div class="lbl">Years of craft</div></div>
+          <div><div class="num">34</div><div class="lbl">Botanical essences</div></div>
+          <div><div class="num">12</div><div class="lbl">Weeks in oak</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- whiplash divider -->
+    <div class="whiplash" role="separator" aria-hidden="true">
+      <svg viewBox="0 0 600 60" preserveAspectRatio="none">
+        <path d="M10 40 C 120 40, 160 10, 260 22 S 420 52, 590 28" fill="none" stroke="#7A7444" stroke-width="3" stroke-linecap="round"/>
+        <path d="M10 40 C 120 40, 160 10, 260 22 S 420 52, 590 28" fill="none" stroke="#33291F" stroke-width="1" opacity="0.3" transform="translate(0,4)"/>
+        <path d="M552 32 q 30 -10 36 -28 q -19 6 -25 24 q 8 -5 19 -5 q -13 3 -17 13 Z" fill="#7A7444"/>
+        <circle cx="10" cy="40" r="4" fill="#C9962E"/>
+        <circle cx="590" cy="28" r="2.5" fill="#C9962E"/>
+      </svg>
+    </div>
+
+    <!-- ================= collection tabs ================= -->
+    <section id="collection" aria-label="Perfume collection">
+      <div class="section-head">
+        <p class="kicker">La Collection</p>
+        <h2>Four Waters of the Season</h2>
+        <p>Choose a family of scent — each arch opens onto its own garden.</p>
+      </div>
+
+      <nav class="arch-tabs" role="tablist" aria-label="Scent families">
+        <button class="arch-tab is-active" role="tab" aria-selected="true" data-tab="panel-floral" id="tab-floral">Floral</button>
+        <button class="arch-tab" role="tab" aria-selected="false" data-tab="panel-oriental" id="tab-oriental">Oriental</button>
+        <button class="arch-tab" role="tab" aria-selected="false" data-tab="panel-citrus" id="tab-citrus">Citrus</button>
+      </nav>
+
+      <div class="tab-stage">
+        <!-- FLORAL -->
+        <div class="tab-panel is-visible" id="panel-floral" role="tabpanel" aria-labelledby="tab-floral">
+          <article class="vignette">
+            <div class="vignette-arch">
+              <svg viewBox="0 0 150 200" role="img" aria-label="Iris blossom illustration">
+                <rect width="150" height="200" fill="#FBF4E2"/>
+                <circle cx="75" cy="60" r="34" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <path d="M75 190 C 70 150, 82 120, 76 96" fill="none" stroke="#7A7444" stroke-width="3"/>
+                <path d="M75 96 C 60 78, 58 60, 64 46 C 76 54, 80 68, 78 80 C 82 68, 90 56, 102 50 C 104 66, 94 82, 80 92 Z" fill="#C98A7D" stroke="#33291F" stroke-width="1.2"/>
+                <path d="M75 96 C 58 92, 44 94, 34 102 C 48 106, 64 102, 74 98 Z" fill="#9AA46B" stroke="#33291F" stroke-width="1"/>
+                <path d="M75 96 C 92 92, 106 94, 116 102 C 102 106, 86 102, 76 98 Z" fill="#9AA46B" stroke="#33291F" stroke-width="1"/>
+                <ellipse cx="58" cy="150" rx="12" ry="4" fill="#9AA46B" transform="rotate(-25 58 150)"/>
+                <rect x="25" y="168" width="100" height="16" fill="#2F4B7C"/>
+              </svg>
+            </div>
+            <h3>Nuit d'Iris</h3>
+            <p class="notes">Iris · violet leaf · blond woods</p>
+            <p class="price">€ 88 <span>· 50 ml</span></p>
+          </article>
+          <article class="vignette">
+            <div class="vignette-arch">
+              <svg viewBox="0 0 150 200" role="img" aria-label="Rose and peony illustration">
+                <rect width="150" height="200" fill="#FBF4E2"/>
+                <circle cx="75" cy="60" r="34" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <path d="M75 190 C 82 150, 68 122, 76 98" fill="none" stroke="#7A7444" stroke-width="3"/>
+                <g stroke="#33291F" stroke-width="1.2">
+                  <circle cx="75" cy="76" r="20" fill="#C98A7D"/>
+                  <circle cx="75" cy="76" r="12" fill="none"/>
+                  <circle cx="75" cy="76" r="5" fill="#D9B45C"/>
+                </g>
+                <ellipse cx="92" cy="150" rx="12" ry="4" fill="#9AA46B" transform="rotate(25 92 150)"/>
+                <ellipse cx="58" cy="128" rx="10" ry="4" fill="#9AA46B" transform="rotate(-25 58 128)"/>
+                <rect x="25" y="168" width="100" height="16" fill="#7A7444"/>
+              </svg>
+            </div>
+            <h3>Rose de Mai</h3>
+            <p class="notes">May rose · peony · white musk</p>
+            <p class="price">€ 76 <span>· 50 ml</span></p>
+          </article>
+          <article class="vignette">
+            <div class="vignette-arch">
+              <svg viewBox="0 0 150 200" role="img" aria-label="Jasmine vine illustration">
+                <rect width="150" height="200" fill="#FBF4E2"/>
+                <circle cx="75" cy="60" r="34" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <path d="M75 190 C 60 160, 92 140, 76 108 C 68 92, 70 84, 76 78" fill="none" stroke="#7A7444" stroke-width="3"/>
+                <g fill="#FBF4E2" stroke="#33291F" stroke-width="1.2">
+                  <circle cx="70" cy="86" r="7"/><circle cx="84" cy="80" r="7"/><circle cx="76" cy="68" r="7"/>
+                  <circle cx="62" cy="70" r="7"/><circle cx="88" cy="94" r="7"/>
+                </g>
+                <circle cx="75" cy="82" r="3.5" fill="#C9962E" stroke="#33291F" stroke-width="1"/>
+                <ellipse cx="92" cy="150" rx="12" ry="4" fill="#9AA46B" transform="rotate(25 92 150)"/>
+                <rect x="25" y="168" width="100" height="16" fill="#B26A2E"/>
+              </svg>
+            </div>
+            <h3>Jasmin Blanc</h3>
+            <p class="notes">Night jasmine · neroli · rice steam</p>
+            <p class="price">€ 82 <span>· 50 ml</span></p>
+          </article>
+        </div>
+
+        <!-- ORIENTAL -->
+        <div class="tab-panel" id="panel-oriental" role="tabpanel" aria-labelledby="tab-oriental">
+          <article class="vignette">
+            <div class="vignette-arch">
+              <svg viewBox="0 0 150 200" role="img" aria-label="Amber resin illustration">
+                <rect width="150" height="200" fill="#FBF4E2"/>
+                <circle cx="75" cy="60" r="34" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <circle cx="75" cy="60" r="20" fill="#B26A2E" stroke="#33291F" stroke-width="1.2"/>
+                <circle cx="75" cy="60" r="12" fill="#D9B45C" opacity="0.85"/>
+                <path d="M75 190 C 68 150, 84 130, 75 100" fill="none" stroke="#7A7444" stroke-width="3"/>
+                <path d="M75 160 C 55 152, 48 138, 44 128" fill="none" stroke="#7A7444" stroke-width="2"/>
+                <ellipse cx="58" cy="150" rx="12" ry="4" fill="#9AA46B" transform="rotate(-25 58 150)"/>
+                <rect x="25" y="168" width="100" height="16" fill="#2F4B7C"/>
+              </svg>
+            </div>
+            <h3>Ambre Nuit</h3>
+            <p class="notes">Grey amber · benzoin · smoked vanilla</p>
+            <p class="price">€ 96 <span>· 50 ml</span></p>
+          </article>
+          <article class="vignette">
+            <div class="vignette-arch">
+              <svg viewBox="0 0 150 200" role="img" aria-label="Sandalwood illustration">
+                <rect width="150" height="200" fill="#FBF4E2"/>
+                <circle cx="75" cy="60" r="34" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <path d="M75 190 C 70 140, 80 110, 75 84" fill="none" stroke="#6B4A2F" stroke-width="5" stroke-linecap="round"/>
+                <path d="M75 150 C 58 142, 52 128, 50 118" fill="none" stroke="#6B4A2F" stroke-width="3" stroke-linecap="round"/>
+                <path d="M75 130 C 92 122, 98 108, 100 98" fill="none" stroke="#6B4A2F" stroke-width="3" stroke-linecap="round"/>
+                <ellipse cx="60" cy="140" rx="10" ry="4" fill="#9AA46B" transform="rotate(-25 60 140)"/>
+                <rect x="25" y="168" width="100" height="16" fill="#6B4A2F"/>
+              </svg>
+            </div>
+            <h3>Santal Mystique</h3>
+            <p class="notes">Mysore sandalwood · cardamom · honey</p>
+            <p class="price">€ 104 <span>· 50 ml</span></p>
+          </article>
+          <article class="vignette">
+            <div class="vignette-arch">
+              <svg viewBox="0 0 150 200" role="img" aria-label="Myrrh and incense illustration">
+                <rect width="150" height="200" fill="#FBF4E2"/>
+                <circle cx="75" cy="60" r="34" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <path d="M75 190 C 80 150, 66 130, 74 100" fill="none" stroke="#7A7444" stroke-width="3"/>
+                <path d="M70 120 q -8 -22 4 -34 M80 118 q 10 -20 -2 -32" fill="none" stroke="#9AA46B" stroke-width="1.6"/>
+                <circle cx="74" cy="84" r="8" fill="#B26A2E" stroke="#33291F" stroke-width="1.2"/>
+                <circle cx="88" cy="96" r="5" fill="#C9962E" stroke="#33291F" stroke-width="1"/>
+                <rect x="25" y="168" width="100" height="16" fill="#B26A2E"/>
+              </svg>
+            </div>
+            <h3>Encens d'Or</h3>
+            <p class="notes">Frankincense · myrrh · golden copal</p>
+            <p class="price">€ 92 <span>· 50 ml</span></p>
+          </article>
+        </div>
+
+        <!-- CITRUS -->
+        <div class="tab-panel" id="panel-citrus" role="tabpanel" aria-labelledby="tab-citrus">
+          <article class="vignette">
+            <div class="vignette-arch">
+              <svg viewBox="0 0 150 200" role="img" aria-label="Bergamot branch illustration">
+                <rect width="150" height="200" fill="#FBF4E2"/>
+                <circle cx="75" cy="60" r="34" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <path d="M75 190 C 70 150, 82 130, 76 104" fill="none" stroke="#7A7444" stroke-width="3"/>
+                <circle cx="75" cy="88" r="14" fill="#D9B45C" stroke="#33291F" stroke-width="1.2"/>
+                <path d="M75 74 q 2 -8 10 -10" fill="none" stroke="#7A7444" stroke-width="2"/>
+                <ellipse cx="58" cy="140" rx="12" ry="4" fill="#9AA46B" transform="rotate(-25 58 140)"/>
+                <ellipse cx="94" cy="120" rx="10" ry="4" fill="#9AA46B" transform="rotate(25 94 120)"/>
+                <rect x="25" y="168" width="100" height="16" fill="#7A7444"/>
+              </svg>
+            </div>
+            <h3>Bergamote Vive</h3>
+            <p class="notes">Calabrian bergamot · petitgrain · rain</p>
+            <p class="price">€ 68 <span>· 50 ml</span></p>
+          </article>
+          <article class="vignette">
+            <div class="vignette-arch">
+              <svg viewBox="0 0 150 200" role="img" aria-label="Neroli blossom illustration">
+                <rect width="150" height="200" fill="#FBF4E2"/>
+                <circle cx="75" cy="60" r="34" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <path d="M75 190 C 84 155, 64 135, 76 106" fill="none" stroke="#7A7444" stroke-width="3"/>
+                <g fill="#FBF4E2" stroke="#33291F" stroke-width="1.2">
+                  <ellipse cx="76" cy="92" rx="10" ry="6"/><ellipse cx="76" cy="92" rx="6" ry="10"/>
+                </g>
+                <circle cx="76" cy="92" r="3" fill="#C9962E"/>
+                <ellipse cx="92" cy="150" rx="12" ry="4" fill="#9AA46B" transform="rotate(25 92 150)"/>
+                <rect x="25" y="168" width="100" height="16" fill="#2F4B7C"/>
+              </svg>
+            </div>
+            <h3>Néroli d'Aube</h3>
+            <p class="notes">Tunisian neroli · orange leaf · dawn air</p>
+            <p class="price">€ 74 <span>· 50 ml</span></p>
+          </article>
+          <article class="vignette">
+            <div class="vignette-arch">
+              <svg viewBox="0 0 150 200" role="img" aria-label="Yuzu illustration">
+                <rect width="150" height="200" fill="#FBF4E2"/>
+                <circle cx="75" cy="60" r="34" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+                <path d="M75 190 C 70 150, 80 128, 75 102" fill="none" stroke="#7A7444" stroke-width="3"/>
+                <circle cx="75" cy="86" r="13" fill="#C9962E" stroke="#33291F" stroke-width="1.2"/>
+                <circle cx="71" cy="82" r="4" fill="#F3E7CB" opacity="0.8"/>
+                <ellipse cx="58" cy="142" rx="11" ry="4" fill="#9AA46B" transform="rotate(-25 58 142)"/>
+                <rect x="25" y="168" width="100" height="16" fill="#B26A2E"/>
+              </svg>
+            </div>
+            <h3>Yuzu Clair</h3>
+            <p class="notes">Kochi yuzu · shiso · white tea</p>
+            <p class="price">€ 71 <span>· 50 ml</span></p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- whiplash divider -->
+    <div class="whiplash" role="separator" aria-hidden="true">
+      <svg viewBox="0 0 600 60" preserveAspectRatio="none">
+        <path d="M590 40 C 480 40, 440 10, 340 22 S 180 52, 10 28" fill="none" stroke="#7A7444" stroke-width="3" stroke-linecap="round"/>
+        <path d="M590 40 C 480 40, 440 10, 340 22 S 180 52, 10 28" fill="none" stroke="#33291F" stroke-width="1" opacity="0.3" transform="translate(0,4)"/>
+        <path d="M48 32 q -30 -10 -36 -28 q 19 6 25 24 q -8 -5 -19 -5 q 13 3 17 13 Z" fill="#7A7444"/>
+        <circle cx="590" cy="40" r="4" fill="#C9962E"/>
+        <circle cx="10" cy="28" r="2.5" fill="#C9962E"/>
+      </svg>
+    </div>
+
+    <!-- ================= the flacon gallery ================= -->
+    <section id="flacon" aria-label="The flacon">
+      <div class="section-head">
+        <p class="kicker">L'Objet</p>
+        <h2>The Flacon</h2>
+        <p>Blown in Lorraine, stoppered in lilac glass. Choose a tint — the scent within never changes.</p>
+      </div>
+
+      <div class="atelier">
+        <div>
+          <div class="flacon-arch" id="flacon-frame">
+            <svg viewBox="0 0 200 260" role="img" aria-label="Perfume flacon illustration" id="flacon-art">
+              <rect width="200" height="260" fill="#FBF4E2"/>
+              <circle cx="100" cy="70" r="52" fill="none" stroke="#C9962E" stroke-width="1.5" stroke-dasharray="2 4"/>
+              <g stroke="#D9B45C" stroke-width="1.4">
+                <line x1="100" y1="12" x2="100" y2="24"/><line x1="42" y1="70" x2="54" y2="70"/>
+                <line x1="146" y1="70" x2="158" y2="70"/>
+              </g>
+              <!-- stopper -->
+              <path d="M88 108 h24 v-14 q 0 -10 -12 -10 q -12 0 -12 10 Z" fill="#C9962E" stroke="#33291F" stroke-width="1.5"/>
+              <rect x="92" y="108" width="16" height="16" fill="#33291F"/>
+              <!-- bottle body -->
+              <path d="M62 200 q 0 -58 14 -72 q 8 -8 8 -22 h32 q 0 14 8 22 q 14 14 14 72 q 0 18 -18 18 h -40 q -18 0 -18 -18 Z"
+                    style="fill:var(--glass,#7A7444)" stroke="#33291F" stroke-width="2" id="flacon-glass"/>
+              <!-- highlight -->
+              <path d="M70 150 q -2 -30 6 -44" fill="none" stroke="#FBF4E2" stroke-width="5" stroke-linecap="round" opacity="0.55"/>
+              <!-- label -->
+              <rect x="72" y="160" width="56" height="30" fill="#FBF4E2" stroke="#C9962E" stroke-width="1.2"/>
+              <text x="100" y="173" text-anchor="middle" font-family="Georgia,serif" font-size="8" letter-spacing="2" fill="#33291F">LILAS</text>
+              <text x="100" y="184" text-anchor="middle" font-family="Georgia,serif" font-size="6" font-style="italic" fill="#6B4A2F">Paris · 1897</text>
+              <!-- vines around bottle -->
+              <path d="M40 230 C 30 180, 55 150, 44 110" fill="none" stroke="#7A7444" stroke-width="2"/>
+              <ellipse cx="46" cy="170" rx="8" ry="3" fill="#9AA46B" transform="rotate(-30 46 170)"/>
+              <path d="M160 230 C 170 180, 145 150, 156 110" fill="none" stroke="#7A7444" stroke-width="2"/>
+              <ellipse cx="154" cy="170" rx="8" ry="3" fill="#9AA46B" transform="rotate(30 154 170)"/>
+            </svg>
+          </div>
+          <div class="swatches" role="group" aria-label="Glass tint">
+            <button class="swatch is-active" data-glass="#7A7444" data-name="Sauge" data-desc="Sage glass, the colour of the lilac leaf at dawn — our signature tint since 1897." style="background:#7A7444" aria-label="Sage glass"></button>
+            <button class="swatch" data-glass="#C98A7D" data-name="Rose Pâle" data-desc="Pale rose glass, blown for the Floral waters — it warms the perfume to a blush in sunlight." style="background:#C98A7D" aria-label="Pale rose glass"></button>
+            <button class="swatch" data-glass="#2F4B7C" data-name="Nuit" data-desc="Midnight cobalt, reserved for the Oriental family — it keeps the amber sleeping in the dark." style="background:#2F4B7C" aria-label="Midnight cobalt glass"></button>
+            <button class="swatch" data-glass="#B26A2E" data-name="Ambre" data-desc="Amber glass, the colour of the Bisquit cellars — chosen for the Citrus waters of autumn." style="background:#B26A2E" aria-label="Amber glass"></button>
+          </div>
+        </div>
+        <div class="flacon-copy">
+          <h3 id="flacon-name">Sauge</h3>
+          <p class="latin" id="flacon-latin">vitrum salviae — sage glass</p>
+          <p id="flacon-desc">Sage glass, the colour of the lilac leaf at dawn — our signature tint since 1897.</p>
+          <p>Every flacon is mouth-blown, so no two carry quite the same breath of air in the glass. The lilac signet is pressed into the stopper while it is still warm.</p>
+          <button class="nouv-btn" id="reserve-btn" type="button">Reserve a Sample Set</button>
+          <p id="reserve-note">Noted in the atelier ledger — three vials, one of each family, will be wrapped in tissue and twine. We write to confirm the posting day.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- whiplash divider -->
+    <div class="whiplash" role="separator" aria-hidden="true">
+      <svg viewBox="0 0 600 60" preserveAspectRatio="none">
+        <path d="M10 40 C 120 40, 160 10, 260 22 S 420 52, 590 28" fill="none" stroke="#7A7444" stroke-width="3" stroke-linecap="round"/>
+        <path d="M10 40 C 120 40, 160 10, 260 22 S 420 52, 590 28" fill="none" stroke="#33291F" stroke-width="1" opacity="0.3" transform="translate(0,4)"/>
+        <path d="M552 32 q 30 -10 36 -28 q -19 6 -25 24 q 8 -5 19 -5 q -13 3 -17 13 Z" fill="#7A7444"/>
+        <circle cx="10" cy="40" r="4" fill="#C9962E"/>
+        <circle cx="590" cy="28" r="2.5" fill="#C9962E"/>
+      </svg>
+    </div>
+
+    <!-- ================= visit ================= -->
+    <section id="visit" aria-label="Visit the atelier">
+      <div class="quote-frame">
+        <blockquote>"Distilled by hand, adorned by nature — our iris rests twelve weeks in oak before it ever meets the flacon."</blockquote>
+        <cite>Hélène Lilas · Maître Parfumeur</cite>
+      </div>
+      <div class="visit">
+        <div class="visit-col">
+          <h4>The Atelier</h4>
+          <p>14 Rue des Lilas, Paris XI<sup>e</sup>. The copper stills run Tuesday to Saturday; on Saturdays we decant the week's pressing while the metal is still warm, and visitors may watch.</p>
+        </div>
+        <div class="visit-col">
+          <h4>Hours</h4>
+          <p>Tuesday – Saturday, ten until six. Closed Sunday and Monday, when the flowers rest and so do we. Appointments for private consultations at the marble counter.</p>
+        </div>
+        <div class="visit-col">
+          <h4>Correspondence</h4>
+          <p>Write to <em>atelier@maison-lilas.example</em> — every letter is answered by hand within the week, sealed with lilac wax. No machines reply here.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= footer ================= -->
+    <footer class="site">
+      <div>
+        <div class="f-brand">Maison Lilas</div>
+        <p>A fictional atelier, drawn in the manner of the 1890s.</p>
+      </div>
+      <p class="skill-line">Built from the art-nouveau skill · design-skills</p>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- arch tabs ---------- */
+  var tabs = document.querySelectorAll(".arch-tab");
+  var panels = document.querySelectorAll(".tab-panel");
+  tabs.forEach(function(tab){
+    tab.addEventListener("click", function(){
+      tabs.forEach(function(t){ t.classList.remove("is-active"); t.setAttribute("aria-selected","false"); });
+      panels.forEach(function(p){ p.classList.remove("is-visible"); });
+      tab.classList.add("is-active");
+      tab.setAttribute("aria-selected","true");
+      var panel = document.getElementById(tab.getAttribute("data-tab"));
+      if (panel) panel.classList.add("is-visible");
+    });
+  });
+
+  /* ---------- flacon gallery switcher ---------- */
+  var swatches = document.querySelectorAll(".swatch");
+  var frame = document.getElementById("flacon-frame");
+  var nameEl = document.getElementById("flacon-name");
+  var descEl = document.getElementById("flacon-desc");
+  var latinEl = document.getElementById("flacon-latin");
+  var latin = {
+    "Sauge": "vitrum salviae — sage glass",
+    "Rose Pâle": "vitrum roseum — pale rose glass",
+    "Nuit": "vitrum noctis — midnight glass",
+    "Ambre": "vitrum electri — amber glass"
+  };
+  swatches.forEach(function(sw){
+    sw.addEventListener("click", function(){
+      swatches.forEach(function(s){ s.classList.remove("is-active"); });
+      sw.classList.add("is-active");
+      frame.style.setProperty("--glass", sw.getAttribute("data-glass"));
+      nameEl.textContent = sw.getAttribute("data-name");
+      descEl.textContent = sw.getAttribute("data-desc");
+      latinEl.textContent = latin[sw.getAttribute("data-name")] || "";
+    });
+  });
+
+  /* ---------- reserve toggle ---------- */
+  var reserveBtn = document.getElementById("reserve-btn");
+  var reserveNote = document.getElementById("reserve-note");
+  reserveBtn.addEventListener("click", function(){
+    var open = reserveNote.classList.toggle("is-visible");
+    reserveBtn.textContent = open ? "Noted — Thank You" : "Reserve a Sample Set";
+  });
+})();
+</script>
+</body>
+</html>
