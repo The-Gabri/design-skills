@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>notion</title>
+<style>
+  :root{
+    --page:#FFFFFF; --sidebar:#F7F6F3; --text:#37352F; --gray:#787774;
+    --faint:#9B9A97; --border:#E9E9E7; --hover:rgba(0,0,0,0.04);
+    --blue:#2383E2; --blue-bg:#E7F3F8; --radius:6px;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--page);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .app{display:flex;min-height:100vh}
+
+  /* ---------- sidebar ---------- */
+  .sidebar{width:240px;flex-shrink:0;background:var(--sidebar);padding:12px 8px;position:sticky;top:0;height:100vh;overflow-y:auto;font-size:14px}
+  .ws{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:3px;font-weight:600;cursor:pointer}
+  .ws:hover{background:var(--hover)}
+  .ws-icon{width:20px;height:20px;border-radius:3px;background:#37352F;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .nav-sec{font-size:12px;color:var(--gray);padding:14px 10px 4px;font-weight:500}
+  .nav-item{display:flex;align-items:center;gap:8px;padding:4px 10px;border-radius:3px;color:var(--text);cursor:pointer;white-space:nowrap;overflow:hidden}
+  .nav-item:hover{background:var(--hover)}
+  .nav-item.active{background:rgba(0,0,0,0.06);font-weight:500}
+  .nav-ico{width:18px;text-align:center;color:var(--gray);font-size:13px}
+
+  /* ---------- main ---------- */
+  .main{flex:1;min-width:0}
+  .cover{height:180px;background:linear-gradient(180deg,#F7F6F3,#EDEDEA);border-bottom:1px solid var(--border);display:flex;align-items:flex-end}
+  .cover span{font-size:11px;color:var(--faint);padding:6px 12px}
+  .doc{max-width:720px;margin:0 auto;padding:40px 32px 120px}
+  .breadcrumb{font-size:13px;color:var(--gray);margin-bottom:10px}
+  .breadcrumb span{color:var(--text);font-weight:500}
+  .page-title{font-family:var(--serif);font-size:38px;font-weight:700;letter-spacing:-0.01em;margin:0 0 4px;line-height:1.2}
+  .page-icon{font-size:44px;display:block;margin-bottom:8px}
+  .meta{font-size:13px;color:var(--faint);margin-bottom:26px}
+
+  .block{margin:8px 0}
+  p.block{line-height:1.65}
+  h2.block{font-size:24px;font-weight:700;margin:28px 0 8px;letter-spacing:-0.005em}
+  h3.block{font-size:20px;font-weight:700;margin:22px 0 6px}
+
+  /* toggle */
+  details.n-toggle{border-radius:3px}
+  details.n-toggle summary{cursor:pointer;list-style:none;font-weight:600;font-size:16px;padding:5px 8px;border-radius:3px;user-select:none}
+  details.n-toggle summary::-webkit-details-marker{display:none}
+  details.n-toggle summary:hover{background:var(--hover)}
+  .caret{display:inline-block;width:22px;color:var(--gray);font-size:12px;transition:transform .15s ease}
+  details.n-toggle:not([open]) .caret{transform:rotate(-90deg)}
+  .toggle-body{padding:4px 8px 10px 36px}
+  .toggle-body p{margin:6px 0}
+
+  /* callout */
+  .callout{display:flex;gap:10px;padding:12px 14px;border-radius:var(--radius);margin:12px 0;line-height:1.55}
+  .callout.blue{background:var(--blue-bg)}
+  .callout.yellow{background:#FBF3DB}
+  .callout.green{background:#EDF3EC}
+  .callout.gray{background:#F1F1EF}
+  .callout .ci{font-size:18px;line-height:1.4;flex-shrink:0}
+
+  /* quote / divider / code / todo */
+  .quote{border-left:3px solid var(--text);margin:12px 0;padding:2px 0 2px 14px;font-size:15px}
+  hr.divider{border:0;border-top:1px solid var(--border);margin:18px 0}
+  pre.code{background:var(--sidebar);border-radius:var(--radius);padding:14px 16px;font-family:var(--mono);font-size:13.5px;line-height:1.6;overflow:auto;margin:12px 0}
+  .todo{display:flex;gap:9px;align-items:flex-start;padding:3px 0;cursor:pointer}
+  .todo input{appearance:none;width:16px;height:16px;border:1.5px solid rgba(0,0,0,0.28);border-radius:3px;margin-top:4px;flex-shrink:0;cursor:pointer;background:#fff}
+  .todo input:checked{background:var(--blue);border-color:var(--blue)}
+  .todo input:checked::after{content:"✓";color:#fff;font-size:11px;display:block;text-align:center;line-height:14px}
+  .todo.done span{color:var(--faint);text-decoration:line-through}
+
+  /* database */
+  .db-head{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px}
+  .db-title{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .view-switch{display:flex;background:#EFEFED;border-radius:6px;padding:3px;gap:2px}
+  .view-switch button{border:0;background:transparent;font-family:var(--sans);font-size:13px;font-weight:500;color:var(--gray);padding:4px 12px;border-radius:4px;cursor:pointer}
+  .view-switch button.active{background:#fff;color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,0.08)}
+  table.db{width:100%;border-collapse:collapse;font-size:14px}
+  table.db th{text-align:left;font-size:12px;font-weight:500;color:var(--gray);border-bottom:1px solid var(--border);padding:8px 10px}
+  table.db td{border-bottom:1px solid var(--border);padding:9px 10px}
+  table.db tbody tr{cursor:pointer}
+  table.db tbody tr:hover{background:var(--hover)}
+  .db-t{font-weight:500}
+  .tag{display:inline-block;font-size:12px;font-weight:500;padding:2px 8px;border-radius:3px;white-space:nowrap}
+  .t-blue{color:#0B6E99;background:#D3E5EF}.t-green{color:#0F7B6C;background:#DBEDEA}
+  .t-yellow{color:#CB912F;background:#FDECC8}.t-red{color:#D44C47;background:#FFE2DD}
+  .t-purple{color:#9065B0;background:#E8DEEE}.t-gray{color:#787774;background:#E3E2E0}
+  .avatar{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#E3E2E0;color:#787774;font-size:10px;font-weight:600;align-items:center;justify-content:center;margin-right:6px;vertical-align:-6px}
+  .cell-date{color:var(--gray);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  .board{display:none;gap:12px;overflow-x:auto;padding:4px 0 8px}
+  .board.show{display:flex}
+  table.db.hide{display:none}
+  .col{flex:0 0 230px;background:var(--sidebar);border-radius:var(--radius);padding:8px}
+  .col-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:4px 6px 10px}
+  .dot{width:8px;height:8px;border-radius:50%}
+  .count{color:var(--faint);font-weight:400}
+  .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:14px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,0.04);cursor:pointer}
+  .card:hover{box-shadow:0 0 0 1px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.08)}
+  .card .cmeta{font-size:12px;color:var(--gray);margin-top:6px;display:flex;gap:6px;align-items:center}
+
+  .bookmark{display:block;border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin:12px 0;text-decoration:none;color:var(--text)}
+  .bookmark:hover{background:var(--hover)}
+  .bookmark b{display:block;font-weight:500;font-size:14px}
+  .bookmark small{display:block;font-size:13px;color:var(--gray);margin-top:2px}
+  .bookmark .url{display:block;font-size:12px;color:var(--faint);margin-top:6px}
+
+  footer{max-width:720px;margin:0 auto;padding:0 32px 40px;font-size:12px;color:var(--faint)}
+
+  @media (max-width:860px){
+    .sidebar{display:none}
+    .doc{padding:24px 20px 80px}
+    .page-title{font-size:30px}
+    .cover{height:120px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="ws"><span class="ws-icon">A</span> Acme Studio</div>
+    <div class="nav-sec">Private</div>
+    <div class="nav-item"><span class="nav-ico">🏠</span> Home</div>
+    <div class="nav-item"><span class="nav-ico">📥</span> Inbox <span style="margin-left:auto;color:var(--faint);font-size:12px">3</span></div>
+    <div class="nav-sec">Workspace</div>
+    <div class="nav-item active"><span class="nav-ico">🗂️</span> Q4 Product Sprint</div>
+    <div class="nav-item"><span class="nav-ico">📝</span> Meeting notes</div>
+    <div class="nav-item"><span class="nav-ico">🎯</span> Roadmap 2027</div>
+    <div class="nav-item"><span class="nav-ico">📚</span> Design library</div>
+    <div class="nav-item"><span class="nav-ico">🧪</span> Research log</div>
+    <div class="nav-sec">Shared</div>
+    <div class="nav-item"><span class="nav-ico">👥</span> Team handbook</div>
+    <div class="nav-item"><span class="nav-ico">💰</span> Pricing decisions</div>
+  </aside>
+
+  <main class="main">
+    <div class="cover"><span>Cover · Unsplash / Studio desk</span></div>
+    <article class="doc">
+      <div class="breadcrumb">Acme Studio / Projects / <span>Q4 Product Sprint</span></div>
+      <span class="page-icon">🗂️</span>
+      <h1 class="page-title">Q4 Product Sprint</h1>
+      <p class="meta">Last edited by Mara Chen · Oct 2, 2026</p>
+
+      <div class="callout blue">
+        <span class="ci">💡</span>
+        <div><strong>Scope freeze Friday.</strong> No new tickets after standup — anything later goes to the Q1 backlog.</div>
+      </div>
+
+      <p class="block">This page tracks the final product sprint of the year. The goal is simple: ship the new onboarding flow and cut trial-to-paid time by 15% before the holiday freeze.</p>
+
+      <h2 class="block">Sprint plan</h2>
+
+      <details class="n-toggle" open>
+        <summary><span class="caret">▾</span> Week 1–2 · Build</summary>
+        <div class="toggle-body">
+          <p>Engineers pair on the onboarding rewrite. Design ships the empty states and the progress indicator. Nothing merges without a passing checklist review.</p>
+          <label class="todo done"><input type="checkbox" checked disabled><span>Migrate signup steps to the new flow</span></label>
+          <label class="todo done"><input type="checkbox" checked disabled><span>Empty states for the project dashboard</span></label>
+          <label class="todo"><input type="checkbox"><span>Progress indicator component</span></label>
+        </div>
+      </details>
+
+      <details class="n-toggle">
+        <summary><span class="caret">▾</span> Week 3 · Measure</summary>
+        <div class="toggle-body">
+          <p>Run the funnel analysis, watch ten session replays, and interview five trial users who dropped off at step two. Bring one surprise finding to Friday's review.</p>
+        </div>
+      </details>
+
+      <details class="n-toggle">
+        <summary><span class="caret">▾</span> Week 4 · Polish &amp; ship</summary>
+        <div class="toggle-body">
+          <p>Fix the top three friction points, write the changelog, and record the two-minute walkthrough video. Ship on Thursday; Friday is buffer, not a workday.</p>
+        </div>
+      </details>
+
+      <div class="db-head">
+        <div class="db-title">📋 Sprint board</div>
+        <div class="view-switch">
+          <button id="btnTable" class="active">Table</button>
+          <button id="btnBoard">Board</button>
+        </div>
+      </div>
+
+      <table class="db" id="dbTable">
+        <thead><tr><th style="width:38%">Task</th><th>Status</th><th>Owner</th><th>Due</th></tr></thead>
+        <tbody>
+          <tr><td class="db-t">Onboarding flow v2</td><td><span class="tag t-blue">In progress</span></td><td><span class="avatar">MC</span>Mara Chen</td><td class="cell-date">Oct 9</td></tr>
+          <tr><td class="db-t">Billing reminder emails</td><td><span class="tag t-green">Done</span></td><td><span class="avatar">JT</span>Jon Tao</td><td class="cell-date">Oct 2</td></tr>
+          <tr><td class="db-t">Progress indicator</td><td><span class="tag t-yellow">In review</span></td><td><span class="avatar">AL</span>Ana Ruiz</td><td class="cell-date">Oct 6</td></tr>
+          <tr><td class="db-t">Session replay analysis</td><td><span class="tag t-gray">Not started</span></td><td><span class="avatar">JT</span>Jon Tao</td><td class="cell-date">Oct 13</td></tr>
+          <tr><td class="db-t">Walkthrough video</td><td><span class="tag t-red">Blocked</span></td><td><span class="avatar">AL</span>Ana Ruiz</td><td class="cell-date">Oct 16</td></tr>
+          <tr><td class="db-t">Changelog draft</td><td><span class="tag t-purple">Backlog</span></td><td><span class="avatar">MC</span>Mara Chen</td><td class="cell-date">Oct 20</td></tr>
+        </tbody>
+      </table>
+
+      <div class="board" id="dbBoard">
+        <div class="col">
+          <div class="col-head"><span class="dot" style="background:#D3E5EF"></span>In progress <span class="count">1</span></div>
+          <div class="card">Onboarding flow v2<div class="cmeta"><span class="avatar">MC</span>Oct 9</div></div>
+        </div>
+        <div class="col">
+          <div class="col-head"><span class="dot" style="background:#FDECC8"></span>In review <span class="count">1</span></div>
+          <div class="card">Progress indicator<div class="cmeta"><span class="avatar">AL</span>Oct 6</div></div>
+        </div>
+        <div class="col">
+          <div class="col-head"><span class="dot" style="background:#E3E2E0"></span>Not started <span class="count">1</span></div>
+          <div class="card">Session replay analysis<div class="cmeta"><span class="avatar">JT</span>Oct 13</div></div>
+        </div>
+        <div class="col">
+          <div class="col-head"><span class="dot" style="background:#FFE2DD"></span>Blocked <span class="count">1</span></div>
+          <div class="card">Walkthrough video<div class="cmeta"><span class="avatar">AL</span>Oct 16</div></div>
+        </div>
+        <div class="col">
+          <div class="col-head"><span class="dot" style="background:#DBEDEA"></span>Done <span class="count">1</span></div>
+          <div class="card">Billing reminder emails<div class="cmeta"><span class="avatar">JT</span>Oct 2</div></div>
+        </div>
+      </div>
+
+      <h3 class="block">Definition of done</h3>
+      <div class="callout green">
+        <span class="ci">✅</span>
+        <div>A task is done when it's merged, documented in the changelog, and the owner has watched a real user complete it once.</div>
+      </div>
+      <blockquote class="quote">“Make every detail perfect and limit the number of details to perfect.”</blockquote>
+
+      <hr class="divider">
+
+      <h3 class="block">Tracking snippet</h3>
+      <p class="block">Drop this into the onboarding page to log funnel events:</p>
+      <pre class="code"><code>analytics.track("onboarding_step", {
+  step: 2,
+  trial_id: user.trialId
+});</code></pre>
+
+      <div class="callout yellow">
+        <span class="ci">⚠️</span>
+        <div>Heads up: the analytics event names changed in v3 — <code style="font-family:var(--mono);font-size:13px">signup_start</code> is now <code style="font-family:var(--mono);font-size:13px">onboarding_step</code>.</div>
+      </div>
+
+      <a class="bookmark" href="#">
+        <b>Notion — One workspace. Every team.</b>
+        <small>Write, plan, and get organized — all in one place.</small>
+        <span class="url">notion.so</span>
+      </a>
+
+      <div class="callout gray">
+        <span class="ci">🗃️</span>
+        <div>Archive note: when the sprint closes, move this page under <strong>Projects / 2026 Archive</strong> and lock it.</div>
+      </div>
+    </article>
+    <footer>Built from the notion skill · design-skills</footer>
+  </main>
+</div>
+<script>
+  const btnT = document.getElementById('btnTable');
+  const btnB = document.getElementById('btnBoard');
+  const table = document.getElementById('dbTable');
+  const board = document.getElementById('dbBoard');
+  btnT.addEventListener('click', () => {
+    btnT.classList.add('active'); btnB.classList.remove('active');
+    table.classList.remove('hide'); board.classList.remove('show');
+  });
+  btnB.addEventListener('click', () => {
+    btnB.classList.add('active'); btnT.classList.remove('active');
+    table.classList.add('hide'); board.classList.add('show');
+  });
+  // Strike through checked to-dos
+  document.querySelectorAll('.todo input').forEach(cb => {
+    cb.addEventListener('change', () => cb.closest('.todo').classList.toggle('done', cb.checked));
+  });
+</script>
+</body>
+</html>
