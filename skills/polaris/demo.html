@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>polaris</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;550;650;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --p-color-bg: #f1f1f1;
+    --p-color-bg-surface: #ffffff;
+    --p-color-bg-surface-secondary: #f6f6f7;
+    --p-color-bg-fill-brand: #303030;
+    --p-color-bg-fill-brand-hover: #1a1a1a;
+    --p-color-bg-fill-critical: #d72c0d;
+    --p-color-bg-fill-critical-hover: #bd2710;
+    --p-color-text: #1a1a1a;
+    --p-color-text-secondary: #616a75;
+    --p-color-text-link: #005bd3;
+    --p-color-border: #e3e5e7;
+    --p-color-border-strong: #c9cccf;
+    --p-color-border-divider: #ebebeb;
+    --p-color-focus: #4680ff;
+    --p-motion-ease: cubic-bezier(0.32, 0.72, 0, 1);
+    --p-font-family: Inter, -apple-system, BlinkMacSystemFont, "San Francisco",
+      "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: var(--p-font-family);
+    font-size: 14px; line-height: 20px; color: var(--p-color-text);
+    background: var(--p-color-bg); font-weight: 450;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--p-color-text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  button { font-family: inherit; }
+
+  /* ---- Admin top bar (dark chrome) ---- */
+  .topbar {
+    background: #1a1a1a; color: #fff;
+    display: flex; align-items: center; gap: 12px;
+    padding: 0 20px; height: 56px; position: sticky; top: 0; z-index: 50;
+  }
+  .store-btn {
+    background: none; border: 0; color: #fff; cursor: pointer;
+    display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px;
+    font-size: 14px; font-weight: 650;
+  }
+  .store-btn:hover { background: rgba(255,255,255,.08); }
+  .store-btn span { color: #a1a8b3; font-weight: 450; }
+  .store-btn svg { opacity: .7; }
+  .topbar nav { display: flex; gap: 4px; margin-left: 16px; }
+  .topbar nav a {
+    color: #d4d6d9; font-size: 14px; padding: 8px 12px; border-radius: 8px;
+  }
+  .topbar nav a:hover { background: rgba(255,255,255,.08); text-decoration: none; }
+  .topbar nav a.active { background: rgba(255,255,255,.12); color: #fff; font-weight: 550; }
+  .topbar .spacer { flex: 1; }
+  .topbar .avatar {
+    width: 32px; height: 32px; border-radius: 9999px; background: #5c5f62;
+    display: grid; place-items: center; font-size: 12px; font-weight: 650; color: #fff;
+  }
+
+  /* ---- Page ---- */
+  .page { max-width: 1120px; margin: 0 auto; padding: 24px 20px 64px; }
+  .page-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 16px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .page-title { font-size: 24px; line-height: 32px; font-weight: 650; letter-spacing: -.01em; margin: 0; }
+  .page-sub { color: var(--p-color-text-secondary); margin: 4px 0 0; }
+  .actions { display: flex; gap: 8px; }
+
+  /* ---- Buttons (dark brand fill + bevel) ---- */
+  .p-btn {
+    font-size: 14px; font-weight: 550; line-height: 20px;
+    border-radius: 8px; padding: 6px 16px; min-height: 36px;
+    border: 1px solid transparent; cursor: pointer;
+    transition: background-color 150ms var(--p-motion-ease);
+  }
+  .p-btn-primary {
+    color: #fff; background-color: var(--p-color-bg-fill-brand);
+    background-image: linear-gradient(180deg, rgba(48,48,48,0) 63.53%, hsla(0,0%,100%,.15));
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .p-btn-primary:hover { background-color: var(--p-color-bg-fill-brand-hover); }
+  .p-btn-secondary {
+    color: var(--p-color-text); background: #fff; border-color: var(--p-color-border-strong);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .p-btn-secondary:hover { background: var(--p-color-bg-surface-secondary); }
+  .p-btn-destructive {
+    color: #fff; background-color: var(--p-color-bg-fill-critical);
+    background-image: linear-gradient(180deg, rgba(215,44,13,0) 63.53%, hsla(0,0%,100%,.12));
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .p-btn-destructive:hover { background-color: var(--p-color-bg-fill-critical-hover); }
+  .p-btn-plain {
+    background: none; border: 0; color: var(--p-color-text-link);
+    font-size: 14px; font-weight: 550; cursor: pointer; padding: 6px 0;
+  }
+  .p-btn-plain:hover { text-decoration: underline; }
+  .p-btn:focus-visible { outline: 2px solid var(--p-color-focus); outline-offset: 1px; }
+
+  /* ---- Banner ---- */
+  .banner {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: #eaf4ff; border-radius: 12px; padding: 16px; margin-bottom: 16px;
+  }
+  .banner.hidden { display: none; }
+  .banner-icon {
+    width: 20px; height: 20px; border-radius: 9999px; background: #005bd3; color: #fff;
+    display: grid; place-items: center; flex-shrink: 0; margin-top: 1px;
+  }
+  .banner-title { font-size: 14px; font-weight: 650; margin: 0 0 4px; }
+  .banner p.body { margin: 0 0 8px; color: var(--p-color-text-secondary); }
+  .banner-dismiss {
+    margin-left: auto; background: none; border: 0; cursor: pointer; padding: 4px;
+    color: var(--p-color-text-secondary); border-radius: 6px; line-height: 0; flex-shrink: 0;
+  }
+  .banner-dismiss:hover { color: var(--p-color-text); background: rgba(0,0,0,.05); }
+
+  /* ---- Card ---- */
+  .card {
+    background: var(--p-color-bg-surface); border-radius: 12px;
+    box-shadow: 0 0 0 1px rgba(63,63,68,.05), 0 1px 3px 0 rgba(63,63,68,.15);
+    margin-bottom: 16px; overflow: hidden;
+  }
+
+  /* ---- Tabs ---- */
+  .tabs { display: flex; gap: 4px; padding: 8px 16px 0; border-bottom: 1px solid var(--p-color-border-divider); overflow-x: auto; }
+  .tab {
+    background: none; border: 0; font-size: 14px; font-weight: 550; color: var(--p-color-text-secondary);
+    padding: 8px 12px 10px; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap;
+  }
+  .tab:hover { color: var(--p-color-text); }
+  .tab-active { color: var(--p-color-text); border-bottom-color: var(--p-color-bg-fill-brand); }
+  .tab-count {
+    background: var(--p-color-border-divider); border-radius: 9999px;
+    padding: 1px 8px; font-size: 11px; font-weight: 550; margin-left: 4px; color: var(--p-color-text);
+  }
+
+  /* ---- Filter bar ---- */
+  .filter-bar { display: flex; gap: 8px; align-items: center; padding: 12px 16px; flex-wrap: wrap; }
+  .search-wrap { position: relative; flex: 1; min-width: 200px; }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--p-color-text-secondary); pointer-events: none; display: flex; }
+  .search {
+    width: 100%; height: 36px; border: 1px solid var(--p-color-border-strong); border-radius: 8px;
+    padding: 0 12px 0 34px; font-size: 14px; font-family: inherit; background: #fff; color: var(--p-color-text);
+  }
+  .search::placeholder { color: #8c9196; }
+  .search:focus { outline: 2px solid var(--p-color-focus); outline-offset: 0; border-color: var(--p-color-focus); }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--p-color-border-divider); border-radius: 9999px;
+    padding: 5px 6px 5px 12px; font-size: 13px; font-weight: 450;
+  }
+  .pill button {
+    background: none; border: 0; cursor: pointer; display: flex;
+    color: var(--p-color-text-secondary); padding: 2px; border-radius: 9999px; line-height: 0;
+  }
+  .pill button:hover { color: var(--p-color-text); }
+  .pill.hidden { display: none; }
+
+  /* ---- Resource list rows ---- */
+  .resource-list { list-style: none; margin: 0; padding: 0; }
+  .resource-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-top: 1px solid var(--p-color-border-divider);
+    transition: background-color 100ms var(--p-motion-ease);
+    cursor: pointer;
+  }
+  .resource-item:hover { background: var(--p-color-bg-surface-secondary); }
+  .resource-item.selected { background: #f2f7fe; }
+  .resource-item input[type="checkbox"] {
+    width: 20px; height: 20px; border-radius: 4px; accent-color: var(--p-color-bg-fill-brand);
+    cursor: pointer; flex-shrink: 0; margin: 0;
+  }
+  .swatch { border-radius: 8px; flex-shrink: 0; display: block; }
+  .item-body { flex: 1; min-width: 0; }
+  .item-name { font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-name span { color: var(--p-color-text); }
+  .item-meta { color: var(--p-color-text-secondary); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-badges { display: flex; gap: 8px; flex-shrink: 0; }
+  .item-price { font-weight: 550; min-width: 72px; text-align: right; flex-shrink: 0; }
+  .item-chevron { color: var(--p-color-text-secondary); flex-shrink: 0; display: flex; }
+
+  .badge {
+    display: inline-flex; align-items: center; border-radius: 9999px;
+    padding: 3px 8px; font-size: 12px; font-weight: 550;
+    background: var(--p-color-border-divider); color: var(--p-color-text); white-space: nowrap;
+  }
+  .badge-success { background: #a4e8b4; color: #0c3d1c; }
+  .badge-attention { background: #ffe9a8; color: #573b00; }
+  .badge-critical { background: #fead9a; color: #61130a; }
+
+  /* ---- Selection bar (bulk actions) ---- */
+  .selection-bar {
+    display: none; align-items: center; gap: 8px;
+    padding: 12px 16px; border-top: 1px solid var(--p-color-border-divider);
+    background: var(--p-color-bg-surface-secondary); font-weight: 550; flex-wrap: wrap;
+  }
+  .selection-bar.visible { display: flex; }
+  .selection-bar .p-btn { min-height: 32px; padding: 4px 12px; font-size: 13px; }
+
+  /* ---- List footer / load more ---- */
+  .list-footer { padding: 16px; text-align: center; border-top: 1px solid var(--p-color-border-divider); }
+  .list-footer p { color: var(--p-color-text-secondary); font-size: 13px; margin: 0 0 8px; }
+
+  /* ---- Empty state ---- */
+  .empty { text-align: center; padding: 48px 32px; max-width: 520px; margin: 0 auto; }
+  .empty-icon { margin-bottom: 16px; color: #8c9196; display: inline-flex; }
+  .empty h2 { font-size: 20px; line-height: 28px; font-weight: 650; margin: 0 0 8px; }
+  .empty p { color: var(--p-color-text-secondary); margin: 0 0 16px; }
+
+  /* ---- Toast ---- */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(16px);
+    background: #1a1a1a; color: #fff; font-size: 14px; font-weight: 550;
+    border-radius: 9999px; padding: 10px 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.25);
+    opacity: 0; pointer-events: none; max-width: calc(100vw - 48px);
+    transition: opacity 200ms var(--p-motion-ease), transform 200ms var(--p-motion-ease);
+    z-index: 120;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---- Slide-over detail panel ---- */
+  .detail-backdrop {
+    position: fixed; inset: 0; background: rgba(26,26,26,.5); z-index: 80;
+    opacity: 0; pointer-events: none; transition: opacity 200ms var(--p-motion-ease);
+  }
+  .detail-backdrop.open { opacity: 1; pointer-events: auto; }
+  .detail-panel {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 90;
+    width: min(440px, 94vw); background: #fff; display: flex; flex-direction: column;
+    transform: translateX(102%); transition: transform 200ms var(--p-motion-ease);
+    box-shadow: -8px 0 24px rgba(0,0,0,.12);
+  }
+  .detail-panel.open { transform: translateX(0); }
+  .detail-head {
+    display: flex; align-items: flex-start; gap: 12px; padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--p-color-border-divider);
+  }
+  .detail-head .swatch { border-radius: 12px; }
+  .detail-title { font-size: 17px; font-weight: 650; margin: 0 0 6px; }
+  .detail-close {
+    margin-left: auto; background: none; border: 0; cursor: pointer; padding: 6px;
+    color: var(--p-color-text-secondary); border-radius: 8px; line-height: 0; flex-shrink: 0;
+  }
+  .detail-close:hover { color: var(--p-color-text); background: var(--p-color-bg-surface-secondary); }
+  .detail-body { padding: 20px; overflow-y: auto; flex: 1; }
+  .detail-section { margin-bottom: 20px; }
+  .detail-section h3 { font-size: 13px; font-weight: 650; color: var(--p-color-text-secondary); margin: 0 0 8px; text-transform: none; }
+  .detail-price { font-size: 20px; font-weight: 650; }
+  .detail-desc { margin: 0; color: var(--p-color-text); }
+  .detail-kv { display: grid; grid-template-columns: 110px 1fr; row-gap: 8px; font-size: 14px; }
+  .detail-kv dt { color: var(--p-color-text-secondary); margin: 0; }
+  .detail-kv dd { margin: 0; font-weight: 450; }
+  .detail-stats { display: flex; gap: 24px; }
+  .detail-stat b { display: block; font-size: 17px; font-weight: 650; }
+  .detail-stat span { color: var(--p-color-text-secondary); font-size: 13px; }
+  .detail-foot { padding: 16px 20px; border-top: 1px solid var(--p-color-border-divider); display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* ---- Modal ---- */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(26,26,26,.5); z-index: 100;
+    display: none; place-items: center; padding: 24px;
+  }
+  .modal-backdrop.open { display: grid; }
+  .modal {
+    background: #fff; border-radius: 12px; padding: 20px;
+    width: min(440px, calc(100vw - 48px));
+    box-shadow: 0 12px 32px rgba(0,0,0,.2);
+  }
+  .modal h2 { font-size: 17px; font-weight: 650; margin: 0 0 8px; }
+  .modal p { margin: 0 0 20px; color: var(--p-color-text-secondary); }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; }
+
+  footer { text-align: center; color: var(--p-color-text-secondary); font-size: 12px; margin-top: 32px; }
+
+  @media (max-width: 720px) {
+    .topbar nav { display: none; }
+    .item-meta { display: none; }
+    .item-badges { flex-wrap: wrap; }
+    .page-header { flex-direction: column; align-items: stretch; }
+    .actions .p-btn { flex: 1; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="store-btn" id="storeBtn" aria-label="Switch store">
+    Fern &amp; Fable <span>· Home goods</span>
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <nav aria-label="Admin">
+    <a href="#">Home</a>
+    <a href="#">Orders</a>
+    <a href="#" class="active" aria-current="page">Products</a>
+    <a href="#">Customers</a>
+    <a href="#">Marketing</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="avatar" aria-hidden="true">MB</div>
+</header>
+
+<main class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Products</h1>
+      <p class="page-sub">Add and manage the products you sell.</p>
+    </div>
+    <div class="actions">
+      <button class="p-btn p-btn-secondary" id="exportBtn">Export</button>
+      <button class="p-btn p-btn-primary" id="addProductBtn">Add product</button>
+    </div>
+  </div>
+
+  <div class="banner" id="banner" role="status">
+    <div class="banner-icon" aria-hidden="true">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 5.4v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="3.4" r="1" fill="currentColor"/></svg>
+    </div>
+    <div>
+      <p class="banner-title">Holiday delivery promises are here</p>
+      <p class="body">Set shipping cutoff dates on your products so customers know gifts arrive on time. It takes about a minute per product.</p>
+      <button class="p-btn-plain" id="bannerReview">Review low-stock products</button>
+    </div>
+    <button class="banner-dismiss" id="bannerDismiss" aria-label="Dismiss announcement">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <section class="card" aria-label="Products list">
+    <div class="tabs" role="tablist" aria-label="Product status">
+      <button class="tab tab-active" role="tab" aria-selected="true" data-tab="all">All</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="active">Active <span class="tab-count" id="countActive"></span></button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="draft">Draft <span class="tab-count" id="countDraft"></span></button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="archived">Archived <span class="tab-count" id="countArchived"></span></button>
+    </div>
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="search-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.8 10.8L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </span>
+        <input class="search" id="search" type="search" placeholder="Search products" aria-label="Search products">
+      </div>
+      <span class="pill hidden" id="pillLow">Inventory: Low <button id="pillLowX" aria-label="Remove inventory filter">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button></span>
+      <button class="p-btn p-btn-secondary" id="moreFilters">More filters</button>
+    </div>
+    <div class="selection-bar" id="selectionBar">
+      <span id="selectionCount">1 selected</span>
+      <button class="p-btn p-btn-secondary" id="bulkActive">Set as active</button>
+      <button class="p-btn p-btn-secondary" id="bulkArchive">Archive</button>
+      <button class="p-btn p-btn-destructive" id="bulkDelete">Delete</button>
+      <button class="p-btn p-btn-secondary" id="clearSel">Clear</button>
+    </div>
+    <ul class="resource-list" id="productList"></ul>
+    <div class="empty" id="emptyState" hidden>
+      <span class="empty-icon" aria-hidden="true">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M10 16l14-7 14 7v16l-14 7-14-7V16z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M10 16l14 7 14-7M24 23v16" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </span>
+      <h2 id="emptyTitle">No products found</h2>
+      <p id="emptyBody">Try a different search term, or clear your filters to see all products.</p>
+      <button class="p-btn p-btn-primary" id="clearFilters">Clear filters</button>
+    </div>
+    <div class="list-footer" id="listFooter">
+      <p id="showingText"></p>
+      <button class="p-btn p-btn-secondary" id="loadMoreBtn">Load more</button>
+    </div>
+  </section>
+
+  <footer>Built from the polaris skill · design-skills</footer>
+</main>
+
+<div class="detail-backdrop" id="detailBackdrop"></div>
+<aside class="detail-panel" id="detailPanel" role="dialog" aria-modal="true" aria-labelledby="detailTitle" hidden>
+  <div class="detail-head">
+    <span id="detailSwatch"></span>
+    <div>
+      <h2 class="detail-title" id="detailTitle"></h2>
+      <span id="detailStatus"></span>
+    </div>
+    <button class="detail-close" id="detailClose" aria-label="Close product details">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="detail-body" id="detailBody"></div>
+  <div class="detail-foot">
+    <button class="p-btn p-btn-secondary" id="detailCloseBtn">Close</button>
+    <button class="p-btn p-btn-primary" id="detailEdit">Edit product</button>
+  </div>
+</aside>
+
+<div class="modal-backdrop" id="deleteModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Delete products?</h2>
+    <p id="modalBody">This can't be undone.</p>
+    <div class="modal-footer">
+      <button class="p-btn p-btn-secondary" id="modalCancel">Cancel</button>
+      <button class="p-btn p-btn-destructive" id="modalConfirm">Delete products</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+  /* ---------- Product data ---------- */
+  const LOW_STOCK_AT = 10;
+  const PAGE_SIZE = 6;
+
+  const products = [
+    { id: 1,  name: "Alpine pine candle",        sku: "FFD-CAN-014", vendor: "Fern & Fable", price: 18.00, inventory: 42, status: "active",   color: "#b3612f", glyph: "candle",
+      desc: "Poured soy candle with pine, cedar, and a little smoke. Burns for about 45 hours.", sales30: 212 },
+    { id: 2,  name: "Glazed stoneware mug",      sku: "FFD-MUG-022", vendor: "Fern & Fable", price: 24.00, inventory: 8,  status: "active",   color: "#7d9b76", glyph: "mug",
+      desc: "Hand-thrown mug with a matte oat glaze. Holds 350 ml and survives the dishwasher.", sales30: 186 },
+    { id: 3,  name: "Washed linen throw",        sku: "FFD-LIN-003", vendor: "Fern & Fable", price: 89.00, inventory: 5,  status: "active",   color: "#a8906a", glyph: "throw",
+      desc: "Garment-washed European linen, soft from the first use. 130 × 180 cm.", sales30: 94 },
+    { id: 4,  name: "Oak serving board",         sku: "FFD-OAK-009", vendor: "Fern & Fable", price: 46.00, inventory: 0,  status: "active",   color: "#8a6238", glyph: "board",
+      desc: "Solid oak board with a food-safe oil finish. 40 × 25 cm, with a hanging handle.", sales30: 61 },
+    { id: 5,  name: "Terracotta planter",        sku: "FFD-TER-031", vendor: "Fern & Fable", price: 22.00, inventory: 30, status: "draft",    color: "#c26d4a", glyph: "planter",
+      desc: "Classic terracotta pot with a drainage hole and saucer. Fits a 14 cm nursery pot.", sales30: 0 },
+    { id: 6,  name: "Braided seagrass basket",   sku: "FFD-SEA-017", vendor: "Fern & Fable", price: 34.00, inventory: 18, status: "active",   color: "#b9a25e", glyph: "basket",
+      desc: "Hand-braided seagrass basket with sturdy handles. 30 cm across.", sales30: 143 },
+    { id: 7,  name: "Wool dryer balls, set of 6",sku: "FFD-WOL-005", vendor: "Fern & Fable", price: 16.00, inventory: 64, status: "active",   color: "#9aa3ad", glyph: "balls",
+      desc: "New Zealand wool balls that soften laundry and cut dryer time. Lasts 1,000 loads.", sales30: 320 },
+    { id: 8,  name: "Ceramic dinner plate set",  sku: "FFD-CER-041", vendor: "Fern & Fable", price: 72.00, inventory: 12, status: "draft",    color: "#6f87a8", glyph: "plates",
+      desc: "Set of four stoneware dinner plates in speckled white. 27 cm.", sales30: 0 },
+    { id: 9,  name: "Beeswax taper pair",        sku: "FFD-BEE-012", vendor: "Fern & Fable", price: 14.00, inventory: 0,  status: "archived", color: "#d9a441", glyph: "taper",
+      desc: "Hand-dipped beeswax tapers with cotton wicks. 25 cm, unscented.", sales30: 88 },
+    { id: 10, name: "Cork coaster set",          sku: "FFD-COR-008", vendor: "Fern & Fable", price: 12.00, inventory: 3,  status: "active",   color: "#a0764a", glyph: "coaster",
+      desc: "Set of six Portuguese cork coasters, 10 cm across. Wipes clean.", sales30: 157 },
+    { id: 11, name: "Recycled cotton tote",      sku: "FFD-TOT-019", vendor: "Fern & Fable", price: 28.00, inventory: 25, status: "active",   color: "#5e8b7e", glyph: "tote",
+      desc: "Heavyweight tote from recycled cotton canvas. Carries 10 kg without complaint.", sales30: 203 },
+    { id: 12, name: "Soy wax melt bundle",       sku: "FFD-MEL-026", vendor: "Fern & Fable", price: 9.50,  inventory: 7,  status: "archived", color: "#b57e9e", glyph: "melt",
+      desc: "Six wax melts in seasonal scents. Works with any standard warmer.", sales30: 76 }
+  ];
+
+  /* ---------- Inline SVG glyphs (product swatches) ---------- */
+  const GLYPHS = {
+    candle:  '<rect x="10" y="7" width="4" height="10" rx="1.2" fill="currentColor"/><path d="M12 5c1.2-1.4 0-2.6 0-3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/><rect x="7" y="17" width="10" height="2.4" rx="1" fill="currentColor" opacity=".45"/>',
+    mug:     '<path d="M7 8h8v7a3.5 3.5 0 0 1-3.5 3.5h-1A3.5 3.5 0 0 1 7 15V8z" fill="currentColor"/><path d="M15 9.5h1.4a2.6 2.6 0 0 1 0 5.2H15" stroke="currentColor" stroke-width="1.6" fill="none"/><rect x="6" y="5.5" width="10" height="1.6" rx=".8" fill="currentColor" opacity=".45"/>',
+    throw:   '<rect x="6" y="6" width="12" height="3.4" rx="1.2" fill="currentColor"/><rect x="6" y="10.6" width="12" height="3.4" rx="1.2" fill="currentColor" opacity=".7"/><rect x="6" y="15.2" width="12" height="3.4" rx="1.2" fill="currentColor" opacity=".45"/>',
+    board:   '<rect x="5" y="9" width="11" height="7" rx="1.6" fill="currentColor"/><rect x="14.5" y="11" width="5" height="3" rx="1.5" fill="currentColor"/><circle cx="17.6" cy="12.5" r=".9" fill="#fff" opacity=".7"/>',
+    planter: '<path d="M8 9h8l-1.2 8.2a1.6 1.6 0 0 1-1.6 1.4h-2.4a1.6 1.6 0 0 1-1.6-1.4L8 9z" fill="currentColor"/><rect x="6.5" y="6.5" width="11" height="2.6" rx="1" fill="currentColor"/><path d="M12 6.5c0-1.6.8-2.4 1.8-3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/>',
+    basket:  '<path d="M6 10h12l-1.3 7a2 2 0 0 1-2 1.6H9.3a2 2 0 0 1-2-1.6L6 10z" fill="currentColor"/><path d="M8.5 10c0-3 1.6-4.6 3.5-4.6S15.5 7 15.5 10" stroke="currentColor" stroke-width="1.6" fill="none"/>',
+    balls:   '<circle cx="9" cy="9" r="3.4" fill="currentColor"/><circle cx="15.5" cy="10.5" r="2.8" fill="currentColor" opacity=".7"/><circle cx="11.5" cy="15.5" r="3" fill="currentColor" opacity=".45"/>',
+    plates:  '<ellipse cx="12" cy="8.5" rx="7" ry="2.6" fill="currentColor"/><ellipse cx="12" cy="13" rx="7" ry="2.6" fill="currentColor" opacity=".65"/><ellipse cx="12" cy="17.5" rx="7" ry="2.6" fill="currentColor" opacity=".4"/>',
+    taper:   '<rect x="8.6" y="6" width="2.6" height="12" rx="1.2" fill="currentColor"/><rect x="12.8" y="6" width="2.6" height="12" rx="1.2" fill="currentColor" opacity=".65"/><path d="M10 4.2c.8-.9 0-1.7 0-2.4M14.2 4.2c.8-.9 0-1.7 0-2.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/>',
+    coaster: '<rect x="6" y="7" width="12" height="3" rx="1.4" fill="currentColor"/><rect x="6" y="11" width="12" height="3" rx="1.4" fill="currentColor" opacity=".65"/><rect x="6" y="15" width="12" height="3" rx="1.4" fill="currentColor" opacity=".4"/>',
+    tote:    '<path d="M7 9h10l-.8 8.4a1.8 1.8 0 0 1-1.8 1.6H9.6a1.8 1.8 0 0 1-1.8-1.6L7 9z" fill="currentColor"/><path d="M9.5 9V7.4a2.5 2.5 0 0 1 5 0V9" stroke="currentColor" stroke-width="1.6" fill="none"/>',
+    melt:    '<rect x="8" y="8" width="8" height="8" rx="1.6" fill="currentColor" transform="rotate(12 12 12)"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" fill="#fff" opacity=".35" transform="rotate(12 12 12)"/>',
+    box:     '<path d="M6 8.5l6-3.2 6 3.2v7l-6 3.2-6-3.2v-7z" fill="currentColor"/><path d="M6 8.5l6 3.2 6-3.2M12 11.7v7" stroke="#fff" stroke-width="1.4" fill="none" opacity=".6"/>'
+  };
+
+  function swatch(p, size) {
+    return `<svg class="swatch" width="${size}" height="${size}" viewBox="0 0 24 24" role="img" aria-label="${p.name} thumbnail">` +
+      `<rect width="24" height="24" rx="${size > 48 ? 6 : 4}" fill="${p.color}" opacity=".16"/>` +
+      `<g transform="translate(0,0)" color="${p.color}">${GLYPHS[p.glyph] || GLYPHS.box}</g>` +
+      `</svg>`;
+  }
+</script>
+
+<script>
+  /* ---------- State ---------- */
+  let activeTab = "all";
+  let showLowPill = false;
+  let visibleCount = PAGE_SIZE;
+  const selected = new Set();
+  let detailId = null;
+  let toastTimer;
+
+  /* ---------- Element handles ---------- */
+  const $ = id => document.getElementById(id);
+  const list = $("productList"), emptyState = $("emptyState"),
+        search = $("search"), toast = $("toast"),
+        selectionBar = $("selectionBar"), selectionCount = $("selectionCount"),
+        listFooter = $("listFooter"), showingText = $("showingText"), loadMoreBtn = $("loadMoreBtn");
+
+  const money = n => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const statusBadge = s =>
+    s === "active"   ? '<span class="badge badge-success">Active</span>' :
+    s === "draft"    ? '<span class="badge">Draft</span>' :
+                       '<span class="badge">Archived</span>';
+  const stockBadge = p =>
+    p.inventory === 0              ? '<span class="badge badge-critical">Out of stock</span>' :
+    p.inventory <= LOW_STOCK_AT     ? '<span class="badge badge-attention">Low stock</span>' : "";
+
+  /* ---------- Filtering ---------- */
+  function matches(p) {
+    if (activeTab !== "all" && p.status !== activeTab) return false;
+    if (showLowPill && p.inventory > LOW_STOCK_AT) return false;
+    const q = search.value.trim().toLowerCase();
+    if (q && !(p.name + " " + p.sku + " " + p.vendor).toLowerCase().includes(q)) return false;
+    return true;
+  }
+  const filtered = () => products.filter(matches);
+
+  /* ---------- Render ---------- */
+  function render() {
+    // Tab counts
+    $("countActive").textContent = products.filter(p => p.status === "active").length;
+    $("countDraft").textContent = products.filter(p => p.status === "draft").length;
+    $("countArchived").textContent = products.filter(p => p.status === "archived").length;
+
+    const visible = filtered();
+    const shown = visible.slice(0, visibleCount);
+
+    list.innerHTML = shown.map(p => {
+      const isSel = selected.has(p.id);
+      return `<li class="resource-item${isSel ? " selected" : ""}" data-id="${p.id}" tabindex="0" role="button" aria-label="View ${p.name}">` +
+        `<input type="checkbox" data-check="${p.id}" aria-label="Select ${p.name}"${isSel ? " checked" : ""}>` +
+        swatch(p, 40) +
+        `<div class="item-body">` +
+          `<div class="item-name"><span>${p.name}</span></div>` +
+          `<div class="item-meta">SKU ${p.sku} · ${p.vendor} · ${p.inventory} in stock</div>` +
+        `</div>` +
+        `<div class="item-badges">${statusBadge(p.status)}${stockBadge(p)}</div>` +
+        `<span class="item-price">${money(p.price)}</span>` +
+        `<span class="item-chevron" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>` +
+      `</li>`;
+    }).join("");
+
+    const hasResults = visible.length > 0;
+    emptyState.hidden = hasResults;
+    list.style.display = hasResults ? "" : "none";
+    listFooter.style.display = hasResults ? "" : "none";
+    if (!hasResults) {
+      const filtering = search.value.trim() || showLowPill || activeTab !== "all";
+      $("emptyTitle").textContent = filtering ? "No products match your filters" : "No products here yet";
+      $("emptyBody").textContent = filtering
+        ? "Try a different search term, or clear your filters to see all products."
+        : "Add your first product to start selling. It takes about a minute.";
+    }
+
+    // Load more footer
+    showingText.textContent = `Showing ${shown.length} of ${visible.length} product${visible.length === 1 ? "" : "s"}`;
+    loadMoreBtn.style.display = visible.length > visibleCount ? "" : "none";
+
+    updateSelection();
+  }
+
+  function updateSelection() {
+    const n = selected.size;
+    selectionBar.classList.toggle("visible", n > 0);
+    selectionCount.textContent = n === 1 ? "1 selected" : n + " selected";
+    list.querySelectorAll(".resource-item").forEach(li => {
+      const on = selected.has(Number(li.dataset.id));
+      li.classList.toggle("selected", on);
+      const cb = li.querySelector('input[type="checkbox"]');
+      if (cb) cb.checked = on;
+    });
+  }
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+  }
+
+  /* ---------- List interactions (delegated) ---------- */
+  list.addEventListener("click", e => {
+    const cb = e.target.closest('input[type="checkbox"]');
+    if (cb) {
+      const id = Number(cb.dataset.check);
+      cb.checked ? selected.add(id) : selected.delete(id);
+      updateSelection();
+      return;
+    }
+    const row = e.target.closest(".resource-item");
+    if (row) openDetail(Number(row.dataset.id));
+  });
+  list.addEventListener("keydown", e => {
+    const row = e.target.closest(".resource-item");
+    if (row && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openDetail(Number(row.dataset.id)); }
+  });
+
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(t => {
+        t.classList.remove("tab-active"); t.setAttribute("aria-selected", "false");
+      });
+      tab.classList.add("tab-active"); tab.setAttribute("aria-selected", "true");
+      activeTab = tab.dataset.tab;
+      visibleCount = PAGE_SIZE;
+      render();
+    });
+  });
+
+  /* ---------- Search + filter pill ---------- */
+  search.addEventListener("input", () => { visibleCount = PAGE_SIZE; render(); });
+  $("moreFilters").addEventListener("click", () => {
+    showLowPill = true;
+    $("pillLow").classList.remove("hidden");
+    visibleCount = PAGE_SIZE;
+    render();
+  });
+  $("pillLowX").addEventListener("click", () => {
+    showLowPill = false;
+    $("pillLow").classList.add("hidden");
+    visibleCount = PAGE_SIZE;
+    render();
+  });
+  $("clearFilters").addEventListener("click", () => {
+    search.value = ""; showLowPill = false;
+    $("pillLow").classList.add("hidden");
+    document.querySelector('[data-tab="all"]').click();
+  });
+
+  /* ---------- Load more ---------- */
+  loadMoreBtn.addEventListener("click", () => { visibleCount += PAGE_SIZE; render(); });
+
+  /* ---------- Bulk actions ---------- */
+  function selectedProducts() { return products.filter(p => selected.has(p.id)); }
+  function plural(n, one, many) { return n === 1 ? one : n + " " + many; }
+
+  $("bulkActive").addEventListener("click", () => {
+    selectedProducts().forEach(p => p.status = "active");
+    showToast(plural(selected.size, "1 product set to active", "products set to active"));
+    selected.clear(); render();
+  });
+  $("bulkArchive").addEventListener("click", () => {
+    selectedProducts().forEach(p => p.status = "archived");
+    showToast(plural(selected.size, "1 product archived", "products archived"));
+    selected.clear(); render();
+  });
+  $("clearSel").addEventListener("click", () => { selected.clear(); updateSelection(); });
+
+  /* Delete modal */
+  const deleteModal = $("deleteModal");
+  $("bulkDelete").addEventListener("click", () => {
+    const n = selected.size;
+    $("modalTitle").textContent = n === 1 ? "Delete 1 product?" : `Delete ${n} products?`;
+    $("modalBody").textContent = "This can't be undone.";
+    deleteModal.classList.add("open");
+  });
+  $("modalCancel").addEventListener("click", () => deleteModal.classList.remove("open"));
+  deleteModal.addEventListener("click", e => { if (e.target === deleteModal) deleteModal.classList.remove("open"); });
+  $("modalConfirm").addEventListener("click", () => {
+    const n = selected.size;
+    for (const p of selectedProducts()) products.splice(products.indexOf(p), 1);
+    selected.clear();
+    deleteModal.classList.remove("open");
+    showToast(n === 1 ? "1 product deleted" : `${n} products deleted`);
+    render();
+  });
+
+  /* ---------- Slide-over detail ---------- */
+  const detailBackdrop = $("detailBackdrop"), detailPanel = $("detailPanel");
+
+  function openDetail(id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    detailId = id;
+    $("detailSwatch").innerHTML = swatch(p, 56);
+    $("detailTitle").textContent = p.name;
+    $("detailStatus").innerHTML = statusBadge(p.status) + stockBadge(p);
+    const revenue = p.price * p.sales30;
+    $("detailBody").innerHTML =
+      `<div class="detail-section"><h3>Price</h3><div class="detail-price">${money(p.price)}</div></div>` +
+      `<div class="detail-section"><h3>Inventory</h3><div class="detail-kv">` +
+        `<dt>Available</dt><dd>${p.inventory} in stock</dd>` +
+        `<dt>Status</dt><dd>${p.inventory === 0 ? "Out of stock — customers can't buy this" : p.inventory <= LOW_STOCK_AT ? "Running low — consider restocking" : "In stock"}</dd>` +
+      `</div></div>` +
+      `<div class="detail-section"><h3>Details</h3><div class="detail-kv">` +
+        `<dt>SKU</dt><dd>${p.sku}</dd>` +
+        `<dt>Vendor</dt><dd>${p.vendor}</dd>` +
+        `<dt>Status</dt><dd>${p.status[0].toUpperCase() + p.status.slice(1)}</dd>` +
+      `</div></div>` +
+      `<div class="detail-section"><h3>Description</h3><p class="detail-desc">${p.desc}</p></div>` +
+      `<div class="detail-section"><h3>Last 30 days</h3><div class="detail-stats">` +
+        `<div class="detail-stat"><b>${p.sales30}</b><span>Sold</span></div>` +
+        `<div class="detail-stat"><b>${money(revenue)}</b><span>Revenue</span></div>` +
+      `</div></div>`;
+    detailPanel.hidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      detailBackdrop.classList.add("open");
+      detailPanel.classList.add("open");
+    }));
+    $("detailClose").focus();
+  }
+  function closeDetail() {
+    detailBackdrop.classList.remove("open");
+    detailPanel.classList.remove("open");
+    setTimeout(() => { detailPanel.hidden = true; }, 220);
+    detailId = null;
+  }
+  $("detailClose").addEventListener("click", closeDetail);
+  $("detailCloseBtn").addEventListener("click", closeDetail);
+  detailBackdrop.addEventListener("click", closeDetail);
+  $("detailEdit").addEventListener("click", () => {
+    closeDetail();
+    showToast("Product editor would open here");
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      if (deleteModal.classList.contains("open")) deleteModal.classList.remove("open");
+      else if (detailId !== null) closeDetail();
+    }
+  });
+
+  /* ---------- Header actions + banner ---------- */
+  $("bannerDismiss").addEventListener("click", () => $("banner").classList.add("hidden"));
+  $("bannerReview").addEventListener("click", () => {
+    showLowPill = true;
+    $("pillLow").classList.remove("hidden");
+    visibleCount = PAGE_SIZE;
+    render();
+    document.querySelector("section.card").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  $("exportBtn").addEventListener("click", () => showToast("Export started — you'll get an email when it's ready"));
+  $("storeBtn").addEventListener("click", () => showToast("Store switcher isn't part of this demo"));
+
+  let newId = 100;
+  $("addProductBtn").addEventListener("click", () => {
+    newId += 1;
+    products.unshift({
+      id: newId, name: "Untitled product", sku: "FFD-NEW-" + newId, vendor: "Fern & Fable",
+      price: 0, inventory: 0, status: "draft", color: "#8c9196", glyph: "box",
+      desc: "Add a description to tell customers what makes this product special.", sales30: 0
+    });
+    visibleCount = PAGE_SIZE;
+    showToast("Draft product created");
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
