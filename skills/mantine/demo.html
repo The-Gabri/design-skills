@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mantine</title>
+<style>
+  :root {
+    --blue-0:#e7f5ff; --blue-1:#d0ebff; --blue-6:#228be6; --blue-7:#1c7ed6; --blue-9:#1864ab;
+    --gray-0:#f8f9fa; --gray-1:#f1f3f5; --gray-2:#e9ecef; --gray-4:#ced4da;
+    --gray-6:#868e96; --gray-7:#495057; --gray-9:#212529;
+    --green-1:#ebfbee; --green-9:#2b8a3e; --green-6:#37b24d;
+    --red-1:#ffe3e3; --red-9:#c92a2a; --red-6:#fa5252;
+    --yellow-1:#fff3bf; --yellow-9:#e67700;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --body-bg: #fff; --surface: #fff;
+  }
+  html[data-theme="dark"] { color-scheme: dark; }
+  /* Mantine dark color scheme: body dark.8, primaryShade -> 8, light variants become translucent tints */
+  [data-theme="dark"] {
+    --body-bg: #1a1b1e; --surface: #25262b;
+    --gray-0: #2c2e33; --gray-1: #373a40; --gray-2: #373a40; --gray-4: #5c5f66;
+    --gray-6: #909296; --gray-7: #c1c2c5; --gray-9: #f1f3f5;
+    --blue-0: rgba(34,139,230,.16); --blue-1: rgba(34,139,230,.28);
+    --blue-6: #1971c2; --blue-7: #1864ab; --blue-9: #74c0fc;
+    --green-1: rgba(55,178,77,.16); --green-9: #69db7c;
+    --red-1: rgba(250,82,82,.16); --red-9: #ff8787;
+    --yellow-1: rgba(245,159,0,.18); --yellow-9: #ffd43b;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font); color: var(--gray-9); background: var(--body-bg);
+    font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased;
+    transition: background-color 200ms ease, color 200ms ease; }
+
+  /* ---------- AppShell ---------- */
+  .shell { display: grid; min-height: 100vh;
+    grid-template-columns: 300px 1fr; grid-template-rows: 60px 1fr;
+    grid-template-areas: "header header" "navbar main"; }
+  .header { grid-area: header; display: flex; align-items: center; gap: 12px;
+    padding: 0 16px; border-bottom: 1px solid var(--gray-2); background: var(--body-bg);
+    position: sticky; top: 0; z-index: 20; transition: background-color 200ms ease, border-color 200ms ease; }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; }
+  .logo-mark { width: 28px; height: 28px; border-radius: 8px; background: var(--blue-6);
+    display: grid; place-items: center; color: #fff; font-size: 15px; font-weight: 700; }
+  .search { position: relative; }
+  .search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--gray-6); }
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+  .icon-btn { width: 34px; height: 34px; border-radius: 8px; border: 0; background: none;
+    color: var(--gray-7); cursor: pointer; display: grid; place-items: center; position: relative; }
+  .icon-btn:hover { background: var(--gray-1); }
+  .icon-btn .dot { position: absolute; top: 6px; right: 7px; width: 9px; height: 9px;
+    border-radius: 50%; background: var(--red-6); border: 2px solid var(--surface); }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--blue-0);
+    color: var(--blue-9); font-weight: 700; font-size: 13px; display: grid; place-items: center; }
+  .burger { display: none; background: none; border: 0; cursor: pointer; padding: 8px; border-radius: 8px; }
+  .burger:hover { background: var(--gray-1); }
+  .burger span { display: block; width: 20px; height: 2px; background: var(--gray-7); margin: 4px 0; border-radius: 2px; }
+
+  .navbar { grid-area: navbar; background: var(--gray-0); border-right: 1px solid var(--gray-2);
+    padding: 16px 12px; display: flex; flex-direction: column; gap: 2px;
+    transition: background-color 200ms ease, border-color 200ms ease; }
+  .nav-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--gray-6); padding: 12px 12px 6px; }
+  .navlink { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px;
+    color: var(--gray-7); font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; border: 0; background: none; width: 100%; text-align: left; }
+  .navlink:hover { background: var(--gray-1); }
+  .navlink.is-active { background: var(--blue-0); color: var(--blue-9); font-weight: 600; }
+  .navlink svg { flex: none; }
+  .ws-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .nav-user { margin-top: auto; display: flex; align-items: center; gap: 10px;
+    padding: 12px; border-top: 1px solid var(--gray-2); }
+  .nav-user .who strong { display: block; font-size: 13px; }
+  .nav-user .who span { font-size: 12px; color: var(--gray-6); }
+
+  .main { grid-area: main; padding: 24px 32px; max-width: 1080px; }
+
+  /* ---------- Type & buttons ---------- */
+  h1 { font-size: 26px; font-weight: 700; margin: 0 0 4px; }
+  .subtitle { color: var(--gray-7); margin: 0 0 20px; }
+  h2 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; }
+  .btn { height: 36px; padding: 0 18px; border: 0; border-radius: 8px; background: var(--blue-6);
+    color: #fff; font: 600 14px/1 var(--font); cursor: pointer; transition: background 120ms ease; }
+  .btn:hover { background: var(--blue-7); }
+  .btn:focus-visible { outline: 2px solid var(--blue-6); outline-offset: 2px; }
+  .btn-light { background: var(--blue-0); color: var(--blue-9); }
+  .btn-light:hover { background: var(--blue-1); }
+  .btn-outline { background: transparent; color: var(--blue-6); border: 1px solid var(--blue-6); }
+  .btn-outline:hover { background: var(--blue-0); }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+
+  /* Focus rings are part of the look: 2px primary outline on every interactive element */
+  .navlink:focus-visible, .tab:focus-visible, .icon-btn:focus-visible, .burger:focus-visible,
+  .acc-control:focus-visible, .modal-x:focus-visible, .notif button:focus-visible,
+  .search .input:focus-visible { outline: 2px solid var(--blue-6); outline-offset: 2px; }
+
+  /* ---------- Paper stats ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .paper { background: var(--surface); border: 1px solid var(--gray-2); border-radius: 8px; padding: 16px;
+    transition: background-color 200ms ease, border-color 200ms ease; }
+  .paper .k { font-size: 12px; color: var(--gray-6); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+  .paper .v { font-size: 26px; font-weight: 700; margin: 4px 0 2px; }
+  .paper .d { font-size: 12px; color: var(--gray-6); }
+  .paper .d .up { color: var(--green-6); font-weight: 700; }
+  .paper .d .down { color: var(--red-6); font-weight: 700; }
+
+  /* ---------- Tabs ---------- */
+  .tablist { display: flex; gap: 4px; border-bottom: 1px solid var(--gray-2); margin-bottom: 16px; }
+  .tab { background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px;
+    padding: 10px 14px; font: 500 14px var(--font); color: var(--gray-7); cursor: pointer; }
+  .tab:hover { color: var(--gray-9); background: var(--gray-0); border-radius: 6px 6px 0 0; }
+  .tab.is-active { color: var(--blue-6); border-bottom-color: var(--blue-6); font-weight: 600; }
+
+  /* ---------- Table ---------- */
+  .table-wrap { border: 1px solid var(--gray-2); border-radius: 8px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--body-bg);
+    transition: background-color 200ms ease; }
+  th { text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-7);
+    padding: 10px 16px; border-bottom: 1px solid var(--gray-2); }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--gray-2); }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:nth-child(even) { background: var(--gray-0); }
+  tbody tr:hover { background: var(--gray-1); }
+  .proj-name { font-weight: 600; }
+  .proj-name small { display: block; font-weight: 400; color: var(--gray-6); font-size: 12px; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+  .badge.blue { background: var(--blue-0); color: var(--blue-9); }
+  .badge.green { background: var(--green-1); color: var(--green-9); }
+  .badge.red { background: var(--red-1); color: var(--red-9); }
+  .badge.yellow { background: var(--yellow-1); color: var(--yellow-9); }
+  .badge.gray { background: var(--gray-1); color: var(--gray-7); }
+  .progress { width: 120px; height: 8px; border-radius: 4px; background: var(--gray-1); overflow: hidden; }
+  .progress i { display: block; height: 100%; background: var(--blue-6); border-radius: 4px;
+    transition: width 400ms ease; }
+  .due { color: var(--gray-7); white-space: nowrap; }
+  .due.late { color: var(--red-9); font-weight: 600; }
+
+  /* ---------- Owner avatars ---------- */
+  .owner { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; color: var(--gray-7); }
+  .owner-avatar { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 10px; font-weight: 700; flex: none; }
+  .oa-blue { background: var(--blue-0); color: var(--blue-9); }
+  .oa-green { background: var(--green-1); color: var(--green-9); }
+  .oa-yellow { background: var(--yellow-1); color: var(--yellow-9); }
+  .oa-red { background: var(--red-1); color: var(--red-9); }
+
+  /* ---------- Empty state ---------- */
+  .empty-row td { border-bottom: 0; }
+  .empty { text-align: center; padding: 44px 16px; color: var(--gray-6); }
+  .empty svg { margin-bottom: 10px; }
+  .empty strong { display: block; font-size: 15px; color: var(--gray-7); margin-bottom: 4px; }
+  .empty p { margin: 0; font-size: 13px; }
+
+  /* ---------- Inputs / modal ---------- */
+  .field { display: block; margin-bottom: 12px; }
+  .label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .input { width: 100%; height: 36px; padding: 0 12px; font: 400 14px var(--font);
+    border: 1px solid var(--gray-4); border-radius: 8px; color: var(--gray-9); background: var(--body-bg);
+    transition: background-color 200ms ease, border-color 200ms ease; }
+  .input::placeholder { color: var(--gray-6); }
+  .input:focus { outline: none; border-color: var(--blue-6); box-shadow: 0 0 0 2px rgba(34,139,230,.25); }
+  .field.has-error .input { border-color: var(--red-6); }
+  .error { display: block; font-size: 12px; color: var(--red-6); margin-top: 4px; }
+
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex;
+    align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+  .overlay[hidden] { display: none; }
+  .modal { background: var(--surface); border-radius: 8px; width: 480px; max-width: 100%;
+    box-shadow: 0 12px 40px rgba(0,0,0,.18); padding: 24px; animation: pop 180ms ease;
+    transition: background-color 200ms ease; }
+  @keyframes pop { from { transform: scale(.96); opacity: 0; } }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .modal-head h3 { margin: 0; font-size: 18px; font-weight: 700; }
+  .modal-x { background: none; border: 0; color: var(--gray-6); font-size: 15px; cursor: pointer;
+    border-radius: 4px; padding: 4px 9px; }
+  .modal-x:hover { background: var(--gray-1); color: var(--gray-9); }
+  .modal-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+  /* ---------- Notifications ---------- */
+  .notifs { position: fixed; right: 16px; bottom: 16px; display: flex; flex-direction: column;
+    gap: 8px; z-index: 200; max-width: 360px; width: calc(100vw - 32px); }
+  .notif { display: flex; gap: 12px; align-items: flex-start; background: var(--surface);
+    border: 1px solid var(--gray-2); border-radius: 8px; padding: 12px 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12); animation: slide 160ms ease;
+    transition: background-color 200ms ease, border-color 200ms ease; }
+  @keyframes slide { from { transform: translateY(8px); opacity: 0; } }
+  .notif-icon { width: 30px; height: 30px; border-radius: 50%; flex: none;
+    display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+  .notif strong { display: block; font-size: 14px; }
+  .notif p { margin: 2px 0 0; font-size: 13px; color: var(--gray-7); }
+  .notif button { margin-left: auto; background: none; border: 0; color: var(--gray-6);
+    cursor: pointer; font-size: 13px; padding: 2px 6px; border-radius: 4px; }
+  .notif button:hover { color: var(--gray-9); background: var(--gray-1); }
+
+  /* ---------- Accordion ---------- */
+  .acc { border: 1px solid var(--gray-2); border-radius: 8px; overflow: hidden; }
+  .acc-item + .acc-item { border-top: 1px solid var(--gray-2); }
+  .acc-control { width: 100%; display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; background: none; border: 0; padding: 14px 16px; font: 500 15px var(--font);
+    color: var(--gray-9); cursor: pointer; text-align: left; }
+  .acc-control:hover { background: var(--gray-0); }
+  .acc-chev { color: var(--gray-6); transition: transform 200ms ease; flex: none; }
+  .acc-control[aria-expanded="true"] .acc-chev { transform: rotate(180deg); color: var(--blue-6); }
+  .acc-panel { padding: 0 16px 16px; font-size: 14px; color: var(--gray-7); max-width: 70ch; }
+  .acc-panel[hidden] { display: none; }
+
+  .demo-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  footer { margin: 48px 0 8px; padding-top: 16px; border-top: 1px solid var(--gray-2);
+    color: var(--gray-6); font-size: 12px; }
+
+  @media (max-width: 900px) { .stats { grid-template-columns: 1fr 1fr; } .demo-cards { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) {
+    .shell { grid-template-columns: 1fr; grid-template-areas: "header" "main"; }
+    .navbar { display: none; position: fixed; top: 60px; bottom: 0; left: 0; width: 300px; z-index: 30;
+      box-shadow: 8px 0 24px rgba(0,0,0,.12); }
+    .navbar.open { display: flex; }
+    .burger { display: block; }
+    .search { display: none; }
+    .main { padding: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header class="header">
+    <button class="burger" id="burger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="logo"><span class="logo-mark">R</span>Relay</div>
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+      <input class="input" id="search" type="text" placeholder="Search projects…" style="width:260px;padding-left:32px">
+    </div>
+    <div class="header-actions" style="margin-left:auto">
+      <button class="icon-btn" id="themeToggle" aria-label="Switch to dark mode">
+        <svg id="iconMoon" width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13.5 9.5A5.5 5.5 0 0 1 6.5 2.5a5.5 5.5 0 1 0 7 7z"/></svg>
+        <svg id="iconSun" width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" hidden><circle cx="8" cy="8" r="3.2"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M12.6 3.4l-1.4 1.4M4.8 11.2L3.4 12.6"/></svg>
+      </button>
+      <button class="icon-btn" id="bell" aria-label="Notifications">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 2a4 4 0 0 0-4 4v2.5L2.7 10h10.6L12 8.5V6a4 4 0 0 0-4-4zM6.5 12.5a1.5 1.5 0 0 0 3 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <span class="avatar">MK</span>
+    </div>
+  </header>
+
+  <aside class="navbar" id="navbar">
+    <div class="nav-section-label">General</div>
+    <a class="navlink is-active" href="#">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Dashboard</a>
+    <a class="navlink" href="#">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3h3L8 4.5h5.5A1.5 1.5 0 0 1 15 6v5.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 11.5z"/></svg>
+      Projects</a>
+    <a class="navlink" href="#">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>
+      Calendar</a>
+    <a class="navlink" href="#">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5.5" cy="5.5" r="2.5"/><circle cx="11" cy="6" r="2"/><path d="M1.5 13.5c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5M9.5 10.3c2 .2 5 1.3 5 3.2"/></svg>
+      Team</a>
+    <div class="nav-section-label">Workspaces</div>
+    <a class="navlink" href="#"><span class="ws-dot" style="background:#228be6"></span>Platform</a>
+    <a class="navlink" href="#"><span class="ws-dot" style="background:#37b24d"></span>Marketing</a>
+    <a class="navlink" href="#"><span class="ws-dot" style="background:#f59f00"></span>Research</a>
+    <div class="nav-user">
+      <span class="avatar">MK</span>
+      <div class="who"><strong>Mara Keller</strong><span>Product lead</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <h1>Projects</h1>
+    <p class="subtitle">Track every active initiative, owner, and deadline in one place.</p>
+
+    <div class="btn-row">
+      <button class="btn" id="openModal">New project</button>
+      <button class="btn btn-light">Import</button>
+      <button class="btn btn-outline">Export</button>
+    </div>
+
+    <div class="stats">
+      <div class="paper"><div class="k">Total projects</div><div class="v">24</div><div class="d"><span class="up">+3</span> this month</div></div>
+      <div class="paper"><div class="k">In progress</div><div class="v">11</div><div class="d">4 due this week</div></div>
+      <div class="paper"><div class="k">Overdue</div><div class="v">2</div><div class="d"><span class="down">+1</span> since yesterday</div></div>
+      <div class="paper"><div class="k">Team members</div><div class="v">18</div><div class="d"><span class="up">+6</span> invited this month</div></div>
+    </div>
+
+    <div class="tablist" role="tablist">
+      <button class="tab is-active" role="tab" data-filter="all">Active</button>
+      <button class="tab" role="tab" data-filter="archived">Archived</button>
+      <button class="tab" role="tab" data-filter="template">Templates</button>
+    </div>
+
+    <div class="table-wrap">
+      <table id="projectsTable">
+        <thead>
+          <tr><th>Project</th><th>Status</th><th>Owner</th><th>Progress</th><th>Due</th></tr>
+        </thead>
+        <tbody>
+          <tr data-group="all">
+            <td><div class="proj-name">Website redesign<small>Platform · 12 tasks</small></div></td>
+            <td><span class="badge blue">In progress</span></td>
+            <td><span class="owner"><span class="owner-avatar oa-blue">MK</span>Mara Keller</span></td>
+            <td><div class="progress"><i style="width:64%"></i></div></td>
+            <td class="due">Oct 20</td>
+          </tr>
+          <tr data-group="all">
+            <td><div class="proj-name">Mobile app v3<small>Platform · 28 tasks</small></div></td>
+            <td><span class="badge yellow">At risk</span></td>
+            <td><span class="owner"><span class="owner-avatar oa-green">DP</span>Dev Park</span></td>
+            <td><div class="progress"><i style="width:41%"></i></div></td>
+            <td class="due late">Oct 9</td>
+          </tr>
+          <tr data-group="all">
+            <td><div class="proj-name">Onboarding emails<small>Marketing · 8 tasks</small></div></td>
+            <td><span class="badge blue">In progress</span></td>
+            <td><span class="owner"><span class="owner-avatar oa-yellow">JW</span>Jonas Weber</span></td>
+            <td><div class="progress"><i style="width:82%"></i></div></td>
+            <td class="due">Oct 15</td>
+          </tr>
+          <tr data-group="all">
+            <td><div class="proj-name">Pricing page test<small>Marketing · 5 tasks</small></div></td>
+            <td><span class="badge red">Blocked</span></td>
+            <td><span class="owner"><span class="owner-avatar oa-blue">MK</span>Mara Keller</span></td>
+            <td><div class="progress"><i style="width:20%"></i></div></td>
+            <td class="due late">Oct 2</td>
+          </tr>
+          <tr data-group="all">
+            <td><div class="proj-name">API docs refresh<small>Platform · 16 tasks</small></div></td>
+            <td><span class="badge blue">In progress</span></td>
+            <td><span class="owner"><span class="owner-avatar oa-red">PS</span>Priya Sharma</span></td>
+            <td><div class="progress"><i style="width:55%"></i></div></td>
+            <td class="due">Nov 3</td>
+          </tr>
+          <tr data-group="archived">
+            <td><div class="proj-name">Brand guidelines 2025<small>Research · 9 tasks</small></div></td>
+            <td><span class="badge green">Completed</span></td>
+            <td><span class="owner"><span class="owner-avatar oa-red">PS</span>Priya Sharma</span></td>
+            <td><div class="progress"><i style="width:100%"></i></div></td>
+            <td class="due">Sep 12</td>
+          </tr>
+          <tr data-group="archived">
+            <td><div class="proj-name">Q3 launch retro<small>Platform · 6 tasks</small></div></td>
+            <td><span class="badge green">Completed</span></td>
+            <td><span class="owner"><span class="owner-avatar oa-yellow">JW</span>Jonas Weber</span></td>
+            <td><div class="progress"><i style="width:100%"></i></div></td>
+            <td class="due">Aug 30</td>
+          </tr>
+          <tr data-group="template">
+            <td><div class="proj-name">Sprint planning<small>Template · reuse anytime</small></div></td>
+            <td><span class="badge gray">Template</span></td>
+            <td><span class="owner"><span class="owner-avatar oa-blue">MK</span>Mara Keller</span></td>
+            <td><div class="progress"><i style="width:0%"></i></div></td>
+            <td class="due">—</td>
+          </tr>
+          <tr data-group="template">
+            <td><div class="proj-name">Bug triage<small>Template · reuse anytime</small></div></td>
+            <td><span class="badge gray">Template</span></td>
+            <td><span class="owner"><span class="owner-avatar oa-green">DP</span>Dev Park</span></td>
+            <td><div class="progress"><i style="width:0%"></i></div></td>
+            <td class="due">—</td>
+          </tr>
+          <tr class="empty-row" id="emptyRow" hidden>
+            <td colspan="5">
+              <div class="empty">
+                <svg width="32" height="32" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+                <strong>No projects found</strong>
+                <p>Try adjusting your search or switching tabs.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Notifications</h2>
+    <p class="subtitle">Notifications stack in the bottom-right corner, each with a title, message, and severity color.</p>
+    <div class="btn-row">
+      <button class="btn btn-light" data-notify="task">Task assigned</button>
+      <button class="btn btn-light" data-notify="deploy">Deploy finished</button>
+      <button class="btn btn-light" data-notify="billing">Billing issue</button>
+    </div>
+
+    <div class="demo-cards">
+      <div>
+        <h2 style="margin-top:0">FAQ</h2>
+        <div class="acc" id="faq">
+          <div class="acc-item">
+            <button class="acc-control" aria-expanded="false">How do I invite teammates to a workspace?
+              <svg class="acc-chev" width="16" height="16" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <div class="acc-panel" hidden>Open Settings, choose Members, and send an invite link. New members join with viewer access until you promote them.</div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-control" aria-expanded="false">Can I change the primary color of the interface?
+              <svg class="acc-chev" width="16" height="16" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <div class="acc-panel" hidden>Yes. Relay exposes the full theme: pick any of the ten-shade palettes, or define your own ten shades, and every component updates at once.</div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-control" aria-expanded="false">How are notifications delivered?
+              <svg class="acc-chev" width="16" height="16" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <div class="acc-panel" hidden>In-app notifications stack in the bottom-right corner and dismiss automatically. Email digests go out every morning at 8:00.</div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-control" aria-expanded="false">Does Relay support dark mode?
+              <svg class="acc-chev" width="16" height="16" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+            <div class="acc-panel" hidden>Yes. Use the sun/moon button in the header to flip the color scheme — the whole theme switches, including the primary shade, so contrast stays correct in both modes.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2 style="margin-top:0">Activity</h2>
+        <div class="paper">
+          <p style="margin:0 0 8px"><strong>Mara</strong> moved <strong>Pricing page test</strong> to Blocked <span style="color:var(--gray-6)">· 12 min ago</span></p>
+          <p style="margin:0 0 8px"><strong>Dev</strong> deployed <strong>relay-web v2.4.1</strong> <span style="color:var(--gray-6)">· 1 hr ago</span></p>
+          <p style="margin:0 0 8px"><strong>Jonas</strong> completed 6 tasks in <strong>Onboarding emails</strong> <span style="color:var(--gray-6)">· 3 hrs ago</span></p>
+          <p style="margin:0"><strong>Priya</strong> joined the <strong>Research</strong> workspace <span style="color:var(--gray-6)">· yesterday</span></p>
+        </div>
+      </div>
+    </div>
+
+    <footer>Built from the mantine skill · design-skills</footer>
+  </main>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h3 id="modalTitle">New project</h3>
+      <button class="modal-x" id="closeModal" aria-label="Close">✕</button>
+    </div>
+    <label class="field" id="nameField">
+      <span class="label">Project name</span>
+      <input class="input" id="projectName" type="text" placeholder="e.g. Website redesign">
+      <span class="error" id="nameError" hidden>Project name is required</span>
+    </label>
+    <label class="field">
+      <span class="label">Workspace</span>
+      <input class="input" type="text" value="Platform" id="projectWs">
+    </label>
+    <div class="modal-foot">
+      <button class="btn btn-light" id="cancelModal">Cancel</button>
+      <button class="btn" id="createProject">Create project</button>
+    </div>
+  </div>
+</div>
+
+<div class="notifs" id="notifs" aria-live="polite"></div>
+
+<script>
+(function () {
+  // Navbar collapse (mobile)
+  var burger = document.getElementById('burger');
+  var navbar = document.getElementById('navbar');
+  burger.addEventListener('click', function () {
+    var open = navbar.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+  });
+
+  // Dark mode toggle (Mantine-style color scheme switch; choice persists)
+  var themeToggle = document.getElementById('themeToggle');
+  var iconMoon = document.getElementById('iconMoon');
+  var iconSun = document.getElementById('iconSun');
+  function setTheme(t) {
+    var dark = t === 'dark';
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    iconMoon.hidden = dark;
+    iconSun.hidden = !dark;
+    themeToggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    try { localStorage.setItem('relay-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  }
+  var savedTheme = null;
+  try { savedTheme = localStorage.getItem('relay-theme'); } catch (e) {}
+  setTheme(savedTheme === 'dark' ? 'dark' : 'light');
+  themeToggle.addEventListener('click', function () {
+    setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // Tabs + search filters (combined), with empty state
+  var tabs = document.querySelectorAll('.tab');
+  var rows = document.querySelectorAll('#projectsTable tbody tr[data-group]');
+  var emptyRow = document.getElementById('emptyRow');
+  var search = document.getElementById('search');
+  var currentFilter = 'all';
+  function applyFilters() {
+    var q = search.value.trim().toLowerCase();
+    var visible = 0;
+    rows.forEach(function (r) {
+      var okGroup = currentFilter === 'all' || r.getAttribute('data-group') === currentFilter;
+      var okSearch = !q || r.querySelector('.proj-name').textContent.toLowerCase().indexOf(q) !== -1;
+      var show = okGroup && okSearch;
+      r.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    emptyRow.hidden = visible > 0;
+  }
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      currentFilter = tab.getAttribute('data-filter');
+      applyFilters();
+    });
+  });
+  search.addEventListener('input', applyFilters);
+
+  // Accordion
+  document.querySelectorAll('.acc-control').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      btn.nextElementSibling.hidden = open;
+    });
+  });
+
+  // Modal
+  var overlay = document.getElementById('overlay');
+  var nameInput = document.getElementById('projectName');
+  var nameField = document.getElementById('nameField');
+  var nameError = document.getElementById('nameError');
+  function openModal() { overlay.hidden = false; nameInput.focus(); }
+  function closeModal() { overlay.hidden = true; nameField.classList.remove('has-error'); nameError.hidden = true; }
+  document.getElementById('openModal').addEventListener('click', openModal);
+  document.getElementById('closeModal').addEventListener('click', closeModal);
+  document.getElementById('cancelModal').addEventListener('click', closeModal);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !overlay.hidden) closeModal(); });
+  document.getElementById('createProject').addEventListener('click', function () {
+    if (!nameInput.value.trim()) {
+      nameField.classList.add('has-error'); nameError.hidden = false; nameInput.focus(); return;
+    }
+    closeModal();
+    notify('Project created', nameInput.value.trim() + ' was added to the ' +
+      document.getElementById('projectWs').value + ' workspace.', 'blue');
+    nameInput.value = '';
+  });
+
+  // Notifications
+  var notifs = document.getElementById('notifs');
+  var ICON = {
+    blue:  { bg: '#e7f5ff', fg: '#228be6', ch: 'i' },
+    green: { bg: '#ebfbee', fg: '#2b8a3e', ch: '✓' },
+    red:   { bg: '#ffe3e3', fg: '#c92a2a', ch: '!' }
+  };
+  function notify(title, message, color) {
+    var c = ICON[color] || ICON.blue;
+    var el = document.createElement('div');
+    el.className = 'notif';
+    el.innerHTML = '<span class="notif-icon" style="background:' + c.bg + ';color:' + c.fg + '">' + c.ch +
+      '</span><div><strong></strong><p></p></div><button aria-label="Dismiss">✕</button>';
+    el.querySelector('strong').textContent = title;
+    el.querySelector('p').textContent = message;
+    var dismiss = function () { el.remove(); };
+    el.querySelector('button').addEventListener('click', dismiss);
+    notifs.appendChild(el);
+    setTimeout(dismiss, 5000);
+  }
+  var PRESETS = {
+    task:    ['Task assigned', 'Jonas assigned "Write release notes" to you.', 'blue'],
+    deploy:  ['Deploy finished', 'relay-web v2.4.1 is live on production.', 'green'],
+    billing: ['Billing issue', 'Your card ending in 1987 was declined. Update payment details.', 'red']
+  };
+  document.querySelectorAll('[data-notify]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var p = PRESETS[btn.getAttribute('data-notify')];
+      notify(p[0], p[1], p[2]);
+    });
+  });
+  document.getElementById('bell').addEventListener('click', function () {
+    notify('3 unread updates', 'Mara mentioned you in Pricing page test.', 'blue');
+  });
+})();
+</script>
+</body>
+</html>
