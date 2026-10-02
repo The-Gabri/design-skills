@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>discord</title>
+<style>
+:root{
+  --blurple:#5865f2; --blurple-hover:#4752c4; --green:#23a55a; --yellow:#f0b232;
+  --red:#ed4245; --stream:#593695; --gray:#80848e;
+  --bg-tertiary:#1e1f22; --bg-secondary:#2b2d31; --bg-primary:#313338; --bg-floating:#111214;
+  --header:#f2f3f5; --text:#dbdee1; --muted:#949ba4; --link:#00a8fc;
+  --chan-default:#80848e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"gg sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg-tertiary); color:var(--text); font-size:16px; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+button{font-family:inherit}
+
+/* ---------- app shell ---------- */
+#app{display:flex;flex:1;min-height:0}
+
+/* ---------- server rail ---------- */
+.rail{width:72px;background:var(--bg-tertiary);display:flex;flex-direction:column;
+  align-items:center;padding:12px 0;gap:8px;flex-shrink:0;overflow-y:auto}
+.rail::-webkit-scrollbar{width:0}
+.rail-btn{position:relative;width:48px;height:48px;border:0;background:transparent;cursor:pointer;padding:0}
+.rail-btn .icon{display:flex;width:48px;height:48px;border-radius:50%;background:var(--bg-primary);
+  color:#fff;align-items:center;justify-content:center;font-weight:700;font-size:14px;
+  transition:border-radius .15s ease,background .15s ease;overflow:hidden}
+.rail-btn .icon img{width:100%;height:100%;object-fit:cover}
+.rail-btn:hover .icon,.rail-btn.active .icon{border-radius:16px}
+.rail-btn.active .icon{background:var(--blurple)}
+.rail-btn .bar{position:absolute;left:-14px;top:50%;transform:translateY(-50%);width:4px;height:8px;
+  border-radius:0 4px 4px 0;background:#fff;opacity:0;transition:all .15s ease}
+.rail-btn.active .bar{height:40px;opacity:1}
+.rail-btn.unread .bar{height:8px;opacity:1}
+.rail-btn.ping .icon{background:var(--blurple)}
+.rail-sep{width:32px;height:2px;background:rgba(78,80,88,.6);border-radius:1px;margin:2px 0;flex-shrink:0}
+.rail-ping{position:absolute;right:-2px;bottom:-2px;background:var(--red);color:#fff;font-size:12px;
+  font-weight:700;border-radius:10px;min-width:20px;height:20px;display:flex;align-items:center;
+  justify-content:center;border:3px solid var(--bg-tertiary);padding:0 2px}
+
+/* ---------- channel sidebar ---------- */
+.sidebar{width:240px;background:var(--bg-secondary);display:flex;flex-direction:column;flex-shrink:0}
+.server-head{background:none;border:0;border-bottom:1px solid var(--bg-tertiary);color:var(--header);
+  font-weight:700;font-size:15px;text-align:left;padding:15px 16px;display:flex;
+  justify-content:space-between;align-items:center;width:100%;cursor:pointer}
+.server-head:hover{background:rgba(78,80,88,.2)}
+.boost{font-size:11px;color:var(--muted);font-weight:600;display:flex;gap:6px;align-items:center;
+  padding:10px 16px 2px}
+.chan-scroll{flex:1;overflow-y:auto;padding:0 8px 8px}
+.cat{color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.02em;padding:18px 8px 4px;
+  display:flex;justify-content:space-between;align-items:center}
+.chan{display:flex;align-items:center;gap:6px;color:var(--chan-default);font-size:15px;
+  padding:6px 8px;border-radius:4px;text-decoration:none;cursor:pointer;margin:1px 0;font-weight:500}
+.chan svg{flex-shrink:0}
+.chan:hover{background:rgba(78,80,88,.3);color:var(--text)}
+.chan.active{background:rgba(78,80,88,.6);color:#fff}
+.chan .hash{color:var(--gray);font-weight:700}
+.chan.active .hash{color:#fff}
+.chan .mention-pill{margin-left:auto;background:var(--red);color:#fff;font-size:12px;font-weight:700;
+  border-radius:10px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.vc-user{display:flex;align-items:center;gap:8px;padding:3px 8px 3px 28px;font-size:14px;color:var(--chan-default)}
+.vc-user:hover{background:rgba(78,80,88,.3);border-radius:4px;color:var(--text)}
+.mini-av{width:20px;height:20px;border-radius:50%;flex-shrink:0}
+.inav{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;
+  font-weight:700;flex-shrink:0;overflow:hidden}
+.av-wrap .inav{width:32px;height:32px}
+
+/* user panel */
+.user-panel{background:#232428;padding:8px;display:flex;align-items:center;gap:8px}
+.av-wrap{position:relative;flex-shrink:0}
+.av-wrap img{width:32px;height:32px;border-radius:50%;display:block}
+.dot{position:absolute;right:-1px;bottom:-1px;width:13px;height:13px;border-radius:50%;border:3px solid #232428}
+.dot.online{background:var(--green)}.dot.idle{background:var(--yellow)}.dot.dnd{background:var(--red)}.dot.off{background:var(--gray)}
+.me-name{color:var(--header);font-size:14px;font-weight:600;line-height:1.2}
+.me-name small{color:var(--muted);font-weight:400;font-size:12px}
+.panel-icons{margin-left:auto;display:flex;gap:2px}
+.panel-icons button{background:none;border:0;color:#b5bac1;cursor:pointer;padding:4px;border-radius:4px}
+.panel-icons button:hover{background:rgba(78,80,88,.5)}
+
+/* ---------- chat column ---------- */
+.chat{flex:1;background:var(--bg-primary);display:flex;flex-direction:column;min-width:0}
+.chat-head{height:48px;border-bottom:1px solid var(--bg-tertiary);display:flex;align-items:center;
+  gap:8px;padding:0 16px;color:var(--header);font-weight:700;font-size:16px;flex-shrink:0}
+.chat-head .hash{color:var(--gray);font-size:20px}
+.chat-head .topic{color:var(--muted);font-size:13px;font-weight:500;border-left:1px solid rgba(78,80,88,.6);
+  padding-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.head-icons{margin-left:auto;display:flex;gap:14px;color:#b5bac1}
+.head-icons span{cursor:pointer}.head-icons span:hover{color:#fff}
+
+.msg-scroll{flex:1;overflow-y:auto;padding:16px 0 8px;display:flex;flex-direction:column}
+.divider{display:flex;align-items:center;gap:8px;margin:14px 16px 6px;color:var(--muted);font-size:12px;font-weight:600}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:rgba(78,80,88,.4)}
+.msg{display:flex;gap:16px;padding:6px 16px 6px 20px;position:relative}
+.msg:hover{background:rgba(4,4,5,.07)}
+.msg.pinged{background:rgba(88,101,242,.1)}
+.msg.pinged::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--blurple)}
+.avatar{width:40px;height:40px;border-radius:50%;flex-shrink:0}
+.msg-body{min-width:0;flex:1}
+.msg-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.user{font-weight:600;font-size:16px;color:var(--header);cursor:pointer}
+.user:hover{text-decoration:underline}
+.role-admin{color:#f0b232}.role-mod{color:#eb459e}.role-dev{color:#57f287}.role-nitro{color:#00a8fc}
+.role-badge{font-size:10px;font-weight:700;background:rgba(240,178,50,.2);color:#f0b232;border-radius:4px;
+  padding:2px 5px;letter-spacing:.03em}
+.time{color:var(--muted);font-size:12px}
+.msg-text{color:var(--text);font-size:16px;line-height:1.375;margin-top:2px;word-wrap:break-word}
+.mention{background:rgba(88,101,242,.3);color:#c7d2fe;border-radius:3px;padding:0 4px;cursor:pointer;font-weight:500}
+.mention:hover{background:var(--blurple);color:#fff}
+.msg-text a{color:var(--link);text-decoration:none}
+.msg-text a:hover{text-decoration:underline}
+.reactions{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.react{background:rgba(78,80,88,.3);border:1px solid rgba(78,80,88,.6);color:var(--text);
+  border-radius:8px;font-size:14px;padding:3px 8px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.react:hover{border-color:#b5bac1}
+.react.mine{background:rgba(88,101,242,.3);border-color:var(--blurple);color:#c7d2fe}
+.react .cnt{font-size:13px;font-weight:600}
+
+/* embed */
+.embed{background:var(--bg-secondary);border-left:4px solid var(--blurple);border-radius:4px;
+  padding:12px 16px 12px 12px;max-width:516px;margin-top:8px}
+.embed-author{color:#fff;font-size:14px;font-weight:600;margin-bottom:2px}
+.embed-title{color:var(--link);font-size:16px;font-weight:600}
+.embed-desc{color:var(--text);font-size:14px;margin-top:2px}
+.embed-grid{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+.embed-thumb{width:80px;height:80px;border-radius:8px;object-fit:cover;background:var(--blurple)}
+
+/* typing + composer */
+.typing{padding:4px 20px;color:var(--muted);font-size:13px;min-height:24px}
+.composer-wrap{padding:0 16px 24px;flex-shrink:0}
+.composer{background:#383a40;border-radius:8px;display:flex;align-items:center;padding:0 8px 0 16px;gap:8px}
+.composer input{flex:1;background:none;border:0;outline:0;color:var(--text);font-size:15px;padding:12px 0}
+.composer input::placeholder{color:#6d6f78}
+.composer button{background:none;border:0;color:#b5bac1;cursor:pointer;padding:8px}
+.composer button:hover{color:#fff}
+
+/* ---------- member list ---------- */
+.members{width:240px;background:var(--bg-secondary);flex-shrink:0;overflow-y:auto;padding:16px 8px 16px 16px}
+.members .cat{padding-top:8px}
+.member{display:flex;align-items:center;gap:12px;padding:6px 8px;border-radius:4px;cursor:pointer}
+.member:hover{background:rgba(78,80,88,.3)}
+.member .av-wrap img{width:32px;height:32px}
+.member .name{font-size:15px;font-weight:500;color:var(--chan-default)}
+.member .name.role-admin,.member .name.role-mod,.member .name.role-dev,.member .name.role-nitro{color:inherit}
+.role-admin.name{color:#f0b232}.role-mod.name{color:#eb459e}.role-dev.name{color:#57f287}.role-nitro.name{color:#00a8fc}
+
+/* ---------- footer ---------- */
+footer{background:var(--bg-tertiary);color:var(--muted);font-size:12px;text-align:center;
+  padding:10px;border-top:1px solid rgba(78,80,88,.3);flex-shrink:0}
+
+/* toast */
+.toast{position:fixed;bottom:64px;right:24px;background:var(--bg-floating);color:var(--text);
+  border-radius:8px;padding:12px 16px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.5);
+  display:none;gap:12px;align-items:center;z-index:50}
+.toast.show{display:flex;animation:pop .2s ease}
+.toast button{background:var(--blurple);color:#fff;border:0;border-radius:6px;padding:6px 12px;cursor:pointer}
+@keyframes pop{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+
+@media (max-width:1100px){.members{display:none}}
+@media (max-width:760px){.sidebar{display:none}.rail{width:60px}.chat-head .topic{display:none}}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- SERVER RAIL -->
+  <nav class="rail" aria-label="Servers">
+    <button class="rail-btn active" title="Pixel Forge"><span class="bar"></span>
+      <span class="icon" style="background:#5865f2;font-size:18px">PF</span></button>
+    <div class="rail-sep"></div>
+    <button class="rail-btn unread ping" title="Valor Arcade"><span class="bar"></span>
+      <span class="icon" style="background:#3b4bd0">VA</span><span class="rail-ping">3</span></button>
+    <button class="rail-btn" title="Indie Devs"><span class="bar"></span>
+      <span class="icon" style="background:#1d7a4f">ID</span></button>
+    <button class="rail-btn" title="Speedrun Club"><span class="bar"></span>
+      <span class="icon" style="background:#8a5a2b">SC</span></button>
+    <button class="rail-btn" title="Add Server"><span class="bar"></span>
+      <span class="icon" style="background:#313338;color:#23a55a;font-size:24px">+</span></button>
+  </nav>
+
+  <!-- CHANNEL SIDEBAR -->
+  <aside class="sidebar">
+    <button class="server-head">Pixel Forge <span>▾</span></button>
+    <div class="boost">◆ Level 2 &nbsp;·&nbsp; 14 boosts</div>
+    <div class="chan-scroll" id="chanList">
+      <div class="cat">TEXT CHANNELS</div>
+      <a class="chan active" data-chan="general"><span class="hash">#</span> general</a>
+      <a class="chan" data-chan="clips"><span class="hash">#</span> clips</a>
+      <a class="chan" data-chan="looking-for-group"><span class="hash">#</span> looking-for-group</a>
+      <a class="chan" data-chan="patch-notes"><span class="hash">#</span> patch-notes</a>
+      <a class="chan" data-chan="mod-chat"><span class="hash">#</span> mod-chat</a>
+      <div class="cat">VOICE CHANNELS</div>
+      <a class="chan" data-chan="lobby"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16 8a5 5 0 010 8" stroke="currentColor" stroke-width="2" fill="none"/></svg> Lobby</a>
+      <div class="vc-user"><span class="inav mini-av" style="background:hsl(336,45%,38%);font-size:10px">NO</span><span>Nova</span></div>
+      <div class="vc-user"><span class="inav mini-av" style="background:hsl(160,45%,38%);font-size:10px">MI</span><span>Milo</span></div>
+      <div class="vc-user"><span class="inav mini-av" style="background:hsl(28,45%,38%);font-size:10px">KI</span><span>Kira</span></div>
+      <a class="chan" data-chan="ranked"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/><path d="M16 8a5 5 0 010 8" stroke="currentColor" stroke-width="2" fill="none"/></svg> ranked-grind</a>
+    </div>
+    <div class="user-panel">
+      <div class="av-wrap"><span class="inav" style="background:hsl(248,45%,38%);font-size:13px">YO</span><span class="dot online"></span></div>
+      <div class="me-name">you<small>online</small></div>
+      <div class="panel-icons">
+        <button title="Mute"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/></svg></button>
+        <button title="Deafen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="7" rx="1.5"/><rect x="17" y="14" width="4" height="7" rx="1.5"/></svg></button>
+        <button title="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CHAT -->
+  <main class="chat">
+    <div class="chat-head"><span class="hash">#</span><span id="chanTitle">general</span>
+      <span class="topic" id="chanTopic">Squad up, share clips, argue about patch notes</span>
+      <div class="head-icons">
+        <span title="Threads"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 7H3M21 12H3M21 17H3"/></svg></span>
+        <span title="Pinned"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 7 3 3v2H7v-2l3-3-1-7z"/><path d="M12 16v5"/></svg></span>
+        <span title="Members"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M17.5 14.2a6.5 6.5 0 0 1 4 5.8"/></svg></span>
+      </div>
+    </div>
+    <div class="msg-scroll" id="msgScroll"></div>
+    <div class="typing" id="typing"></div>
+    <div class="composer-wrap">
+      <div class="composer">
+        <button title="Upload">＋</button>
+        <input id="composer" type="text" placeholder="Message #general" autocomplete="off">
+        <button title="GIF">GIF</button>
+        <button title="Emoji"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/></svg></button>
+      </div>
+    </div>
+  </main>
+
+  <!-- MEMBER LIST -->
+  <aside class="members" id="memberList"></aside>
+</div>
+
+<div class="toast" id="toast"><span id="toastText"></span><button id="toastBtn">Join</button></div>
+
+<footer>Built from the discord skill · design-skills</footer>
+
+<script>
+/* Inline initial avatars (deterministic hue per name) — no external avatar service */
+function AV(seed){
+  const s = String(seed);
+  let h = 0; for(const c of s) h = (h*31 + c.charCodeAt(0)) >>> 0;
+  const hue = [248,160,28,336,204,18,290,120][h % 8];
+  const init = s.trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase();
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="hsl(${hue},45%,38%)"/><text x="40" y="54" font-family="sans-serif" font-size="36" font-weight="700" fill="#fff" text-anchor="middle">${init}</text></svg>`;
+  return "data:image/svg+xml," + encodeURIComponent(svg);
+}
+
+const members = [
+  {name:"ForgeMaster", role:"admin", status:"online", bot:true},
+  {name:"Nova", role:"mod", status:"online"},
+  {name:"PatchBot", role:"dev", status:"online", bot:true},
+  {name:"Kira", role:"dev", status:"idle"},
+  {name:"Milo", role:"nitro", status:"online"},
+  {name:"Jax", role:"", status:"idle"},
+  {name:"PixelPete", role:"", status:"dnd"},
+  {name:"Luna", role:"nitro", status:"online"},
+  {name:"Rogue", role:"", status:"off"},
+  {name:"Taco", role:"", status:"off"},
+];
+
+const channels = {
+  general: {topic:"Squad up, share clips, argue about patch notes", msgs:[
+    {u:"Nova",r:"mod",t:"Today at 20:02",text:"alright, ranked reset is live. who is actually grinding tonight and not just saying it"},
+    {u:"Milo",r:"nitro",t:"Today at 20:04",text:"me, obviously. <span class='mention'>@Kira</span> you in or are you still 'warming up'"},
+    {u:"Kira",r:"dev",t:"Today at 20:05",text:"warming up is a legitimate strategy and you know it"},
+    {u:"Jax",r:"",t:"Today at 20:07",text:"i just got dumpstered by a duo running double sniper. i am logging off emotionally"},
+    {u:"Nova",r:"mod",t:"Today at 20:08",pinged:true,text:"<span class='mention'>@you</span> get in voice, Lobby needs a fourth and Milo is throwing"},
+    {u:"Milo",r:"nitro",t:"Today at 20:09",text:"THROWING is a strong word. i prefer 'aggressively experimenting'"},
+  ]},
+  clips: {topic:"Post your best plays — no bronze highlights", msgs:[
+    {u:"PixelPete",r:"",t:"Today at 18:31",text:"1v4 clutch on Haven, tell me this isn't clean",embed:{author:"PixelPete",title:"haven-1v4.mp4",desc:"3.2 MB · 0:47 — that last flick was pure instinct"},reacts:[["🔥",14],["💀",3]]},
+    {u:"Luna",r:"nitro",t:"Today at 18:44",text:"the flick?? okay pete we see you",reacts:[["👏",5]]},
+  ]},
+  "looking-for-group": {topic:"Find your squad — state your rank and role", msgs:[
+    {u:"Rogue",r:"",t:"Today at 19:15",text:"LFG ranked, diamond 2, flex. mic on, no tilt. starting in 20 min"},
+    {u:"Taco",r:"",t:"Today at 19:22",text:"gold 3 support main here, can i sneak into that stack or is this diamond-only elitism"},
+    {u:"Rogue",r:"",t:"Today at 19:23",text:"bring good vibes and we will figure it out"},
+  ]},
+  "patch-notes": {topic:"Official updates from the devs", msgs:[
+    {u:"PatchBot",r:"dev",t:"Today at 12:00",text:"",bot:true,embed:{author:"PatchBot",title:"Patch 4.2 is live",desc:"Nova's ultimate cooldown increased to 90s. Sniper scope sway reduced by 15%. New map 'Foundry' added to rotation. Full notes at pixelforge.gg/patch-42"},reacts:[["🎉",31],["📝",8]]},
+    {u:"Kira",r:"dev",t:"Today at 12:26",text:"the Foundry mid rotation is going to break so many strats and i am here for it"},
+  ]},
+  "mod-chat": {topic:"Staff only — keep it civil(ish)", msgs:[
+    {u:"ForgeMaster",r:"admin",t:"Yesterday at 23:41",text:"reminder: the clip contest winners get announced friday. do NOT leak the list early this time, <span class='mention'>@Nova</span>"},
+    {u:"Nova",r:"mod",t:"Yesterday at 23:43",text:"that was ONE time and it was an accident"},
+    {u:"ForgeMaster",r:"admin",t:"Yesterday at 23:44",text:"it was a scheduled announcement, Nova. with a countdown."},
+  ]},
+};
+
+const roleNames = {admin:"SERVER OWNER", mod:"MODERATOR", dev:"DEVELOPER", nitro:"NITRO BOOSTER", "":"MEMBERS"};
+
+function renderMembers(){
+  const el = document.getElementById("memberList");
+  const order = ["admin","mod","dev","nitro",""];
+  el.innerHTML = order.map(r=>{
+    const list = members.filter(m=>m.role===r);
+    if(!list.length) return "";
+    return `<div class="cat">${roleNames[r]} — ${list.length}</div>` +
+      list.map(m=>`<div class="member"><div class="av-wrap"><img src="${AV(m.name)}" alt=""><span class="dot ${m.status}"></span></div><span class="name role-${m.role}">${m.name}</span></div>`).join("");
+  }).join("");
+}
+
+function msgHTML(m){
+  const reacts = (m.reacts||[]).map(r=>`<button class="react" data-r="${r[0]}">${r[0]} <span class="cnt">${r[1]}</span></button>`).join("");
+  const embed = m.embed ? `<div class="embed"><div class="embed-grid"><div><div class="embed-author">${m.embed.author}</div><div class="embed-title">${m.embed.title}</div><div class="embed-desc">${m.embed.desc}</div></div><img class="embed-thumb" src="${AV(m.embed.title)}" alt=""></div></div>` : "";
+  const badge = m.r==="admin" ? `<span class="role-badge">OWNER</span>` : (m.bot ? `<span class="role-badge" style="background:rgba(88,101,242,.3);color:#c7d2fe">BOT</span>` : "");
+  return `<div class="msg${m.pinged?" pinged":""}">
+    <img class="avatar" src="${AV(m.u)}" alt="">
+    <div class="msg-body">
+      <div class="msg-head"><span class="user role-${m.r}">${m.u}</span>${badge}<span class="time">${m.t}</span></div>
+      <div class="msg-text">${m.text}</div>${embed}
+      ${reacts?`<div class="reactions">${reacts}</div>`:""}
+    </div></div>`;
+}
+
+let current = "general";
+function renderChannel(){
+  const c = channels[current];
+  document.getElementById("chanTitle").textContent = current;
+  document.getElementById("chanTopic").textContent = c.topic;
+  document.getElementById("composer").placeholder = "Message #" + current;
+  const scroll = document.getElementById("msgScroll");
+  scroll.innerHTML = `<div class="divider">Today</div>` + c.msgs.map(msgHTML).join("");
+  scroll.scrollTop = scroll.scrollHeight;
+  wireReacts();
+}
+
+document.getElementById("chanList").addEventListener("click", e=>{
+  const a = e.target.closest(".chan[data-chan]");
+  if(!a || !channels[a.dataset.chan]) return;
+  document.querySelectorAll(".chan").forEach(x=>x.classList.remove("active"));
+  a.classList.add("active");
+  current = a.dataset.chan;
+  renderChannel();
+});
+
+function wireReacts(){
+  document.querySelectorAll(".react").forEach(btn=>{
+    btn.onclick = ()=>{
+      const cnt = btn.querySelector(".cnt");
+      let n = parseInt(cnt.textContent,10);
+      if(btn.classList.contains("mine")){ btn.classList.remove("mine"); cnt.textContent = n-1; }
+      else { btn.classList.add("mine"); cnt.textContent = n+1; }
+    };
+  });
+}
+
+// send messages
+document.getElementById("composer").addEventListener("keydown", e=>{
+  if(e.key!=="Enter") return;
+  const inp = e.target, v = inp.value.trim();
+  if(!v) return;
+  const esc = v.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  channels[current].msgs.push({u:"you",r:"nitro",t:"Today at now",text:esc});
+  inp.value = "";
+  renderChannel();
+  if(/@(everyone|here|you)/i.test(v)) fakeReply();
+});
+
+// fake typing + reply
+const replies = [
+  {u:"Milo",r:"nitro",text:"okay that is actually a solid point, adding it to the list"},
+  {u:"Nova",r:"mod",text:"noted. putting it in the pinned thread so nobody forgets"},
+  {u:"Kira",r:"dev",text:"+1. this is exactly the kind of thing we argued about for two hours last week"},
+  {u:"Jax",r:"",text:"say less. i am already in voice"},
+];
+function fakeReply(){
+  const t = document.getElementById("typing");
+  const r = replies[Math.floor(Math.random()*replies.length)];
+  t.textContent = r.u + " is typing...";
+  setTimeout(()=>{
+    t.textContent = "";
+    channels[current].msgs.push({u:r.u,r:r.r,t:"Today at now",text:r.text});
+    renderChannel();
+  }, 1600);
+}
+
+// stream toast
+setTimeout(()=>{
+  document.getElementById("toastText").innerHTML = "<b>Milo</b> started streaming <b>Ranked Grind</b>";
+  document.getElementById("toast").classList.add("show");
+  setTimeout(()=>document.getElementById("toast").classList.remove("show"), 6000);
+}, 5000);
+document.getElementById("toastBtn").onclick = ()=>{
+  document.getElementById("toast").classList.remove("show");
+  channels.general.msgs.push({u:"Milo",r:"nitro",t:"Today at now",text:"stream is LIVE — ranked grind, come watch me not throw this time",embed:{author:"Milo",title:"Ranked Grind — LIVE",desc:"12 viewers · come hang out"},reacts:[["🔥",6]]});
+  if(current==="general") renderChannel();
+};
+
+renderMembers();
+renderChannel();
+</script>
+</body>
+</html>
