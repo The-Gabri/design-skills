@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pop-art</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#111; --paper:#fff;
+    --red:#E8112D; --yellow:#FFD100; --blue:#0057B8;
+    --pink:#F4007A; --cyan:#00B0E0; --acid:#7ABF00;
+    --display:"Archivo Black", Impact, "Arial Black", sans-serif;
+    --body:"Archivo", Arial, Helvetica, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--body); overflow-x:hidden;
+  }
+  .display{ font-family:var(--display); text-transform:uppercase; }
+  h1,h2,h3{ margin:0; }
+  img,svg{ display:block; }
+
+  /* ---------- NAV ---------- */
+  nav{
+    background:var(--ink); color:#fff; display:flex; align-items:center;
+    justify-content:space-between; padding:.7rem 1.2rem;
+    position:sticky; top:0; z-index:50; border-bottom:5px solid var(--ink);
+  }
+  .logo{ font-family:var(--display); font-size:1.5rem; color:var(--yellow); letter-spacing:.02em; }
+  .logo .kick{ color:var(--red); -webkit-text-stroke:.8px #fff; }
+  .nav-links{ display:flex; gap:1.5rem; }
+  .nav-links a{ color:#fff; text-decoration:none; font-weight:800; font-size:.85rem; letter-spacing:.1em; }
+  .nav-links a:hover{ color:var(--yellow); }
+  #btn-cart{
+    font-family:var(--display); font-size:1rem; background:var(--red); color:#fff;
+    border:3px solid #fff; padding:.45em 1em; cursor:pointer; box-shadow:3px 3px 0 rgba(255,255,255,.35);
+  }
+  #btn-cart:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 rgba(255,255,255,.35); }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background-color:var(--yellow);
+    background-image:radial-gradient(circle, rgba(17,17,17,.55) 2px, transparent 2.6px);
+    background-size:13px 13px;
+    border-bottom:6px solid var(--ink); padding:3.2rem 1.5rem 2.8rem; position:relative; overflow:hidden;
+  }
+  .hero-inner{ max-width:1140px; margin:0 auto; display:grid; grid-template-columns:1.05fr .95fr; gap:2.5rem; align-items:center; }
+  .kicker{
+    display:inline-block; background:var(--ink); color:var(--yellow);
+    font-weight:800; font-size:.85rem; letter-spacing:.14em; padding:.5em 1em; margin-bottom:1.1rem;
+    transform:rotate(-2deg);
+  }
+  .pop-display{
+    font-family:var(--display); text-transform:uppercase;
+    font-size:clamp(3.4rem, 10vw, 8rem); line-height:.86; margin:0 0 1.1rem;
+    color:var(--red); -webkit-text-stroke:3px var(--ink); paint-order:stroke fill;
+    text-shadow:7px 7px 0 var(--ink); transform:rotate(-1.5deg);
+  }
+  .pop-display .alt{ color:var(--paper); }
+  .hero-sub{
+    font-size:1.1rem; font-weight:700; max-width:36ch; background:#fff;
+    border:4px solid var(--ink); padding:.9em 1.1em; box-shadow:6px 6px 0 var(--ink);
+  }
+  .hero-cta{ display:flex; gap:1.2rem; align-items:center; margin-top:1.7rem; flex-wrap:wrap; }
+  .pop-btn{
+    display:inline-block; font-family:var(--display); font-size:1.35rem; letter-spacing:.02em;
+    color:#fff; background:var(--red); border:4px solid var(--ink); padding:.7em 1.5em;
+    box-shadow:6px 6px 0 var(--ink); text-decoration:none; cursor:pointer; text-transform:uppercase;
+    transition:transform .08s steps(2), box-shadow .08s steps(2);
+  }
+  .pop-btn:hover{ transform:translate(-2px,-2px) rotate(-1deg); box-shadow:8px 8px 0 var(--ink); }
+  .pop-btn:active{ transform:translate(4px,4px); box-shadow:2px 2px 0 var(--ink); }
+  .hero-tag{
+    margin-top:1.4rem; display:inline-block; background:var(--ink); color:#fff;
+    border:4px solid var(--ink); padding:.6em 1em; font-weight:800; font-size:.95rem; letter-spacing:.04em;
+    box-shadow:5px 5px 0 var(--red);
+  }
+  .hero-tag b{ color:var(--yellow); font-family:var(--display); }
+
+  .hero-stage{ position:relative; display:flex; justify-content:center; }
+  .hero-panel{
+    background-color:var(--blue);
+    background-image:radial-gradient(circle, #fff 2.4px, transparent 2.9px);
+    background-size:16px 16px;
+    border:6px solid var(--ink); box-shadow:10px 10px 0 var(--ink);
+    padding:2rem 1.5rem; transform:rotate(2deg); width:min(480px, 92vw);
+  }
+  .hero-panel svg{ width:100%; height:auto; }
+  .halo{
+    position:absolute; inset:-26px; pointer-events:none;
+    background-image:radial-gradient(circle, rgba(232,17,45,.85) 3px, transparent 3.8px);
+    background-size:22px 22px; opacity:.9; z-index:-1;
+  }
+  .hero-burst{ position:absolute; width:140px; height:140px; }
+  .hero-burst.b1{ top:-46px; right:-30px; transform:rotate(10deg); }
+  .hero-burst.b2{ bottom:-40px; left:-34px; transform:rotate(-12deg); }
+
+  .countdown{
+    max-width:1140px; margin:1.8rem auto 0; background:var(--ink); color:#fff;
+    border:4px solid var(--ink); padding:.8em 1.2em; display:flex; gap:1.2rem; align-items:center;
+    flex-wrap:wrap; box-shadow:6px 6px 0 var(--red);
+  }
+  .countdown .lbl{ font-family:var(--display); color:var(--yellow); letter-spacing:.06em; font-size:1.05rem; }
+  #countdown{ font-family:var(--display); font-size:1.35rem; letter-spacing:.05em; }
+  #countdown .num{ color:var(--cyan); }
+
+  /* ---------- BURSTS (SVG starbursts, click to pop) ---------- */
+  .burst{ display:inline-block; width:120px; height:120px; cursor:pointer; }
+  .burst svg{ width:100%; height:100%; overflow:visible; }
+  .burst-shape{ fill:var(--red); stroke:var(--ink); stroke-width:6; }
+  .burst-shape.alt{ fill:var(--blue); }
+  .burst-shape.alt2{ fill:var(--pink); }
+  .burst-text{
+    font-family:var(--display); font-size:30px; fill:#fff;
+    stroke:var(--ink); stroke-width:1.5px; paint-order:stroke; letter-spacing:1px;
+  }
+  .burst.popped svg{ animation:burstpop .45s steps(5); transform-origin:50% 50%; }
+  @keyframes burstpop{
+    0%{ transform:scale(1) rotate(0deg); }
+    35%{ transform:scale(1.45) rotate(10deg); }
+    60%{ transform:scale(.92) rotate(-6deg); }
+    100%{ transform:scale(1) rotate(0deg); }
+  }
+
+  /* ---------- TICKER ---------- */
+  .ticker{ background:var(--red); color:#fff; overflow:hidden; white-space:nowrap; border-bottom:6px solid var(--ink); }
+  .ticker-track{
+    display:inline-block; padding:.6em 0; font-family:var(--display);
+    font-size:1.2rem; letter-spacing:.06em; animation:tick 16s linear infinite;
+  }
+  .ticker-track .st{ color:var(--yellow); }
+  @keyframes tick{ to{ transform:translateX(-50%); } }
+
+  /* ---------- SECTIONS ---------- */
+  section{ max-width:1140px; margin:0 auto; padding:3.2rem 1.5rem; }
+  .section-head{ display:flex; align-items:center; gap:1.2rem; margin-bottom:1.6rem; flex-wrap:wrap; }
+  .section-title{
+    font-family:var(--display); font-size:clamp(2.1rem,5vw,3.4rem); margin:0; text-transform:uppercase;
+    color:var(--blue); -webkit-text-stroke:1.5px var(--ink); paint-order:stroke fill; text-shadow:5px 5px 0 var(--ink);
+  }
+  .section-sub{ font-weight:700; max-width:62ch; font-size:1.05rem; }
+
+  /* ---------- SILKSCREEN WALL ---------- */
+  .wall{ border:6px solid var(--ink); background:var(--ink); display:grid; grid-template-columns:repeat(4,1fr); gap:0; box-shadow:10px 10px 0 var(--ink); }
+  .tile{
+    border:0; border-right:6px solid var(--ink); cursor:pointer; padding:1.6rem 1rem 1.2rem;
+    background-color:var(--bg); color:inherit; font-family:inherit; text-align:center;
+    background-image:radial-gradient(circle, rgba(17,17,17,.42) 1.8px, transparent 2.3px);
+    background-size:11px 11px;
+    transition:transform .1s steps(2);
+  }
+  .tile:last-child{ border-right:0; }
+  .tile:hover{ transform:translateY(-4px); }
+  .tile svg{ width:100%; max-width:210px; height:auto; margin:0 auto .9rem; filter:drop-shadow(5px 5px 0 var(--ink)); }
+  .tile .fname{
+    font-family:var(--display); font-size:1.05rem; color:var(--ink); background:#fff;
+    border:3px solid var(--ink); padding:.3em .6em; display:inline-block;
+  }
+  .tile .fprice{ font-family:var(--display); font-size:1.5rem; margin-top:.6rem; color:var(--ink); -webkit-text-stroke:.8px #fff; paint-order:stroke fill; }
+  .tile[aria-pressed="true"]{ outline:6px solid var(--yellow); outline-offset:-6px; }
+  .palette-row{ margin-top:1.6rem; display:flex; gap:.9rem; flex-wrap:wrap; align-items:center; }
+  .palette-row .plbl{ font-family:var(--display); font-size:1rem; letter-spacing:.05em; }
+  .pal-btn{
+    font-family:var(--display); font-size:.95rem; cursor:pointer; letter-spacing:.04em;
+    border:4px solid var(--ink); padding:.55em 1.1em; box-shadow:4px 4px 0 var(--ink); background:#fff;
+    transition:transform .08s steps(2), box-shadow .08s steps(2);
+  }
+  .pal-btn:hover{ transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--ink); }
+  .pal-btn[aria-pressed="true"]{ background:var(--ink); color:var(--yellow); transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+
+  /* ---------- COMIC STORY ---------- */
+  .story-head .section-title{ color:var(--red); }
+  .comic{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; background:var(--ink); border:6px solid var(--ink); box-shadow:10px 10px 0 var(--ink); }
+  .panel{
+    background:#fff; border-right:6px solid var(--ink); border-bottom:6px solid var(--ink);
+    position:relative; min-height:360px; display:flex; flex-direction:column;
+    opacity:0; transform:translateY(70px) rotate(6deg) scale(1.06);
+  }
+  .panel.slam{ animation:slam .5s steps(4) forwards; animation-delay:calc(var(--i, 0) * .12s); }
+  @keyframes slam{
+    0%{ opacity:0; transform:translateY(70px) rotate(6deg) scale(1.06); }
+    55%{ opacity:1; transform:translateY(-8px) rotate(-1.5deg) scale(1); }
+    100%{ opacity:1; transform:none; }
+  }
+  .caption{
+    font-weight:800; font-size:.82rem; letter-spacing:.06em; background:var(--yellow);
+    border-bottom:4px solid var(--ink); padding:.55em .8em; text-transform:uppercase; z-index:2;
+  }
+  .panel .art{ flex:1; display:flex; align-items:center; justify-content:center; padding:1.2rem; min-height:215px; }
+  .panel .art svg{ width:100%; max-width:250px; height:auto; }
+  .art.a1{ background-color:var(--blue); background-image:radial-gradient(circle, rgba(255,255,255,.6) 2px, transparent 2.5px); background-size:13px 13px; }
+  .art.a2{ background-color:var(--red); background-image:radial-gradient(circle, rgba(17,17,17,.5) 2.2px, transparent 2.7px); background-size:14px 14px; }
+  .art.a3{ background-color:var(--yellow); background-image:radial-gradient(circle, rgba(17,17,17,.5) 1.8px, transparent 2.3px); background-size:11px 11px; }
+  .art.a4{ background-color:var(--pink); background-image:radial-gradient(circle, rgba(255,255,255,.55) 2px, transparent 2.5px); background-size:13px 13px; }
+  .art.a5{ background-color:var(--cyan); background-image:radial-gradient(circle, rgba(17,17,17,.45) 2px, transparent 2.5px); background-size:13px 13px; }
+  .art.a6{ background-color:var(--acid); background-image:radial-gradient(circle, rgba(17,17,17,.5) 2px, transparent 2.5px); background-size:13px 13px; }
+  .onomat{
+    font-family:var(--display); font-style:italic; font-size:2.4rem; color:#fff;
+    -webkit-text-stroke:2px var(--ink); paint-order:stroke fill; text-shadow:4px 4px 0 var(--ink); margin:0; text-align:center;
+  }
+  .panel .foot{ font-size:.9rem; font-weight:700; padding:.8em 1em; border-top:4px solid var(--ink); background:#fff; line-height:1.45; }
+  .panel .foot b{ font-family:var(--display); }
+
+  /* ---------- SPECS ---------- */
+  .specs-head .section-title{ color:var(--pink); -webkit-text-stroke:1.5px var(--ink); }
+  .spec-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; background:var(--ink); border:6px solid var(--ink); box-shadow:10px 10px 0 var(--ink); }
+  .spec{ border-right:6px solid var(--ink); padding:1.5rem 1.2rem; background:var(--paper); }
+  .spec:last-child{ border-right:0; }
+  .spec:nth-child(1){ background-color:var(--yellow); background-image:radial-gradient(circle, rgba(17,17,17,.4) 1.6px, transparent 2.1px); background-size:10px 10px; }
+  .spec:nth-child(2){ background-color:var(--red); color:#fff; background-image:radial-gradient(circle, rgba(255,255,255,.45) 1.6px, transparent 2.1px); background-size:10px 10px; }
+  .spec:nth-child(3){ background-color:var(--blue); color:#fff; background-image:radial-gradient(circle, rgba(255,255,255,.45) 1.6px, transparent 2.1px); background-size:10px 10px; }
+  .spec:nth-child(4){ background-color:var(--acid); background-image:radial-gradient(circle, rgba(17,17,17,.4) 1.6px, transparent 2.1px); background-size:10px 10px; }
+  .spec .big{ font-family:var(--display); font-size:2.2rem; -webkit-text-stroke:1.2px var(--ink); paint-order:stroke fill; }
+  .spec:nth-child(2) .big, .spec:nth-child(3) .big{ color:var(--yellow); }
+  .spec p{ font-weight:700; margin:.5rem 0 0; font-size:.95rem; line-height:1.45; }
+
+  /* ---------- REVIEWS ---------- */
+  .rev-head .section-title{ color:var(--acid); -webkit-text-stroke:1.5px var(--ink); }
+  .reviews{
+    display:flex; gap:2.2rem; flex-wrap:wrap; justify-content:center; padding:2.6rem 2rem;
+    background-color:var(--cyan); background-image:radial-gradient(circle, rgba(255,255,255,.55) 2px, transparent 2.5px); background-size:14px 14px;
+    border:6px solid var(--ink); box-shadow:10px 10px 0 var(--ink);
+  }
+  .bubble{
+    position:relative; display:inline-block; background:#fff; border:4px solid var(--ink);
+    padding:1.1em 1.3em; max-width:26ch; font-weight:700; box-shadow:5px 5px 0 var(--ink);
+    transform:rotate(-1.5deg);
+  }
+  .bubble:nth-child(2){ transform:rotate(1.5deg); }
+  .bubble::after{
+    content:""; position:absolute; left:32px; bottom:-13px; width:18px; height:18px; background:#fff;
+    border-right:4px solid var(--ink); border-bottom:4px solid var(--ink); transform:rotate(45deg) skew(12deg,12deg);
+  }
+  .bubble cite{ display:block; margin-top:.7em; font-style:normal; font-size:.8rem; letter-spacing:.08em; color:var(--red); font-family:var(--display); }
+
+  /* ---------- FINAL CTA ---------- */
+  .final{
+    background-color:var(--red);
+    background-image:radial-gradient(circle, rgba(17,17,17,.5) 2.4px, transparent 2.9px);
+    background-size:15px 15px;
+    border:6px solid var(--ink); box-shadow:10px 10px 0 var(--ink);
+    padding:3rem 2rem; text-align:center; position:relative; overflow:hidden;
+  }
+  .final h2{
+    font-family:var(--display); font-size:clamp(2.4rem,7vw,4.6rem); color:#fff;
+    -webkit-text-stroke:2px var(--ink); paint-order:stroke fill; text-shadow:6px 6px 0 var(--ink);
+    text-transform:uppercase; margin:0 0 1rem; transform:rotate(-1.5deg);
+  }
+  .final p{ font-weight:800; color:var(--yellow); font-size:1.15rem; letter-spacing:.04em; margin:0 0 1.8rem; }
+  .final .burst{ position:absolute; width:130px; height:130px; }
+  .final .f1{ top:14px; left:18px; transform:rotate(-10deg); }
+  .final .f2{ bottom:14px; right:18px; transform:rotate(12deg); }
+  .pop-btn.big{ font-size:1.6rem; background:var(--yellow); color:var(--ink); }
+
+  footer{ background:var(--ink); color:#fff; text-align:center; padding:1.8rem 1rem; font-size:.88rem; letter-spacing:.06em; }
+  footer .display{ color:var(--yellow); font-size:1.2rem; margin-bottom:.4rem; }
+
+  @media (max-width:900px){
+    .hero-inner{ grid-template-columns:1fr; }
+    .wall{ grid-template-columns:repeat(2,1fr); }
+    .tile:nth-child(2n){ border-right:0; }
+    .tile{ border-bottom:6px solid var(--ink); }
+    .tile:nth-child(3), .tile:nth-child(4){ border-bottom:0; }
+    .comic{ grid-template-columns:1fr; }
+    .panel{ border-right:0; }
+    .spec-grid{ grid-template-columns:1fr 1fr; }
+    .spec{ border-bottom:6px solid var(--ink); }
+    .spec:nth-child(2){ border-right:0; }
+    .nav-links{ display:none; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .ticker-track{ animation:none; }
+    .panel{ opacity:1; transform:none; }
+    .panel.slam{ animation:none; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ REUSABLE SNEAKER ARTWORK (pure SVG, halftone-shaded) ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="dotsInk" width="12" height="12" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="2.1" fill="#111"/>
+    </pattern>
+    <clipPath id="upperClip">
+      <path d="M34,152 C24,132 26,110 46,96 C58,87 72,82 90,78 C110,73 122,76 142,70 C156,66 162,56 182,54 C196,52 204,56 220,54 C248,51 276,64 292,88 C302,104 306,128 304,152 Z"/>
+    </clipPath>
+    <g id="sneakerArt">
+      <!-- outsole -->
+      <path d="M18,172 L322,172 L310,206 L30,206 Z" style="fill:#111" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+      <polyline points="52,180 70,198 88,180 106,198 124,180" fill="none" stroke="#fff" stroke-width="5"/>
+      <polyline points="200,180 218,198 236,180 254,198 272,180" fill="none" stroke="#fff" stroke-width="5"/>
+      <!-- midsole -->
+      <path d="M22,148 L318,148 L322,172 L18,172 Z" style="fill:#fff" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+      <text x="170" y="167" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="15" fill="#E8112D" letter-spacing="2">POW!</text>
+      <!-- upper -->
+      <path d="M34,152 C24,132 26,110 46,96 C58,87 72,82 90,78 C110,73 122,76 142,70 C156,66 162,56 182,54 C196,52 204,56 220,54 C248,51 276,64 292,88 C302,104 306,128 304,152 Z"
+            style="fill:var(--u, #E8112D)" stroke="#111" stroke-width="7" stroke-linejoin="round"/>
+      <!-- halftone shade over heel -->
+      <g clip-path="url(#upperClip)">
+        <ellipse cx="262" cy="122" rx="82" ry="62" fill="url(#dotsInk)" opacity=".32"/>
+        <ellipse cx="120" cy="150" rx="70" ry="30" fill="url(#dotsInk)" opacity=".18"/>
+      </g>
+      <!-- slash stripe -->
+      <polygon points="172,62 208,58 152,150 114,150" style="fill:var(--a, #FFD100)" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+      <!-- toe cap -->
+      <path d="M34,152 C24,132 26,110 46,96 C62,86 80,82 98,84 C86,106 84,130 86,152 Z"
+            style="fill:var(--a, #FFD100)" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+      <!-- laces -->
+      <g stroke="#111" stroke-width="10" stroke-linecap="round">
+        <line x1="118" y1="80" x2="132" y2="100"/>
+        <line x1="134" y1="76" x2="148" y2="96"/>
+        <line x1="150" y1="72" x2="164" y2="92"/>
+      </g>
+      <g stroke="#fff" stroke-width="5" stroke-linecap="round">
+        <line x1="118" y1="80" x2="132" y2="100"/>
+        <line x1="134" y1="76" x2="148" y2="96"/>
+        <line x1="150" y1="72" x2="164" y2="92"/>
+      </g>
+      <!-- collar + heel details -->
+      <ellipse cx="206" cy="64" rx="27" ry="13" style="fill:var(--a, #FFD100)" stroke="#111" stroke-width="6"/>
+      <circle cx="232" cy="102" r="11" style="fill:var(--a, #FFD100)" stroke="#111" stroke-width="6"/>
+      <rect x="288" y="66" width="14" height="30" style="fill:var(--a, #FFD100)" stroke="#111" stroke-width="5"/>
+    </g>
+  </defs>
+</svg>
+
+<nav>
+  <div class="logo display">POW<span class="kick">!</span> KICKS</div>
+  <div class="nav-links">
+    <a href="#wall">THE WALL</a>
+    <a href="#story">ISSUE #1</a>
+    <a href="#reviews">REVIEWS</a>
+  </div>
+  <button id="btn-cart" type="button">CART (<span id="cart-count">0</span>)</button>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="kicker">DROP Nº 001 ★ 500 NUMBERED PAIRS ★ NO RESTOCK</span>
+      <h1 class="pop-display">STEP INTO<br>THE <span class="alt">POW!</span></h1>
+      <p class="hero-sub">The "WHAM" runner — a limited pop-art sneaker drop. Air-pop cushion, Ben-Day everything, and a colorway loud enough to get you noticed from two blocks away.</p>
+      <div class="hero-cta">
+        <button class="pop-btn" id="btn-add" type="button">GRAB YOUR PAIR!</button>
+        <span class="burst" data-text="NEW!"></span>
+      </div>
+      <div class="hero-tag">COLORWAY: <b id="cw-name">CLASSIC RED</b> &nbsp;·&nbsp; <b id="cw-price">€129</b></div>
+    </div>
+    <div class="hero-stage">
+      <div class="halo" aria-hidden="true"></div>
+      <div class="hero-panel" id="hero-panel" style="--u:#E8112D;--a:#FFD100">
+        <svg viewBox="0 0 340 240" role="img" aria-label="POW! Kicks WHAM runner sneaker">
+          <use href="#sneakerArt"/>
+        </svg>
+      </div>
+      <span class="burst hero-burst b1" data-text="WHAM!" data-alt="1"></span>
+      <span class="burst hero-burst b2" data-text="500 ONLY" data-alt="2"></span>
+    </div>
+  </div>
+  <div class="countdown">
+    <span class="lbl">DROP OPENS IN</span>
+    <span id="countdown" aria-live="off">-- DAYS --:--:--</span>
+    <span style="font-weight:800; letter-spacing:.05em;">FRIDAY 16·10·26 — 09:00 CEST — WHEN THEY'RE GONE, THEY'RE GONE.</span>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="ticker-track">
+    <span>DROP DAY 16·10·26 <span class="st">★</span> 500 NUMBERED PAIRS <span class="st">★</span> NO RESTOCK <span class="st">★</span> €129 A PAIR <span class="st">★</span> ZERO BORING STEPS <span class="st">★</span> </span><span>DROP DAY 16·10·26 <span class="st">★</span> 500 NUMBERED PAIRS <span class="st">★</span> NO RESTOCK <span class="st">★</span> €129 A PAIR <span class="st">★</span> ZERO BORING STEPS <span class="st">★</span> </span>
+  </div>
+</div>
+
+<section id="wall">
+  <div class="section-head">
+    <h2 class="section-title">THE SILKSCREEN WALL</h2>
+    <span class="burst" data-text="4 LOOKS" data-alt="1"></span>
+  </div>
+  <p class="section-sub">Warhol rule: one shoe, printed four times, four colorways. Tap a print to load it into the hero — or smash a palette button to re-ink the whole wall.</p>
+  <div class="wall" role="group" aria-label="Sneaker colorways">
+    <button class="tile" id="tile-0" type="button" aria-pressed="true" style="--bg:#FFD100;--u:#E8112D;--a:#FFD100">
+      <svg viewBox="0 0 340 240"><use href="#sneakerArt"/></svg>
+      <span class="fname">CLASSIC RED</span>
+      <div class="fprice">€129</div>
+    </button>
+    <button class="tile" id="tile-1" type="button" aria-pressed="false" style="--bg:#0057B8;--u:#FFD100;--a:#E8112D">
+      <svg viewBox="0 0 340 240"><use href="#sneakerArt"/></svg>
+      <span class="fname">ACID LEMON</span>
+      <div class="fprice">€129</div>
+    </button>
+    <button class="tile" id="tile-2" type="button" aria-pressed="false" style="--bg:#E8112D;--u:#0057B8;--a:#FFFFFF">
+      <svg viewBox="0 0 340 240"><use href="#sneakerArt"/></svg>
+      <span class="fname">BLUE BOLT</span>
+      <div class="fprice">€139</div>
+    </button>
+    <button class="tile" id="tile-3" type="button" aria-pressed="false" style="--bg:#00B0E0;--u:#F4007A;--a:#00B0E0">
+      <svg viewBox="0 0 340 240"><use href="#sneakerArt"/></svg>
+      <span class="fname">PINK ZOWIE</span>
+      <div class="fprice">€139</div>
+    </button>
+  </div>
+  <div class="palette-row">
+    <span class="plbl">RE-INK THE WALL:</span>
+    <button class="pal-btn" id="pal-0" type="button" aria-pressed="true" style="background:#E8112D;color:#fff">ORIGINAL POP</button>
+    <button class="pal-btn" id="pal-1" type="button" aria-pressed="false" style="background:#7ABF00">ACID TRIP</button>
+    <button class="pal-btn" id="pal-2" type="button" aria-pressed="false" style="background:#111;color:#fff">MIDNIGHT OIL</button>
+    <button class="pal-btn" id="pal-3" type="button" aria-pressed="false" style="background:#F4007A;color:#fff">SUGAR RUSH</button>
+  </div>
+</section>
+
+<section id="story" class="story-head">
+  <div class="section-head">
+    <h2 class="section-title">ISSUE #1: BIRTH OF A BANGER</h2>
+    <span class="burst" data-text="ZAP!" data-alt="1"></span>
+  </div>
+  <p class="section-sub">Six panels. One shoe. Scroll — they slam in like comic pages.</p>
+  <div class="comic">
+    <div class="panel" style="--i:0">
+      <div class="caption">MEANWHILE, AT POW! LABS…</div>
+      <div class="art a1">
+        <svg viewBox="0 0 220 170" role="img" aria-label="Flask bubbling over">
+          <polygon points="80,20 80,80 45,140 155,140 120,80 120,20" fill="#fff" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+          <polygon points="66,95 134,95 145,130 55,130" fill="#E8112D" stroke="#111" stroke-width="5"/>
+          <circle cx="90" cy="112" r="7" fill="#fff" stroke="#111" stroke-width="4"/>
+          <circle cx="112" cy="120" r="5" fill="#fff" stroke="#111" stroke-width="4"/>
+          <circle cx="128" cy="60" r="6" fill="#00B0E0" stroke="#111" stroke-width="4"/>
+          <circle cx="146" cy="36" r="5" fill="#FFD100" stroke="#111" stroke-width="4"/>
+          <text x="110" y="158" text-anchor="middle" font-family="Impact,'Arial Black',sans-serif" font-size="20" fill="#111">FIZZ-X</text>
+        </svg>
+      </div>
+      <div class="foot"><b>HMMM…</b> "Sneakers are too quiet," mutters Dr. Fizz. "What if a shoe could SHOUT?"</div>
+    </div>
+    <div class="panel" style="--i:1">
+      <div class="caption">THE SILKSCREEN…</div>
+      <div class="art a2">
+        <svg viewBox="0 0 220 170" role="img" aria-label="Silkscreen printing the shoe">
+          <rect x="30" y="30" width="160" height="90" fill="#fff" stroke="#111" stroke-width="6"/>
+          <rect x="30" y="30" width="160" height="90" fill="url(#dotsInk)" opacity=".25"/>
+          <rect x="40" y="10" width="140" height="16" fill="#FFD100" stroke="#111" stroke-width="5" transform="rotate(-8 110 18)"/>
+          <use href="#sneakerArt" transform="translate(58,66) scale(.32)" style="--u:#0057B8;--a:#FFD100"/>
+          <text x="110" y="152" text-anchor="middle" font-family="Impact,'Arial Black',sans-serif" font-style="italic" font-size="26" fill="#fff" stroke="#111" stroke-width="1.5" style="paint-order:stroke">SQUEEGE!</text>
+        </svg>
+      </div>
+      <div class="foot"><b>SQUEEGE!</b> One pull of the squeegee. Ink hits canvas. The first WHAM is born.</div>
+    </div>
+    <div class="panel" style="--i:2">
+      <div class="caption">THE HEAT IS ON…</div>
+      <div class="art a3">
+        <svg viewBox="0 0 220 170" role="img" aria-label="Lightning bolts">
+          <polygon points="120,10 70,95 100,95 85,160 150,70 118,70" fill="#FFD100" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+          <polygon points="170,30 145,80 162,80 150,120 185,65 166,65" fill="#fff" stroke="#111" stroke-width="5" stroke-linejoin="round"/>
+          <circle cx="45" cy="120" r="9" fill="#E8112D" stroke="#111" stroke-width="5"/>
+          <circle cx="45" cy="120" r="3" fill="#111"/>
+        </svg>
+      </div>
+      <div class="foot"><b>BAM!</b> The air-pop cushion gets charged. 240 grams of pure lightning.</div>
+    </div>
+    <div class="panel" style="--i:3">
+      <div class="caption">OUT ON THE STREET…</div>
+      <div class="art a4">
+        <svg viewBox="0 0 220 170" role="img" aria-label="Shoe racing with motion lines">
+          <g stroke="#111" stroke-width="6" stroke-linecap="round">
+            <line x1="10" y1="60" x2="60" y2="60"/>
+            <line x1="10" y1="85" x2="48" y2="85"/>
+            <line x1="10" y1="110" x2="60" y2="110"/>
+          </g>
+          <use href="#sneakerArt" transform="translate(70,40) scale(.42)" style="--u:#F4007A;--a:#00B0E0"/>
+        </svg>
+      </div>
+      <div class="foot"><b>ZOOM!</b> First test run: three blocks in four minutes. The pigeons applauded.</div>
+    </div>
+    <div class="panel" style="--i:4">
+      <div class="caption">WORD GETS OUT…</div>
+      <div class="art a5">
+        <svg viewBox="0 0 220 170" role="img" aria-label="Crowd queuing for the drop">
+          <g stroke="#111" stroke-width="5">
+            <circle cx="45" cy="70" r="16" fill="#FFD100"/>
+            <circle cx="100" cy="70" r="16" fill="#E8112D"/>
+            <circle cx="155" cy="70" r="16" fill="#fff"/>
+            <rect x="29" y="88" width="32" height="52" fill="#0057B8"/>
+            <rect x="84" y="88" width="32" height="52" fill="#F4007A"/>
+            <rect x="139" y="88" width="32" height="52" fill="#7ABF00"/>
+          </g>
+          <text x="110" y="160" text-anchor="middle" font-family="Impact,'Arial Black',sans-serif" font-style="italic" font-size="26" fill="#fff" stroke="#111" stroke-width="1.5" style="paint-order:stroke">HURRY!</text>
+        </svg>
+      </div>
+      <div class="foot"><b>HURRY!</b> The queue wraps the block. Somebody brought a tent. Somebody brought a trombone.</div>
+    </div>
+    <div class="panel" style="--i:5">
+      <div class="caption">DROP DAY — 16·10·26…</div>
+      <div class="art a6">
+        <div style="text-align:center">
+          <span class="burst" data-text="NEW!" data-alt="2" style="width:130px;height:130px"></span>
+          <p class="onomat">GRAB 'EM!</p>
+        </div>
+      </div>
+      <div class="foot"><b>NEW!</b> 500 numbered pairs. €129 a pair. When the dots fade, they're gone forever.</div>
+    </div>
+  </div>
+</section>
+
+<section class="specs-head">
+  <div class="section-head">
+    <h2 class="section-title">THE FINE PRINT (LOUD)</h2>
+    <span class="burst" data-text="SPECS!"></span>
+  </div>
+  <div class="spec-grid">
+    <div class="spec">
+      <div class="big">240G</div>
+      <p>Featherweight build. Lighter than your excuses for skipping leg day.</p>
+    </div>
+    <div class="spec">
+      <div class="big">8MM</div>
+      <p>Heel drop tuned for city sprints and dramatic entrances.</p>
+    </div>
+    <div class="spec">
+      <div class="big">AIR-POP</div>
+      <p>Cushion charged like a thundercloud. Every step lands with a thud and a grin.</p>
+    </div>
+    <div class="spec">
+      <div class="big">500</div>
+      <p>Numbered pairs. Each tongue stamped by hand. No restock — ever.</p>
+    </div>
+  </div>
+</section>
+
+<section id="reviews" class="rev-head">
+  <div class="section-head">
+    <h2 class="section-title">STREET TALK</h2>
+    <span class="burst" data-text="WOW!" data-alt="1"></span>
+  </div>
+  <div class="reviews">
+    <blockquote class="bubble">They squeak when I walk and I have never been prouder of a sound.<cite>— RITA K., PAIR Nº 0042</cite></blockquote>
+    <blockquote class="bubble">A stranger stopped me to ask about my shoes. We are married now.<cite>— MARC D., PAIR Nº 0137</cite></blockquote>
+    <blockquote class="bubble">I bought two pairs. One to wear, one to frame. The frame cost more.<cite>— JUNE P., PAIR Nº 0288</cite></blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="final">
+    <span class="burst f1" data-text="POW!"></span>
+    <span class="burst f2" data-text="BAM!" data-alt="1"></span>
+    <h2>Don't sleep on the drop!</h2>
+    <p>500 PAIRS · €129 · FRIDAY 16·10·26 — 09:00 CEST</p>
+    <button class="pop-btn big" id="btn-final" type="button">GET 'EM!</button>
+  </div>
+</section>
+
+<footer>
+  <div class="display">POW! KICKS — WALK LOUD.</div>
+  <p>Built from the pop-art skill · design-skills</p>
+</footer>
+
+<script>
+  /* ---------- Starburst badges (real SVG shapes, click to pop) ---------- */
+  function burstPoints(cx, cy, spikes, r1, r2){
+    var pts = [];
+    for (var i = 0; i < spikes * 2; i++){
+      var r = (i % 2 === 0) ? r1 : r2;
+      var a = (Math.PI * i) / spikes - Math.PI / 2;
+      pts.push((cx + r * Math.cos(a)).toFixed(1) + "," + (cy + r * Math.sin(a)).toFixed(1));
+    }
+    return pts.join(" ");
+  }
+  document.querySelectorAll(".burst").forEach(function(el){
+    var NS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 200 200");
+    var poly = document.createElementNS(NS, "polygon");
+    poly.setAttribute("points", burstPoints(100, 100, 16, 98, 70));
+    poly.setAttribute("class", "burst-shape" + (el.hasAttribute("data-alt") ? " alt" + (el.getAttribute("data-alt") === "2" ? "2" : "") : ""));
+    svg.appendChild(poly);
+    var t = document.createElementNS(NS, "text");
+    t.setAttribute("x", "100"); t.setAttribute("y", "112");
+    t.setAttribute("text-anchor", "middle"); t.setAttribute("class", "burst-text");
+    t.textContent = el.getAttribute("data-text") || "POW!";
+    svg.appendChild(t);
+    el.appendChild(svg);
+    el.addEventListener("click", function(){
+      el.classList.remove("popped");
+      void el.offsetWidth; /* restart the pop */
+      el.classList.add("popped");
+    });
+  });
+
+  /* ---------- Colorways: tap a tile to load it, or re-ink the whole wall ---------- */
+  var palettes = [
+    { name:"ORIGINAL POP", tiles:[
+      { bg:"#FFD100", u:"#E8112D", a:"#FFD100", name:"CLASSIC RED",  price:"€129" },
+      { bg:"#0057B8", u:"#FFD100", a:"#E8112D", name:"ACID LEMON",   price:"€129" },
+      { bg:"#E8112D", u:"#0057B8", a:"#FFFFFF", name:"BLUE BOLT",    price:"€139" },
+      { bg:"#00B0E0", u:"#F4007A", a:"#00B0E0", name:"PINK ZOWIE",    price:"€139" }
+    ]},
+    { name:"ACID TRIP", tiles:[
+      { bg:"#111111", u:"#7ABF00", a:"#111111", name:"ACID GREEN",   price:"€139" },
+      { bg:"#F4007A", u:"#00B0E0", a:"#FFD100", name:"CYBER SODA",   price:"€139" },
+      { bg:"#FFD100", u:"#F4007A", a:"#FFD100", name:"BUBBLEGUM",    price:"€129" },
+      { bg:"#0057B8", u:"#FFD100", a:"#0057B8", name:"TAXI!",        price:"€129" }
+    ]},
+    { name:"MIDNIGHT OIL", tiles:[
+      { bg:"#0057B8", u:"#111111", a:"#E8112D", name:"MIDNIGHT",     price:"€139" },
+      { bg:"#00B0E0", u:"#111111", a:"#00B0E0", name:"NIGHT OWL",    price:"€139" },
+      { bg:"#F4007A", u:"#111111", a:"#F4007A", name:"AFTER DARK",   price:"€139" },
+      { bg:"#FFD100", u:"#111111", a:"#FFD100", name:"STREETLIGHT",  price:"€129" }
+    ]},
+    { name:"SUGAR RUSH", tiles:[
+      { bg:"#F4007A", u:"#FFFFFF", a:"#F4007A", name:"COTTON CANDY", price:"€139" },
+      { bg:"#0057B8", u:"#FFFFFF", a:"#00B0E0", name:"ICE POP",      price:"€129" },
+      { bg:"#FFD100", u:"#FFFFFF", a:"#E8112D", name:"CHERRY POP",   price:"€129" },
+      { bg:"#E8112D", u:"#FFD100", a:"#F4007A", name:"LEMONADE",     price:"€129" }
+    ]}
+  ];
+  var heroPanel = document.getElementById("hero-panel");
+  var cwName = document.getElementById("cw-name");
+  var cwPrice = document.getElementById("cw-price");
+  var currentPal = 0;
+
+  function paintTiles(pal){
+    pal.tiles.forEach(function(tw, i){
+      var tile = document.getElementById("tile-" + i);
+      tile.style.setProperty("--bg", tw.bg);
+      tile.style.setProperty("--u", tw.u);
+      tile.style.setProperty("--a", tw.a);
+      tile.querySelector(".fname").textContent = tw.name;
+      tile.querySelector(".fprice").textContent = tw.price;
+    });
+  }
+  function loadIntoHero(i){
+    var tw = palettes[currentPal].tiles[i];
+    heroPanel.style.setProperty("--u", tw.u);
+    heroPanel.style.setProperty("--a", tw.a);
+    cwName.textContent = tw.name;
+    cwPrice.textContent = tw.price;
+    for (var k = 0; k < 4; k++){
+      document.getElementById("tile-" + k).setAttribute("aria-pressed", k === i ? "true" : "false");
+    }
+  }
+  for (var ti = 0; ti < 4; ti++){
+    (function(n){
+      document.getElementById("tile-" + n).addEventListener("click", function(){ loadIntoHero(n); });
+    })(ti);
+  }
+  for (var pi = 0; pi < 4; pi++){
+    (function(n){
+      document.getElementById("pal-" + n).addEventListener("click", function(){
+        currentPal = n;
+        paintTiles(palettes[n]);
+        for (var k = 0; k < 4; k++){
+          document.getElementById("pal-" + k).setAttribute("aria-pressed", k === n ? "true" : "false");
+        }
+        loadIntoHero(0);
+      });
+    })(pi);
+  }
+
+  /* ---------- Comic panels slam in on scroll ---------- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){
+        e.target.classList.add("slam");
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+  document.querySelectorAll(".panel").forEach(function(p){ io.observe(p); });
+
+  /* ---------- Cart + bursts ---------- */
+  var cartCount = 0;
+  var cartEl = document.getElementById("cart-count");
+  function addToCart(){
+    cartCount++;
+    cartEl.textContent = cartCount;
+  }
+  document.getElementById("btn-add").addEventListener("click", addToCart);
+  document.getElementById("btn-final").addEventListener("click", addToCart);
+  document.getElementById("btn-cart").addEventListener("click", function(){
+    cartEl.parentElement.classList.remove("popped");
+  });
+
+  /* ---------- Drop countdown (16 Oct 2026, 09:00 CEST) ---------- */
+  var dropAt = new Date("2026-10-16T09:00:00+02:00").getTime();
+  var cdEl = document.getElementById("countdown");
+  function pad(n){ return (n < 10 ? "0" : "") + n; }
+  function tickCd(){
+    var diff = dropAt - Date.now();
+    if (diff <= 0){
+      cdEl.innerHTML = '<span class="num">LIVE NOW!</span> — THE WALL IS OPEN';
+      return;
+    }
+    var d = Math.floor(diff / 864e5);
+    var h = Math.floor(diff % 864e5 / 36e5);
+    var m = Math.floor(diff % 36e5 / 6e4);
+    var s = Math.floor(diff % 6e4 / 1e3);
+    cdEl.innerHTML = '<span class="num">' + d + ' DAYS</span> ' + pad(h) + ':' + pad(m) + ':' + pad(s);
+  }
+  tickCd();
+  setInterval(tickCd, 1000);
+</script>
+</body>
+</html>
