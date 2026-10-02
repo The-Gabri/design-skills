@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>netflix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#E50914; --red-dark:#B20710; --canvas:#141414; --black:#000;
+  --ink:#fff; --grey:#B3B3B3; --muted:#808080; --panel:#181818;
+  --match:#46d369; --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--canvas);color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:rgba(229,9,20,.5)}
+button{font-family:inherit}
+a{color:inherit}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:0;left:0;right:0;height:68px;z-index:60;
+  display:flex;align-items:center;gap:36px;padding:0 4%;
+  background:linear-gradient(to bottom,rgba(0,0,0,.75),transparent);
+  transition:background .4s ease}
+.nav.solid{background:var(--canvas)}
+.logo{color:var(--red);font-family:"Bebas Neue",Impact,sans-serif;font-size:32px;
+  letter-spacing:.16em;text-decoration:none;line-height:1;padding-top:4px}
+.nav-links{display:flex;gap:22px}
+.nav-links a{color:#e5e5e5;text-decoration:none;font-size:14px;transition:color .2s}
+.nav-links a:hover{color:var(--grey)}
+.nav-links a.on{color:#fff;font-weight:600}
+.nav-tools{margin-left:auto;display:flex;align-items:center;gap:22px}
+.nav-tools button{background:none;border:0;color:#fff;cursor:pointer;display:flex;
+  padding:4px;transition:transform .15s ease}
+.nav-tools button:hover{transform:scale(1.12)}
+.nav-tools svg{width:22px;height:22px;fill:#fff}
+.avatar{width:32px;height:32px;border-radius:4px;cursor:pointer;
+  background:linear-gradient(135deg,var(--red),var(--red-dark));
+  box-shadow:0 2px 8px rgba(0,0,0,.5)}
+
+/* ---------- billboard ---------- */
+.billboard{position:relative;height:92vh;min-height:600px;overflow:hidden}
+.bb-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;pointer-events:none}
+.bb-slide.active{opacity:1;pointer-events:auto}
+.bb-art{position:absolute;inset:0}
+.bb-copy{position:absolute;left:4%;bottom:24%;max-width:600px;z-index:2}
+.series-tag{display:flex;align-items:center;gap:10px;font-weight:700;
+  letter-spacing:.38em;font-size:14px;margin-bottom:14px;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+.series-tag .n{color:var(--red);font-family:"Bebas Neue",Impact,sans-serif;
+  font-size:26px;letter-spacing:0;line-height:1}
+.bb-title{font-family:"Bebas Neue",Impact,sans-serif;
+  font-size:clamp(72px,10vw,132px);line-height:.9;letter-spacing:.015em;
+  text-shadow:0 6px 30px rgba(0,0,0,.65)}
+.top10-line{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;
+  margin:16px 0 12px;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+.top10-line::before{content:"TOP 10";background:var(--red);font-size:11px;
+  letter-spacing:.08em;padding:4px 8px;border-radius:3px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.bb-synopsis{font-size:16.5px;line-height:1.5;color:#ededed;max-width:46ch;
+  text-shadow:0 2px 10px rgba(0,0,0,.85);margin-bottom:6px}
+.bb-meta{display:flex;align-items:center;gap:10px;font-size:14px;color:#d6d6d6;margin-bottom:22px}
+.bb-meta .match{color:var(--match);font-weight:600}
+.bb-meta .age{border:1px solid rgba(255,255,255,.45);padding:1px 8px;font-size:12.5px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn-play{display:inline-flex;align-items:center;gap:12px;background:#fff;color:#000;
+  font-weight:700;font-size:19px;padding:11px 32px 11px 24px;border:0;border-radius:4px;
+  cursor:pointer;transition:background .2s ease;text-decoration:none}
+.btn-play svg{width:28px;height:28px;fill:#000}
+.btn-play:hover{background:rgba(255,255,255,.72)}
+.btn-more{display:inline-flex;align-items:center;gap:12px;
+  background:rgba(109,109,110,.72);color:#fff;font-weight:700;font-size:19px;
+  padding:11px 30px 11px 24px;border:0;border-radius:4px;cursor:pointer;
+  transition:background .2s ease}
+.btn-more svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2}
+.btn-more:hover{background:rgba(109,109,110,.4)}
+.maturity{position:absolute;right:0;bottom:30%;z-index:2;border-left:3px solid #fff;
+  background:rgba(20,20,20,.55);padding:9px 40px 9px 14px;font-size:14px;letter-spacing:.06em}
+.bb-dots{position:absolute;left:4%;bottom:6%;display:flex;gap:8px;z-index:2}
+.bb-dots i{width:26px;height:3px;background:rgba(255,255,255,.3);border-radius:2px;cursor:pointer;transition:background .3s}
+.bb-dots i.on{background:var(--red)}
+
+/* ---------- rails ---------- */
+.rails{position:relative;z-index:3;margin-top:-12vh;padding-bottom:20px}
+.rail{margin:26px 0}
+.rail-head{display:flex;align-items:baseline;gap:14px;padding:0 4%;margin-bottom:4px}
+.rail-head h2{font-size:20px;font-weight:500;letter-spacing:.01em}
+.rail-head .explore{font-size:12.5px;color:#54b9c5;text-decoration:none;opacity:0;
+  transform:translateX(-8px);transition:opacity .25s ease,transform .25s ease;white-space:nowrap}
+.rail:hover .explore{opacity:1;transform:none}
+.strip{position:relative}
+.viewport{overflow-x:auto;overflow-y:clip;padding:26px 4% 34px;scrollbar-width:none;scroll-behavior:smooth}
+.viewport::-webkit-scrollbar{display:none}
+.tiles{display:flex;gap:7px;align-items:flex-start}
+.chev{position:absolute;top:0;bottom:0;width:4%;min-width:44px;border:0;z-index:6;
+  background:rgba(20,20,20,.6);color:#fff;font-size:46px;cursor:pointer;
+  opacity:0;transition:opacity .2s ease,background .2s ease;line-height:1}
+.strip:hover .chev{opacity:1}
+.chev:hover{background:rgba(20,20,20,.85)}
+.chev.left{left:0;border-radius:0 4px 4px 0}
+.chev.right{right:0;border-radius:4px 0 0 4px}
+
+/* ---------- tiles ---------- */
+.tile{position:relative;flex:0 0 auto;text-decoration:none;color:#fff;
+  border-radius:4px;transition:transform .3s var(--ease),box-shadow .3s ease}
+.tile .art{position:relative;border-radius:4px;overflow:hidden;
+  display:flex;align-items:flex-end;padding:14px;
+  box-shadow:inset 0 -60px 60px -40px rgba(0,0,0,.75)}
+.tile.landscape{width:clamp(220px,17.5vw,300px)}
+.tile.landscape .art{aspect-ratio:16/9}
+.tile.portrait{width:clamp(130px,11vw,180px)}
+.tile.portrait .art{aspect-ratio:2/3}
+.art-title{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(20px,1.6vw,27px);
+  letter-spacing:.05em;line-height:.95;text-shadow:0 2px 8px rgba(0,0,0,.7);position:relative;z-index:1}
+.tile .badge{position:absolute;top:0;left:8px;z-index:2;background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.07em;padding:4px 8px 6px;
+  border-radius:0 0 3px 3px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.tile .new-ep{position:absolute;top:8px;right:8px;z-index:2;background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.05em;padding:3px 7px;border-radius:3px}
+.tile .progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.28);z-index:2}
+.tile .progress i{display:block;height:100%;background:var(--red)}
+.cw-label{font-size:13px;color:var(--grey);text-align:center;margin-top:8px}
+.tile:hover{transform:scale(1.22);z-index:7;box-shadow:0 18px 44px rgba(0,0,0,.75)}
+.pop{display:none;background:var(--panel);border-radius:0 0 4px 4px;padding:14px 14px 16px;
+  box-shadow:0 18px 44px rgba(0,0,0,.75)}
+.tile:hover .pop{display:block}
+.pop-actions{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+.round{width:37px;height:37px;border-radius:50%;border:2px solid rgba(255,255,255,.55);
+  background:transparent;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:border-color .15s ease,background .15s ease;padding:0}
+.round svg{width:15px;height:15px;fill:#fff}
+.round.solid{background:#fff;border-color:#fff}
+.round.solid svg{fill:#000}
+.round:hover{border-color:#fff}
+.round.more{margin-left:auto}
+.pop-meta{display:flex;align-items:center;gap:9px;font-size:13px;color:#bcbcbc;margin-bottom:8px;flex-wrap:wrap}
+.pop-meta .match{color:var(--match);font-weight:600}
+.pop-meta .age{border:1px solid rgba(255,255,255,.45);padding:0 7px;font-size:12px}
+.pop-meta .hd{border:1px solid rgba(255,255,255,.45);border-radius:3px;padding:0 5px;font-size:11px}
+.pop-genres{font-size:13px;color:#fff}
+.pop-genres i{font-style:normal;color:#646464;margin:0 4px}
+
+/* ---------- top 10 row ---------- */
+.top10-item{display:flex;align-items:flex-end;flex:0 0 auto;text-decoration:none;color:#fff}
+.top10-num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(130px,13vw,215px);
+  line-height:.76;letter-spacing:-.04em;color:var(--canvas);
+  -webkit-text-stroke:4px #6d6d6d;margin-right:-12px;position:relative;z-index:0;
+  text-shadow:0 10px 30px rgba(0,0,0,.6)}
+.top10-item .tile{position:relative;z-index:1}
+.top10-item:hover .top10-num{-webkit-text-stroke-color:#a8a8a8}
+
+/* ---------- billboard art scenes (pure CSS) ---------- */
+.scene-harvest{background:
+  radial-gradient(45% 38% at 72% 26%,rgba(240,180,90,.30),transparent 65%),
+  radial-gradient(90% 60% at 30% 90%,rgba(229,9,20,.20),transparent 60%),
+  linear-gradient(180deg,#04060a 0%,#0a0f14 45%,#141414 100%)}
+.scene-harvest::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(178deg,transparent 0 46px,rgba(255,255,255,.022) 46px 47px)}
+.scene-neon{background:
+  radial-gradient(35% 45% at 20% 70%,rgba(20,180,170,.22),transparent 60%),
+  radial-gradient(40% 40% at 85% 25%,rgba(229,9,20,.28),transparent 62%),
+  linear-gradient(180deg,#050608 0%,#0b0d10 55%,#141414 100%)}
+.scene-glass{background:
+  radial-gradient(50% 55% at 60% 40%,rgba(150,200,190,.14),transparent 60%),
+  linear-gradient(115deg,rgba(229,9,20,.16),transparent 45%),
+  linear-gradient(180deg,#07090b 0%,#0d1114 60%,#141414 100%)}
+.scrim-l{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg,rgba(20,20,20,.9) 0%,rgba(20,20,20,.45) 32%,transparent 58%)}
+.scrim-b{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(0deg,var(--canvas) 2%,rgba(20,20,20,.55) 22%,transparent 46%)}
+
+/* ---------- FAQ ---------- */
+.faq{max-width:860px;margin:70px auto 0;padding:0 4%}
+.faq h2{font-size:clamp(30px,4vw,44px);font-weight:700;text-align:center;margin-bottom:28px;letter-spacing:-.01em}
+.faq-item{margin-bottom:8px}
+.faq-q{width:100%;display:flex;justify-content:space-between;align-items:center;
+  background:#303030;color:#fff;border:0;padding:20px 28px;font-size:21px;font-weight:400;
+  cursor:pointer;text-align:left;transition:background .2s ease}
+.faq-q:hover{background:#3a3a3a}
+.faq-q .plus{font-size:34px;font-weight:300;line-height:1;transition:transform .25s ease;flex:none;margin-left:16px}
+.faq-item.open .faq-q .plus{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;background:#303030;transition:max-height .3s ease}
+.faq-a p{padding:4px 28px 24px;font-size:19px;line-height:1.6;color:#e8e8e8;border-top:1px solid #141414}
+.faq-cta{text-align:center;margin:48px 0 70px}
+.faq-cta p{font-size:19px;margin-bottom:20px}
+.email-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.email-row input{width:min(420px,80vw);padding:16px;font-size:16px;background:rgba(20,20,20,.7);
+  border:1px solid rgba(255,255,255,.4);border-radius:4px;color:#fff;outline:none}
+.email-row input:focus{border-color:#fff}
+.btn-red{display:inline-flex;align-items:center;gap:10px;background:var(--red);color:#fff;
+  border:0;border-radius:4px;font-size:20px;font-weight:600;padding:12px 30px;cursor:pointer;
+  transition:background .2s ease}
+.btn-red:hover{background:#f6121d}
+.btn-red svg{width:20px;height:20px;fill:#fff}
+
+/* ---------- footer ---------- */
+footer{padding:56px 4% 40px;color:var(--muted);font-size:13px;border-top:1px solid rgba(255,255,255,.06)}
+.foot-social{display:flex;gap:26px;margin-bottom:22px}
+.foot-social a{color:var(--muted);text-decoration:none;display:flex}
+.foot-social a:hover{color:#fff}
+.foot-social svg{width:24px;height:24px;fill:currentColor}
+.foot-links{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:14px 20px;
+  max-width:960px;margin-bottom:28px}
+.foot-links a{color:var(--muted);text-decoration:none;font-size:13px}
+.foot-links a:hover{text-decoration:underline}
+.service-code{background:transparent;border:1px solid var(--muted);color:var(--muted);
+  padding:8px 12px;font-size:13px;cursor:pointer;margin-bottom:24px;display:block}
+.service-code:hover{color:#fff;border-color:#fff}
+.foot-copy{font-size:12px;margin-bottom:8px}
+.foot-skill{font-size:12px;color:#5c5c5c}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .nav-links{display:none}
+  .nav{gap:20px}
+  .bb-copy{bottom:20%;right:4%}
+  .maturity{display:none}
+  .foot-links{grid-template-columns:repeat(2,1fr)}
+  .faq-q{font-size:17px;padding:16px 20px}
+  .faq-a p{font-size:16px;padding:4px 20px 20px}
+  .tile:hover{transform:scale(1.12)}
+  .top10-num{-webkit-text-stroke-width:3px}
+}
+@media (max-width:560px){
+  .billboard{height:80vh;min-height:520px}
+  .btn-play,.btn-more{font-size:16px;padding:10px 22px 10px 18px}
+  .pop{display:none !important}
+  .tile:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<nav class="nav" id="nav">
+  <a class="logo" href="#">NOCTURNE</a>
+  <div class="nav-links">
+    <a class="on" href="#">Home</a>
+    <a href="#">TV Shows</a>
+    <a href="#">Movies</a>
+    <a href="#">New &amp; Popular</a>
+    <a href="#mylist">My List</a>
+  </div>
+  <div class="nav-tools">
+    <button aria-label="Search"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg></button>
+    <button aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M12 22a2.5 2.5 0 0 0 2.45-2H9.55A2.5 2.5 0 0 0 12 22zm7-6v-5a7 7 0 0 0-5-6.71V4a2 2 0 1 0-4 0v.29A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2z"/></svg></button>
+    <span class="avatar" role="img" aria-label="Profile: Alex"></span>
+  </div>
+</nav>
+
+<!-- ================= BILLBOARD ================= -->
+<header class="billboard" id="billboard" aria-label="Featured titles"></header>
+
+<!-- ================= RAILS ================= -->
+<main class="rails" id="rails"></main>
+
+<!-- ================= FAQ ================= -->
+<section class="faq" aria-label="Frequently asked questions">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-item">
+    <button class="faq-q">What is Nocturne?<span class="plus">+</span></button>
+    <div class="faq-a"><p>Nocturne is a streaming service with a deep bench of films, series, and documentaries — from slow-burn mysteries to midnight horror marathons. Watch as much as you want, whenever you want, on thousands of internet-connected devices. There's always something new to discover, and new titles drop every Friday.</p></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q">How much does Nocturne cost?<span class="plus">+</span></button>
+    <div class="faq-a"><p>Plans range from $7.99 to $23.99 a month. No extra costs, no contracts, no cancellation fees. Night Owl gets you HD on one screen, Standard unlocks Full HD on two, and Premium goes all the way to 4K with spatial audio on four screens at once.</p></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q">Where can I watch?<span class="plus">+</span></button>
+    <div class="faq-a"><p>Watch anywhere, anytime. Sign in on your smart TV, phone, tablet, laptop, or streaming stick — start an episode on the train and finish it on the couch. Downloads are included on every plan, so your queue travels with you even without a signal.</p></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q">How do I cancel?<span class="plus">+</span></button>
+    <div class="faq-a"><p>Nocturne is flexible. There are no contracts and no commitments — cancel online in two clicks from your Account page. No phone calls, no retention scripts, no hard feelings.</p></div>
+  </div>
+  <div class="faq-item">
+    <button class="faq-q">What can I watch on Nocturne?<span class="plus">+</span></button>
+    <div class="faq-a"><p>A library built for night owls: award-winning originals like <em>Midnight Harvest</em> and <em>Glasshouse</em>, cult classics, festival darlings, and a documentary shelf that keeps winning things. Browse the rails above — your next obsession is probably already there.</p></div>
+  </div>
+  <div class="faq-cta">
+    <p>Ready to watch? Enter your email to start your free month.</p>
+    <form class="email-row" id="emailForm">
+      <input type="email" placeholder="Email address" required aria-label="Email address">
+      <button class="btn-red" type="submit">Get Started
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="foot-social">
+    <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.7-1.6h1.5V4.2c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.7H7.8V14h2.7v8h3z"/></svg></a>
+    <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1s-3.6 0-4.9-.1c-3.3-.1-4.8-1.7-4.9-4.9-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8C2.4 4 4 2.4 7.2 2.3c1.2-.1 1.6-.1 4.8-.1zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm5.2-9.6a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg></a>
+    <a href="#" aria-label="X"><svg viewBox="0 0 24 24"><path d="M17.7 3H21l-7.1 8.1L22.2 21h-6.6l-5.1-6.1L4.6 21H1.3l7.6-8.7L1.8 3h6.7l4.6 5.6L17.7 3zm-1.2 16h1.8L7 4.9H5L16.5 19z"/></svg></a>
+    <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23 7.2s-.2-1.6-.9-2.3c-.9-.9-1.9-.9-2.4-1C16.4 3.6 12 3.6 12 3.6s-4.4 0-7.7.3c-.5.1-1.5.1-2.4 1-.7.7-.9 2.3-.9 2.3S.8 9.1.8 11v1.8c0 1.9.2 3.8.2 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.5 1 1.8.2 7.6.3 7.6.3s4.4 0 7.7-.4c.5-.1 1.5-.1 2.4-1 .7-.7.9-2.3.9-2.3s.2-1.9.2-3.8V11c0-1.9-.2-3.8-.2-3.8zM9.7 15V8.4l6.2 3.3L9.7 15z"/></svg></a>
+  </div>
+  <nav class="foot-links">
+    <a href="#">Audio Description</a><a href="#">Help Center</a><a href="#">Gift Cards</a><a href="#">Media Center</a>
+    <a href="#">Investor Relations</a><a href="#">Jobs</a><a href="#">Terms of Use</a><a href="#">Privacy</a>
+    <a href="#">Legal Notices</a><a href="#">Cookie Preferences</a><a href="#">Corporate Information</a><a href="#">Contact Us</a>
+  </nav>
+  <button class="service-code">Service Code</button>
+  <p class="foot-copy">© 1997–2026 Nocturne Entertainment, Inc. — a fictional demo service.</p>
+  <p class="foot-skill">Built from the netflix skill · design-skills</p>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* ---------- data: fictional titles ---------- */
+var T = [
+ {t:"Midnight Harvest", kind:"SERIES", age:"TV-MA", s:"3 Seasons", m:98, g:["Mystery","Drama","Small Town"], c:["#5a1620","#0e0a0b"], badge:1, rank1:1,
+  syn:"A coastal town hides a decades-old secret — and the only one digging it up is the sheriff's runaway daughter.",
+  scene:"scene-harvest"},
+ {t:"Neon Harbor", kind:"SERIES", age:"TV-MA", s:"2 Seasons", m:96, g:["Crime","Neo-Noir","Thriller"], c:["#0f3b3e","#0a0c0d"], badge:1},
+ {t:"Glasshouse", kind:"LIMITED SERIES", age:"TV-MA", s:"Limited Series", m:99, g:["Psychological","Thriller","Slow Burn"], c:["#3d4a4a","#0c0f10"], badge:1, rank1:1,
+  syn:"A botanist inherits a glass mansion in the desert — and the family that never left it.",
+  scene:"scene-glass"},
+ {t:"Violet Hour", kind:"FILM", age:"16+", s:"1h 58m", m:94, g:["Heist","Neo-Noir","Stylish"], c:["#4a1630","#100a0d"], badge:1},
+ {t:"Low Orbit", kind:"FILM", age:"PG-13", s:"2h 12m", m:91, g:["Sci-Fi","Survival","Space"], c:["#1d2b33","#0b0d0f"]},
+ {t:"Echo Protocol", kind:"SERIES", age:"TV-14", s:"4 Seasons", m:89, g:["Spy","Action","Conspiracy"], c:["#33302a","#0e0d0b"]},
+ {t:"Saltwater Static", kind:"SERIES", age:"TV-MA", s:"1 Season", m:97, g:["Horror","Supernatural","Folk"], c:["#12291d","#090d0a"], badge:1, rank1:1,
+  syn:"A pirate-radio DJ on a fog-bound island starts receiving calls from listeners who died years ago.",
+  scene:"scene-neon"},
+ {t:"Ironwood", kind:"SERIES", age:"TV-14", s:"2 Seasons", m:88, g:["Western","Drama","Family Saga"], c:["#6b4218","#141009"]},
+ {t:"Cinder Meridian", kind:"FILM", age:"PG", s:"1h 47m", m:93, g:["Fantasy","Adventure","Family"], c:["#7a3b12","#140d06"]},
+ {t:"The Cartographer's Daughter", kind:"FILM", age:"PG", s:"2h 4m", m:95, g:["Adventure","Historical","Heartfelt"], c:["#3f5a3a","#0c100b"]},
+ {t:"Hollow Creek", kind:"SERIES", age:"TV-MA", s:"5 Seasons", m:90, g:["Mystery","Crime","Bingeable"], c:["#2b2b2e","#0d0d0f"]},
+ {t:"Paper Moons", kind:"FILM", age:"PG-13", s:"1h 52m", m:87, g:["Romance","Drama","Festival Pick"], c:["#6b5a2e","#12100a"]},
+ {t:"Dust & Signal", kind:"FILM", age:"PG-13", s:"2h 21m", m:92, g:["Sci-Fi Western","Epic","Dystopia"], c:["#8a4a16","#150c05"]},
+ {t:"The Night Bakery", kind:"SERIES", age:"ALL", s:"2 Seasons", m:96, g:["Reality","Cozy","Food"], c:["#5c3a1e","#120d07"]},
+ {t:"Fever Line", kind:"DOCUSERIES", age:"TV-PG", s:"1 Season", m:85, g:["Sports","Documentary","True Story"], c:["#7a1a12","#130a08"]},
+ {t:"Static Bloom", kind:"ANIME", age:"TV-14", s:"3 Seasons", m:94, g:["Anime","Cyberpunk","Mecha"], c:["#1e3038","#090c0e"]},
+ {t:"The Long Con", kind:"DOCUSERIES", age:"TV-MA", s:"Limited Series", m:90, g:["True Crime","Documentary"], c:["#3a3a40","#0c0c0e"]},
+ {t:"Copper Canyon Heist", kind:"FILM", age:"PG-13", s:"2h 8m", m:86, g:["Action","Heist","Comedy"], c:["#8a2b10","#140b06"]},
+ {t:"The Beekeeper's Widow", kind:"FILM", age:"R", s:"2h 1m", m:93, g:["Drama","Awards Buzz"], c:["#6e6a3a","#111009"]}
+];
+function byName(n){ for(var i=0;i<T.length;i++) if(T[i].t===n) return T[i]; }
+var CW = [
+ {ref:"Midnight Harvest", ep:'S1:E4 "The Tidemill"', left:"22m left", pct:64},
+ {ref:"Echo Protocol", ep:'S2:E1 "Dead Drop"', left:"41m left", pct:28},
+ {ref:"Glasshouse", ep:'E3 "Condensation"', left:"12m left", pct:81},
+ {ref:"Low Orbit", ep:"Film", left:"38m left", pct:55},
+ {ref:"The Night Bakery", ep:'S1:E7 "Sourdough at 3AM"', left:"9m left", pct:88},
+ {ref:"Static Bloom", ep:'S3:E11 "Petal Circuit"', left:"16m left", pct:70}
+];
+var RAILS = [
+ {h:"Trending Now", type:"landscape", items:["Neon Harbor","Saltwater Static","Copper Canyon Heist","Fever Line","Dust & Signal","Paper Moons"]},
+ {h:"Continue Watching for Alex", type:"continue"},
+ {h:"Top 10 TV Shows Today", type:"top10", items:["Midnight Harvest","Saltwater Static","Glasshouse","Hollow Creek","Echo Protocol","Neon Harbor","Ironwood","The Long Con","Static Bloom","The Night Bakery"]},
+ {h:"Because You Watched Glasshouse", type:"landscape", items:["Violet Hour","Midnight Harvest","Hollow Creek","The Beekeeper's Widow","Ironwood","Cinder Meridian"]},
+ {h:"Only on Nocturne", type:"portrait", items:["Midnight Harvest","Glasshouse","Saltwater Static","Neon Harbor","Echo Protocol","Static Bloom","Ironwood"]},
+ {h:"Critics' Corner", type:"landscape", items:["The Beekeeper's Widow","The Cartographer's Daughter","Paper Moons","Dust & Signal","Cinder Meridian","Low Orbit"]},
+ {h:"My List", type:"landscape", id:"mylist", items:["Violet Hour","Low Orbit","The Night Bakery","Fever Line"]}
+];
+
+/* ---------- helpers ---------- */
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function artBG(d){ return "background:linear-gradient(140deg,"+d.c[0]+", "+d.c[1]+" 78%)"; }
+var SVG = {
+ play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
+ info:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v.2M12 11v5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+ plus:'<svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>',
+ check:'<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>',
+ down:'<svg viewBox="0 0 24 24"><path d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg>'
+};
+function popHTML(d){
+ return '<div class="pop"><div class="pop-actions">'
+  +'<button class="round solid" aria-label="Play '+esc(d.t)+'">'+SVG.play+'</button>'
+  +'<button class="round" aria-label="Add to My List">'+SVG.plus+'</button>'
+  +'<button class="round more" aria-label="More info">'+SVG.down+'</button></div>'
+  +'<div class="pop-meta"><span class="match">'+d.m+'% Match</span><span class="age">'+d.age+'</span><span>'+d.s+'</span><span class="hd">HD</span></div>'
+  +'<p class="pop-genres">'+d.g.join('<i>•</i>')+'</p></div>';
+}
+function tileHTML(d, type){
+ var cls = type==="portrait" ? "portrait" : "landscape";
+ var h = '<a class="tile '+cls+'" href="#" data-title="'+esc(d.t)+'">'
+  +'<div class="art" style="'+artBG(d)+'">'
+  +(d.badge?'<span class="badge">TOP 10</span>':'')
+  +'<span class="art-title">'+esc(d.t.toUpperCase())+'</span></div>'
+  + popHTML(d) + '</a>';
+ return h;
+}
+
+/* ---------- billboard ---------- */
+var FEATURED = ["Midnight Harvest","Glasshouse","Saltwater Static"];
+var bb = document.getElementById("billboard"), cur = 0, timer = null;
+function slideHTML(d, i){
+ return '<div class="bb-slide'+(i===0?" active":"")+'">'
+  +'<div class="bb-art '+d.scene+'"></div><div class="scrim-l"></div><div class="scrim-b"></div>'
+  +'<div class="bb-copy"><p class="series-tag"><span class="n">N</span> '+d.kind+'</p>'
+  +'<h1 class="bb-title">'+esc(d.t.toUpperCase()).replace(/ /g,"<br>")+'</h1>'
+  +'<p class="top10-line">#'+(d.rank1||1)+' in '+(d.kind.indexOf("FILM")>-1?"Movies":"TV Shows")+' Today</p>'
+  +'<p class="bb-synopsis">'+esc(d.syn)+'</p>'
+  +'<div class="bb-meta"><span class="match">'+d.m+'% Match</span><span class="age">'+d.age+'</span><span>'+d.s+'</span></div>'
+  +'<div class="cta-row"><a class="btn-play" href="#">'+SVG.play+'Play</a>'
+  +'<button class="btn-more">'+SVG.info+'More Info</button></div></div>'
+  +'<span class="maturity">'+d.age+'</span></div>';
+}
+bb.innerHTML = FEATURED.map(function(n,i){ return slideHTML(byName(n),i); }).join("")
+ +'<div class="bb-dots" role="tablist">'+FEATURED.map(function(_,i){
+   return '<i role="tab" aria-label="Featured '+(i+1)+'" class="'+(i===0?"on":"")+'" data-i="'+i+'"></i>';
+ }).join("")+'</div>';
+var slides = bb.querySelectorAll(".bb-slide"), dots = bb.querySelectorAll(".bb-dots i");
+function go(i){
+ cur = (i+FEATURED.length)%FEATURED.length;
+ slides.forEach(function(s,k){ s.classList.toggle("active",k===cur); });
+ dots.forEach(function(d,k){ d.classList.toggle("on",k===cur); });
+}
+function auto(){ clearInterval(timer); timer = setInterval(function(){ go(cur+1); }, 9000); }
+dots.forEach(function(d){ d.addEventListener("click",function(){ go(+d.dataset.i); auto(); }); });
+bb.addEventListener("mouseenter",function(){ clearInterval(timer); });
+bb.addEventListener("mouseleave",auto);
+auto();
+
+/* ---------- rails ---------- */
+var rails = document.getElementById("rails");
+rails.innerHTML = RAILS.map(function(r){
+ var tiles = "";
+ if(r.type==="continue"){
+  tiles = CW.map(function(c){
+   var d = byName(c.ref);
+   return '<a class="tile landscape" href="#" data-title="'+esc(d.t)+'">'
+    +'<div class="art" style="'+artBG(d)+'"><span class="art-title">'+esc(d.t.toUpperCase())+'</span>'
+    +'<span class="progress"><i style="width:'+c.pct+'%"></i></span></div>'
+    +'<p class="cw-label">'+esc(c.ep)+' · '+esc(c.left)+'</p></a>';
+  }).join("");
+ } else if(r.type==="top10"){
+  tiles = r.items.map(function(n,i){
+   var d = byName(n);
+   return '<a class="top10-item" href="#" data-title="'+esc(d.t)+'"><span class="top10-num">'+(i+1)+'</span>'
+    +'<span class="tile portrait"><span class="art" style="'+artBG(d)+'"><span class="art-title">'+esc(d.t.toUpperCase())+'</span></span></span></a>';
+  }).join("");
+ } else {
+  tiles = r.items.map(function(n){ return tileHTML(byName(n), r.type); }).join("");
+ }
+ return '<section class="rail"'+(r.id?' id="'+r.id+'"':"")+'>'
+  +'<div class="rail-head"><h2>'+r.h+'</h2><a class="explore" href="#">Explore all ›</a></div>'
+  +'<div class="strip"><button class="chev left" aria-label="Scroll left">‹</button>'
+  +'<div class="viewport"><div class="tiles">'+tiles+'</div></div>'
+  +'<button class="chev right" aria-label="Scroll right">›</button></div></section>';
+}).join("");
+
+document.querySelectorAll(".strip").forEach(function(strip){
+ var vp = strip.querySelector(".viewport");
+ strip.querySelector(".chev.left").addEventListener("click",function(){ vp.scrollBy({left:-vp.clientWidth*.92,behavior:"smooth"}); });
+ strip.querySelector(".chev.right").addEventListener("click",function(){ vp.scrollBy({left:vp.clientWidth*.92,behavior:"smooth"}); });
+});
+/* keep expanded hover card inside the viewport on touch devices */
+rails.addEventListener("click",function(e){
+ var t = e.target.closest(".tile, .top10-item, .btn-play");
+ if(t && t.getAttribute("href")==="#") e.preventDefault();
+});
+
+/* ---------- nav scroll ---------- */
+var nav = document.getElementById("nav");
+function onScroll(){ nav.classList.toggle("solid", window.scrollY>40); }
+window.addEventListener("scroll", onScroll, {passive:true}); onScroll();
+
+/* ---------- faq accordion ---------- */
+document.querySelectorAll(".faq-item").forEach(function(item){
+ var q = item.querySelector(".faq-q"), a = item.querySelector(".faq-a");
+ q.addEventListener("click",function(){
+  var open = item.classList.contains("open");
+  document.querySelectorAll(".faq-item.open").forEach(function(o){
+   o.classList.remove("open"); o.querySelector(".faq-a").style.maxHeight = null;
+  });
+  if(!open){ item.classList.add("open"); a.style.maxHeight = a.scrollHeight+"px"; }
+ });
+});
+
+/* ---------- email capture ---------- */
+document.getElementById("emailForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ var input = this.querySelector("input");
+ this.innerHTML = '<p style="font-size:19px;color:#fff">Welcome aboard — check <b>'+esc(input.value)+'</b> to finish setting up your profile.</p>';
+});
+})();
+</script>
+</body>
+</html>
