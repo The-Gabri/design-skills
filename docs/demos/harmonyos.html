@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>harmonyos</title>
+<style>
+  :root{
+    --bg:#131316;            /* starry sky gray — dark bg, never pure black */
+    --card:#1d1d23;
+    --card-hi:#23232a;
+    --text:#f4f5f7;
+    --text2:rgba(244,245,247,.58);
+    --text3:rgba(244,245,247,.38);
+    --input:#26262d;
+    --accent:#0A59F7;
+    --green:#00B578;
+    --orange:#FF8A00;
+    --red:#FA2A2D;
+    --scrim:rgba(8,10,16,.45);
+    --fs:16px;
+    --shadow:0 2px 8px rgba(0,0,0,.25), 0 14px 36px rgba(0,0,0,.35);
+  }
+  body.light{
+    --bg:#f1f3f5;            /* snowy-white world: light gray ground, white cards */
+    --card:#ffffff;
+    --card-hi:#f7f8fa;
+    --text:#182431;
+    --text2:rgba(24,36,49,.6);
+    --text3:rgba(24,36,49,.38);
+    --input:#e7ebef;
+    --scrim:rgba(20,30,45,.35);
+    --shadow:0 2px 8px rgba(20,30,45,.06), 0 14px 36px rgba(20,30,45,.10);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html{ font-size:var(--fs); }
+  body{
+    font-family:"HarmonyOS Sans","HarmonyOS Sans SC",-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:#0a0a0c; color:var(--text);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  }
+  body.light{ background:#dfe4e9; }
+
+  /* ---------- phone stage ---------- */
+  .stage{ width:100%; max-width:430px; flex:1; display:flex; flex-direction:column; padding:12px 0 0; }
+  .phone{
+    background:var(--bg); border-radius:44px; overflow:hidden; position:relative;
+    display:flex; flex-direction:column; height:min(880px, calc(100vh - 24px)); min-height:640px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55);
+  }
+  body.light .phone{ box-shadow:0 30px 80px rgba(20,30,45,.25); }
+  @media (max-width:480px){
+    .stage{ padding:0; max-width:none; }
+    .phone{ border-radius:0; height:100vh; min-height:0; box-shadow:none; }
+  }
+
+  /* ---------- status bar (content scrolls under it) ---------- */
+  .statusbar{
+    position:sticky; top:0; z-index:20;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 28px 6px;
+    background:linear-gradient(to bottom, var(--bg) 55%, transparent);
+    font-size:.95rem; font-weight:500;
+  }
+  .statusbar .sic{ display:flex; gap:7px; align-items:center; color:var(--text); }
+  .statusbar svg{ display:block; }
+
+  .screen{ flex:1; overflow-y:auto; padding:4px 16px 8px; scrollbar-width:none; }
+  .screen::-webkit-scrollbar{ display:none; }
+
+  /* ---------- header ---------- */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; margin:6px 4px 12px; }
+  .topbar .tools{ display:flex; gap:10px; }
+  .toolbtn{
+    width:38px; height:38px; border-radius:50%; border:0; cursor:pointer;
+    background:var(--input); color:var(--text); font-size:1rem; font-weight:600;
+    display:grid; place-items:center; transition:transform .15s;
+  }
+  .toolbtn:active{ transform:scale(.92); }
+  .greet h1{ font-size:1.65rem; font-weight:700; letter-spacing:-.01em; }
+  .greet p{ color:var(--text2); font-size:.85rem; margin-top:2px; }
+
+  .search{
+    display:flex; align-items:center; gap:10px; background:var(--input);
+    border-radius:999px; padding:.72rem 1.1rem; color:var(--text3); margin:2px 2px 14px;
+  }
+  .search input{ border:0; background:none; outline:0; width:100%; font-size:.95rem; color:var(--text); font-family:inherit; }
+
+  /* ---------- service card grid ---------- */
+  .cards{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .card{
+    background:var(--card); border-radius:24px; padding:16px; position:relative;
+    box-shadow:var(--shadow); cursor:pointer; border:0; text-align:left; color:var(--text);
+    font-family:inherit; transition:transform .16s ease;
+    min-height:96px; display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .card:active{ transform:scale(.96); }
+  .card .ctop{ display:flex; justify-content:space-between; align-items:center; }
+  .card .cname{ font-size:.78rem; color:var(--text2); font-weight:500; }
+  .card .cdot{ color:var(--text3); letter-spacing:2px; font-size:.8rem; }
+
+  .span2{ grid-column:span 2; } .span4{ grid-column:span 4; }
+  .tall{ grid-row:span 2; }
+
+  /* weather 2x2 — vivid dawn, the one vivid card on a calm screen */
+  .c-weather{
+    background:linear-gradient(150deg,#ff9a56 0%,#ff6a5e 45%,#d94f70 100%);
+    color:#fff; overflow:hidden;
+  }
+  .c-weather .cname{ color:rgba(255,255,255,.85); }
+  .c-weather .temp{ font-size:2.6rem; font-weight:700; line-height:1; margin-top:6px; }
+  .c-weather .cond{ font-size:.85rem; opacity:.92; margin-top:2px; }
+  .c-weather .hl{ font-size:.78rem; opacity:.85; margin-top:auto; padding-top:8px; }
+  .c-weather .sun{ position:absolute; right:14px; top:12px; opacity:.95; }
+
+  .c-music .song{ font-size:.92rem; font-weight:700; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .c-music .artist{ font-size:.78rem; color:var(--text2); }
+  .c-music .mrow{ display:flex; align-items:center; gap:12px; margin-top:10px; }
+  .c-music .art{ width:44px; height:44px; border-radius:12px; flex:none;
+    background:linear-gradient(135deg,#00B578,#00d8a8); display:grid; place-items:center; color:#fff; }
+  .pbtn{ width:44px; height:44px; border-radius:50%; border:0; background:var(--accent);
+    color:#fff; display:grid; place-items:center; cursor:pointer; flex:none; }
+  .pbar{ height:5px; border-radius:999px; background:var(--input); margin-top:10px; overflow:hidden; }
+  .pbar i{ display:block; height:100%; width:32%; border-radius:inherit; background:var(--accent); transition:width .5s linear; }
+
+  .c-steps .big{ font-size:1.7rem; font-weight:700; margin-top:4px; }
+  .c-steps .big small{ font-size:.8rem; font-weight:400; color:var(--text2); }
+  .ring{ position:absolute; right:10px; bottom:10px; }
+
+  .c-notes{ flex-direction:row; align-items:stretch; gap:10px; }
+  .note{ flex:1; background:var(--card-hi); border-radius:16px; padding:12px; min-width:0; }
+  .note b{ display:block; font-size:.82rem; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .note span{ font-size:.75rem; color:var(--text2); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+  .c-dev .devrow{ display:flex; align-items:center; gap:10px; margin-top:8px; font-size:.82rem; }
+  .c-dev .dot{ width:8px; height:8px; border-radius:50%; background:var(--green); flex:none; }
+  .c-dev .dot.off{ background:var(--text3); }
+  .c-dev .devrow small{ margin-left:auto; color:var(--text2); }
+
+  .c-cal .day{ font-size:2rem; font-weight:700; }
+  .c-cal .evt{ margin-top:8px; font-size:.8rem; background:var(--card-hi); border-radius:12px; padding:8px 10px; }
+  .c-cal .evt b{ color:var(--accent); }
+
+  /* ---------- app grid ---------- */
+  .seclabel{ font-size:1.05rem; font-weight:700; margin:20px 4px 12px; }
+  .appgrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px 8px; padding:0 4px; }
+  .app{ display:flex; flex-direction:column; align-items:center; gap:7px; font-size:.72rem;
+    color:var(--text); background:none; border:0; cursor:pointer; font-family:inherit; }
+  .app:active .icon{ transform:scale(.9); }
+  .icon{ width:58px; height:58px; border-radius:17px; display:grid; place-items:center; color:#fff;
+    box-shadow:0 4px 14px rgba(0,0,0,.28); transition:transform .15s; }
+  body.light .icon{ box-shadow:0 4px 14px rgba(20,30,45,.16); }
+
+  /* ---------- dock ---------- */
+  .dockwrap{ padding:10px 16px 6px; }
+  .dock{ background:var(--card); border-radius:28px; box-shadow:var(--shadow);
+    display:flex; justify-content:space-around; padding:12px 8px; }
+  .dock .icon{ width:54px; height:54px; }
+  .homepill{ width:120px; height:5px; border-radius:999px; background:var(--text3); margin:10px auto 8px; }
+
+  /* ---------- bottom sheet ---------- */
+  .scrim{ position:absolute; inset:0; background:var(--scrim); backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px); opacity:0; pointer-events:none; transition:opacity .25s; z-index:40; }
+  .scrim.on{ opacity:1; pointer-events:auto; }
+  .sheet{
+    position:absolute; left:0; right:0; bottom:0; z-index:50; background:var(--card);
+    border-radius:28px 28px 0 0; padding:6px 20px 34px; max-height:78%;
+    transform:translateY(105%); transition:transform .32s cubic-bezier(.32,.72,.35,1);
+    box-shadow:0 -12px 44px rgba(0,0,0,.4); display:flex; flex-direction:column;
+  }
+  .sheet.on{ transform:translateY(0); }
+  .grabber{ width:42px; height:5px; border-radius:999px; background:var(--text3); margin:10px auto 14px; flex:none; cursor:grab; touch-action:none; }
+  .sheet h2{ font-size:1.3rem; font-weight:700; }
+  .sheet .sub{ color:var(--text2); font-size:.85rem; margin:4px 0 14px; }
+  .sheetbody{ overflow-y:auto; scrollbar-width:none; }
+  .sheetbody::-webkit-scrollbar{ display:none; }
+  .atomic{ display:inline-block; font-size:.72rem; font-weight:600; color:var(--accent);
+    background:rgba(10,89,247,.12); border-radius:999px; padding:4px 10px; margin-bottom:12px; }
+
+  .hours{ display:flex; gap:10px; overflow-x:auto; padding:4px 2px 10px; scrollbar-width:none; }
+  .hours::-webkit-scrollbar{ display:none; }
+  .hour{ flex:none; width:64px; background:var(--card-hi); border-radius:16px; padding:10px 6px; text-align:center; }
+  .hour b{ font-size:.95rem; } .hour span{ display:block; font-size:.72rem; color:var(--text2); margin:2px 0 6px; }
+  .dayrow{ display:flex; align-items:center; gap:12px; padding:11px 2px; font-size:.9rem; }
+  .dayrow .d{ width:44px; color:var(--text2); } .dayrow .t{ margin-left:auto; font-weight:600; }
+  .dayrow + .dayrow{ border-top:1px solid var(--input); }
+
+  .player{ text-align:center; padding:6px 0 4px; }
+  .player .bigart{ width:150px; height:150px; border-radius:28px; margin:0 auto 14px;
+    background:linear-gradient(135deg,#00B578,#00d8a8); display:grid; place-items:center; color:#fff;
+    box-shadow:0 12px 32px rgba(0,181,120,.35); }
+  .player h3{ font-size:1.15rem; } .player p{ color:var(--text2); font-size:.85rem; margin:2px 0 12px; }
+  .pcontrols{ display:flex; align-items:center; justify-content:center; gap:26px; margin:14px 0 6px; }
+  .pcontrols .pbtn{ width:60px; height:60px; }
+  .skip{ background:none; border:0; color:var(--text); cursor:pointer; }
+
+  .stat3{ display:flex; gap:10px; margin-top:4px; }
+  .stat{ flex:1; background:var(--card-hi); border-radius:16px; padding:12px; text-align:center; }
+  .stat b{ font-size:1.05rem; display:block; } .stat span{ font-size:.72rem; color:var(--text2); }
+
+  .setrow{ display:flex; align-items:center; gap:12px; padding:13px 2px; font-size:.92rem; }
+  .setrow + .setrow{ border-top:1px solid var(--input); }
+  .setrow small{ display:block; color:var(--text2); font-size:.76rem; }
+  .switch{ width:52px; height:32px; border-radius:999px; border:0; background:var(--accent);
+    position:relative; cursor:pointer; margin-left:auto; flex:none; transition:background .2s; }
+  .switch span{ position:absolute; top:3px; left:3px; width:26px; height:26px; border-radius:50%;
+    background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.25); transition:left .2s; }
+  .switch[aria-checked="false"]{ background:#8a8f98; }
+  .switch[aria-checked="false"] span{ left:23px; }
+
+  .credit{ text-align:center; color:var(--text3); font-size:.72rem; padding:22px 16px 8px; }
+  .credit a{ color:var(--text3); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone" id="phone">
+
+    <div class="statusbar">
+      <span>9:41</span>
+      <span class="sic">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="5.5" width="3" height="6.5" rx="1"/><rect x="9" y="3" width="3" height="9" rx="1"/><rect x="13.5" y="0.5" width="3" height="11.5" rx="1" opacity=".35"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1.5 4.5a10 10 0 0 1 13 0"/><path d="M4 7.2a6.4 6.4 0 0 1 8 0"/><circle cx="8" cy="10" r="1.3" fill="currentColor" stroke="none"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" opacity=".5"/><rect x="2.5" y="2.5" width="14" height="7" rx="2" fill="currentColor"/><path d="M23.2 4v4a2 2 0 0 0 0-4z" fill="currentColor" opacity=".5"/></svg>
+      </span>
+    </div>
+
+    <div class="screen" id="screen">
+      <div class="topbar">
+        <div class="greet">
+          <h1>Good morning</h1>
+          <p>Friday, October 2 · Shenzhen 24°</p>
+        </div>
+        <div class="tools">
+          <button class="toolbtn" id="fontBtn" title="Larger text" aria-label="Toggle larger text">A⁺</button>
+          <button class="toolbtn" id="themeBtn" title="Light / dark" aria-label="Toggle light and dark">☾</button>
+        </div>
+      </div>
+
+      <label class="search">
+        <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11l3.2 3.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="search" placeholder="Search apps and services" aria-label="Search apps and services">
+      </label>
+
+      <div class="cards">
+        <button class="card span2 tall c-weather" data-sheet="weather">
+          <span class="ctop"><span class="cname">Weather</span><span class="cdot">•••</span></span>
+          <svg class="sun" width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="22" cy="22" r="9"/><path d="M22 4v4M22 36v4M4 22h4M36 22h4M9.3 9.3l2.8 2.8M31.9 31.9l2.8 2.8M34.7 9.3l-2.8 2.8M12.1 31.9l-2.8 2.8"/></svg>
+          <span class="temp">24°</span>
+          <span class="cond">Shenzhen · Clear</span>
+          <span class="hl">H 28° · L 21° · AQI 32 Good</span>
+        </button>
+
+        <button class="card span2 c-music" data-sheet="music">
+          <span class="ctop"><span class="cname">Music</span><span class="cdot">•••</span></span>
+          <span class="song">Midnight Drive</span>
+          <span class="artist">Neon Coast</span>
+          <span class="mrow">
+            <span class="art"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M9 18V6l10-2v11.5a3.5 3.5 0 1 1-2-3.16V7.4L11 9.1V18a3.5 3.5 0 1 1-2-3.16z"/></svg></span>
+            <span class="pbtn" style="width:40px;height:40px"><svg width="15" height="15" viewBox="0 0 16 16" fill="#fff"><path d="M4 2.5v11l9-5.5z"/></svg></span>
+          </span>
+          <span class="pbar"><i></i></span>
+        </button>
+
+        <button class="card span2 c-steps" data-sheet="health">
+          <span class="ctop"><span class="cname">Health</span><span class="cdot">•••</span></span>
+          <span class="big">8,432 <small>steps</small></span>
+          <svg class="ring" width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="21" fill="none" stroke="currentColor" stroke-width="6" opacity=".15"/><circle cx="26" cy="26" r="21" fill="none" stroke="#00B578" stroke-width="6" stroke-linecap="round" stroke-dasharray="131.9" stroke-dashoffset="42" transform="rotate(-90 26 26)"/></svg>
+        </button>
+
+        <button class="card span4 c-notes" data-sheet="notes">
+          <span class="note"><b>Grocery list</b><span>Oat milk, eggs, chili crisp, basil…</span></span>
+          <span class="note"><b>Trip ideas</b><span>Zhangjiajie glass bridge in autumn?</span></span>
+          <span class="note"><b>Standup notes</b><span>Ship the widget refresh today.</span></span>
+        </button>
+
+        <button class="card span2 c-dev" data-sheet="devices">
+          <span class="ctop"><span class="cname">Super Device</span><span class="cdot">•••</span></span>
+          <span class="devrow"><span class="dot"></span>Watch GT 5 <small>82%</small></span>
+          <span class="devrow"><span class="dot"></span>FreeBuds Pro 3 <small>64%</small></span>
+          <span class="devrow"><span class="dot off"></span>MateBook X <small>off</small></span>
+        </button>
+
+        <button class="card span2 c-cal" data-sheet="calendar">
+          <span class="ctop"><span class="cname">Calendar</span><span class="cdot">•••</span></span>
+          <span class="day">2</span>
+          <span class="evt"><b>14:30</b> · Design review</span>
+        </button>
+      </div>
+
+      <div class="seclabel">Apps</div>
+      <div class="appgrid">
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#0A59F7,#00A0FF)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 7l8.5 6 8.5-6"/></svg></span>Mail</button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#FF6A00,#FFB300)"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M9 18V6l10-2v11.5a3.5 3.5 0 1 1-2-3.16V7.4L11 9.1V18a3.5 3.5 0 1 1-2-3.16z"/></svg></span>Music</button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#00B578,#00d8a8)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M12 20s-7-4.3-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.7-9 9-9 9z"/></svg></span>Health</button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#7A5CFF,#B388FF)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/></svg></span>Camera</button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#FF4D6D,#FF8A5C)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M4 11a8 8 0 0 1 16 0"/><rect x="2.5" y="11" width="4" height="9" rx="2"/><rect x="17.5" y="11" width="4" height="9" rx="2"/><path d="M20 18a4 4 0 0 1-4 3h-2"/></svg></span>Calls</button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#00A0FF,#00E0FF)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>Clock</button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#FFB300,#FF7A00)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg></span>Files</button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#5B6B7A,#9AA5B1)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 1-.1 1.2l2 1.6-2 3.4-2.4-1a7 7 0 0 1-2 1.2L14 20h-4l-.5-2.6a7 7 0 0 1-2-1.2l-2.4 1-2-3.4 2-1.6A7 7 0 0 1 5 12a7 7 0 0 1 .1-1.2l-2-1.6 2-3.4 2.4 1a7 7 0 0 1 2-1.2L10 4h4l.5 2.6a7 7 0 0 1 2 1.2l2.4-1 2 3.4-2 1.6c.06.4.1.8.1 1.2z"/></svg></span>Settings</button>
+      </div>
+
+      <div class="credit">Fictional demo — HarmonyOS-style launcher.<br>Built from the harmonyos skill · design-skills</div>
+    </div>
+
+    <div class="dockwrap">
+      <div class="dock">
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#FF4D6D,#FF8A5C)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M4 11a8 8 0 0 1 16 0"/><rect x="2.5" y="11" width="4" height="9" rx="2"/><rect x="17.5" y="11" width="4" height="9" rx="2"/></svg></span></button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#0A59F7,#00A0FF)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M8 12.5l2.6 2.6L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#00B578,#00d8a8)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg></span></button>
+        <button class="app"><span class="icon" style="background:linear-gradient(135deg,#FFB300,#FF7A00)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg></span></button>
+      </div>
+      <div class="homepill"></div>
+    </div>
+
+    <!-- bottom sheet -->
+    <div class="scrim" id="scrim"></div>
+    <section class="sheet" id="sheet" aria-modal="true" role="dialog">
+      <span class="grabber" id="grabber"></span>
+      <div id="sheetContent"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+  var phone = document.getElementById('phone');
+  var scrim = document.getElementById('scrim');
+  var sheet = document.getElementById('sheet');
+  var grabber = document.getElementById('grabber');
+  var content = document.getElementById('sheetContent');
+  var open = false, playing = true, prog = 32, progTimer = null;
+
+  var T = {
+    weather:
+      '<span class="atomic">Atomic service · opens instantly, no install</span>' +
+      '<h2>Shenzhen</h2><p class="sub">Clear · 24° · Feels like 26° · AQI 32 Good</p>' +
+      '<div class="hours">' +
+      ['Now|24°','11:00|25°','12:00|27°','13:00|28°','14:00|28°','15:00|27°','16:00|26°','17:00|25°']
+        .map(function(h){ var p=h.split('|'); return '<div class="hour"><b>'+p[1]+'</b><span>'+p[0]+'</span><svg width="20" height="20" viewBox="0 0 44 44" fill="none" stroke="#FF8A00" stroke-width="3" stroke-linecap="round"><circle cx="22" cy="22" r="9"/><path d="M22 4v4M22 36v4M4 22h4M36 22h4"/></svg></div>'; }).join('') +
+      '</div>' +
+      [['Saturday','Clear','28° / 22°'],['Sunday','Partly cloudy','27° / 22°'],['Monday','Showers','25° / 21°'],['Tuesday','Clear','26° / 21°']]
+        .map(function(d){ return '<div class="dayrow"><span class="d">'+d[0]+'</span><span>'+d[1]+'</span><span class="t">'+d[2]+'</span></div>'; }).join(''),
+    music:
+      '<span class="atomic">Atomic service · opens instantly, no install</span>' +
+      '<div class="player"><div class="bigart"><svg width="56" height="56" viewBox="0 0 24 24" fill="#fff"><path d="M9 18V6l10-2v11.5a3.5 3.5 0 1 1-2-3.16V7.4L11 9.1V18a3.5 3.5 0 1 1-2-3.16z"/></svg></div>' +
+      '<h3>Midnight Drive</h3><p>Neon Coast · Afterglow, 2026</p>' +
+      '<div class="pbar"><i id="sheetProg" style="width:'+prog+'%"></i></div>' +
+      '<div class="pcontrols">' +
+      '<button class="skip" aria-label="Previous"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2.5v14H6zM19 5v14L9.5 12z"/></svg></button>' +
+      '<button class="pbtn" id="sheetPlay" aria-label="Play or pause"><svg id="sheetPlayIco" width="22" height="22" viewBox="0 0 16 16" fill="#fff"><path d="M4 3h3.2v10H4zM8.8 3H12v10H8.8z"/></svg></button>' +
+      '<button class="skip" aria-label="Next"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 5H18v14h-2.5zM5 5v14l9.5-7z"/></svg></button>' +
+      '</div></div>',
+    health:
+      '<span class="atomic">Atomic service · opens instantly, no install</span>' +
+      '<h2>Today\'s activity</h2><p class="sub">Friday, October 2 · Watch GT 5 synced 2 min ago</p>' +
+      '<div class="stat3">' +
+      '<div class="stat"><b>8,432</b><span>steps</span></div>' +
+      '<div class="stat"><b>5.9 km</b><span>distance</span></div>' +
+      '<div class="stat"><b>412</b><span>kcal</span></div>' +
+      '</div>' +
+      '<div class="dayrow" style="margin-top:10px"><span class="d">Goal</span><span>12,000 steps · 70% there</span><span class="t">Keep going</span></div>' +
+      '<div class="dayrow"><span class="d">Sleep</span><span>Last night · 7 h 24 m</span><span class="t">Good</span></div>' +
+      '<div class="dayrow"><span class="d">Heart</span><span>Resting · 62 bpm</span><span class="t">Normal</span></div>',
+    notes:
+      '<span class="atomic">Atomic service · opens instantly, no install</span>' +
+      '<h2>Notes</h2><p class="sub">3 pinned · synced across phone, tablet and watch</p>' +
+      '<div class="dayrow"><span class="d">List</span><span><b>Grocery list</b><br><small style="color:var(--text2)">Oat milk, eggs, chili crisp, basil, sourdough</small></span></div>' +
+      '<div class="dayrow"><span class="d">Idea</span><span><b>Trip ideas</b><br><small style="color:var(--text2)">Zhangjiajie glass bridge in autumn?</small></span></div>' +
+      '<div class="dayrow"><span class="d">Work</span><span><b>Standup notes</b><br><small style="color:var(--text2)">Ship the widget refresh today.</small></span></div>',
+    devices:
+      '<span class="atomic">Super Device · drag to connect</span>' +
+      '<h2>Nearby devices</h2><p class="sub">3 found · everything connected, nothing to set up</p>' +
+      '<div class="setrow"><span><b>Watch GT 5</b><small>Connected · 82% battery</small></span><button class="switch" role="switch" aria-checked="true" aria-label="Watch GT 5"><span></span></button></div>' +
+      '<div class="setrow"><span><b>FreeBuds Pro 3</b><small>Connected · 64% battery</small></span><button class="switch" role="switch" aria-checked="true" aria-label="FreeBuds Pro 3"><span></span></button></div>' +
+      '<div class="setrow"><span><b>MateBook X Pro</b><small>Nearby · tap to connect</small></span><button class="switch" role="switch" aria-checked="false" aria-label="MateBook X Pro"><span></span></button></div>',
+    calendar:
+      '<span class="atomic">Atomic service · opens instantly, no install</span>' +
+      '<h2>Friday, October 2</h2><p class="sub">2 events today</p>' +
+      '<div class="dayrow"><span class="d">14:30</span><span><b>Design review</b><br><small style="color:var(--text2)">Room 4B · with the widgets team</small></span></div>' +
+      '<div class="dayrow"><span class="d">19:00</span><span><b>Evening run</b><br><small style="color:var(--text2)">5 km · riverside route</small></span></div>'
+  };
+
+  function openSheet(key){
+    content.innerHTML = T[key] || '';
+    scrim.classList.add('on'); sheet.classList.add('on'); open = true;
+    bindSheet();
+  }
+  function closeSheet(){
+    scrim.classList.remove('on'); sheet.classList.remove('on'); open = false;
+    stopProg();
+  }
+  document.querySelectorAll('.card').forEach(function(c){
+    c.addEventListener('click', function(){ openSheet(c.getAttribute('data-sheet')); });
+  });
+  scrim.addEventListener('click', closeSheet);
+
+  /* drag grabber down to dismiss */
+  var startY = 0, dy = 0, dragging = false;
+  grabber.addEventListener('pointerdown', function(e){
+    dragging = true; startY = e.clientY; sheet.style.transition = 'none';
+    grabber.setPointerCapture(e.pointerId);
+  });
+  grabber.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    dy = Math.max(0, e.clientY - startY);
+    sheet.style.transform = 'translateY(' + dy + 'px)';
+  });
+  function endDrag(){
+    if(!dragging) return; dragging = false;
+    sheet.style.transition = '';
+    if(dy > 110){ closeSheet(); } 
+    sheet.style.transform = '';
+    dy = 0;
+  }
+  grabber.addEventListener('pointerup', endDrag);
+  grabber.addEventListener('pointercancel', endDrag);
+
+  function bindSheet(){
+    content.querySelectorAll('.switch').forEach(function(s){
+      s.addEventListener('click', function(){
+        s.setAttribute('aria-checked', s.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+      });
+    });
+    var sp = document.getElementById('sheetPlay');
+    if(sp){ sp.addEventListener('click', function(){
+      playing = !playing;
+      document.getElementById('sheetPlayIco').innerHTML = playing
+        ? '<path d="M4 3h3.2v10H4zM8.8 3H12v10H8.8z"/>'
+        : '<path d="M4 2.5v11l9-5.5z"/>';
+      playing ? startProg() : stopProg();
+    }); if(playing) startProg(); }
+  }
+  function startProg(){
+    stopProg();
+    progTimer = setInterval(function(){
+      prog = (prog + 1) % 100;
+      var el = document.getElementById('sheetProg');
+      if(el) el.style.width = prog + '%';
+    }, 600);
+  }
+  function stopProg(){ if(progTimer){ clearInterval(progTimer); progTimer = null; } }
+
+  /* larger text (HarmonyOS accessibility) */
+  var big = false;
+  document.getElementById('fontBtn').addEventListener('click', function(){
+    big = !big;
+    document.documentElement.style.setProperty('--fs', big ? '19px' : '16px');
+    this.textContent = big ? 'A⁻' : 'A⁺';
+  });
+
+  /* starry gray <-> snowy white */
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.body.classList.toggle('light');
+    this.textContent = document.body.classList.contains('light') ? '☀' : '☾';
+  });
+
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && open) closeSheet(); });
+})();
+</script>
+</body>
+</html>
