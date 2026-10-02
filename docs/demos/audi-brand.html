@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>audi-brand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..700;1,62..125,300..700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --audi-black: #000000;
+    --audi-white: #ffffff;
+    --audi-silver: #C0C0C0;
+    --audi-red: #BB0A30;
+    --ink: #0A0A0A;
+    --surface: #141414;
+    --hairline-dark: #2B2B2B;
+    --hairline-light: #E2E2E2;
+    --muted: #9A9A9A;
+    --paper: #F5F5F5;
+    --font: "Archivo", "Helvetica Neue", Arial, system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--ink);
+    color: var(--audi-white);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--audi-red); color: #fff; }
+
+  .eyebrow {
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--audi-silver); font-weight: 400;
+  }
+
+  /* ---------- Nav ---------- */
+  .audi-nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 72px; padding: 0 48px;
+    background: rgba(0,0,0,.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hairline-dark);
+  }
+  .audi-nav nav { display: flex; gap: 40px; }
+  .audi-nav nav a {
+    color: #fff; text-decoration: none; font-size: 13px;
+    letter-spacing: .14em; text-transform: uppercase;
+  }
+  .audi-nav nav a:hover { color: var(--audi-silver); }
+  .cta-quiet {
+    color: #fff; text-decoration: none; font-size: 13px;
+    letter-spacing: .14em; text-transform: uppercase;
+    border: 1px solid #fff; padding: 12px 24px;
+    transition: background .2s ease-out, color .2s ease-out;
+  }
+  .cta-quiet:hover { background: #fff; color: #000; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; height: 100vh; min-height: 680px;
+    background: var(--ink); overflow: hidden;
+  }
+  .hero-car {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-car svg { width: min(1200px, 130vw); height: auto; opacity: .95; }
+  .hero-copy {
+    position: absolute; left: 48px; bottom: 88px; max-width: 660px;
+  }
+  .hero-copy .eyebrow { margin-bottom: 24px; display: block; }
+  .hero-copy h1 {
+    font-weight: 300; font-stretch: 115%;
+    font-size: clamp(48px, 7vw, 104px); line-height: 1.02;
+    letter-spacing: -.01em; margin-bottom: 28px;
+  }
+  .hero-copy p.sub {
+    font-size: 18px; line-height: 1.6; color: #d6d6d6;
+    max-width: 46ch; margin-bottom: 36px;
+  }
+  .link-arrow {
+    color: #fff; text-decoration: none; font-size: 15px;
+    margin-right: 40px; letter-spacing: .02em;
+  }
+  .link-arrow::after { content: " \2192"; }
+  .link-arrow:hover { color: var(--audi-red); }
+
+  /* ---------- Stat strip ---------- */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    background: var(--audi-black);
+    border-top: 1px solid var(--hairline-dark);
+    border-bottom: 1px solid var(--hairline-dark);
+  }
+  .stat { padding: 56px 48px; border-left: 1px solid var(--hairline-dark); }
+  .stat:first-child { border-left: none; }
+  .figure {
+    font-weight: 300; font-stretch: 110%; font-size: 54px;
+    margin-top: 18px; font-variant-numeric: tabular-nums;
+  }
+  .figure span { font-size: 17px; color: var(--muted); }
+
+  /* ---------- Sections ---------- */
+  section.block { padding: 144px 48px; max-width: 1440px; margin: 0 auto; }
+  section.block h2 {
+    font-weight: 300; font-stretch: 112%;
+    font-size: clamp(34px, 4vw, 56px); line-height: 1.08;
+    letter-spacing: -.01em; margin: 24px 0 24px; max-width: 16ch;
+  }
+  section.block > .lede {
+    font-size: 18px; line-height: 1.65; color: #c9c9c9;
+    max-width: 62ch; margin-bottom: 72px;
+  }
+
+  /* ---------- Trim selector + specs ---------- */
+  .trims {
+    display: flex; gap: 48px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--hairline-dark); margin-bottom: 8px;
+  }
+  .trim {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-family: var(--font); font-size: 14px; letter-spacing: .12em;
+    text-transform: uppercase; padding: 0 0 20px;
+    transition: color .2s ease-out;
+  }
+  .trim.is-active { color: #fff; box-shadow: inset 0 -2px 0 #fff; }
+  .trim:hover { color: #fff; }
+  .trim-note {
+    font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); margin: 28px 0 40px;
+  }
+  .specs { width: 100%; border-collapse: collapse; font-size: 16px; }
+  .specs tr { border-bottom: 1px solid var(--hairline-dark); }
+  .specs th {
+    text-align: left; font-weight: 400; color: var(--muted);
+    padding: 20px 0; width: 55%;
+  }
+  .specs td {
+    text-align: right; padding: 20px 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .price-line { margin-top: 48px; font-size: 15px; color: var(--muted); }
+  .price-line strong {
+    color: #fff; font-weight: 400; font-size: 28px;
+    font-variant-numeric: tabular-nums; margin-right: 16px;
+  }
+
+  /* ---------- Detail grid (design section) ---------- */
+  .detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--hairline-dark); border: 1px solid var(--hairline-dark);
+  }
+  .detail {
+    background: var(--surface); padding: 64px 56px;
+  }
+  .detail h3 {
+    font-weight: 300; font-stretch: 110%; font-size: 30px;
+    margin: 20px 0 16px;
+  }
+  .detail p { color: #bdbdbd; line-height: 1.65; font-size: 16px; max-width: 44ch; }
+  .detail .num {
+    font-size: 13px; letter-spacing: .18em; color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ---------- Lineup ---------- */
+  .lineup {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px;
+  }
+  .model-card { border-top: 1px solid var(--hairline-dark); padding-top: 32px; }
+  .model-card .swatch {
+    height: 180px; margin-bottom: 32px; position: relative; overflow: hidden;
+    background: #101010;
+  }
+  .model-card .swatch svg { width: 100%; height: 100%; }
+  .model-card h3 { font-weight: 300; font-size: 30px; margin-bottom: 10px; }
+  .model-card p { color: var(--muted); font-size: 15px; margin-bottom: 22px; }
+  .rs-badge {
+    display: inline-block; font-size: 11px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--audi-red);
+    border: 1px solid var(--audi-red); padding: 6px 12px; margin-bottom: 18px;
+  }
+
+  /* ---------- CTA (light) ---------- */
+  .cta-block { background: var(--audi-white); color: #000; }
+  .cta-block .inner { max-width: 1440px; margin: 0 auto; padding: 160px 48px; }
+  .cta-block h2 {
+    font-weight: 300; font-stretch: 112%;
+    font-size: clamp(38px, 5vw, 72px); line-height: 1.05;
+    letter-spacing: -.01em; margin-bottom: 24px;
+  }
+  .cta-block p { font-size: 18px; color: #444; max-width: 52ch; margin-bottom: 48px; line-height: 1.6; }
+  .cta-row { display: flex; align-items: center; gap: 48px; flex-wrap: wrap; }
+  .btn-solid {
+    background: #000; color: #fff; text-decoration: none;
+    font-size: 14px; letter-spacing: .14em; text-transform: uppercase;
+    padding: 18px 40px; display: inline-block;
+    transition: background .2s ease-out;
+  }
+  .btn-solid:hover { background: #2b2b2b; }
+  .link-red {
+    color: var(--audi-red); text-decoration: none; font-size: 15px;
+  }
+  .link-red::after { content: " \2192"; }
+  .link-red:hover { text-decoration: underline; }
+
+  /* ---------- Footer ---------- */
+  .audi-footer {
+    background: var(--audi-black); color: #fff;
+    padding: 96px 48px 48px; border-top: 1px solid var(--hairline-dark);
+  }
+  .foot-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 48px;
+    max-width: 1440px; margin: 0 auto 88px;
+  }
+  .foot-grid .eyebrow { display: block; margin-bottom: 8px; }
+  .audi-footer a.f {
+    display: block; color: var(--muted); text-decoration: none;
+    font-size: 15px; margin-top: 16px;
+  }
+  .audi-footer a.f:hover { color: #fff; }
+  .legal {
+    max-width: 1440px; margin: 0 auto; font-size: 12px; color: #666;
+    border-top: 1px solid var(--hairline-dark); padding-top: 32px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+
+  /* ---------- Scroll-in ---------- */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .28s ease-out, transform .28s ease-out; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .audi-nav { padding: 0 24px; }
+    .audi-nav nav { display: none; }
+    .hero-copy { left: 24px; right: 24px; bottom: 56px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat { padding: 36px 28px; border-left: none; border-top: 1px solid var(--hairline-dark); }
+    .stat:nth-child(-n+2) { border-top: none; }
+    .stat:nth-child(even) { border-left: 1px solid var(--hairline-dark); }
+    section.block { padding: 96px 24px; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .lineup { grid-template-columns: 1fr; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+    .cta-block .inner { padding: 110px 24px; }
+    .audi-footer { padding: 72px 24px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="audi-nav">
+  <a href="#" aria-label="Home">
+    <svg width="68" height="22" viewBox="0 0 76 24" aria-label="Four rings">
+      <g fill="none" stroke="#fff" stroke-width="2.6">
+        <circle cx="13" cy="12" r="10.5"/><circle cx="31.6" cy="12" r="10.5"/>
+        <circle cx="50.2" cy="12" r="10.5"/><circle cx="68.8" cy="12" r="10.5"/>
+      </g>
+    </svg>
+  </a>
+  <nav>
+    <a href="#trims">Models</a>
+    <a href="#design">Design</a>
+    <a href="#lineup">Electric range</a>
+    <a href="#test-drive">Company</a>
+  </nav>
+  <a class="cta-quiet" href="#test-drive">Book a test drive</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-car" aria-hidden="true">
+    <svg viewBox="0 0 1200 420">
+      <defs>
+        <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#3d3d3d"/>
+          <stop offset=".55" stop-color="#1c1c1c"/>
+          <stop offset="1" stop-color="#0d0d0d"/>
+        </linearGradient>
+        <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2e2e2e"/>
+          <stop offset="1" stop-color="#101010"/>
+        </linearGradient>
+        <radialGradient id="glowW" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#eaf4ff" stop-opacity=".9"/>
+          <stop offset="1" stop-color="#eaf4ff" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="600" cy="372" rx="470" ry="26" fill="#000" opacity=".55"/>
+      <!-- wheels -->
+      <g>
+        <circle cx="330" cy="308" r="62" fill="#080808" stroke="#2c2c2c" stroke-width="3"/>
+        <circle cx="330" cy="308" r="32" fill="none" stroke="#8a8a8a" stroke-width="4"/>
+        <g stroke="#8a8a8a" stroke-width="3">
+          <line x1="330" y1="276" x2="330" y2="340"/>
+          <line x1="298" y1="308" x2="362" y2="308"/>
+          <line x1="307" y1="285" x2="353" y2="331"/>
+          <line x1="353" y1="285" x2="307" y2="331"/>
+        </g>
+        <circle cx="330" cy="308" r="8" fill="#8a8a8a"/>
+        <circle cx="872" cy="308" r="62" fill="#080808" stroke="#2c2c2c" stroke-width="3"/>
+        <circle cx="872" cy="308" r="32" fill="none" stroke="#8a8a8a" stroke-width="4"/>
+        <g stroke="#8a8a8a" stroke-width="3">
+          <line x1="872" y1="276" x2="872" y2="340"/>
+          <line x1="840" y1="308" x2="904" y2="308"/>
+          <line x1="849" y1="285" x2="895" y2="331"/>
+          <line x1="895" y1="285" x2="849" y2="331"/>
+        </g>
+        <circle cx="872" cy="308" r="8" fill="#8a8a8a"/>
+      </g>
+      <!-- body -->
+      <path fill="url(#bodyGrad)" d="M108,300 L112,274 Q115,260 132,256 L246,246 Q380,196 428,190 L636,186 Q706,188 762,228 L862,260 L1052,268 Q1082,271 1084,292 L1082,304 L1036,310 L934,310 A62,62 0 0 0 810,310 L392,310 A62,62 0 0 0 268,310 L140,308 Z"/>
+      <!-- glasshouse -->
+      <path fill="url(#glassGrad)" d="M446,204 L620,200 Q678,202 722,232 L560,246 L446,242 Z"/>
+      <path fill="none" stroke="#4a4a4a" stroke-width="2" d="M446,204 L620,200 Q678,202 722,232"/>
+      <!-- character line -->
+      <path fill="none" stroke="#6f6f6f" stroke-width="1.6" opacity=".8" d="M140,282 L1050,272"/>
+      <!-- headlight -->
+      <ellipse cx="1052" cy="278" rx="34" ry="10" fill="url(#glowW)"/>
+      <rect x="1022" y="274" width="58" height="7" rx="3.5" fill="#dfeaff"/>
+      <!-- rear light bar: the single red accent -->
+      <rect x="112" y="270" width="52" height="6" rx="3" fill="#BB0A30"/>
+      <!-- door handles -->
+      <rect x="560" y="262" width="34" height="4" rx="2" fill="#5a5a5a"/>
+      <rect x="700" y="260" width="34" height="4" rx="2" fill="#5a5a5a"/>
+    </svg>
+  </div>
+  <div class="hero-copy">
+    <span class="eyebrow">The new Audi A9 e-tron</span>
+    <h1>Vorsprung<br>durch Technik.</h1>
+    <p class="sub">The all-electric gran turismo. 625 kilometers of range, a drag coefficient of 0.22, and not a single line that isn't earning its place.</p>
+    <div>
+      <a class="link-arrow" href="#trims">Explore the A9 e-tron</a>
+      <a class="link-arrow" href="#test-drive">Book a test drive</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats" id="stats">
+  <div class="stat"><p class="eyebrow">0&ndash;100 km/h</p><p class="figure"><span data-stat="accel">3.1</span> <span>s</span></p></div>
+  <div class="stat"><p class="eyebrow">Range (WLTP)</p><p class="figure"><span data-stat="range">625</span> <span>km</span></p></div>
+  <div class="stat"><p class="eyebrow">Power</p><p class="figure"><span data-stat="power">500</span> <span>kW</span></p></div>
+  <div class="stat"><p class="eyebrow">DC charging</p><p class="figure"><span data-stat="charge">320</span> <span>kW</span></p></div>
+</div>
+
+<!-- TRIMS + SPECS -->
+<section class="block reveal" id="trims">
+  <span class="eyebrow">Model range</span>
+  <h2>Choose your A9 e-tron.</h2>
+  <p class="lede">Three drivetrains. One silhouette. Every figure below is measured, not promised &mdash; select a trim to see the exact specification.</p>
+
+  <div class="trims" role="tablist" aria-label="A9 e-tron trims">
+    <button class="trim" role="tab" aria-selected="false" data-trim="base">A9 e-tron</button>
+    <button class="trim" role="tab" aria-selected="false" data-trim="perf">A9 e-tron performance</button>
+    <button class="trim is-active" role="tab" aria-selected="true" data-trim="rs">A9 e-tron RS</button>
+  </div>
+  <p class="trim-note" id="trimNote">quattro all-wheel drive &middot; 800-volt architecture</p>
+
+  <table class="specs">
+    <tbody>
+      <tr><th>Battery (usable)</th><td data-spec="battery">105 kWh</td></tr>
+      <tr><th>Power</th><td data-spec="powerFull">500 kW (680 hp)</td></tr>
+      <tr><th>0&ndash;100 km/h</th><td data-spec="accelFull">3.1 s</td></tr>
+      <tr><th>Range (WLTP)</th><td data-spec="rangeFull">625 km</td></tr>
+      <tr><th>Top speed</th><td data-spec="top">250 km/h</td></tr>
+      <tr><th>DC fast charging</th><td data-spec="chargeFull">320 kW &middot; 10&ndash;80% in 18 min</td></tr>
+      <tr><th>Drag coefficient</th><td>0.22</td></tr>
+      <tr><th>Length / width</th><td>4,990 / 1,960 mm</td></tr>
+    </tbody>
+  </table>
+
+  <p class="price-line"><strong id="price">&euro;129,900</strong> <span id="priceNote">Starting price, A9 e-tron RS. Excluding options.</span></p>
+</section>
+
+<!-- DESIGN -->
+<section class="block reveal" id="design">
+  <span class="eyebrow">Design</span>
+  <h2>Precision, from every angle.</h2>
+  <p class="lede">The A9 e-tron was drawn with a single rule: every surface must do aerodynamic work. What remains is the quietest shape we have ever built.</p>
+  <div class="detail-grid">
+    <div class="detail">
+      <span class="num">01</span>
+      <h3>Aerodynamics as ornament</h3>
+      <p>Flush door handles, a sealed underbody, and virtual exterior mirrors shape the airflow. The result is a drag coefficient of 0.22 &mdash; and silence at 130 km/h.</p>
+    </div>
+    <div class="detail">
+      <span class="num">02</span>
+      <h3>Light, engineered</h3>
+      <p>Digital Matrix LED headlights project guidance onto the road ahead. The rear light bar &mdash; one continuous line of red &mdash; is the only color the car wears.</p>
+    </div>
+    <div class="detail">
+      <span class="num">03</span>
+      <h3>An interior of restraint</h3>
+      <p>One curved display. Four physical controls that matter. Materials chosen for how they age, not how they photograph: recycled microfiber, open-pore wood, aluminum.</p>
+    </div>
+    <div class="detail">
+      <span class="num">04</span>
+      <h3>800 volts, 18 minutes</h3>
+      <p>The 800-volt architecture charges at up to 320 kW. Ten to eighty percent in 18 minutes &mdash; roughly the time it takes to drink a coffee properly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LINEUP -->
+<section class="block reveal" id="lineup">
+  <span class="eyebrow">The electric range</span>
+  <h2>One idea, three expressions.</h2>
+  <div class="lineup" style="margin-top: 72px;">
+    <article class="model-card">
+      <div class="swatch" aria-hidden="true">
+        <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid slice">
+          <ellipse cx="150" cy="140" rx="120" ry="12" fill="#000" opacity=".5"/>
+          <path fill="#232323" d="M28,118 L32,104 Q34,96 46,94 L86,88 Q138,64 158,62 L208,61 Q232,62 252,80 L272,94 Q288,97 287,108 L285,116 L240,120 L196,120 A26,26 0 0 0 144,120 L70,120 Z"/>
+          <rect x="28" y="100" width="16" height="5" rx="2.5" fill="#BB0A30"/>
+        </svg>
+      </div>
+      <h3>Audi A9 e-tron</h3>
+      <p>The gran turismo. 625 km range. From &euro;84,900.</p>
+      <a class="link-arrow" href="#trims">Configure</a>
+    </article>
+    <article class="model-card">
+      <div class="swatch" aria-hidden="true">
+        <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid slice">
+          <ellipse cx="150" cy="142" rx="120" ry="12" fill="#000" opacity=".5"/>
+          <path fill="#2b2b2b" d="M30,120 L36,98 Q40,88 54,86 L100,78 Q150,58 175,58 L215,58 Q245,60 262,84 L280,100 Q292,104 290,114 L288,120 L244,124 L200,124 A26,26 0 0 0 148,124 L74,124 Z"/>
+          <rect x="30" y="104" width="16" height="5" rx="2.5" fill="#BB0A30"/>
+        </svg>
+      </div>
+      <h3>Audi Q6 e-tron</h3>
+      <p>The electric SUV. 590 km range. From &euro;71,200.</p>
+      <a class="link-arrow" href="#test-drive">Configure</a>
+    </article>
+    <article class="model-card">
+      <span class="rs-badge">RS</span>
+      <div class="swatch" aria-hidden="true">
+        <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid slice">
+          <ellipse cx="150" cy="140" rx="120" ry="12" fill="#000" opacity=".5"/>
+          <path fill="#1a1a1a" d="M26,116 L30,100 Q33,92 46,90 L88,84 Q140,60 162,58 L212,57 Q238,59 258,78 L278,92 Q292,95 291,106 L289,114 L242,118 L198,118 A26,26 0 0 0 146,118 L68,118 Z"/>
+          <rect x="26" y="98" width="16" height="5" rx="2.5" fill="#BB0A30"/>
+        </svg>
+      </div>
+      <h3>Audi e-tron GT</h3>
+      <p>The icon. 0&ndash;100 km/h in 3.3 s. From &euro;108,500.</p>
+      <a class="link-arrow" href="#test-drive">Configure</a>
+    </article>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-block reveal" id="test-drive">
+  <div class="inner">
+    <span class="eyebrow" style="color:#666;">Next step</span>
+    <h2 style="margin-top:20px;">Book a test drive.</h2>
+    <p>Thirty minutes. Your route, your music, no salesperson in the passenger seat unless you ask. The numbers speak quietly &mdash; the car doesn't need to.</p>
+    <div class="cta-row">
+      <a class="btn-solid" href="#">Book a test drive</a>
+      <a class="link-red" href="#lineup">Compare the range</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="audi-footer">
+  <div class="foot-grid">
+    <div>
+      <span class="eyebrow">Models</span>
+      <a class="f" href="#trims">A9 e-tron</a>
+      <a class="f" href="#lineup">Q6 e-tron</a>
+      <a class="f" href="#lineup">e-tron GT</a>
+    </div>
+    <div>
+      <span class="eyebrow">Services</span>
+      <a class="f" href="#test-drive">Book a test drive</a>
+      <a class="f" href="#">Find a dealer</a>
+      <a class="f" href="#">Charging</a>
+    </div>
+    <div>
+      <span class="eyebrow">Technology</span>
+      <a class="f" href="#design">800-volt architecture</a>
+      <a class="f" href="#design">quattro</a>
+      <a class="f" href="#design">Digital Matrix LED</a>
+    </div>
+    <div>
+      <span class="eyebrow">Company</span>
+      <a class="f" href="#">About Audi</a>
+      <a class="f" href="#">Sustainability</a>
+      <a class="f" href="#">Careers</a>
+    </div>
+  </div>
+  <div class="legal">
+    <span>Built from the audi-brand skill · design-skills</span>
+    <span>A fictional concept demo. Not affiliated with AUDI AG.</span>
+  </div>
+</footer>
+
+<script>
+  var TRIMS = {
+    base: {
+      accel: "4.6", range: "540", power: "320", charge: "270",
+      battery: "100 kWh", powerFull: "320 kW (435 hp)",
+      accelFull: "4.6 s", rangeFull: "540 km", top: "200 km/h",
+      chargeFull: "270 kW \u00b7 10\u201380% in 22 min",
+      note: "quattro all-wheel drive \u00b7 800-volt architecture",
+      price: "\u20ac84,900", priceNote: "Starting price, A9 e-tron. Excluding options."
+    },
+    perf: {
+      accel: "3.8", range: "560", power: "380", charge: "270",
+      battery: "105 kWh", powerFull: "380 kW (517 hp)",
+      accelFull: "3.8 s", rangeFull: "560 km", top: "210 km/h",
+      chargeFull: "270 kW \u00b7 10\u201380% in 21 min",
+      note: "quattro all-wheel drive \u00b7 sport air suspension",
+      price: "\u20ac96,400", priceNote: "Starting price, A9 e-tron performance. Excluding options."
+    },
+    rs: {
+      accel: "3.1", range: "625", power: "500", charge: "320",
+      battery: "105 kWh", powerFull: "500 kW (680 hp)",
+      accelFull: "3.1 s", rangeFull: "625 km", top: "250 km/h",
+      chargeFull: "320 kW \u00b7 10\u201380% in 18 min",
+      note: "quattro all-wheel drive \u00b7 RS sport suspension plus",
+      price: "\u20ac129,900", priceNote: "Starting price, A9 e-tron RS. Excluding options."
+    }
+  };
+
+  var tabs = document.querySelectorAll(".trim");
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      tabs.forEach(function (t) {
+        t.classList.remove("is-active");
+        t.setAttribute("aria-selected", "false");
+      });
+      tab.classList.add("is-active");
+      tab.setAttribute("aria-selected", "true");
+      var d = TRIMS[tab.getAttribute("data-trim")];
+      document.querySelector('[data-stat="accel"]').textContent = d.accel;
+      document.querySelector('[data-stat="range"]').textContent = d.range;
+      document.querySelector('[data-stat="power"]').textContent = d.power;
+      document.querySelector('[data-stat="charge"]').textContent = d.charge;
+      document.querySelector('[data-spec="battery"]').textContent = d.battery;
+      document.querySelector('[data-spec="powerFull"]').textContent = d.powerFull;
+      document.querySelector('[data-spec="accelFull"]').textContent = d.accelFull;
+      document.querySelector('[data-spec="rangeFull"]').textContent = d.rangeFull;
+      document.querySelector('[data-spec="top"]').textContent = d.top;
+      document.querySelector('[data-spec="chargeFull"]').textContent = d.chargeFull;
+      document.getElementById("trimNote").textContent = d.note;
+      document.getElementById("price").textContent = d.price;
+      document.getElementById("priceNote").textContent = d.priceNote;
+    });
+  });
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+</script>
+</body>
+</html>
