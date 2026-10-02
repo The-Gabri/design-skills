@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>wabi-sabi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Karla:ital,wght@0,300;0,400;0,500;1,400&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --washi:#F1EAE0;
+    --washi-deep:#E6DACA;
+    --paper:#FAF6EE;
+    --ink:#2E2A24;
+    --ink-soft:#5C554A;
+    --clay:#A9714B;
+    --ash:#8C887C;
+    --moss:#767A58;
+    --kintsugi:#C6A15B;
+    --serif:"Shippori Mincho","Hiragino Mincho ProN",Georgia,serif;
+    --sans:"Karla",-apple-system,"Segoe UI",system-ui,sans-serif;
+    --hand:"Caveat","Segoe Script",cursive;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--washi); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.8;
+    overflow-x:hidden;
+  }
+  /* paper grain over everything */
+  body::after{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:60;
+    opacity:.55; filter:url(#paper-grain);
+  }
+  ::selection{ background:var(--kintsugi); color:var(--ink); }
+  h1,h2,h3{ font-family:var(--serif); font-weight:500; line-height:1.25; }
+  a{ color:var(--ink); }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 5vw; }
+
+  /* ---------- nav ---------- */
+  nav{
+    display:flex; align-items:baseline; gap:2.5rem;
+    padding:1.6rem 5vw; max-width:1180px; margin:0 auto;
+  }
+  .wordmark{ font-family:var(--serif); font-size:1.35rem; letter-spacing:.02em; text-decoration:none; }
+  .wordmark .kanji{ color:var(--clay); margin-right:.5rem; }
+  .nav-links{ display:flex; gap:1.8rem; margin-left:auto; font-size:.95rem; }
+  .nav-links a{ text-decoration:none; color:var(--ink-soft); position:relative; }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-links a::after{
+    content:""; position:absolute; left:0; bottom:-4px; height:1.5px; width:0;
+    background:var(--kintsugi); transition:width .35s ease;
+  }
+  .nav-links a:hover::after{ width:100%; }
+
+  /* ---------- quiet button ---------- */
+  .wabi-btn{
+    display:inline-block; padding:.8rem 2rem; margin-top:1.8rem;
+    border:1.5px solid var(--ink); color:var(--ink); background:transparent;
+    border-radius:13px 17px 14px 19px; text-decoration:none; font-size:1rem;
+    transition:background .35s ease,color .35s ease; cursor:pointer; font-family:var(--sans);
+  }
+  .wabi-btn:hover{ background:var(--ink); color:var(--washi); }
+
+  /* ---------- hero (deliberately asymmetric) ---------- */
+  .hero{
+    display:grid; grid-template-columns:repeat(12,1fr); gap:1.5rem;
+    align-items:end; padding:clamp(3rem,7vw,6rem) 5vw 0; max-width:1180px; margin:0 auto;
+  }
+  .hero-kicker{
+    grid-column:2 / span 10; font-size:.85rem; letter-spacing:.14em;
+    color:var(--ink-soft); text-transform:uppercase; margin-bottom:1.2rem;
+  }
+  .hero-copy{ grid-column:2 / span 6; }
+  .hero-copy h1{ font-size:clamp(2.6rem,6vw,4.6rem); font-weight:500; }
+  .hero-copy h1 em{ font-style:normal; color:var(--clay); }
+  .hero-copy p.lede{ margin-top:1.4rem; color:var(--ink-soft); max-width:44ch; }
+  .hero-vessel{ grid-column:9 / span 3; margin-bottom:-3.2rem; z-index:2; transform:rotate(1.2deg); }
+  .hero-handnote{
+    grid-column:3 / span 4; font-family:var(--hand); font-size:1.35rem;
+    color:var(--ink-soft); transform:rotate(-1.6deg); margin-top:1.6rem;
+  }
+  .hero-handnote .arrow{ color:var(--kintsugi); }
+
+  /* torn edge into next section */
+  .torn{ display:block; width:100%; height:46px; margin-top:-1px; }
+
+  /* ---------- philosophy strip ---------- */
+  .philosophy{
+    background:var(--washi-deep); padding:clamp(3rem,7vw,5.5rem) 0;
+    position:relative;
+  }
+  .philosophy .wrap{ display:grid; grid-template-columns:repeat(12,1fr); gap:1.5rem; }
+  .philosophy blockquote{ grid-column:3 / span 7; }
+  .philosophy blockquote p{
+    font-family:var(--serif); font-size:clamp(1.5rem,3vw,2.2rem); line-height:1.45;
+  }
+  .philosophy .cite{
+    margin-top:1.2rem; font-family:var(--hand); font-size:1.3rem; color:var(--ink-soft);
+    transform:rotate(-1deg); display:inline-block;
+  }
+  .philosophy aside{
+    grid-column:10 / span 2; align-self:end; font-size:.92rem; color:var(--ink-soft);
+    border-left:1px dashed var(--ash); padding-left:1.2rem; margin-bottom:.5rem;
+  }
+  .kintsugi-seam{ max-width:420px; margin:0 auto 2.5rem; opacity:.9; }
+  .kintsugi-seam svg{ width:100%; height:22px; display:block; }
+
+  /* ---------- collection ---------- */
+  .collection{ padding:clamp(3.5rem,8vw,6.5rem) 0; }
+  .collection-head{ display:grid; grid-template-columns:repeat(12,1fr); gap:1.5rem; margin-bottom:2.5rem; }
+  .collection-head h2{ grid-column:2 / span 5; font-size:clamp(1.9rem,3.6vw,2.8rem); }
+  .collection-head p{ grid-column:8 / span 4; color:var(--ink-soft); align-self:end; font-size:.98rem; }
+  .tabbar{ grid-column:2 / span 10; display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.2rem; }
+  .wtab{
+    font-family:var(--sans); font-size:.88rem; padding:.42rem 1.05rem; cursor:pointer;
+    border:1px dashed var(--ink-soft); border-radius:15px 19px 16px 21px;
+    background:transparent; color:var(--ink-soft); transition:all .3s ease;
+  }
+  .wtab:hover{ border-style:solid; color:var(--ink); }
+  .wtab[aria-selected="true"]{ border-style:solid; color:var(--ink); background:var(--paper); }
+  .collection-grid{
+    grid-column:2 / span 10; display:grid; gap:2.2rem;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); margin-top:.5rem;
+  }
+  .vessel-card{
+    background:var(--paper); padding:1.6rem 1.6rem 1.4rem;
+    border:1px dashed rgba(46,42,36,.28);
+    border-radius:4% 6% 5% 7% / 6% 5% 7% 4%;
+    box-shadow:3px 5px 0 rgba(46,42,36,.06);
+    transition:transform .4s ease, box-shadow .4s ease;
+  }
+  .vessel-card:nth-child(odd){ transform:rotate(-.7deg); }
+  .vessel-card:nth-child(even){ transform:rotate(.8deg); }
+  .vessel-card:hover{ transform:rotate(0deg) translateY(-5px); box-shadow:5px 9px 0 rgba(46,42,36,.08); }
+  .vessel-card.hidden{ display:none; }
+  .vessel-card svg{ width:100%; height:auto; display:block; }
+  .vessel-card h3{ font-size:1.15rem; margin-top:1rem; }
+  .vessel-card .desc{ font-size:.92rem; color:var(--ink-soft); margin-top:.3rem; }
+  .vessel-card .price{
+    font-family:var(--hand); font-size:1.35rem; color:var(--clay);
+    display:inline-block; transform:rotate(-1.5deg); margin-top:.6rem;
+  }
+  .vessel-card .sold-tag{
+    font-family:var(--hand); font-size:1.2rem; color:var(--moss);
+    display:inline-block; transform:rotate(1.4deg); margin-top:.6rem; margin-left:.8rem;
+  }
+
+  /* ---------- process accordion ---------- */
+  .process{ background:var(--washi-deep); padding:clamp(3.5rem,8vw,6rem) 0; }
+  .process .wrap{ display:grid; grid-template-columns:repeat(12,1fr); gap:1.5rem; }
+  .process h2{ grid-column:2 / span 4; font-size:clamp(1.9rem,3.6vw,2.8rem); align-self:start; }
+  .process .acc-list{ grid-column:7 / span 5; }
+  .wabi-acc{ border-top:1px dashed rgba(46,42,36,.35); }
+  .wabi-acc:last-child{ border-bottom:1px dashed rgba(46,42,36,.35); }
+  .wabi-acc-head{
+    width:100%; text-align:left; background:none; border:0; cursor:pointer;
+    font-family:var(--serif); font-size:1.2rem; padding:1.15rem .25rem; color:var(--ink);
+    display:flex; align-items:baseline; gap:.8rem;
+  }
+  .wabi-acc-head .num{ font-family:var(--hand); color:var(--clay); font-size:1.15rem; }
+  .wabi-acc-head .pm{ margin-left:auto; color:var(--clay); font-family:var(--sans); }
+  .wabi-acc-body{ max-height:0; overflow:hidden; transition:max-height .5s ease; }
+  .wabi-acc-body p{ padding:0 .25rem 1.5rem 2.6rem; color:var(--ink-soft); font-size:.98rem; }
+
+  /* ---------- workshop / visit ---------- */
+  .visit{ padding:clamp(3.5rem,8vw,6.5rem) 0; }
+  .visit .wrap{ display:grid; grid-template-columns:repeat(12,1fr); gap:2rem; }
+  .visit-info{ grid-column:2 / span 5; }
+  .visit-info h2{ font-size:clamp(1.9rem,3.6vw,2.8rem); margin-bottom:1.2rem; }
+  .visit-info p{ color:var(--ink-soft); margin-bottom:1rem; max-width:42ch; }
+  .visit-info .hours{
+    margin-top:1.6rem; padding:1.4rem 1.6rem; background:var(--paper);
+    border:1px dashed rgba(46,42,36,.28); border-radius:6% 4% 7% 5% / 5% 7% 4% 6%;
+    display:inline-block; transform:rotate(-.8deg);
+  }
+  .visit-info .hours dt{ font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ash); }
+  .visit-info .hours dd{ font-family:var(--serif); font-size:1.1rem; margin-bottom:.4rem; }
+  .workshop{ grid-column:8 / span 4; }
+  .workshop form{
+    background:var(--paper); padding:2.2rem;
+    border:1px dashed rgba(46,42,36,.28);
+    border-radius:5% 7% 4% 6% / 7% 4% 6% 5%;
+    box-shadow:3px 5px 0 rgba(46,42,36,.06); transform:rotate(.6deg);
+  }
+  .workshop h3{ font-size:1.4rem; margin-bottom:.4rem; }
+  .workshop .sub{ font-size:.92rem; color:var(--ink-soft); margin-bottom:1.4rem; }
+  .field{ margin-bottom:1.1rem; }
+  .field label{ display:block; font-size:.85rem; color:var(--ink-soft); margin-bottom:.35rem; }
+  .field input,.field select{
+    width:100%; padding:.7rem .9rem; font-family:var(--sans); font-size:1rem;
+    background:var(--washi); border:1px solid rgba(46,42,36,.3); color:var(--ink);
+    border-radius:9px 12px 10px 13px;
+  }
+  .field input:focus,.field select:focus{ outline:2px solid var(--kintsugi); outline-offset:1px; }
+  #form-note{
+    margin-top:1.2rem; font-family:var(--hand); font-size:1.3rem; color:var(--moss);
+    transform:rotate(-1deg); min-height:2rem;
+  }
+
+  /* ---------- footer ---------- */
+  footer{ border-top:1px dashed rgba(46,42,36,.3); padding:2.5rem 5vw 3rem; }
+  footer .wrap{ display:flex; flex-wrap:wrap; gap:1rem 3rem; align-items:baseline; justify-content:space-between; }
+  footer .f-note{ font-family:var(--hand); font-size:1.25rem; color:var(--ink-soft); transform:rotate(-1deg); }
+  footer .f-built{ font-size:.85rem; color:var(--ash); }
+
+  /* reveal on scroll: slow fade only */
+  .reveal{ opacity:0; transform:translateY(14px); transition:opacity .9s ease, transform .9s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    *{ transition:none !important; }
+    html{ scroll-behavior:auto; }
+  }
+  @media (max-width:760px){
+    .hero-kicker,.hero-copy{ grid-column:1 / -1; }
+    .hero-vessel{ grid-column:4 / span 6; margin-bottom:0; margin-top:1rem; }
+    .hero-handnote{ grid-column:2 / span 10; }
+    .philosophy blockquote{ grid-column:1 / -1; }
+    .philosophy aside{ grid-column:1 / -1; border-left:0; border-top:1px dashed var(--ash); padding:1rem 0 0; }
+    .collection-head h2,.collection-head p,.tabbar,.collection-grid{ grid-column:1 / -1; }
+    .process h2,.process .acc-list{ grid-column:1 / -1; }
+    .visit-info,.workshop{ grid-column:1 / -1; }
+    .nav-links{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- shared SVG defs: paper grain -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="paper-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.18  0 0 0 0 0.16  0 0 0 0 0.13  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+</svg>
+
+<nav>
+  <a class="wordmark" href="#"><span class="kanji">土</span>Tsuchi Kiln</a>
+  <div class="nav-links">
+    <a href="#collection">Collection</a>
+    <a href="#process">Process</a>
+    <a href="#visit">Visit</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <p class="hero-kicker">Handmade ceramics &middot; wood-fired &middot; est. 2011</p>
+  <div class="hero-copy">
+    <h1>Beautiful<br>because<br>it&rsquo;s <em>broken.</em></h1>
+    <p class="lede">We throw clay, fire it with wood, and keep the pieces that warp.
+      Every bowl leaves the kiln a little different from the last one &mdash; that is the whole point.</p>
+    <a class="wabi-btn" href="#collection">See the autumn firing</a>
+  </div>
+  <figure class="hero-vessel" aria-label="Ash-glazed teabowl with a gold kintsugi seam">
+    <svg viewBox="0 0 200 170">
+      <defs>
+        <linearGradient id="glaze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#B9A88F"/><stop offset="1" stop-color="#8C7B63"/>
+        </linearGradient>
+      </defs>
+      <path d="M38,52 C60,48 92,50 100,52 C108,50 140,48 162,52
+               C158,96 138,128 122,140 C112,147 88,147 78,140
+               C62,128 42,96 38,52 Z"
+            fill="url(#glaze)" stroke="#4A4239" stroke-width="2"/>
+      <ellipse cx="100" cy="52" rx="62" ry="12" fill="#3A342C"/>
+      <ellipse cx="100" cy="52" rx="52" ry="8" fill="#241F19"/>
+      <!-- glaze drips -->
+      <path d="M70,60 q4,26 -2,44" stroke="#E8DCC4" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"/>
+      <path d="M132,60 q-3,20 4,36" stroke="#E8DCC4" stroke-width="2.5" fill="none" opacity=".45" stroke-linecap="round"/>
+      <!-- kintsugi crack -->
+      <path d="M104,66 L96,88 L108,104 L98,124 L104,138" fill="none"
+            stroke="#C6A15B" stroke-width="3" stroke-linecap="round"/>
+      <path d="M96,88 L84,94" fill="none" stroke="#C6A15B" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </figure>
+  <p class="hero-handnote"><span class="arrow">&#8627;</span> fired at 1,300&deg;C &mdash; warped on purpose</p>
+</header>
+
+<svg class="torn" viewBox="0 0 1200 46" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0,46 L0,30 L60,34 L120,26 L210,36 L300,28 L390,38 L470,30 L560,36 L660,27 L740,37 L830,30 L920,36 L1010,28 L1100,35 L1200,30 L1200,46 Z" fill="#E6DACA"/>
+</svg>
+
+<section class="philosophy">
+  <div class="wrap">
+    <blockquote class="reveal">
+      <div class="kintsugi-seam" aria-hidden="true">
+        <svg viewBox="0 0 600 24" preserveAspectRatio="none">
+          <path d="M0,14 L70,10 L130,16 L210,8 L290,15 L360,9 L440,17 L520,11 L600,14"
+                fill="none" stroke="#C6A15B" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M210,8 L235,18 L262,12" fill="none" stroke="#C6A15B"
+                stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        </svg>
+      </div>
+      <p>&ldquo;Nothing here is new. Everything here is still becoming. If a bowl survives a hundred winters, it has earned its cracks &mdash; we fill them with gold.&rdquo;</p>
+      <span class="cite">&mdash; Aiko, founder &amp; thrower</span>
+    </blockquote>
+    <aside class="reveal">
+      Kintsugi: the art of mending broken pottery with lacquer and powdered gold. The repair is not hidden. It is the most beautiful part.
+    </aside>
+  </div>
+</section>
+
+<section class="collection" id="collection">
+  <div class="wrap" style="display:grid; grid-template-columns:repeat(12,1fr); gap:1.5rem;">
+    <div class="collection-head" style="grid-column:1/-1; display:grid; grid-template-columns:repeat(12,1fr); gap:1.5rem;">
+      <h2 style="grid-column:2/span 5;">The autumn firing</h2>
+      <p style="grid-column:8/span 4;">Forty-one pieces went in. Thirty-four came out worth keeping. Each one is the only one of its kind &mdash; when it sells, it is gone.</p>
+      <div class="tabbar" id="tabbar" role="tablist" aria-label="Filter collection" style="grid-column:2/span 10;">
+        <button class="wtab" role="tab" aria-selected="true" data-filter="all">All pieces</button>
+        <button class="wtab" role="tab" aria-selected="false" data-filter="bowl">Teabowls</button>
+        <button class="wtab" role="tab" aria-selected="false" data-filter="vase">Vases</button>
+        <button class="wtab" role="tab" aria-selected="false" data-filter="plate">Plates</button>
+      </div>
+    </div>
+    <div class="collection-grid" id="collection-grid" style="grid-column:2/span 10;">
+
+      <article class="vessel-card reveal" data-cat="bowl">
+        <svg viewBox="0 0 200 150">
+          <path d="M45,40 C70,36 130,36 155,40 C150,90 132,118 118,128 C108,134 92,134 82,128 C68,118 50,90 45,40 Z"
+                fill="#A9714B" stroke="#4A4239" stroke-width="2"/>
+          <ellipse cx="100" cy="40" rx="55" ry="10" fill="#3A342C"/>
+          <path d="M104,52 L96,74 L106,92 L98,112" fill="none" stroke="#C6A15B" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+        <h3>Winter chawan</h3>
+        <p class="desc">Ash glaze, one gold seam where it cracked in the cooling.</p>
+        <span class="price">&euro;68</span>
+      </article>
+
+      <article class="vessel-card reveal" data-cat="vase">
+        <svg viewBox="0 0 200 150">
+          <path d="M82,12 C96,10 104,10 118,12 C114,40 128,58 124,92 C121,118 112,132 100,136
+                   C88,132 79,118 76,92 C72,58 86,40 82,12 Z"
+                fill="#767A58" stroke="#4A4239" stroke-width="2"/>
+          <ellipse cx="100" cy="12" rx="18" ry="5" fill="#3A342C"/>
+          <circle cx="92" cy="70" r="3" fill="#4A4239" opacity=".6"/>
+          <circle cx="110" cy="96" r="2.4" fill="#4A4239" opacity=".55"/>
+          <circle cx="100" cy="52" r="2" fill="#4A4239" opacity=".5"/>
+        </svg>
+        <h3>Tall vase</h3>
+        <p class="desc">Moss-green glaze, iron spots from the clay itself.</p>
+        <span class="price">&euro;94</span>
+      </article>
+
+      <article class="vessel-card reveal" data-cat="bowl">
+        <svg viewBox="0 0 200 150">
+          <path d="M55,55 C78,50 122,50 145,55 C140,95 126,118 114,126 C106,131 94,131 86,126 C74,118 60,95 55,55 Z"
+                fill="#8C887C" stroke="#4A4239" stroke-width="2"/>
+          <ellipse cx="100" cy="55" rx="45" ry="9" fill="#3A342C"/>
+          <path d="M60,62 q30,-8 80,0" stroke="#E8DCC4" stroke-width="2" fill="none" opacity=".5"/>
+        </svg>
+        <h3>Rice bowl</h3>
+        <p class="desc">Unglazed outside. You can still see the thumbprint at the rim.</p>
+        <span class="price">&euro;42</span>
+      </article>
+
+      <article class="vessel-card reveal" data-cat="plate">
+        <svg viewBox="0 0 200 150">
+          <ellipse cx="100" cy="85" rx="72" ry="34" fill="#B9A88F" stroke="#4A4239" stroke-width="2"/>
+          <ellipse cx="100" cy="85" rx="48" ry="20" fill="#A08E72" stroke="#4A4239" stroke-width="1.5"/>
+          <path d="M52,72 C70,66 130,66 148,74" stroke="#4A4239" stroke-width="1.4" fill="none" opacity=".5"/>
+        </svg>
+        <h3>Serving plate</h3>
+        <p class="desc">Warped in the kiln. We kept it anyway &mdash; it holds olives beautifully.</p>
+        <span class="price">&euro;56</span><span class="sold-tag">sold</span>
+      </article>
+
+      <article class="vessel-card reveal" data-cat="vase">
+        <svg viewBox="0 0 200 150">
+          <path d="M78,30 C92,27 108,27 122,30 C118,52 130,64 126,88 C123,110 114,124 100,128
+                   C86,124 77,110 74,88 C70,64 82,52 78,30 Z"
+                fill="#C6A15B" stroke="#4A4239" stroke-width="2" opacity=".85"/>
+          <ellipse cx="100" cy="30" rx="22" ry="6" fill="#3A342C"/>
+          <path d="M84,60 q16,-6 32,0" stroke="#4A4239" stroke-width="1.5" fill="none" opacity=".45"/>
+        </svg>
+        <h3>Tea caddy</h3>
+        <p class="desc">The lid sits a little crooked. It has sat crooked since 2019.</p>
+        <span class="price">&euro;61</span>
+      </article>
+
+      <article class="vessel-card reveal" data-cat="bowl">
+        <svg viewBox="0 0 200 150">
+          <path d="M62,62 C80,58 120,58 138,62 C134,96 124,114 114,120 C106,124 94,124 86,120 C76,114 66,96 62,62 Z"
+                fill="#5C554A" stroke="#2E2A24" stroke-width="2"/>
+          <ellipse cx="100" cy="62" rx="38" ry="8" fill="#241F19"/>
+          <path d="M78,72 q3,20 -1,34" stroke="#C6A15B" stroke-width="2" fill="none" opacity=".7" stroke-linecap="round"/>
+          <path d="M122,72 q-3,18 1,30" stroke="#C6A15B" stroke-width="2" fill="none" opacity=".7" stroke-linecap="round"/>
+        </svg>
+        <h3>Small cup</h3>
+        <p class="desc">Dark tenmoku, feldspar drips down one side only.</p>
+        <span class="price">&euro;28</span>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section class="process" id="process">
+  <div class="wrap">
+    <h2 class="reveal">How a bowl<br>is born</h2>
+    <div class="acc-list reveal">
+      <div class="wabi-acc">
+        <button class="wabi-acc-head" id="acc-clay" aria-expanded="false" aria-controls="panel-clay">
+          <span class="num">01</span> Clay <span class="pm">+</span>
+        </button>
+        <div class="wabi-acc-body" id="panel-clay" role="region" aria-labelledby="acc-clay">
+          <p>We dig it an hour from here, from a riverbank nobody photographs. It is full of small stones and iron. We take out the worst of the stones and leave the iron &mdash; the iron is what makes the spots.</p>
+        </div>
+      </div>
+      <div class="wabi-acc">
+        <button class="wabi-acc-head" id="acc-fire" aria-expanded="false" aria-controls="panel-fire">
+          <span class="num">02</span> Fire <span class="pm">+</span>
+        </button>
+        <div class="wabi-acc-body" id="panel-fire" role="region" aria-labelledby="acc-fire">
+          <p>Three days in the wood kiln, stoking every twenty minutes through two nights. The flame decides the surface: ash lands where it lands. About one piece in six comes out warped, cracked, or strange. Those are usually our favorites.</p>
+        </div>
+      </div>
+      <div class="wabi-acc">
+        <button class="wabi-acc-head" id="acc-mend" aria-expanded="false" aria-controls="panel-mend">
+          <span class="num">03</span> Mend <span class="pm">+</span>
+        </button>
+        <div class="wabi-acc-body" id="panel-mend" role="region" aria-labelledby="acc-mend">
+          <p>When a bowl breaks &mdash; and good bowls do break &mdash; we join the pieces with lacquer and powdered gold. Kintsugi. The seam stays visible forever, because the break is part of the bowl's story now, not the end of it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="visit" id="visit">
+  <div class="wrap">
+    <div class="visit-info reveal">
+      <h2>Come see the kiln</h2>
+      <p>We are open on Saturdays, ten to four. You can watch a firing, hold the bowls, and ask us anything. Nothing is for sale online &mdash; some things should be touched first.</p>
+      <p>The dog may be asleep by the door. Step over her gently.</p>
+      <dl class="hours">
+        <dt>Open</dt><dd>Saturdays, 10:00 &ndash; 16:00</dd>
+        <dt>Find us</dt><dd>Hills outside Mashiko, follow the smoke</dd>
+      </dl>
+    </div>
+    <div class="workshop reveal">
+      <form id="visit-form" novalidate>
+        <h3>Autumn workshop</h3>
+        <p class="sub">Mend your own bowl &mdash; kintsugi for beginners. Four seats per session, tea included.</p>
+        <div class="field">
+          <label for="visit-name">Your name</label>
+          <input type="text" id="visit-name" name="name" autocomplete="name" placeholder="e.g. June Park">
+        </div>
+        <div class="field">
+          <label for="visit-email">Email</label>
+          <input type="email" id="visit-email" name="email" autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="visit-date">Session</label>
+          <select id="visit-date" name="date">
+            <option value="">Choose a Saturday&hellip;</option>
+            <option>October 10 &mdash; morning</option>
+            <option>October 17 &mdash; afternoon</option>
+            <option>October 24 &mdash; morning</option>
+          </select>
+        </div>
+        <button class="wabi-btn" type="submit" style="margin-top:.4rem;">Save me a seat</button>
+        <p id="form-note" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="f-note">Made slowly, by hand, with clay under our nails.</p>
+    <p class="f-built">Built from the wabi-sabi skill &middot; design-skills</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- collection tabs (filter) ---- */
+  var tabbar = document.getElementById('tabbar');
+  var cards  = Array.prototype.slice.call(document.querySelectorAll('#collection-grid .vessel-card'));
+
+  tabbar.addEventListener('click', function(e){
+    var btn = e.target.closest('.wtab');
+    if(!btn) return;
+    var tabs = tabbar.querySelectorAll('.wtab');
+    tabs.forEach(function(t){ t.setAttribute('aria-selected','false'); });
+    btn.setAttribute('aria-selected','true');
+    var f = btn.getAttribute('data-filter');
+    cards.forEach(function(c){
+      var show = (f === 'all') || (c.getAttribute('data-cat') === f);
+      c.classList.toggle('hidden', !show);
+    });
+  });
+
+  /* ---- process accordion (one open at a time) ---- */
+  var heads = document.querySelectorAll('.wabi-acc-head');
+  heads.forEach(function(h){
+    h.addEventListener('click', function(){
+      var wasOpen = h.getAttribute('aria-expanded') === 'true';
+      heads.forEach(function(x){
+        x.setAttribute('aria-expanded','false');
+        x.querySelector('.pm').textContent = '+';
+        var p = document.getElementById(x.getAttribute('aria-controls'));
+        if(p) p.style.maxHeight = null;
+      });
+      if(!wasOpen){
+        h.setAttribute('aria-expanded','true');
+        h.querySelector('.pm').textContent = '\u2013';
+        var panel = document.getElementById(h.getAttribute('aria-controls'));
+        if(panel) panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+
+  /* ---- workshop form ---- */
+  var form = document.getElementById('visit-form');
+  var note = document.getElementById('form-note');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name  = document.getElementById('visit-name').value.trim();
+    var email = document.getElementById('visit-email').value.trim();
+    var date  = document.getElementById('visit-date').value;
+    if(!name || !email || !date){
+      note.style.color = '#A9714B';
+      note.textContent = 'A name, an email, and a Saturday \u2014 we need all three.';
+      return;
+    }
+    if(email.indexOf('@') < 1){
+      note.style.color = '#A9714B';
+      note.textContent = 'That email looks unfinished, like a good bowl. Check it?';
+      return;
+    }
+    note.style.color = '';
+    note.textContent = 'Thank you, ' + name + '. We will write to you by hand \u2014 or by email, which is nearly as slow.';
+    form.querySelectorAll('input,select').forEach(function(el){ el.value=''; });
+  });
+
+  /* ---- slow reveal on scroll ---- */
+  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.12 }) : null;
+  document.querySelectorAll('.reveal').forEach(function(el){
+    if(io) io.observe(el); else el.classList.add('in');
+  });
+})();
+</script>
+</body>
+</html>
