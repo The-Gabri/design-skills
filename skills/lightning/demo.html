@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lightning</title>
+<style>
+  /* ============ SLDS tokens (values verified against the official design-token set) ============ */
+  :root{
+    --brand:#0176d3;               /* $brand-accessible / $color-brand-dark */
+    --brand-active:#014486;        /* $brand-accessible-active */
+    --brand-bright:#1b96ff;        /* $color-brand */
+    --link:#0b5cab;               /* $brand-text-link */
+    --navy:#032d60;               /* $palette-blue-20 — global header */
+    --text:#181818;               /* $color-text-default */
+    --text-weak:#444444;          /* $color-text-weak */
+    --icon:#747474;               /* $color-text-icon-default */
+    --border:#e5e5e5;             /* $color-border */
+    --border-strong:#c9c9c9;      /* $card-color-border */
+    --bg:#f3f3f3;                 /* $color-background */
+    --brand-tint:#eef4ff;         /* $brand-background-primary */
+    --error:#ea001e;              /* $color-text-error */
+    --success:#2e844a;            /* $color-text-success */
+    --warning:#fe9339;
+    --radius:.25rem;              /* $border-radius-medium */
+    /* Sales Path — official $color-background-path-* tokens */
+    --path-complete:#3ba755;
+    --path-complete-hover:#2e844a;
+    --path-current-text:#014486;  /* $color-text-path-current */
+    --path-current-border:#014486;
+    --path-incomplete:#f3f3f3;
+    --path-incomplete-hover:#c9c9c9;
+    --path-won:#2e844a;
+    --path-lost:#ea001e;
+    --icon-opp:#fcb95b;           /* slds-icon-standard-opportunity */
+    --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);font-size:.8125rem;color:var(--text);background:var(--bg);line-height:1.5}
+  a{color:var(--link);text-decoration:none}
+  a:hover{color:var(--brand-active);text-decoration:underline}
+  button{font-family:inherit}
+
+  /* ============ Global header ============ */
+  .global-header{background:var(--navy);color:#fff;height:3.125rem;display:flex;align-items:center;gap:.75rem;padding:0 1rem;position:sticky;top:0;z-index:40}
+  .waffle{border:0;background:transparent;cursor:pointer;padding:.375rem;border-radius:var(--radius);display:inline-flex}
+  .waffle:hover{background:rgba(255,255,255,.12)}
+  .waffle svg{width:1.125rem;height:1.125rem;fill:#fff;display:block}
+  .app-id{display:flex;align-items:center;gap:.5rem;font-size:.9375rem;font-weight:600;white-space:nowrap}
+  .app-id svg{width:1.375rem;height:1.375rem;fill:#fff}
+  .object-nav{display:flex;align-items:stretch;height:100%;margin-left:.5rem}
+  .object-nav a{color:rgba(255,255,255,.85);font-size:.8125rem;display:flex;align-items:center;padding:0 .75rem;border-bottom:3px solid transparent;white-space:nowrap}
+  .object-nav a:hover{color:#fff;text-decoration:none;background:rgba(255,255,255,.08)}
+  .object-nav a.is-active{color:#fff;font-weight:600;border-bottom-color:#fff}
+  .global-search{flex:1;max-width:26rem;margin-left:auto;position:relative}
+  .global-search input{width:100%;border:1px solid rgba(255,255,255,.4);border-radius:1rem;background:rgba(255,255,255,.14);color:#fff;padding:.375rem .75rem .375rem 2rem;font-size:.8125rem;font-family:inherit}
+  .global-search input::placeholder{color:rgba(255,255,255,.75)}
+  .global-search > svg{position:absolute;left:.6rem;top:50%;transform:translateY(-50%);width:1rem;height:1rem;fill:rgba(255,255,255,.85);pointer-events:none}
+  .search-results{position:absolute;top:calc(100% + .25rem);left:0;right:0;background:#fff;border:1px solid var(--border-strong);border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.2);overflow:hidden;z-index:50}
+  .search-results button{display:flex;align-items:center;gap:.625rem;width:100%;border:0;background:#fff;padding:.5rem .75rem;cursor:pointer;text-align:left;color:var(--text);font-size:.8125rem}
+  .search-results button:hover{background:var(--brand-tint)}
+  .sr-type{font-size:.625rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-weak);min-width:4.75rem}
+  .sr-name{font-weight:600}
+  .sr-sub{color:var(--text-weak);font-size:.75rem}
+  .header-actions{display:flex;align-items:center;gap:.25rem;margin-left:.5rem}
+  .icon-btn{border:0;background:transparent;cursor:pointer;padding:.375rem;border-radius:var(--radius);position:relative;display:inline-flex}
+  .icon-btn:hover{background:rgba(255,255,255,.12)}
+  .icon-btn svg{width:1.125rem;height:1.125rem;fill:#fff;display:block}
+  .notif-badge{position:absolute;top:.1rem;right:.1rem;background:var(--error);color:#fff;font-size:.625rem;font-weight:700;min-width:1rem;height:1rem;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
+  .avatar{width:1.75rem;height:1.75rem;border-radius:50%;background:var(--brand-bright);color:var(--navy);font-weight:700;font-size:.75rem;display:inline-flex;align-items:center;justify-content:center;margin-left:.25rem;cursor:pointer}
+
+  /* ============ Breadcrumb ============ */
+  .crumb-row{background:#fff;border-bottom:1px solid var(--border);padding:.375rem 1.5rem;font-size:.8125rem}
+  .crumb-row a{display:inline-flex;align-items:center;gap:.25rem}
+
+  /* ============ Record page header ============ */
+  .record-hero{background:#fff;border-bottom:1px solid var(--border-strong);padding:1rem 1.5rem}
+  .record-hero__row{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+  .slds-media{display:flex;align-items:flex-start;gap:.75rem}
+  .icon-tile{width:2.25rem;height:2.25rem;border-radius:var(--radius);background:var(--icon-opp);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+  .icon-tile svg{width:1.375rem;height:1.375rem;fill:#fff}
+  .object-label{font-size:.75rem;color:var(--text-weak);line-height:1.25}
+  .record-title{font-size:1.25rem;font-weight:400;line-height:1.25}
+  .record-meta{font-size:.8125rem;color:var(--text-weak);display:flex;align-items:center;gap:.5rem;margin-top:.125rem;flex-wrap:wrap}
+  .record-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+  .highlights{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.75rem 1.5rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
+  .hl-label{font-size:.75rem;color:var(--text-weak)}
+  .hl-value{font-size:.875rem;font-variant-numeric:tabular-nums}
+
+  /* ============ Buttons ============ */
+  .slds-button{font-size:.8125rem;padding:0 1rem;line-height:1.875rem;min-height:2rem;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;white-space:nowrap;background:#fff}
+  .slds-button_brand{background:var(--brand);border-color:var(--brand);color:#fff}
+  .slds-button_brand:hover{background:var(--brand-active);border-color:var(--brand-active)}
+  .slds-button_neutral{border-color:var(--border-strong);color:var(--link)}
+  .slds-button_neutral:hover{background:var(--bg)}
+  .slds-button_neutral.is-following{color:var(--text-weak)}
+  .slds-button_destructive{border-color:var(--border-strong);color:var(--error)}
+  .slds-button_destructive:hover{background:#fdecec}
+  .slds-button_small{line-height:1.5rem;min-height:1.75rem;padding:0 .75rem;font-size:.75rem}
+  .link-btn{border:0;background:none;color:var(--link);cursor:pointer;font-size:.8125rem;padding:0}
+  .link-btn:hover{color:var(--brand-active);text-decoration:underline}
+  .link-btn.destructive{color:var(--error)}
+  .link-btn.small{font-size:.75rem}
+
+  /* ============ Badges (flat tints) ============ */
+  .slds-badge{display:inline-block;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:15rem;font-size:.75rem;padding:.0625rem .5rem;white-space:nowrap}
+  .b-prospecting{background:#eef4ff;border-color:#aacbff;color:#0b5cab}
+  .b-qualification{background:#fef3e3;border-color:#fe9339;color:#8c4b02}
+  .b-proposal{background:#e6f4f8;border-color:#8fd0e8;color:#0a5a75}
+  .b-negotiation{background:#e4ecf9;border-color:#8aa8e8;color:#032d60}
+  .b-closed-won{background:#e5f4e9;border-color:#91db8b;color:#2e844a}
+  .b-closed-lost{background:#fdecec;border-color:#f3a3a3;color:#ba0517}
+
+  /* ============ Sales Path (signature chevron path, official token colors) ============ */
+  .path-card{background:#fff;border:1px solid var(--border-strong);border-radius:var(--radius);margin:1rem 1.5rem 0;padding:.875rem 1rem}
+  .slds-path{display:flex;align-items:stretch;gap:2px;background:#fff}
+  .path-cell{flex:1;display:flex;min-width:0}
+  .path-cell.pos-first,.path-cell.pos-first .path-item{clip-path:polygon(0 0,calc(100% - .75rem) 0,100% 50%,calc(100% - .75rem) 100%,0 100%)}
+  .path-cell.pos-mid,.path-cell.pos-mid .path-item{clip-path:polygon(0 0,calc(100% - .75rem) 0,100% 50%,calc(100% - .75rem) 100%,0 100%,.75rem 50%)}
+  .path-cell.pos-last,.path-cell.pos-last .path-item{clip-path:polygon(0 0,100% 0,100% 100%,0 100%,.75rem 50%)}
+  .path-item{flex:1;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.375rem;min-height:2rem;padding:.25rem .5rem .25rem 1.25rem;font-size:.8125rem;color:var(--text-weak);background:var(--path-incomplete);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .path-cell.pos-first .path-item{padding-left:.625rem}
+  .path-item:hover{background:var(--path-incomplete-hover)}
+  .path-cell.is-complete .path-item{background:var(--path-complete);color:#fff;font-weight:600}
+  .path-cell.is-complete .path-item:hover{background:var(--path-complete-hover)}
+  .path-cell.is-current{background:var(--path-current-border);padding:2px}
+  .path-cell.is-current .path-item{background:#fff;color:var(--path-current-text);font-weight:700}
+  .path-cell.is-current .path-item:hover{background:#fff}
+  .path-cell.is-won .path-item{background:var(--path-won);color:#fff;font-weight:700}
+  .path-cell.is-lost .path-item{background:var(--path-lost);color:#fff;font-weight:700}
+  .path-item .tick{width:.875rem;height:.875rem;fill:#fff;flex-shrink:0}
+  .path-coaching{margin-top:.75rem;border:1px solid var(--border);border-radius:var(--radius);background:#fff;padding:.75rem 1rem;display:flex;gap:1.5rem;justify-content:space-between;flex-wrap:wrap}
+  .coaching-title{font-size:.875rem;font-weight:600;margin-bottom:.25rem}
+  .coaching-text{font-size:.8125rem;color:var(--text);max-width:46rem}
+  .key-fields{display:flex;gap:1.5rem;margin-top:.625rem;flex-wrap:wrap}
+  .kf-label{font-size:.75rem;color:var(--text-weak)}
+  .kf-value{font-size:.8125rem;font-weight:600;font-variant-numeric:tabular-nums}
+  .coaching-actions{display:flex;flex-direction:column;gap:.5rem;align-items:flex-end;justify-content:center}
+
+  /* ============ Tabs ============ */
+  .tabs-bar{background:#fff;border-bottom:1px solid var(--border);padding:0 1.5rem;margin-top:1rem;position:sticky;top:3.125rem;z-index:30}
+  .slds-tabs_default__nav{display:flex;list-style:none;gap:1.5rem}
+  .slds-tabs_default__item{padding:.75rem .125rem;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .slds-tabs_default__link{color:var(--text-weak);font-size:.8125rem;background:none;border:0;cursor:pointer;padding:0}
+  .slds-tabs_default__link:hover{color:var(--link)}
+  .slds-tabs_default__item.slds-is-active{border-bottom-color:var(--brand)}
+  .slds-tabs_default__item.slds-is-active .slds-tabs_default__link{color:var(--text);font-weight:600}
+  .tab-panels{padding:1rem 1.5rem 2.5rem}
+
+  /* ============ Cards ============ */
+  .slds-card{background:#fff;border:1px solid var(--border-strong);border-radius:var(--radius)}
+  .slds-card + .slds-card{margin-top:1rem}
+  .slds-card__header{padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap}
+  .slds-card__header-title{font-size:1rem;font-weight:400}
+  .record-count{font-size:.75rem;color:var(--text-weak);font-weight:400}
+  .slds-card__body_inner{padding:1rem}
+  .slds-card__footer{padding:.5rem;text-align:center;border-top:1px solid var(--border)}
+
+  /* ============ Activity tab ============ */
+  .activity-grid{display:grid;grid-template-columns:2fr 1fr;gap:1rem;align-items:start}
+  .composer{display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap}
+  .composer textarea{flex:1;min-width:12rem;border:1px solid var(--border-strong);border-radius:var(--radius);padding:.5rem .75rem;font-family:inherit;font-size:.8125rem;resize:vertical;min-height:2.25rem}
+  .composer textarea:focus{outline:2px solid var(--brand);outline-offset:-1px;border-color:var(--brand)}
+  .tl-group{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text-weak);margin:1rem 0 .25rem}
+  .tl-group:first-child{margin-top:0}
+  .tl-item{display:flex;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--border)}
+  .tl-item:last-child{border-bottom:0}
+  .tl-icon{width:1.75rem;height:1.75rem;border-radius:50%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center}
+  .tl-icon svg{width:1rem;height:1rem;fill:#fff}
+  .tl-call{background:#0176d3}.tl-email{background:#9050e9}.tl-task{background:#2e844a}.tl-note{background:#747474}.tl-meeting{background:#0b5cab}
+  .tl-body{flex:1;min-width:0}
+  .tl-title{font-weight:600;font-size:.8125rem}
+  .tl-detail{font-size:.8125rem;color:var(--text);margin-top:.125rem}
+  .tl-meta{font-size:.75rem;color:var(--text-weak);margin-top:.25rem}
+  .rail-card__row{padding:.625rem 1rem;border-bottom:1px solid var(--border)}
+  .rail-card__row:last-child{border-bottom:0}
+  .rail-name{font-weight:600;font-size:.8125rem}
+  .rail-sub{font-size:.75rem;color:var(--text-weak)}
+  .prod-row{display:flex;justify-content:space-between;gap:.5rem;padding:.5rem 1rem;border-bottom:1px solid var(--border);font-size:.8125rem}
+  .prod-row:last-child{border-bottom:0}
+  .prod-total{display:flex;justify-content:space-between;padding:.625rem 1rem;font-weight:600;font-size:.875rem;border-top:1px solid var(--border-strong)}
+
+  /* ============ Details tab ============ */
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 2rem}
+  .detail-field{padding:.5rem 0;border-bottom:1px solid var(--border)}
+  .detail-field dt{font-size:.75rem;color:var(--text-weak)}
+  .detail-field dd{font-size:.8125rem;margin:0;overflow-wrap:anywhere}
+  .detail-section{font-size:.875rem;font-weight:600;margin:0 0 .25rem}
+
+  /* ============ Related tab: dense data table ============ */
+  .related-toolbar{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+  .search-box{position:relative}
+  .search-box input{border:1px solid var(--border-strong);border-radius:var(--radius);padding:.375rem .75rem .375rem 2rem;font-size:.8125rem;font-family:inherit;width:15rem}
+  .search-box input:focus{outline:2px solid var(--brand);outline-offset:-1px;border-color:var(--brand)}
+  .search-box svg{position:absolute;left:.6rem;top:50%;transform:translateY(-50%);width:1rem;height:1rem;fill:var(--icon)}
+  .pill-row{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem 1rem 0}
+  .slds-pill{display:inline-flex;align-items:center;background:#fff;border:1px solid var(--border-strong);border-radius:15rem;padding:.1875rem .1875rem .1875rem .75rem;font-size:.75rem;cursor:pointer;color:var(--text)}
+  .slds-pill:hover{border-color:var(--brand)}
+  .slds-pill.is-active{background:var(--brand-tint);border-color:var(--brand);color:var(--navy);font-weight:600}
+  .slds-pill__remove{border:none;background:transparent;color:var(--text-weak);cursor:pointer;border-radius:50%;width:1.25rem;height:1.25rem;font-size:.85rem;line-height:1;margin-left:.25rem;display:none}
+  .slds-pill.is-active .slds-pill__remove{display:inline-block}
+  .slds-pill__remove:hover{background:#d8e6fe;color:var(--brand-active)}
+  .sel-strip{display:none;align-items:center;gap:.75rem;background:var(--brand-tint);border:1px solid #aacbff;border-radius:var(--radius);margin:.75rem 1rem 0;padding:.375rem .75rem;font-size:.8125rem}
+  .sel-strip.show{display:flex}
+  .table-scroll{overflow-x:auto}
+  table.slds-table{width:100%;border-collapse:collapse;font-size:.8125rem}
+  .slds-table thead th{background:var(--bg);color:var(--text-weak);font-size:.75rem;font-weight:400;text-align:left;padding:.25rem .5rem;border-bottom:1px solid var(--border-strong);white-space:nowrap}
+  .slds-table thead th .th-btn{border:0;background:none;cursor:pointer;color:inherit;font:inherit;padding:.25rem;display:inline-flex;align-items:center;gap:.25rem}
+  .slds-table thead th .th-btn:hover{color:var(--brand-active)}
+  .slds-table thead th[aria-sort="ascending"] .sort-ic,.slds-table thead th[aria-sort="descending"] .sort-ic{fill:var(--brand)}
+  .sort-ic{width:.75rem;height:.75rem;fill:var(--icon)}
+  .slds-table tbody td,.slds-table tbody th{padding:.25rem .5rem;border-bottom:1px solid var(--border);vertical-align:middle}
+  .slds-table tbody tr:hover{background:var(--bg)}
+  .slds-table tbody tr.is-selected{background:var(--bg);box-shadow:inset 2px 0 0 var(--brand)}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .row-check{accent-color:var(--brand)}
+  .row-menu-btn{border:0;background:transparent;cursor:pointer;padding:.125rem .375rem;border-radius:var(--radius);color:var(--text-weak)}
+  .row-menu-btn:hover{background:var(--bg);color:var(--text)}
+  .row-menu-btn svg{width:1rem;height:1rem;fill:currentColor;display:block}
+  .empty{padding:2rem;text-align:center;color:var(--text-weak)}
+
+  /* Row actions dropdown */
+  .row-menu{position:fixed;z-index:80;background:#fff;border:1px solid var(--border-strong);border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.18);min-width:10rem;padding:.25rem 0}
+  .row-menu button{display:block;width:100%;border:0;background:#fff;padding:.5rem 1rem;font-size:.8125rem;color:var(--text);cursor:pointer;text-align:left}
+  .row-menu button:hover{background:var(--brand-tint)}
+  .row-menu button.danger{color:var(--error)}
+  .row-menu button.danger:hover{background:#fdecec}
+
+  /* ============ Modal ============ */
+  .slds-backdrop{position:fixed;inset:0;background:rgba(8,7,7,.6);display:none;z-index:60}
+  .slds-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:61;padding:1rem}
+  .slds-modal.open{display:flex}
+  .slds-backdrop.open{display:block}
+  .slds-modal__container{background:#fff;border-radius:var(--radius);width:34rem;max-width:100%;max-height:90vh;overflow:auto;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+  .slds-modal__header{padding:1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff}
+  .slds-modal__title{font-size:1.125rem;font-weight:400}
+  .slds-modal__close{border:none;background:transparent;font-size:1.25rem;color:var(--text-weak);cursor:pointer;line-height:1;padding:.25rem}
+  .slds-modal__close:hover{color:var(--text)}
+  .slds-modal__content{padding:1rem}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+  .form-row{margin-bottom:.75rem}
+  .form-grid .form-row{margin-bottom:0}
+  .form-row label{display:block;font-size:.75rem;color:var(--text-weak);margin-bottom:.25rem}
+  .form-row label .req{color:var(--error)}
+  .form-row input,.form-row select,.form-row textarea{width:100%;border:1px solid var(--border-strong);border-radius:var(--radius);padding:.375rem .75rem;font-size:.8125rem;font-family:inherit;color:var(--text);background:#fff}
+  .form-row input:focus,.form-row select:focus,.form-row textarea:focus{outline:2px solid var(--brand);outline-offset:-1px;border-color:var(--brand)}
+  .form-row input[disabled]{background:var(--bg);color:var(--text-weak)}
+  .form-row input.field-error{border-color:var(--error)}
+  .form-hint{font-size:.75rem;color:var(--text-weak);margin-top:.25rem}
+  .form-error{font-size:.75rem;color:var(--error);margin-top:.25rem;display:none}
+  .slds-modal__footer{padding:.75rem 1rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:.5rem;position:sticky;bottom:0;background:#fff}
+
+  /* ============ Toasts ============ */
+  .slds-notify_container{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);z-index:70;display:flex;flex-direction:column;gap:.5rem;align-items:center}
+  .slds-notify_toast{border-radius:var(--radius);padding:.75rem 1rem;color:#fff;min-width:20rem;max-width:28rem;box-shadow:0 4px 12px rgba(0,0,0,.3);display:flex;gap:.75rem;align-items:flex-start;animation:toast-in .12s ease-out}
+  @keyframes toast-in{from{opacity:0;transform:translateY(.5rem)}to{opacity:1;transform:none}}
+  .slds-theme_success{background:var(--success)}
+  .slds-theme_error{background:var(--error)}
+  .slds-theme_info{background:var(--brand-active)}
+  .slds-notify_toast svg{width:1.25rem;height:1.25rem;fill:#fff;flex-shrink:0;margin-top:.125rem}
+  .slds-notify__content h2{font-size:.875rem;font-weight:600}
+  .slds-notify__content p{font-size:.8125rem;opacity:.95}
+  .toast-close{margin-left:auto;border:none;background:transparent;color:#fff;font-size:1.1rem;cursor:pointer;opacity:.85;line-height:1;flex-shrink:0;padding:0 .125rem}
+  .toast-close:hover{opacity:1}
+
+  footer.credit{padding:1.5rem;text-align:center;font-size:.75rem;color:var(--text-weak);background:#fff;border-top:1px solid var(--border)}
+
+  @media (max-width:900px){
+    .activity-grid{grid-template-columns:1fr}
+    .object-nav{display:none}
+    .detail-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    .global-search{display:none}
+    .record-hero,.crumb-row{padding-left:1rem;padding-right:1rem}
+    .path-card{margin:1rem 1rem 0}
+    .tab-panels{padding:1rem 1rem 2rem}
+    .form-grid{grid-template-columns:1fr}
+    .slds-path{overflow-x:auto}
+    .path-cell{min-width:9rem}
+    .coaching-actions{align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+<!-- ============ Global header ============ -->
+<header class="global-header">
+  <button class="waffle" aria-label="App launcher" id="waffleBtn">
+    <svg viewBox="0 0 24 24"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/></svg>
+  </button>
+  <div class="app-id">
+    <svg viewBox="0 0 24 24"><path d="M18.4 10.6c.3-.3.4-.7.4-1.1 0-2.4-2.7-4.3-6-4.3-2.3 0-4.3 1-5.4 2.5C5.9 7.9 4.7 9.2 4.7 10.8c0 .4.1.8.2 1.1C3.4 12.4 2.5 13.6 2.5 15c0 2.2 2.5 4 5.5 4h9.6c2.3 0 4.2-1.4 4.2-3.2 0-1.5-1.3-2.8-3.1-3.1.1-.4.2-.8.2-1.2 0-.4-.1-.7-.5-.9z"/></svg>
+    Sales
+  </div>
+  <nav class="object-nav" aria-label="Object navigation">
+    <a href="#">Home</a>
+    <a href="#" class="is-active" aria-current="page">Opportunities</a>
+    <a href="#">Accounts</a>
+    <a href="#">Contacts</a>
+    <a href="#">Leads</a>
+    <a href="#">Reports</a>
+    <a href="#">Dashboards</a>
+  </nav>
+  <div class="global-search">
+    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+    <input type="search" id="globalSearch" placeholder="Search accounts, opportunities, contacts…" aria-label="Global search" autocomplete="off">
+    <div class="search-results" id="searchResults" hidden></div>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" aria-label="Favorites" id="starBtn">
+      <svg viewBox="0 0 24 24"><path d="M12 17.3l6.2 3.7-1.6-7 5.4-4.7-7.2-.6L12 2 9.2 8.7l-7.2.6 5.4 4.7-1.6 7z"/></svg>
+    </button>
+    <button class="icon-btn" aria-label="Notifications, 3 unread" id="bellBtn">
+      <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5a6 6 0 0 0-4.5-5.8V4.5a1.5 1.5 0 0 0-3 0v.7A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+      <span class="notif-badge">3</span>
+    </button>
+    <button class="icon-btn" aria-label="Help" id="helpBtn">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 17h-2v-2h2v2zm1.1-7.3c-.5.5-1.1.8-1.1 1.8h-2c0-1.9 1.3-2.6 2.1-3.2.6-.5 1-1 1-1.8 0-1.1-.9-2-2.1-2-1.2 0-2.1.9-2.1 2H7.7C7.7 5.2 9.6 3.5 12 3.5c2.5 0 4.2 1.6 4.2 3.9 0 1.2-.6 2.2-1.4 2.9z"/></svg>
+    </button>
+    <button class="icon-btn" aria-label="Setup" id="gearBtn">
+      <svg viewBox="0 0 24 24"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-1.7-1L14.9 3h-4l-.4 2.6a7.6 7.6 0 0 0-1.7 1l-2.4-1-2 3.4L6.4 11a7.6 7.6 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.6 7.6 0 0 0 1.7-1l2.4 1 2-3.4zM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5z"/></svg>
+    </button>
+    <span class="avatar" title="Maria Ruiz" id="userAvatar" role="button" tabindex="0" aria-label="User menu">MR</span>
+  </div>
+</header>
+
+<!-- ============ Breadcrumb ============ -->
+<div class="crumb-row"><a href="#" id="backLink">‹ Back to List: Opportunities</a></div>
+
+<!-- ============ Record page header ============ -->
+<section class="record-hero" aria-label="Record header">
+  <div class="record-hero__row">
+    <div class="slds-media">
+      <span class="icon-tile" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="2"/><path d="M12 7v10M14.8 9.2c-.4-.8-1.4-1.2-2.7-1.2-1.7 0-2.9.9-2.9 2.2 0 2.9 5.8 1.5 5.8 4.5 0 1.4-1.3 2.3-3.1 2.3-1.4 0-2.5-.6-2.9-1.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </span>
+      <div>
+        <div class="object-label">Opportunity</div>
+        <h1 class="record-title" id="recordTitle">Acme — Enterprise Renewal</h1>
+        <div class="record-meta"><span class="slds-badge b-negotiation" id="hdrStageBadge">Negotiation</span><span>Owner: <span id="hdrOwner">Maria Ruiz</span></span><span id="hdrFollowed" hidden>· Following</span></div>
+      </div>
+    </div>
+    <div class="record-actions">
+      <button class="slds-button slds-button_neutral" id="btnFollow">Follow</button>
+      <button class="slds-button slds-button_neutral" id="btnEdit">Edit</button>
+      <button class="slds-button slds-button_neutral" id="btnClone">Clone</button>
+      <button class="slds-button slds-button_brand" id="btnNew">New Opportunity</button>
+    </div>
+  </div>
+  <div class="highlights" aria-label="Highlights">
+    <div><div class="hl-label">Amount</div><div class="hl-value" id="hlAmount">$250,000.00</div></div>
+    <div><div class="hl-label">Close Date</div><div class="hl-value" id="hlClose">11/20/2026</div></div>
+    <div><div class="hl-label">Stage</div><div class="hl-value" id="hlStage">Negotiation</div></div>
+    <div><div class="hl-label">Probability (%)</div><div class="hl-value" id="hlProb">80%</div></div>
+    <div><div class="hl-label">Forecast Category</div><div class="hl-value" id="hlForecast">Commit</div></div>
+    <div><div class="hl-label">Opportunity Owner</div><div class="hl-value" id="hlOwner">Maria Ruiz</div></div>
+    <div><div class="hl-label">Type</div><div class="hl-value" id="hlType">Existing Business — Renewal</div></div>
+  </div>
+</section>
+
+<!-- ============ Sales Path ============ -->
+<section class="path-card" aria-label="Sales path">
+  <div class="slds-path" id="stagePath" role="listbox" aria-label="Opportunity stages"></div>
+  <div class="path-coaching">
+    <div>
+      <div class="coaching-title">Guidance for Success — <span id="guidanceStage">Negotiation</span></div>
+      <p class="coaching-text" id="guidanceText"></p>
+      <div class="key-fields">
+        <div><div class="kf-label">Next Step</div><div class="kf-value" id="kfNext"></div></div>
+        <div><div class="kf-label">Amount</div><div class="kf-value" id="kfAmount"></div></div>
+        <div><div class="kf-label">Close Date</div><div class="kf-value" id="kfClose"></div></div>
+        <div><div class="kf-label">Probability</div><div class="kf-value" id="kfProb"></div></div>
+      </div>
+    </div>
+    <div class="coaching-actions">
+      <button class="slds-button slds-button_brand" id="btnComplete">Mark Stage as Complete</button>
+      <button class="link-btn destructive small" id="btnClosedLost">Mark as Closed Lost</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Tabs ============ -->
+<nav class="tabs-bar" aria-label="Record tabs">
+  <ul class="slds-tabs_default__nav">
+    <li class="slds-tabs_default__item slds-is-active"><button class="slds-tabs_default__link" data-tab="activity">Activity</button></li>
+    <li class="slds-tabs_default__item"><button class="slds-tabs_default__link" data-tab="details">Details</button></li>
+    <li class="slds-tabs_default__item"><button class="slds-tabs_default__link" data-tab="related">Related</button></li>
+  </ul>
+</nav>
+
+<div class="tab-panels">
+
+  <!-- ============ ACTIVITY TAB ============ -->
+  <section id="panel-activity" role="tabpanel" aria-label="Activity">
+    <div class="activity-grid">
+      <div>
+        <div class="slds-card">
+          <div class="slds-card__header"><h2 class="slds-card__header-title">Activity</h2></div>
+          <div class="slds-card__body_inner">
+            <div class="composer">
+              <button class="slds-button slds-button_neutral slds-button_small" id="composerCall">Log a Call</button>
+              <button class="slds-button slds-button_neutral slds-button_small" id="composerTask">New Task</button>
+              <button class="slds-button slds-button_neutral slds-button_small" id="composerEmail">Send Email</button>
+            </div>
+            <div class="composer">
+              <textarea id="noteText" placeholder="Share an update…" aria-label="Post a note"></textarea>
+              <button class="slds-button slds-button_neutral slds-button_small" id="noteShare" style="align-self:flex-end">Share</button>
+            </div>
+            <div id="timelineUpcoming"></div>
+            <div id="timelinePast"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="slds-card">
+          <div class="slds-card__header"><h2 class="slds-card__header-title">Contact Roles</h2><span class="record-count" id="railContactsCount"></span></div>
+          <div id="railContacts"></div>
+          <footer class="slds-card__footer"><a href="#" data-toast="Related list">View All</a></footer>
+        </div>
+        <div class="slds-card">
+          <div class="slds-card__header"><h2 class="slds-card__header-title">Products</h2><span class="record-count" id="railProductsCount"></span></div>
+          <div id="railProducts"></div>
+          <footer class="slds-card__footer"><a href="#" data-toast="Related list">View All</a></footer>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DETAILS TAB ============ -->
+  <section id="panel-details" role="tabpanel" aria-label="Details" hidden>
+    <div class="slds-card">
+      <div class="slds-card__header"><h2 class="slds-card__header-title">Opportunity Detail</h2><button class="slds-button slds-button_neutral slds-button_small" id="btnEdit2">Edit</button></div>
+      <div class="slds-card__body_inner">
+        <h3 class="detail-section">Opportunity Information</h3>
+        <dl class="detail-grid" id="detailsInfo"></dl>
+        <h3 class="detail-section" style="margin-top:1.25rem">Additional Information</h3>
+        <dl class="detail-grid" id="detailsExtra"></dl>
+        <h3 class="detail-section" style="margin-top:1.25rem">System Information</h3>
+        <dl class="detail-grid" id="detailsSys"></dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED TAB ============ -->
+  <section id="panel-related" role="tabpanel" aria-label="Related" hidden>
+    <div class="slds-card">
+      <div class="slds-card__header">
+        <h2 class="slds-card__header-title">Opportunities <span class="record-count" id="recordCount"></span></h2>
+        <div class="related-toolbar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+            <input type="search" id="tableSearch" placeholder="Search this list…" aria-label="Search opportunities">
+          </div>
+          <button class="slds-button slds-button_neutral" id="btnNew2">New</button>
+        </div>
+      </div>
+      <div class="pill-row" id="pillRow" aria-label="Stage filters"></div>
+      <div class="sel-strip" id="selStrip">
+        <span id="selCount"></span>
+        <button class="slds-button slds-button_destructive slds-button_small" id="selDelete">Delete</button>
+        <button class="link-btn small" id="selClear">Clear selection</button>
+      </div>
+      <div class="table-scroll">
+        <table class="slds-table" id="oppTable">
+          <thead>
+            <tr>
+              <th scope="col" style="width:2rem"><input type="checkbox" class="row-check" id="selectAll" aria-label="Select all rows"></th>
+              <th scope="col" data-sort="name" aria-sort="none"><button class="th-btn">Opportunity Name <svg class="sort-ic" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button></th>
+              <th scope="col" data-sort="account" aria-sort="none"><button class="th-btn">Account Name <svg class="sort-ic" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button></th>
+              <th scope="col" data-sort="amount" aria-sort="none" style="text-align:right"><button class="th-btn">Amount <svg class="sort-ic" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button></th>
+              <th scope="col" data-sort="stage" aria-sort="none"><button class="th-btn">Stage <svg class="sort-ic" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button></th>
+              <th scope="col" data-sort="close" aria-sort="none"><button class="th-btn">Close Date <svg class="sort-ic" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button></th>
+              <th scope="col" data-sort="prob" aria-sort="none" style="text-align:right"><button class="th-btn">Probability (%) <svg class="sort-ic" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button></th>
+              <th scope="col" data-sort="owner" aria-sort="none"><button class="th-btn">Opportunity Owner <svg class="sort-ic" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button></th>
+              <th scope="col" style="width:2.5rem"><span class="sr-only" style="position:absolute;left:-9999px">Row actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="oppBody"></tbody>
+        </table>
+        <div class="empty" id="emptyState" hidden>No opportunities match these filters. <a href="#" id="clearFilters">Clear filters</a></div>
+      </div>
+      <footer class="slds-card__footer"><a href="#" data-toast="List view">View All</a></footer>
+    </div>
+
+    <div class="slds-card">
+      <div class="slds-card__header"><h2 class="slds-card__header-title">Contact Roles</h2><span class="record-count" id="relContactsCount"></span></div>
+      <div class="table-scroll">
+        <table class="slds-table">
+          <thead><tr><th scope="col">Contact</th><th scope="col">Title</th><th scope="col">Role</th><th scope="col">Primary</th></tr></thead>
+          <tbody id="relContactsBody"></tbody>
+        </table>
+      </div>
+      <footer class="slds-card__footer"><a href="#" data-toast="Related list">View All</a></footer>
+    </div>
+
+    <div class="slds-card">
+      <div class="slds-card__header"><h2 class="slds-card__header-title">Products</h2><span class="record-count" id="relProductsCount"></span></div>
+      <div class="table-scroll">
+        <table class="slds-table">
+          <thead><tr><th scope="col">Product</th><th scope="col" style="text-align:right">Quantity</th><th scope="col" style="text-align:right">Sales Price</th><th scope="col" style="text-align:right">Total Price</th></tr></thead>
+          <tbody id="relProductsBody"></tbody>
+        </table>
+        <div class="prod-total"><span>Total</span><span class="num" id="relProductsTotal"></span></div>
+      </div>
+      <footer class="slds-card__footer"><a href="#" data-toast="Related list">View All</a></footer>
+    </div>
+  </section>
+</div>
+
+<!-- Row actions dropdown -->
+<div class="row-menu" id="rowMenu" hidden></div>
+
+<!-- ============ New / Edit modal ============ -->
+<div class="slds-backdrop" id="backdrop"></div>
+<div class="slds-modal" id="oppModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="slds-modal__container">
+    <header class="slds-modal__header">
+      <h2 class="slds-modal__title" id="modalTitle">New Opportunity</h2>
+      <button class="slds-modal__close" id="modalClose" aria-label="Close">×</button>
+    </header>
+    <div class="slds-modal__content">
+      <div class="form-grid">
+        <div class="form-row"><label for="fName">Opportunity Name <span class="req" aria-hidden="true">*</span></label><input id="fName" autocomplete="off"><div class="form-error" id="eName">Enter a value</div></div>
+        <div class="form-row"><label for="fAccount">Account Name <span class="req" aria-hidden="true">*</span></label><input id="fAccount" autocomplete="off" list="accountList"><datalist id="accountList"></datalist><div class="form-error" id="eAccount">Enter a value</div></div>
+        <div class="form-row"><label for="fAmount">Amount (USD)</label><input id="fAmount" type="number" min="0" step="100"></div>
+        <div class="form-row"><label for="fClose">Close Date</label><input id="fClose" type="date"></div>
+        <div class="form-row"><label for="fStage">Stage</label>
+          <select id="fStage">
+            <option>Prospecting</option><option>Qualification</option><option>Proposal</option>
+            <option>Negotiation</option><option>Closed Won</option><option>Closed Lost</option>
+          </select>
+        </div>
+        <div class="form-row"><label for="fProb">Probability (%)</label><input id="fProb" disabled aria-describedby="probHint"><div class="form-hint" id="probHint">Set automatically from the stage</div></div>
+        <div class="form-row"><label for="fType">Type</label>
+          <select id="fType">
+            <option>New Business</option><option>Existing Business — Renewal</option><option>Existing Business — Upsell</option>
+          </select>
+        </div>
+        <div class="form-row"><label for="fOwner">Opportunity Owner</label><input id="fOwner" autocomplete="off"></div>
+      </div>
+      <div class="form-row" style="margin-top:.75rem"><label for="fNext">Next Step</label><input id="fNext" autocomplete="off"></div>
+    </div>
+    <footer class="slds-modal__footer">
+      <button class="slds-button slds-button_neutral" id="modalCancel">Cancel</button>
+      <button class="slds-button slds-button_brand" id="modalSave">Save</button>
+    </footer>
+  </div>
+</div>
+
+<div class="slds-notify_container" id="toasts" aria-live="polite"></div>
+
+<footer class="credit">Built from the lightning skill · design-skills</footer>
+<script>
+/* ================= Data ================= */
+const STAGE_PROB = {"Prospecting":10,"Qualification":25,"Proposal":50,"Negotiation":80,"Closed Won":100,"Closed Lost":0};
+const STAGE_ORDER = {"Prospecting":0,"Qualification":1,"Proposal":2,"Negotiation":3,"Closed Won":4,"Closed Lost":4};
+const FORECAST = {"Prospecting":"Pipeline","Qualification":"Pipeline","Proposal":"Best Case","Negotiation":"Commit","Closed Won":"Closed","Closed Lost":"Omitted"};
+const PATH_STAGES = ["Prospecting","Qualification","Proposal","Negotiation","Closed"];
+const GUIDANCE = {
+  "Prospecting":"Identify the pain. Confirm budget exists and a decision maker is engaged before advancing.",
+  "Qualification":"Validate budget, authority, need, and timeline. Confirm the economic buyer is on board.",
+  "Proposal":"Deliver pricing and the mutual action plan. Multi-year options must be included in the proposal.",
+  "Negotiation":"Finalize the MSA. Procurement sign-off is the gate — keep discounting inside the approved floor.",
+  "Closed Won":"Hand off to onboarding. Send the close summary to the account team and schedule kickoff.",
+  "Closed Lost":"Log the loss reason. Set a 90-day follow-up — most lost deals reopen within two quarters."
+};
+const STAGE_BADGE = s => "slds-badge b-" + s.toLowerCase().replace(/ /g,"-");
+
+const ACCOUNTS = ["Acme Corporation","Northwind Traders","Meridian Health Group","BluePeak Energy","Summit Financial","Halcyon Logistics"];
+const CONTACTS = [
+  {name:"Dana Cole", title:"VP of Information Technology", account:"Acme Corporation", role:"Decision Maker"},
+  {name:"Ravi Patel", title:"Chief Financial Officer", account:"Acme Corporation", role:"Economic Buyer"},
+  {name:"Elena Torres", title:"IT Director", account:"Acme Corporation", role:"Evaluator"},
+  {name:"James Carter", title:"Chief Operating Officer", account:"Northwind Traders", role:"Decision Maker"},
+  {name:"Lisa Wang", title:"Chief Information Officer", account:"Meridian Health Group", role:"Decision Maker"},
+  {name:"Tom Becker", title:"VP of Operations", account:"BluePeak Energy", role:"Economic Buyer"},
+  {name:"Ana Silva", title:"Chief Technology Officer", account:"Summit Financial", role:"Decision Maker"},
+  {name:"Mark Doyle", title:"Director of Logistics", account:"Halcyon Logistics", role:"Evaluator"}
+];
+
+let nextId = 100;
+const opps = [
+  {id:1, name:"Acme — Enterprise Renewal", account:"Acme Corporation", amount:250000, close:"2026-11-20", stage:"Negotiation", prob:80, owner:"Maria Ruiz", type:"Existing Business — Renewal", leadSource:"Partner Referral", campaign:"Q3 Renewal Push", nextStep:"Executive alignment meeting Oct 14", competitor:"Microsoft Dynamics 365", description:"Renewal of the 120-seat Sales Cloud Enterprise agreement plus Premier Success Plan and MuleSoft integration services."},
+  {id:2, name:"Acme — Service Cloud Add-on", account:"Acme Corporation", amount:96500, close:"2027-01-22", stage:"Qualification", prob:25, owner:"Sam Whitfield", type:"Existing Business — Upsell", leadSource:"Web", campaign:"Service Expansion FY27", nextStep:"Demo for the support leadership team", competitor:"Zendesk", description:"40 Service Cloud licenses for the Acme support organization."},
+  {id:3, name:"Acme — MuleSoft Integration", account:"Acme Corporation", amount:132000, close:"2026-12-05", stage:"Proposal", prob:50, owner:"Maria Ruiz", type:"New Business", leadSource:"Partner Referral", campaign:"Integration Plays", nextStep:"Send proposal v2 with implementation timeline", competitor:"Boomi", description:"MuleSoft Anypoint Platform to connect SAP and the data warehouse."},
+  {id:4, name:"Acme — Slack Expansion", account:"Acme Corporation", amount:64800, close:"2027-02-14", stage:"Prospecting", prob:10, owner:"Priya Nair", type:"Existing Business — Upsell", leadSource:"Web", campaign:"Slack Land and Expand", nextStep:"Identify the executive sponsor", competitor:"Microsoft Teams", description:"Expand Slack from engineering to the whole company."},
+  {id:5, name:"Acme — Data Cloud Pilot", account:"Acme Corporation", amount:87200, close:"2026-11-30", stage:"Negotiation", prob:80, owner:"Sam Whitfield", type:"New Business", leadSource:"Phone Inquiry", campaign:"Data Cloud Pilots", nextStep:"Finalize the data residency addendum", competitor:"Snowflake", description:"90-day Data Cloud pilot across marketing and service data."},
+  {id:6, name:"Acme — Marketing Cloud Deal", account:"Acme Corporation", amount:154000, close:"2026-09-18", stage:"Closed Lost", prob:0, owner:"Maria Ruiz", type:"New Business", leadSource:"Web", campaign:"Marketing Cloud Push", nextStep:"90-day follow-up task", competitor:"Adobe", description:"Marketing Cloud Engagement for the Acme demand-gen team. Lost on price."},
+  {id:7, name:"Acme — Tableau Rollout", account:"Acme Corporation", amount:73600, close:"2027-01-09", stage:"Qualification", prob:25, owner:"Priya Nair", type:"New Business", leadSource:"Partner Referral", campaign:"Analytics Q4", nextStep:"Validate the data source inventory", competitor:"Power BI", description:"Tableau Creator and Explorer licenses for finance and operations."},
+  {id:8, name:"Northwind — Commerce Cloud Build", account:"Northwind Traders", amount:210000, close:"2027-01-15", stage:"Proposal", prob:50, owner:"Sam Whitfield", type:"New Business", leadSource:"Web", campaign:"Commerce Replatform", nextStep:"Architecture review with the SI partner", competitor:"Adobe Commerce", description:"B2C Commerce Cloud replatform for the Northwind storefront."},
+  {id:9, name:"Meridian — Patient 360 Program", account:"Meridian Health Group", amount:320000, close:"2027-02-28", stage:"Negotiation", prob:80, owner:"Maria Ruiz", type:"New Business", leadSource:"Partner Referral", campaign:"Health Cloud FY27", nextStep:"Security review sign-off", competitor:"Epic", description:"Health Cloud plus Data Cloud for a unified patient record."},
+  {id:10, name:"BluePeak — Field Service Rollout", account:"BluePeak Energy", amount:118000, close:"2026-12-18", stage:"Qualification", prob:25, owner:"Priya Nair", type:"New Business", leadSource:"Phone Inquiry", campaign:"Field Service Plays", nextStep:"On-site discovery at the Denver depot", competitor:"ServiceMax", description:"Field Service for 85 mobile technicians across three states."},
+  {id:11, name:"Summit — Wealth Platform Upgrade", account:"Summit Financial", amount:275000, close:"2027-03-10", stage:"Prospecting", prob:10, owner:"Sam Whitfield", type:"New Business", leadSource:"Web", campaign:"Financial Services FY27", nextStep:"Intro call with the digital banking team", competitor:"nCino", description:"Financial Services Cloud for the Summit wealth division."},
+  {id:12, name:"Halcyon — Logistics Cloud Pilot", account:"Halcyon Logistics", amount:89000, close:"2026-11-25", stage:"Closed Won", prob:100, owner:"Maria Ruiz", type:"New Business", leadSource:"Partner Referral", campaign:"Logistics Pilots", nextStep:"Kickoff with onboarding", competitor:"Oracle", description:"Pilot for shipment tracking and partner collaboration."}
+];
+
+let record = opps[0];
+const followed = new Set();
+let extraUpcoming = [], extraPast = [];
+
+/* ================= Helpers ================= */
+const $ = id => document.getElementById(id);
+const fmtMoney = n => "$" + Number(n).toLocaleString("en-US");
+const fmtMoney2 = n => "$" + Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtDate = s => { const p = String(s).split("-"); return p.length===3 ? p[1]+"/"+p[2]+"/"+p[0] : s; };
+const esc = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+const ICONS = {
+  check:'<svg viewBox="0 0 24 24"><path d="M9 16.2l-3.5-3.5L4 14.2 9 19.2 20 8.2l-1.4-1.4z"/></svg>',
+  info:'<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>',
+  phone:'<svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.6 1 1 0 0 1-.25 1z"/></svg>',
+  mail:'<svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5z"/></svg>',
+  task:'<svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-9 14l-5-5 1.4-1.4L10 14.2l7.6-7.6L19 8z"/></svg>',
+  note:'<svg viewBox="0 0 24 24"><path d="M3 17.2V21h3.8L17.9 9.9l-3.8-3.8zM20.7 7a1 1 0 0 0 0-1.4l-2.3-2.3a1 1 0 0 0-1.4 0l-1.8 1.8 3.8 3.8z"/></svg>',
+  cal:'<svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V8h14z"/></svg>'
+};
+
+function toast(theme, title, msg, icon){
+  const el = document.createElement("div");
+  el.className = "slds-notify slds-notify_toast slds-theme_" + theme;
+  el.setAttribute("role","status");
+  el.innerHTML = (ICONS[icon] || ICONS.check) +
+    '<span class="slds-notify__content"><h2>' + esc(title) + "</h2>" +
+    (msg ? "<p>" + esc(msg) + "</p>" : "") + "</span>" +
+    '<button class="toast-close" aria-label="Dismiss">×</button>';
+  el.querySelector(".toast-close").onclick = () => el.remove();
+  $("toasts").appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 5000);
+}
+
+/* ================= Tabs ================= */
+function switchTab(name){
+  document.querySelectorAll(".slds-tabs_default__item").forEach(li => {
+    li.classList.toggle("slds-is-active", li.querySelector("[data-tab]").dataset.tab === name);
+  });
+  ["activity","details","related"].forEach(t => { $("panel-"+t).hidden = t !== name; });
+}
+document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+/* ================= Record ================= */
+function loadRecord(id){
+  const o = opps.find(x => x.id === id);
+  if (!o) return;
+  record = o;
+  extraUpcoming = []; extraPast = [];
+  renderRecord();
+  switchTab("activity");
+  window.scrollTo(0,0);
+}
+function renderRecord(){
+  renderHeader(); renderPath(); renderDetails(); renderTimeline(); renderRail(); renderRelatedCards();
+}
+function renderHeader(){
+  $("recordTitle").textContent = record.name;
+  $("hlAmount").textContent = fmtMoney2(record.amount);
+  $("hlClose").textContent = fmtDate(record.close);
+  $("hlStage").textContent = record.stage;
+  $("hlProb").textContent = record.prob + "%";
+  $("hlForecast").textContent = FORECAST[record.stage];
+  $("hlOwner").textContent = record.owner;
+  $("hdrOwner").textContent = record.owner;
+  $("hlType").textContent = record.type;
+  const badge = $("hdrStageBadge");
+  badge.className = STAGE_BADGE(record.stage);
+  badge.textContent = record.stage;
+  const isF = followed.has(record.id);
+  $("btnFollow").textContent = isF ? "Following" : "Follow";
+  $("btnFollow").classList.toggle("is-following", isF);
+  $("hdrFollowed").hidden = !isF;
+}
+
+/* ================= Sales path ================= */
+function pathState(){
+  const closed = record.stage === "Closed Won" || record.stage === "Closed Lost";
+  return { closed, idx: closed ? 4 : PATH_STAGES.indexOf(record.stage) };
+}
+function renderPath(){
+  const box = $("stagePath");
+  box.innerHTML = "";
+  const { closed, idx } = pathState();
+  PATH_STAGES.forEach((s, i) => {
+    const cell = document.createElement("div");
+    cell.className = "path-cell " + (i===0 ? "pos-first" : i===PATH_STAGES.length-1 ? "pos-last" : "pos-mid");
+    const btn = document.createElement("button");
+    btn.className = "path-item";
+    btn.setAttribute("role","option");
+    let cls = "", label = s, selected = false;
+    if (closed && i < 4){ cls = "is-complete"; }
+    else if (closed && i === 4){ cls = record.stage === "Closed Won" ? "is-won" : "is-lost"; label = record.stage; selected = true; }
+    else if (i < idx){ cls = "is-complete"; }
+    else if (i === idx){ cls = "is-current"; selected = true; }
+    if (cls) cell.classList.add(cls);
+    btn.setAttribute("aria-selected", selected ? "true" : "false");
+    btn.innerHTML = (cls === "is-complete" ? '<svg class="tick" viewBox="0 0 24 24"><path d="M9 16.2l-3.5-3.5L4 14.2 9 19.2 20 8.2l-1.4-1.4z"/></svg>' : "") + esc(label);
+    btn.addEventListener("click", () => {
+      if (closed && i === 4){ toast("info","Opportunity is closed","Reopen it by choosing an earlier stage."); return; }
+      setStage(i === 4 ? "Closed Won" : PATH_STAGES[i]);
+    });
+    cell.appendChild(btn);
+    box.appendChild(cell);
+  });
+  $("guidanceStage").textContent = record.stage;
+  $("guidanceText").textContent = GUIDANCE[record.stage];
+  $("kfNext").textContent = record.nextStep;
+  $("kfAmount").textContent = fmtMoney2(record.amount);
+  $("kfClose").textContent = fmtDate(record.close);
+  $("kfProb").textContent = record.prob + "%";
+  $("btnComplete").style.display = closed ? "none" : "";
+  $("btnClosedLost").style.display = closed ? "none" : "";
+}
+function setStage(stage){
+  if (record.stage === stage) return;
+  record.stage = stage;
+  record.prob = STAGE_PROB[stage];
+  renderRecord(); renderTable();
+  if (stage === "Closed Won") toast("success","Opportunity closed as won", record.name + " is now Closed Won.");
+  else if (stage === "Closed Lost") toast("error","Opportunity closed as lost", record.name + " is now Closed Lost.");
+  else toast("success","Stage updated", record.name + " moved to " + stage + ".");
+}
+function advanceStage(){
+  const { closed, idx } = pathState();
+  if (closed){ toast("info","Opportunity is closed","There is no next stage."); return; }
+  setStage(idx >= 3 ? "Closed Won" : PATH_STAGES[idx+1]);
+}
+$("btnComplete").addEventListener("click", advanceStage);
+$("btnClosedLost").addEventListener("click", () => setStage("Closed Lost"));
+
+/* ================= Details ================= */
+function detailRows(pairs){
+  return pairs.map(([k,v]) => '<div class="detail-field"><dt>'+esc(k)+'</dt><dd>'+esc(v)+'</dd></div>').join("");
+}
+function renderDetails(){
+  $("detailsInfo").innerHTML = detailRows([
+    ["Opportunity Name", record.name], ["Account Name", record.account],
+    ["Amount", fmtMoney2(record.amount)], ["Close Date", fmtDate(record.close)],
+    ["Stage", record.stage], ["Probability (%)", record.prob + "%"],
+    ["Forecast Category", FORECAST[record.stage]], ["Type", record.type],
+    ["Description", record.description]
+  ]);
+  $("detailsExtra").innerHTML = detailRows([
+    ["Next Step", record.nextStep], ["Main Competitor", record.competitor],
+    ["Lead Source", record.leadSource], ["Primary Campaign Source", record.campaign]
+  ]);
+  $("detailsSys").innerHTML = detailRows([
+    ["Created By", record.owner + ", 9/12/2026, 10:04 AM"],
+    ["Last Modified By", record.owner + ", Just now"]
+  ]);
+}
+
+/* ================= Activity timeline ================= */
+function primaryContact(o){
+  return CONTACTS.find(c => c.account === o.account) || CONTACTS[0];
+}
+function timelineFor(o){
+  const c = primaryContact(o);
+  const upcoming = extraUpcoming.concat([{
+    icon:"tl-task", key:"task",
+    title:"Task: " + o.nextStep,
+    detail:"Assigned to " + o.owner + " · Status: Not Started",
+    meta:"Due " + fmtDate(o.close)
+  }]);
+  if (STAGE_ORDER[o.stage] >= 3 && o.stage !== "Closed Lost"){
+    upcoming.push({icon:"tl-meeting", key:"cal",
+      title:"Meeting: Executive alignment with " + c.name,
+      detail:"Conference room 4B · 45 min", meta:"Next week"});
+  }
+  const past = extraPast.concat([
+    {icon:"tl-call", key:"phone",
+     title:"Call with " + c.name + " (" + c.title + ")",
+     detail:"Discussed timeline and budget for " + o.name + ". " + c.name + " confirmed the close date of " + fmtDate(o.close) + ".",
+     meta:"Today, 9:42 AM · Logged by " + o.owner},
+    {icon:"tl-email", key:"mail",
+     title:"Email: Proposal sent to " + o.account,
+     detail:"To " + c.name + ". Includes pricing and the mutual action plan.",
+     meta:"Yesterday, 4:15 PM"},
+    {icon:"tl-note", key:"note",
+     title:"Note",
+     detail:"Competitive: " + o.competitor + " is also bidding. Our edge is the existing footprint; the risk is price.",
+     meta:"Oct 1 · " + o.owner}
+  ]);
+  return {upcoming, past};
+}
+function tlItem(a){
+  return '<div class="tl-item"><span class="tl-icon ' + a.icon + '">' + ICONS[a.key] + '</span>' +
+    '<div class="tl-body"><div class="tl-title">' + esc(a.title) + '</div>' +
+    '<div class="tl-detail">' + esc(a.detail) + '</div>' +
+    '<div class="tl-meta">' + esc(a.meta) + '</div></div></div>';
+}
+function renderTimeline(){
+  const t = timelineFor(record);
+  $("timelineUpcoming").innerHTML = t.upcoming.length
+    ? '<div class="tl-group">Upcoming &amp; Next Steps</div>' + t.upcoming.map(tlItem).join("") : "";
+  $("timelinePast").innerHTML = '<div class="tl-group">Past</div>' + t.past.map(tlItem).join("");
+}
+function logCall(){
+  const c = primaryContact(record);
+  extraPast.unshift({icon:"tl-call", key:"phone",
+    title:"Call with " + c.name + " (" + c.title + ")",
+    detail:"Logged from the record page. Follow-up on " + record.nextStep.toLowerCase() + ".",
+    meta:"Just now · Logged by " + record.owner});
+  renderTimeline();
+  toast("success","Call logged","Your call was added to the activity timeline.","phone");
+}
+$("composerCall").addEventListener("click", logCall);
+$("composerTask").addEventListener("click", () => {
+  extraUpcoming.unshift({icon:"tl-task", key:"task",
+    title:"Task: Follow up with " + record.account,
+    detail:"Assigned to " + record.owner + " · Status: Not Started", meta:"Due Tomorrow"});
+  renderTimeline();
+  toast("success","Task created","Follow-up task added to Upcoming.","task");
+});
+$("composerEmail").addEventListener("click", () => {
+  const c = primaryContact(record);
+  toast("info","Email composer opened","Drafting to " + c.name + ".","mail");
+});
+$("noteShare").addEventListener("click", () => {
+  const v = $("noteText").value.trim();
+  if (!v){ toast("error","Note is empty","Write an update before sharing."); return; }
+  extraPast.unshift({icon:"tl-note", key:"note", title:"Note", detail:v, meta:"Just now · " + record.owner});
+  $("noteText").value = "";
+  renderTimeline();
+  toast("success","Note shared","Your update was posted to the timeline.","note");
+});
+
+/* ================= Rail + related cards ================= */
+function contactRolesFor(o){
+  const list = CONTACTS.filter(c => c.account === o.account);
+  return (list.length ? list : CONTACTS.slice(0,3)).slice(0,3);
+}
+function productsFor(o){
+  if (o.id === 1) return [
+    {name:"Sales Cloud Enterprise · 120 users", qty:120, price:1500},
+    {name:"Premier Success Plan", qty:1, price:40000},
+    {name:"MuleSoft Integration Services", qty:1, price:30000}
+  ];
+  return [
+    {name:"Sales Cloud — Enterprise Edition", qty:Math.max(10, Math.round(o.amount/2000)), price:Math.round(o.amount*0.8/Math.max(10, Math.round(o.amount/2000)))},
+    {name:"Premier Success Plan", qty:1, price:Math.round(o.amount*0.2)}
+  ];
+}
+function renderRail(){
+  const roles = contactRolesFor(record);
+  $("railContactsCount").textContent = roles.length;
+  $("railContacts").innerHTML = roles.map((c,i) =>
+    '<div class="rail-card__row"><div class="rail-name"><a href="#">' + esc(c.name) + '</a></div>' +
+    '<div class="rail-sub">' + esc(c.title) + ' · ' + esc(c.role || "Influencer") + (i===0 ? ' · Primary' : '') + '</div></div>').join("");
+  const prods = productsFor(record);
+  $("railProductsCount").textContent = prods.length;
+  $("railProducts").innerHTML = prods.map(p =>
+    '<div class="prod-row"><span>' + esc(p.name) + '</span><span class="num">' + fmtMoney(p.qty*p.price) + '</span></div>').join("") +
+    '<div class="prod-total"><span>Total</span><span class="num">' + fmtMoney(prods.reduce((s,p)=>s+p.qty*p.price,0)) + '</span></div>';
+}
+function renderRelatedCards(){
+  const roles = contactRolesFor(record);
+  $("relContactsCount").textContent = roles.length;
+  $("relContactsBody").innerHTML = roles.map((c,i) =>
+    '<tr><th scope="row"><a href="#">' + esc(c.name) + '</a></th><td>' + esc(c.title) + '</td><td>' + esc(c.role || "Influencer") + '</td>' +
+    '<td><input type="checkbox" class="row-check" disabled' + (i===0 ? " checked" : "") + ' aria-label="Primary contact"></td></tr>').join("");
+  const prods = productsFor(record);
+  $("relProductsCount").textContent = prods.length;
+  $("relProductsBody").innerHTML = prods.map(p =>
+    '<tr><th scope="row">' + esc(p.name) + '</th><td class="num">' + p.qty + '</td><td class="num">' + fmtMoney(p.price) + '</td><td class="num">' + fmtMoney(p.qty*p.price) + '</td></tr>').join("");
+  $("relProductsTotal").textContent = fmtMoney(prods.reduce((s,p)=>s+p.qty*p.price,0));
+}
+
+/* ================= Related: sortable, filterable table ================= */
+let stageFilter = "All", query = "", sortKey = null, sortDir = 1;
+const selected = new Set();
+
+function filteredRows(){
+  return opps.filter(o =>
+    (stageFilter === "All" || o.stage === stageFilter) &&
+    (o.name + " " + o.account + " " + o.stage + " " + o.owner).toLowerCase().includes(query.toLowerCase()));
+}
+function sortRows(rows){
+  if (!sortKey) return rows;
+  const val = o => sortKey === "amount" || sortKey === "prob" ? o[sortKey]
+    : sortKey === "stage" ? STAGE_ORDER[o.stage]
+    : sortKey === "close" ? o.close
+    : String(o[sortKey]).toLowerCase();
+  return rows.slice().sort((a,b) => {
+    const va = val(a), vb = val(b);
+    return (va < vb ? -1 : va > vb ? 1 : 0) * sortDir;
+  });
+}
+function renderTable(){
+  const body = $("oppBody");
+  body.innerHTML = "";
+  const rows = sortRows(filteredRows());
+  rows.forEach(o => {
+    const tr = document.createElement("tr");
+    if (selected.has(o.id)) tr.classList.add("is-selected");
+    tr.innerHTML =
+      '<td><input type="checkbox" class="row-check" data-id="' + o.id + '" aria-label="Select ' + esc(o.name) + '"' + (selected.has(o.id) ? " checked" : "") + '></td>' +
+      '<th scope="row"><a href="#" data-view="' + o.id + '">' + esc(o.name) + "</a></th>" +
+      "<td>" + esc(o.account) + "</td>" +
+      '<td class="num">' + fmtMoney(o.amount) + "</td>" +
+      '<td><span class="' + STAGE_BADGE(o.stage) + '">' + esc(o.stage) + "</span></td>" +
+      "<td>" + fmtDate(o.close) + "</td>" +
+      '<td class="num">' + o.prob + "%</td>" +
+      "<td>" + esc(o.owner) + "</td>" +
+      '<td><button class="row-menu-btn" data-menu="' + o.id + '" aria-label="Row actions for ' + esc(o.name) + '" aria-haspopup="menu"><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button></td>';
+    body.appendChild(tr);
+  });
+  body.querySelectorAll("[data-id]").forEach(cb => cb.addEventListener("change", e => {
+    const id = +e.target.dataset.id;
+    e.target.checked ? selected.add(id) : selected.delete(id);
+    e.target.closest("tr").classList.toggle("is-selected", e.target.checked);
+    syncSelectAll(); renderSelStrip();
+  }));
+  body.querySelectorAll("[data-view]").forEach(a => a.addEventListener("click", e => {
+    e.preventDefault(); closeRowMenu(); loadRecord(+a.dataset.view);
+  }));
+  body.querySelectorAll("[data-menu]").forEach(b => b.addEventListener("click", e => {
+    e.stopPropagation(); openRowMenu(b, +b.dataset.menu);
+  }));
+  $("emptyState").hidden = rows.length > 0;
+  $("recordCount").textContent = rows.length + " records • Updated 2 minutes ago";
+  syncSelectAll(); renderSelStrip();
+}
+function syncSelectAll(){
+  const boxes = [...document.querySelectorAll("#oppBody [data-id]")];
+  $("selectAll").checked = boxes.length > 0 && boxes.every(b => b.checked);
+}
+$("selectAll").addEventListener("change", e => {
+  document.querySelectorAll("#oppBody [data-id]").forEach(cb => {
+    const id = +cb.dataset.id;
+    cb.checked = e.target.checked;
+    e.target.checked ? selected.add(id) : selected.delete(id);
+    cb.closest("tr").classList.toggle("is-selected", e.target.checked);
+  });
+  renderSelStrip();
+  if (e.target.checked && selected.size) toast("info", selected.size + " selected", "Use Delete to remove the selected records.");
+});
+function renderSelStrip(){
+  $("selStrip").classList.toggle("show", selected.size > 0);
+  $("selCount").textContent = selected.size + (selected.size === 1 ? " record selected" : " records selected");
+}
+$("selClear").addEventListener("click", () => { selected.clear(); renderTable(); });
+$("selDelete").addEventListener("click", () => {
+  const n = selected.size;
+  deleteOpps([...selected]);
+  toast("success", n + (n === 1 ? " opportunity deleted" : " opportunities deleted"), "The selected records were removed.");
+});
+function deleteOpps(ids){
+  if (opps.length - ids.length < 1){ toast("error","Cannot delete","The last opportunity cannot be deleted in this demo."); return; }
+  ids.forEach(id => { const i = opps.findIndex(o => o.id === id); if (i > -1) opps.splice(i,1); selected.delete(id); });
+  if (!opps.find(o => o.id === record.id)){ record = opps[0]; extraUpcoming = []; extraPast = []; renderRecord(); }
+  renderTable();
+}
+
+/* Sorting */
+document.querySelectorAll("#oppTable th[data-sort]").forEach(th => {
+  th.querySelector(".th-btn").addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (sortKey === key){ sortDir *= -1; }
+    else { sortKey = key; sortDir = 1; }
+    document.querySelectorAll("#oppTable th[data-sort]").forEach(h => {
+      const active = h === th;
+      h.setAttribute("aria-sort", active ? (sortDir === 1 ? "ascending" : "descending") : "none");
+      h.querySelector(".sort-ic").innerHTML = active
+        ? (sortDir === 1 ? '<path d="M7 14l5-5 5 5z"/>' : '<path d="M7 10l5 5 5-5z"/>')
+        : '<path d="M7 10l5 5 5-5z"/>';
+    });
+    renderTable();
+  });
+});
+
+/* Stage pills */
+function renderPills(){
+  const stages = ["All","Prospecting","Qualification","Proposal","Negotiation","Closed Won","Closed Lost"];
+  const row = $("pillRow");
+  row.innerHTML = "";
+  stages.forEach(s => {
+    const b = document.createElement("button");
+    b.className = "slds-pill" + (stageFilter === s ? " is-active" : "");
+    b.innerHTML = esc(s) + '<span class="slds-pill__remove" aria-hidden="true">×</span>';
+    b.setAttribute("aria-pressed", stageFilter === s ? "true" : "false");
+    b.addEventListener("click", e => {
+      if (e.target.classList.contains("slds-pill__remove")){ stageFilter = "All"; }
+      else { stageFilter = s; }
+      selected.clear(); renderPills(); renderTable();
+    });
+    row.appendChild(b);
+  });
+}
+$("tableSearch").addEventListener("input", e => { query = e.target.value; selected.clear(); renderTable(); });
+$("clearFilters").addEventListener("click", e => {
+  e.preventDefault();
+  query = ""; stageFilter = "All"; sortKey = null; sortDir = 1; selected.clear();
+  $("tableSearch").value = "";
+  document.querySelectorAll("#oppTable th[data-sort]").forEach(h => h.setAttribute("aria-sort","none"));
+  renderPills(); renderTable();
+});
+
+/* Row actions menu */
+function openRowMenu(btn, id){
+  const menu = $("rowMenu");
+  const o = opps.find(x => x.id === id);
+  if (!o) return;
+  menu.innerHTML =
+    '<button data-act="view">View</button>' +
+    '<button data-act="edit">Edit</button>' +
+    '<button data-act="clone">Clone</button>' +
+    '<button data-act="delete" class="danger">Delete</button>';
+  menu.hidden = false;
+  const r = btn.getBoundingClientRect();
+  menu.style.top = Math.min(r.bottom + 4, window.innerHeight - 170) + "px";
+  menu.style.left = Math.max(8, Math.min(r.left - 120, window.innerWidth - 180)) + "px";
+  menu.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    const act = b.dataset.act;
+    closeRowMenu();
+    if (act === "view") loadRecord(id);
+    else if (act === "edit") openModal("edit", o);
+    else if (act === "clone") openModal("new", o);
+    else if (act === "delete"){ deleteOpps([id]); toast("success","Opportunity deleted", o.name + " was removed."); }
+  }));
+  setTimeout(() => document.addEventListener("click", closeRowMenu, {once:true}), 0);
+}
+function closeRowMenu(){ $("rowMenu").hidden = true; }
+
+/* ================= Global search ================= */
+function searchItems(){
+  const items = [];
+  opps.forEach(o => items.push({type:"Opportunity", name:o.name, sub:o.account + " · " + fmtMoney(o.amount), id:o.id}));
+  ACCOUNTS.forEach(a => {
+    const n = opps.filter(o => o.account === a && o.stage !== "Closed Won" && o.stage !== "Closed Lost").length;
+    items.push({type:"Account", name:a, sub:n + " open " + (n === 1 ? "opportunity" : "opportunities"), account:a});
+  });
+  CONTACTS.forEach(c => items.push({type:"Contact", name:c.name, sub:c.title + " · " + c.account, contact:c}));
+  return items;
+}
+function closeSearch(){ $("searchResults").hidden = true; }
+$("globalSearch").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase();
+  const box = $("searchResults");
+  if (q.length < 2){ closeSearch(); return; }
+  const hits = searchItems().filter(i => (i.name + " " + i.sub).toLowerCase().includes(q)).slice(0,9);
+  if (!hits.length){ box.innerHTML = '<button disabled><span class="sr-sub">No results for "' + esc(e.target.value.trim()) + '"</span></button>'; box.hidden = false; return; }
+  box.innerHTML = "";
+  hits.forEach(h => {
+    const b = document.createElement("button");
+    b.innerHTML = '<span class="sr-type">' + h.type + '</span><span><span class="sr-name">' + esc(h.name) + '</span><br><span class="sr-sub">' + esc(h.sub) + '</span></span>';
+    b.addEventListener("click", () => {
+      closeSearch(); $("globalSearch").value = "";
+      if (h.type === "Opportunity") loadRecord(h.id);
+      else if (h.type === "Account"){
+        query = h.account; stageFilter = "All"; selected.clear();
+        $("tableSearch").value = h.account;
+        renderPills(); renderTable(); switchTab("related");
+        toast("info","Filtered to account","Showing opportunities for " + h.account + ".");
+      } else {
+        toast("info", h.contact.name, h.contact.title + " · " + h.contact.account + ".");
+      }
+    });
+    box.appendChild(b);
+  });
+  box.hidden = false;
+});
+$("globalSearch").addEventListener("keydown", e => { if (e.key === "Escape"){ closeSearch(); e.target.blur(); } });
+document.addEventListener("click", e => {
+  if (!e.target.closest(".global-search")) closeSearch();
+});
+
+/* ================= Modal ================= */
+let modalMode = "new", modalOpp = null;
+function openModal(mode, opp){
+  modalMode = mode; modalOpp = opp || null;
+  $("modalTitle").textContent = mode === "edit" ? "Edit Opportunity" : "New Opportunity";
+  const src = opp || {};
+  $("fName").value = mode === "edit" ? src.name : (opp ? src.name + " — Copy" : "");
+  $("fAccount").value = src.account || "";
+  $("fAmount").value = src.amount != null ? src.amount : "";
+  $("fClose").value = src.close || "2027-03-31";
+  $("fStage").value = src.stage || "Prospecting";
+  $("fProb").value = STAGE_PROB[$("fStage").value];
+  $("fType").value = src.type || "New Business";
+  $("fOwner").value = src.owner || "Maria Ruiz";
+  $("fNext").value = src.nextStep || "";
+  ["fName","fAccount"].forEach(id => { $(id).classList.remove("field-error"); });
+  $("eName").style.display = "none"; $("eAccount").style.display = "none";
+  $("backdrop").classList.add("open");
+  $("oppModal").classList.add("open");
+  setTimeout(() => $("fName").focus(), 50);
+}
+function closeModal(){
+  $("backdrop").classList.remove("open");
+  $("oppModal").classList.remove("open");
+}
+$("fStage").addEventListener("change", () => { $("fProb").value = STAGE_PROB[$("fStage").value]; });
+$("modalClose").addEventListener("click", closeModal);
+$("modalCancel").addEventListener("click", closeModal);
+$("backdrop").addEventListener("click", closeModal);
+$("modalSave").addEventListener("click", () => {
+  const name = $("fName").value.trim(), account = $("fAccount").value.trim();
+  let ok = true;
+  [["fName","eName",name],["fAccount","eAccount",account]].forEach(([f,e,v]) => {
+    const bad = !v;
+    $(f).classList.toggle("field-error", bad);
+    $(e).style.display = bad ? "block" : "none";
+    if (bad) ok = false;
+  });
+  if (!ok){ toast("error","Review the errors","Opportunity Name and Account Name are required."); return; }
+  const stage = $("fStage").value;
+  const data = {
+    name, account,
+    amount: Math.max(0, +$("fAmount").value || 0),
+    close: $("fClose").value || "2027-03-31",
+    stage, prob: STAGE_PROB[stage],
+    owner: $("fOwner").value.trim() || "Maria Ruiz",
+    type: $("fType").value,
+    nextStep: $("fNext").value.trim() || "Qualify the opportunity",
+    leadSource: modalMode === "edit" && modalOpp ? modalOpp.leadSource : "Web",
+    campaign: modalMode === "edit" && modalOpp ? modalOpp.campaign : "",
+    competitor: modalMode === "edit" && modalOpp ? modalOpp.competitor : "TBD",
+    description: modalMode === "edit" && modalOpp ? modalOpp.description : ""
+  };
+  if (modalMode === "edit" && modalOpp){
+    Object.assign(modalOpp, data);
+    if (modalOpp === record) renderRecord();
+    renderTable();
+    toast("success","Changes saved", name + " was updated.","check");
+  } else {
+    opps.unshift(Object.assign({id: nextId++}, data));
+    selected.clear();
+    query = ""; stageFilter = "All"; sortKey = null; sortDir = 1;
+    $("tableSearch").value = "";
+    document.querySelectorAll("#oppTable th[data-sort]").forEach(h => h.setAttribute("aria-sort","none"));
+    renderPills(); renderTable(); switchTab("related");
+    toast("success","Opportunity saved", name + " was added to the pipeline.","check");
+  }
+  closeModal();
+});
+
+/* ================= Header / record actions ================= */
+$("btnFollow").addEventListener("click", () => {
+  if (followed.has(record.id)){ followed.delete(record.id); toast("info","Unfollowed","You will no longer get updates for " + record.name + "."); }
+  else { followed.add(record.id); toast("success","Following","You will get updates for " + record.name + "."); }
+  renderHeader();
+});
+$("btnEdit").addEventListener("click", () => openModal("edit", record));
+$("btnEdit2").addEventListener("click", () => openModal("edit", record));
+$("btnClone").addEventListener("click", () => openModal("new", record));
+$("btnNew").addEventListener("click", () => openModal("new"));
+$("btnNew2").addEventListener("click", () => openModal("new"));
+
+/* ================= Misc chrome ================= */
+$("bellBtn").addEventListener("click", () =>
+  toast("info","3 new notifications","Proposal v3 was viewed by Ravi Patel · MSA redlines are ready · Q4 forecast is due Friday.","info"));
+$("starBtn").addEventListener("click", () =>
+  toast("info","Added to favorites","Opportunities was added to your favorites."));
+$("helpBtn").addEventListener("click", () => toast("info","Help","Search help articles and Trailhead from here."));
+$("gearBtn").addEventListener("click", () => toast("info","Setup","Object Manager, users, and company settings live here."));
+$("userAvatar").addEventListener("click", () => toast("info","Signed in as Maria Ruiz","Sales Executive · Sales org."));
+$("waffleBtn").addEventListener("click", () =>
+  toast("info","App launcher","Sales, Service, Marketing, and Experience apps are available here."));
+$("backLink").addEventListener("click", e => {
+  e.preventDefault();
+  toast("info","Back to list","Returning to the Opportunities list view.");
+});
+document.querySelectorAll("[data-toast]").forEach(a => a.addEventListener("click", e => {
+  e.preventDefault();
+  toast("info", a.dataset.toast, "This view is not part of the demo.");
+}));
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape"){ closeModal(); closeRowMenu(); closeSearch(); }
+});
+
+/* ================= Init ================= */
+$("accountList").innerHTML = ACCOUNTS.map(a => "<option>" + esc(a)).join("");
+renderRecord();
+renderPills();
+renderTable();
+</script>
+</body>
+</html>
