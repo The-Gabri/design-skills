@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>teenage-engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F4F0; --ink:#0F0E12; --line:#E4E2DA;
+    --orange:#FF4D00; --red:#E1251B; --alu:#C8C8C6; --oled:#A6E22E;
+    --grotesk:'Space Grotesk','Helvetica Neue',Helvetica,Arial,sans-serif;
+    --mono:'Space Mono','SFMono-Regular',Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--grotesk);
+    font-weight:300;-webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:var(--ink);text-decoration:none}
+  a:hover{opacity:.6;transition:opacity 200ms ease}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;
+    padding:20px 32px;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:12px;max-width:1184px;margin:0 auto}
+  .nav .links{display:flex;gap:28px}
+  .wordmark{font-weight:700;letter-spacing:-.02em}
+  .wordmark sup{font-size:9px;font-weight:400}
+
+  /* hero */
+  .hero{padding:72px 0 40px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;display:flex;align-items:center;gap:12px}
+  .kicker .dot{width:8px;height:8px;background:var(--orange);border-radius:50%;display:inline-block}
+  h1{font-weight:300;font-size:clamp(64px,10vw,132px);letter-spacing:-.035em;
+    line-height:1;margin:16px 0 8px}
+  .dek{font-size:19px;max-width:38ch;color:var(--ink)}
+  .price{font-family:var(--mono);font-size:13px;margin-top:24px}
+  .price a{color:var(--orange)}
+  .price .note{opacity:.55;margin-left:16px}
+
+  /* variant selector */
+  .variants{margin:32px 0 8px;display:flex;gap:12px;align-items:center;
+    font-family:var(--mono);font-size:11px}
+  .variants button{font-family:var(--mono);font-size:11px;background:none;
+    border:1px solid var(--line);padding:8px 14px;cursor:pointer;color:var(--ink)}
+  .variants button:hover{opacity:.6}
+  .variants button[aria-pressed="true"]{border-color:var(--ink);border-width:1px;
+    box-shadow:inset 0 0 0 1px var(--ink)}
+
+  /* device figure */
+  .device-stage{border-top:1px solid var(--line);margin-top:24px;padding-top:32px;
+    display:grid;grid-template-columns:1fr 280px;gap:48px;align-items:start}
+  .device-svg{width:100%;height:auto;display:block}
+  .callouts{font-family:var(--mono);font-size:11px}
+  .callouts li{list-style:none;padding:10px 0;border-top:1px solid var(--line)}
+  .callouts b{font-weight:700;margin-right:10px}
+  .callouts .orange{color:var(--orange)}
+  .figcap{font-family:var(--mono);font-size:11px;opacity:.55;margin-top:12px}
+
+  .recrow{margin-top:24px;display:flex;gap:16px;align-items:center;
+    font-family:var(--mono);font-size:11px}
+  #recBtn{font-family:var(--mono);font-size:12px;background:var(--ink);color:var(--paper);
+    border:0;padding:12px 24px;cursor:pointer}
+  #recBtn:hover{opacity:.6;transition:opacity 200ms ease}
+  #recBtn.live{background:var(--red)}
+  #recState{opacity:.55}
+
+  /* sections */
+  .rule{border-top:1px solid var(--line);margin:80px 0 0}
+  h2{font-size:28px;font-weight:300;margin:16px 0 8px}
+  .lede{font-size:17px;max-width:56ch}
+  .lede + .lede{margin-top:1em}
+
+  /* spec tabs */
+  .tabs{display:flex;gap:0;margin:28px 0 0;border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;
+    letter-spacing:.1em;text-transform:uppercase}
+  .tabs button{background:none;border:0;font:inherit;color:var(--ink);opacity:.55;
+    padding:14px 20px 14px 0;margin-right:28px;cursor:pointer;text-transform:uppercase;
+    letter-spacing:.1em}
+  .tabs button[aria-selected="true"]{opacity:1;border-bottom:2px solid var(--orange);
+    padding-bottom:12px}
+  .tabpage{display:none;padding:8px 0 16px}
+  .tabpage.active{display:block}
+  .specgrid{display:grid;grid-template-columns:200px 1fr 1fr;gap:8px;
+    padding:11px 0;border-top:1px solid var(--line);font-size:13px}
+  .specgrid dt{font-family:var(--mono);font-size:11px;opacity:.6}
+  .specgrid .alt{opacity:.6}
+  .bullets{list-style:none;font-size:16px}
+  .bullets li{padding:7px 0}
+  .bullets li::before{content:"— "}
+
+  /* manual */
+  .manual{list-style:none}
+  .manual li{display:grid;grid-template-columns:64px 1fr 1fr;gap:24px;align-items:center;
+    padding:20px 0;border-top:1px solid var(--line)}
+  .manual .n{font-family:var(--mono);font-size:11px;opacity:.55}
+  .manual p{font-size:16px;max-width:34ch}
+  .manual .mini{border:1px solid var(--line);padding:12px}
+
+  /* setup grid */
+  .setup{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+    border-top:1px solid var(--line);margin-top:28px}
+  .setup article{padding:24px 24px 24px 0;border-bottom:1px solid var(--line)}
+  .setup h3{font-weight:400;font-size:17px}
+  .setup .mono{font-family:var(--mono);font-size:11px;opacity:.6;margin:6px 0}
+  .setup p{font-size:14px}
+  .setup .buyrow{font-family:var(--mono);font-size:12px;margin-top:12px}
+  .setup .buyrow a{color:var(--orange)}
+
+  footer{border-top:1px solid var(--line);margin-top:80px;padding:32px;
+    display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
+    font-family:var(--mono);font-size:11px;opacity:.75;max-width:1184px;margin-left:auto;margin-right:auto}
+  footer a{margin-left:18px}
+  .built{width:100%;margin-top:8px;opacity:.6}
+
+  /* svg mechanics */
+  .reel{transform-origin:center;transform-box:fill-box}
+  .spinning .reel{animation:spin 2.4s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .led{opacity:.18}
+  .spinning .led{animation:blink 1s steps(2,start) infinite}
+  @keyframes blink{to{opacity:1}}
+
+  @media (max-width:820px){
+    .device-stage{grid-template-columns:1fr}
+    .manual li{grid-template-columns:48px 1fr}
+    .manual .mini{display:none}
+    .specgrid{grid-template-columns:1fr 1fr}
+    .specgrid dt{grid-column:1/-1}
+    .setup{grid-template-columns:1fr}
+    .nav .links{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="wordmark" href="#">teenage engineering<sup>®</sup></a>
+  <nav class="links">
+    <a href="#device">products</a><a href="#specs">field system™</a>
+    <a href="#manual">guides</a><a href="#setup">support</a>
+  </nav>
+  <a href="#buy">cart (0)</a>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" id="device">
+    <p class="kicker"><span class="dot"></span>tp–9 · pocket looper · os 1.2.4</p>
+    <h1>tape buddy</h1>
+    <p class="dek">a tape recorder, without the tape.</p>
+    <p class="price">$199 <a href="#buy">buy now</a><span class="note">ships in 3–5 days. 2-year warranty.</span></p>
+
+    <div class="variants" role="group" aria-label="finish">
+      <span>finish:</span>
+      <button data-finish="chalk" aria-pressed="true">chalk</button>
+      <button data-finish="black" aria-pressed="false">black</button>
+      <button data-finish="orange" aria-pressed="false">orange</button>
+    </div>
+  </section>
+
+  <!-- DEVICE FIGURE -->
+  <section class="device-stage">
+    <div>
+      <svg class="device-svg" id="deviceSvg" viewBox="0 0 560 380" role="img"
+           aria-label="tp–9 tape buddy, technical front view with callouts">
+        <!-- dimension lines -->
+        <g font-family="Space Mono, monospace" font-size="10" fill="#0F0E12" opacity=".65">
+          <line x1="120" y1="18" x2="440" y2="18" stroke="#0F0E12" stroke-width="1" opacity=".5"/>
+          <line x1="120" y1="12" x2="120" y2="24" stroke="#0F0E12" stroke-width="1" opacity=".5"/>
+          <line x1="440" y1="12" x2="440" y2="24" stroke="#0F0E12" stroke-width="1" opacity=".5"/>
+          <text x="280" y="12" text-anchor="middle">96 mm</text>
+          <line x1="478" y1="60" x2="478" y2="330" stroke="#0F0E12" stroke-width="1" opacity=".5"/>
+          <line x1="472" y1="60" x2="484" y2="60" stroke="#0F0E12" stroke-width="1" opacity=".5"/>
+          <line x1="472" y1="330" x2="484" y2="330" stroke="#0F0E12" stroke-width="1" opacity=".5"/>
+          <text x="492" y="198" text-anchor="middle" transform="rotate(90 492 198)">68 mm</text>
+        </g>
+        <!-- body -->
+        <rect id="body" x="120" y="60" width="320" height="270" rx="6"
+              fill="#F5F4F0" stroke="#0F0E12" stroke-width="2"/>
+        <!-- speaker grille -->
+        <g id="grille" fill="#0F0E12" opacity=".8">
+          <circle cx="160" cy="100" r="2.4"/><circle cx="176" cy="100" r="2.4"/><circle cx="192" cy="100" r="2.4"/><circle cx="208" cy="100" r="2.4"/>
+          <circle cx="160" cy="116" r="2.4"/><circle cx="176" cy="116" r="2.4"/><circle cx="192" cy="116" r="2.4"/><circle cx="208" cy="116" r="2.4"/>
+          <circle cx="160" cy="132" r="2.4"/><circle cx="176" cy="132" r="2.4"/><circle cx="192" cy="132" r="2.4"/><circle cx="208" cy="132" r="2.4"/>
+        </g>
+        <!-- lcd screen -->
+        <rect x="150" y="160" width="120" height="64" fill="#0F0E12"/>
+        <polyline points="158,192 172,192 180,178 188,206 196,186 204,192 218,192 226,184 234,200 242,192 262,192"
+                  fill="none" stroke="#A6E22E" stroke-width="2"/>
+        <text x="162" y="176" font-family="Space Mono, monospace" font-size="9" fill="#A6E22E">rec 00:04:12</text>
+        <!-- reels -->
+        <g class="reel" stroke="#0F0E12" stroke-width="1.5" fill="none">
+          <circle cx="330" cy="120" r="26"/>
+          <circle cx="330" cy="120" r="7"/>
+          <line x1="330" y1="94" x2="330" y2="113"/><line x1="330" y1="127" x2="330" y2="146"/>
+          <line x1="304" y1="120" x2="323" y2="120"/><line x1="337" y1="120" x2="356" y2="120"/>
+        </g>
+        <g class="reel" stroke="#0F0E12" stroke-width="1.5" fill="none">
+          <circle cx="396" cy="120" r="26"/>
+          <circle cx="396" cy="120" r="7"/>
+          <line x1="396" y1="94" x2="396" y2="113"/><line x1="396" y1="127" x2="396" y2="146"/>
+          <line x1="370" y1="120" x2="389" y2="120"/><line x1="403" y1="120" x2="422" y2="120"/>
+        </g>
+        <!-- encoders -->
+        <g>
+          <circle cx="180" cy="272" r="22" fill="none" stroke="#0F0E12" stroke-width="2"/>
+          <circle cx="180" cy="272" r="22" fill="none" stroke="#2E5FA3" stroke-width="4"
+                  stroke-dasharray="34 104" transform="rotate(-90 180 272)"/>
+          <line x1="180" y1="272" x2="180" y2="256" stroke="#0F0E12" stroke-width="2"/>
+          <circle cx="262" cy="272" r="22" fill="none" stroke="#0F0E12" stroke-width="2"/>
+          <circle cx="262" cy="272" r="22" fill="none" stroke="#FF4D00" stroke-width="4"
+                  stroke-dasharray="60 78" transform="rotate(-90 262 272)"/>
+          <line x1="262" y1="272" x2="274" y2="262" stroke="#0F0E12" stroke-width="2"/>
+        </g>
+        <!-- rec button + led -->
+        <circle class="led" cx="396" cy="272" r="9" fill="#E1251B"/>
+        <circle cx="396" cy="272" r="9" fill="none" stroke="#0F0E12" stroke-width="2"/>
+        <text x="396" y="300" text-anchor="middle" font-family="Space Mono, monospace" font-size="10" fill="#0F0E12">rec</text>
+        <!-- callout lines + numbers -->
+        <g stroke="#0F0E12" stroke-width="1" opacity=".8">
+          <line x1="208" y1="100" x2="120" y2="100"/><line x1="120" y1="100" x2="120" y2="60"/>
+          <line x1="270" y1="176" x2="120" y2="176"/><line x1="120" y1="176" x2="120" y2="216"/>
+          <line x1="262" y1="252" x2="120" y2="252"/><line x1="120" y1="252" x2="120" y2="292"/>
+          <line x1="387" y1="263" x2="470" y2="263"/><line x1="470" y1="263" x2="470" y2="300"/>
+        </g>
+        <g font-family="Space Mono, monospace" font-size="11" fill="#0F0E12">
+          <text x="96" y="64">1</text><text x="96" y="220">2</text>
+          <text x="96" y="296">3</text><text x="462" y="304">4</text>
+        </g>
+      </svg>
+      <p class="figcap">fig. 01 — front panel. finish shown: <span id="finishName">chalk</span>.</p>
+      <div class="recrow">
+        <button id="recBtn" aria-pressed="false">● press to test</button>
+        <span id="recState">standby. nothing is being recorded.</span>
+      </div>
+    </div>
+    <ol class="callouts">
+      <li><b>1</b>speaker. small, loud enough.</li>
+      <li><b>2</b>lcd. shows time, level, nothing else.</li>
+      <li><b>3</b>encoders. blue is input, <span class="orange">orange is fx</span>.</li>
+      <li><b>4</b>rec. the red dot means it's listening.</li>
+    </ol>
+  </section>
+
+  <!-- THE IDEA -->
+  <div class="rule"></div>
+  <section>
+    <h2>the idea</h2>
+    <p class="lede">the plan was to build a voice recorder. but voice recorders are
+      boring, so we built a tape machine that fits in your pocket instead.
+      it records everything, all the time, onto a spinning reel that isn't really
+      there. quite cool actually.</p>
+    <p class="lede">spin the reel back to hear what you just missed. press the orange
+      encoder to make it sound worse, on purpose. that's the whole manual —
+      well, almost.</p>
+  </section>
+
+  <!-- SPECS -->
+  <div class="rule"></div>
+  <section id="specs">
+    <h2>specifications</h2>
+    <div class="tabs" role="tablist" aria-label="specifications">
+      <button role="tab" aria-selected="true" data-tab="t-high">highlights</button>
+      <button role="tab" aria-selected="false" data-tab="t-dim">dimensions</button>
+      <button role="tab" aria-selected="false" data-tab="t-audio">audio</button>
+      <button role="tab" aria-selected="false" data-tab="t-power">power</button>
+    </div>
+
+    <div class="tabpage active" id="t-high" role="tabpanel">
+      <ul class="bullets">
+        <li>records everything, all the time. 24-bit.</li>
+        <li>motorised reel scrub — rewind real life.</li>
+        <li>dedicated controls for all params. no menus.</li>
+        <li>six performance effects, one orange encoder.</li>
+        <li>usb-c audio interface / sound card.</li>
+        <li>7 hours of battery. yes, really.</li>
+      </ul>
+    </div>
+
+    <div class="tabpage" id="t-dim" role="tabpanel">
+      <dl>
+        <div class="specgrid"><dt>size</dt><dd>96 mm x 68 mm x 16 mm</dd><dd class="alt">3.78" x 2.68" x 0.63" inches</dd></div>
+        <div class="specgrid"><dt>weight</dt><dd>170 g</dd><dd class="alt">6.0 oz</dd></div>
+        <div class="specgrid"><dt>housing</dt><dd>powder-coated aluminium</dd><dd class="alt">one piece, no screws visible</dd></div>
+        <div class="specgrid"><dt>display</dt><dd>64 x 32 monochrome lcd</dd><dd class="alt">backlit, oled green</dd></div>
+      </dl>
+    </div>
+
+    <div class="tabpage" id="t-audio" role="tabpanel">
+      <dl>
+        <div class="specgrid"><dt>input</dt><dd>impedance: 10k</dd><dd class="alt">max level: 8 dBu / 2 Vrms</dd></div>
+        <div class="specgrid"><dt>output</dt><dd>max level: 1.4 Vrms</dd><dd class="alt">SNR: 108 dBA (typical)</dd></div>
+        <div class="specgrid"><dt>format</dt><dd>48 kHz / 24-bit</dd><dd class="alt">128 GB internal storage</dd></div>
+        <div class="specgrid"><dt>connectivity</dt><dd>usb-c audio + midi</dd><dd class="alt">3.5 mm line in / out</dd></div>
+      </dl>
+    </div>
+
+    <div class="tabpage" id="t-power" role="tabpanel">
+      <dl>
+        <div class="specgrid"><dt>battery</dt><dd>7 hours recording</dd><dd class="alt">rechargeable, usb-c</dd></div>
+        <div class="specgrid"><dt>standby</dt><dd>30 days</dd><dd class="alt">it waits. patiently.</dd></div>
+        <div class="specgrid"><dt>charging</dt><dd>0–80% in 45 min</dd><dd class="alt">full in 90 min</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- MANUAL -->
+  <div class="rule"></div>
+  <section id="manual">
+    <h2>the manual, abridged</h2>
+    <ol class="manual">
+      <li>
+        <span class="n">01</span>
+        <p>press rec. the red dot means it's listening. it is always listening, but now it means it.</p>
+        <svg class="mini" width="120" height="60" viewBox="0 0 120 60"><circle cx="30" cy="30" r="10" fill="#E1251B"/><line x1="48" y1="30" x2="100" y2="30" stroke="#0F0E12"/><text x="52" y="26" font-family="Space Mono" font-size="9" fill="#0F0E12">listening</text></svg>
+      </li>
+      <li>
+        <span class="n">02</span>
+        <p>spin the reel to scrub back through time. yes, that meeting too.</p>
+        <svg class="mini" width="120" height="60" viewBox="0 0 120 60"><circle cx="30" cy="30" r="18" fill="none" stroke="#0F0E12" stroke-width="2"/><path d="M30 12 A18 18 0 0 1 48 30" fill="none" stroke="#FF4D00" stroke-width="2"/><text x="56" y="34" font-family="Space Mono" font-size="9" fill="#0F0E12">rewind</text></svg>
+      </li>
+      <li>
+        <span class="n">03</span>
+        <p>press play. overdub if you're feeling brave. that's the whole manual.</p>
+        <svg class="mini" width="120" height="60" viewBox="0 0 120 60"><polygon points="30,14 46,30 30,46" fill="none" stroke="#0F0E12" stroke-width="2"/><text x="56" y="34" font-family="Space Mono" font-size="9" fill="#0F0E12">play</text></svg>
+      </li>
+    </ol>
+  </section>
+
+  <!-- SETUP -->
+  <div class="rule"></div>
+  <section id="setup">
+    <h2>complete your setup</h2>
+    <div class="setup">
+      <article>
+        <h3>tp–9 soft case</h3>
+        <p class="mono">accessory · 001</p>
+        <p>felt. orange stitching. fits the tp–9 and nothing else.</p>
+        <p class="buyrow">$29 <a href="#buy">buy now</a></p>
+      </article>
+      <article>
+        <h3>cm–15 goes well with it</h3>
+        <p class="mono">microphone · field system™</p>
+        <p>a tiny condenser mic for tiny important sounds.</p>
+        <p class="buyrow">$1199 <a href="#buy">buy now</a></p>
+      </article>
+      <article>
+        <h3>usb-c cable, braided</h3>
+        <p class="mono">accessory · 002</p>
+        <p>charges. transfers. survives your bag.</p>
+        <p class="buyrow">$19 <a href="#buy">buy now</a></p>
+      </article>
+    </div>
+  </section>
+
+  <!-- BUY -->
+  <div class="rule"></div>
+  <section id="buy">
+    <h2>tp–9 tape buddy</h2>
+    <p class="price" style="font-size:16px">$199 <a href="#">buy now</a><span class="note">ships in 3–5 days. 2-year warranty. no subscription, ever.</span></p>
+  </section>
+
+</main>
+
+<footer>
+  <span>teenage engineering · stockholm, sweden</span>
+  <span><a href="#">terms</a><a href="#">privacy</a><a href="#">contact</a></span>
+  <span class="built">Built from the teenage-engineering skill · design-skills</span>
+</footer>
+
+<script>
+(function(){
+  // finish selector: chalk / black / orange
+  var finishes = {
+    chalk:  { body:'#F5F4F0', stroke:'#0F0E12', label:'chalk' },
+    black:  { body:'#1B1B1D', stroke:'#F5F4F0', label:'black' },
+    orange: { body:'#FF4D00', stroke:'#0F0E12', label:'orange' }
+  };
+  var bodyRect = document.getElementById('body');
+  var finishName = document.getElementById('finishName');
+  var buttons = document.querySelectorAll('.variants button');
+  buttons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var f = finishes[btn.getAttribute('data-finish')];
+      bodyRect.setAttribute('fill', f.body);
+      bodyRect.setAttribute('stroke', f.stroke);
+      finishName.textContent = f.label;
+      buttons.forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+      btn.setAttribute('aria-pressed','true');
+    });
+  });
+
+  // spec tabs
+  var tabs = document.querySelectorAll('.tabs [role="tab"]');
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.setAttribute('aria-selected','false'); });
+      document.querySelectorAll('.tabpage').forEach(function(p){ p.classList.remove('active'); });
+      tab.setAttribute('aria-selected','true');
+      document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+    });
+  });
+
+  // rec test: spin reels + blink led
+  var svg = document.getElementById('deviceSvg');
+  var recBtn = document.getElementById('recBtn');
+  var recState = document.getElementById('recState');
+  recBtn.addEventListener('click', function(){
+    var live = svg.classList.toggle('spinning');
+    recBtn.classList.toggle('live', live);
+    recBtn.setAttribute('aria-pressed', live ? 'true' : 'false');
+    recBtn.textContent = live ? '■ stop' : '● press to test';
+    recState.textContent = live
+      ? 'recording. the reels are spinning. say something clever.'
+      : 'standby. nothing is being recorded.';
+  });
+})();
+</script>
+</body>
+</html>

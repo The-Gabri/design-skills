@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>chakra-ui</title>
+<style>
+  :root {
+    --font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --bg: #ffffff;
+    --bg-subtle: #fafafa;
+    --bg-muted: #f4f4f5;
+    --fg: #18181b;
+    --fg-muted: #52525b;
+    --fg-subtle: #71717a;
+    --border: #e4e4e7;
+    --border-emph: #d4d4d8;
+    --teal-solid: #0d9488;
+    --teal-solid-hover: #0c5d56;
+    --teal-subtle: #ccfbf1;
+    --teal-fg: #0c5d56;
+    --teal-ring: rgba(20, 184, 166, .25);
+    --blue-subtle: #dbeafe;
+    --blue-fg: #173da6;
+    --blue-solid: #2563eb;
+    --green-subtle: #dcfce7;
+    --green-fg: #116932;
+    --green-solid: #16a34a;
+    --orange-subtle: #ffedd5;
+    --orange-fg: #92310a;
+    --orange-solid: #ea580c;
+    --red-subtle: #fee2e2;
+    --red-fg: #991919;
+    --red-solid: #dc2626;
+    --info-subtle: #eff6ff;
+    --success-subtle: #f0fdf4;
+    --warn-subtle: #fff7ed;
+    --error-subtle: #fef2f2;
+    --card-shadow: 0 1px 3px rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+    --dialog-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+    --backdrop: rgba(0, 0, 0, .48);
+  }
+  [data-mode="dark"] {
+    --bg: #09090b;
+    --bg-subtle: #09090b;
+    --bg-muted: #18181b;
+    --fg: #fafafa;
+    --fg-muted: #d4d4d8;
+    --fg-subtle: #a1a1aa;
+    --border: #27272a;
+    --border-emph: #3f3f46;
+    --teal-subtle: #032726;
+    --teal-fg: #5eead4;
+    --blue-subtle: #0c142e;
+    --blue-fg: #a3cfff;
+    --green-subtle: #042713;
+    --green-fg: #86efac;
+    --orange-subtle: #3b1106;
+    --orange-fg: #fdba74;
+    --red-subtle: #1f0808;
+    --red-fg: #fca5a5;
+    --info-subtle: #0c142e;
+    --success-subtle: #042713;
+    --warn-subtle: #3b1106;
+    --error-subtle: #1f0808;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 1rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- Nav ---- */
+  .nav {
+    display: flex; align-items: center; gap: 2rem;
+    max-width: 72rem; margin: 0 auto; padding: 1rem 1.5rem;
+  }
+  .brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; font-size: 1.125rem; }
+  .brand-mark { width: 2rem; height: 2rem; border-radius: 8px; background: var(--teal-solid); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; }
+  .nav-links { display: flex; gap: 1.5rem; margin-left: 1rem; }
+  .nav-links a { color: var(--fg-muted); text-decoration: none; font-size: .875rem; font-weight: 500; }
+  .nav-links a:hover { color: var(--fg); }
+  .nav-actions { margin-left: auto; display: flex; gap: .5rem; align-items: center; }
+
+  /* ---- Buttons ---- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+    height: 2.5rem; padding: 0 1rem; font-size: .875rem; font-weight: 600;
+    border-radius: 6px; border: 1px solid transparent; cursor: pointer;
+    transition: background .2s, border-color .2s; font-family: var(--font); }
+  .btn:focus-visible, .iconbtn:focus-visible, .tab:focus-visible, input:focus { outline: none; }
+  .btn:focus-visible { box-shadow: 0 0 0 3px var(--teal-ring); }
+  .btn-solid-teal { background: var(--teal-solid); color: #fff; }
+  .btn-solid-teal:hover { background: var(--teal-solid-hover); }
+  .btn-ghost { background: transparent; color: var(--fg); }
+  .btn-ghost:hover { background: var(--bg-muted); }
+  .btn-outline { background: var(--bg); border-color: var(--border); color: var(--fg); }
+  .btn-outline:hover { background: var(--bg-muted); }
+  .iconbtn { border: 0; background: transparent; cursor: pointer; color: var(--fg-subtle);
+    border-radius: 6px; padding: .5rem; font-size: 1rem; line-height: 1; }
+  .iconbtn:hover { background: var(--bg-muted); }
+
+  /* ---- Page ---- */
+  .page { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap; }
+  .page-head h1 { font-size: 1.875rem; font-weight: 700; letter-spacing: -.025em; }
+  .page-head p { color: var(--fg-muted); font-size: .875rem; margin-top: .25rem; }
+
+  /* ---- Alert ---- */
+  .alert { display: flex; gap: .75rem; align-items: flex-start; padding: .875rem 1rem;
+    border-radius: 8px; font-size: .875rem; margin-bottom: 1.5rem; }
+  .alert-icon { display: inline-flex; align-items: center; justify-content: center;
+    width: 1.25rem; height: 1.25rem; border-radius: 9999px; font-size: .75rem; font-weight: 700; flex: none; }
+  .alert strong { font-weight: 600; }
+  .alert--success { background: var(--success-subtle); color: var(--green-fg); }
+  .alert--success .alert-icon { background: var(--green-solid); color: #fff; }
+  .alert--info { background: var(--info-subtle); color: var(--blue-fg); }
+  .alert--info .alert-icon { background: var(--blue-solid); color: #fff; }
+
+  /* ---- Stats ---- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat dt { font-size: .875rem; font-weight: 500; color: var(--fg-muted); }
+  .stat-num { font-size: 1.875rem; font-weight: 600; letter-spacing: -.025em; margin: .25rem 0; font-variant-numeric: tabular-nums; }
+  .stat-help { font-size: .875rem; color: var(--fg-subtle); }
+  .stat-help .up { color: var(--green-solid); font-weight: 600; }
+  .stat-help .down { color: var(--red-solid); font-weight: 600; }
+
+  /* ---- Card ---- */
+  .card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: var(--card-shadow); padding: 1.25rem; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
+  .card-head h3 { font-size: 1.125rem; font-weight: 600; }
+  .muted { color: var(--fg-muted); font-size: .875rem; }
+
+  /* ---- Badge ---- */
+  .badge { display: inline-flex; align-items: center; padding: .125rem .625rem;
+    border-radius: 9999px; font-size: .75rem; font-weight: 600; letter-spacing: .025em; text-transform: uppercase; }
+  .badge--green { background: var(--green-subtle); color: var(--green-fg); }
+  .badge--blue { background: var(--blue-subtle); color: var(--blue-fg); }
+  .badge--orange { background: var(--orange-subtle); color: var(--orange-fg); }
+  .badge--teal { background: var(--teal-subtle); color: var(--teal-fg); }
+  .badge--gray { background: var(--bg-muted); color: var(--fg-muted); }
+
+  /* ---- Tabs ---- */
+  .tabs [role="tablist"] { display: flex; gap: .25rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .tab { background: none; border: 0; cursor: pointer; padding: .5rem 1rem;
+    font-size: .875rem; font-weight: 600; color: var(--fg-muted); font-family: var(--font);
+    border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s; }
+  .tab:hover { color: var(--fg); }
+  .tab.is-active { color: var(--teal-fg); border-bottom-color: var(--teal-solid); }
+  .tabpanel[hidden] { display: none; }
+
+  /* ---- Table ---- */
+  .table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+  .table th { text-align: left; font-size: .75rem; font-weight: 600; color: var(--fg-subtle);
+    text-transform: uppercase; letter-spacing: .05em; padding: .5rem .75rem; border-bottom: 1px solid var(--border); }
+  .table td { padding: .75rem; border-bottom: 1px solid var(--border); }
+  .table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .table tr:last-child td { border-bottom: 0; }
+
+  /* ---- Form ---- */
+  .field { display: flex; flex-direction: column; gap: .375rem; margin-bottom: 1rem; }
+  .field label { font-size: .875rem; font-weight: 500; }
+  .field input { height: 2.5rem; padding: 0 .75rem; font-size: 1rem; font-family: var(--font);
+    border: 1px solid var(--border-emph); border-radius: 6px; background: var(--bg); color: var(--fg); }
+  .field input::placeholder { color: var(--fg-subtle); }
+  .field input:focus { outline: none; border-color: var(--teal-solid); box-shadow: 0 0 0 3px var(--teal-ring); }
+  .help { font-size: .75rem; color: var(--fg-subtle); }
+
+  /* ---- Usage bars ---- */
+  .meter { margin-bottom: 1rem; }
+  .meter-row { display: flex; justify-content: space-between; font-size: .875rem; margin-bottom: .375rem; }
+  .meter-track { height: .5rem; border-radius: 9999px; background: var(--bg-muted); overflow: hidden; }
+  .meter-fill { height: 100%; border-radius: 9999px; background: var(--teal-solid); transition: width .4s ease-out; }
+
+  /* ---- Team ---- */
+  .team-list { list-style: none; display: flex; flex-direction: column; }
+  .team-list li { display: flex; align-items: center; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--border); }
+  .team-list li:last-child { border-bottom: 0; }
+  .avatar { width: 2.5rem; height: 2.5rem; border-radius: 9999px; background: var(--teal-subtle); color: var(--teal-fg);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: .875rem; flex: none; }
+  .team-name { font-weight: 600; font-size: .875rem; }
+  .team-role { font-size: .75rem; color: var(--fg-subtle); }
+  .team-list .badge { margin-left: auto; }
+
+  /* ---- Grid ---- */
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
+
+  /* ---- Dialog ---- */
+  .backdrop { position: fixed; inset: 0; background: var(--backdrop);
+    display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
+  .backdrop[hidden] { display: none; }
+  .dialog { background: var(--bg); border-radius: 8px; padding: 1.5rem; width: 100%; max-width: 28rem;
+    box-shadow: var(--dialog-shadow); border: 1px solid var(--border); }
+  .dialog header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+  .dialog h2 { font-size: 1.25rem; font-weight: 600; }
+  .dialog footer { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1.5rem; }
+  .plan { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; }
+  .plan strong { display: block; }
+  .plan span { font-size: .875rem; color: var(--fg-muted); }
+
+  footer.page-foot { max-width: 72rem; margin: 0 auto; padding: 2rem 1.5rem 3rem;
+    border-top: 1px solid var(--border); color: var(--fg-subtle); font-size: .75rem;
+    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+  @media (max-width: 48em) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main">
+  <div class="brand"><span class="brand-mark">T</span> Tandem</div>
+  <div class="nav-links">
+    <a href="#">Features</a>
+    <a href="#">Pricing</a>
+    <a href="#">Changelog</a>
+    <a href="#">Docs</a>
+  </div>
+  <div class="nav-actions">
+    <button class="iconbtn" id="modeToggle" aria-label="Toggle color mode" title="Toggle color mode">◐</button>
+    <button class="btn btn-ghost">Log in</button>
+    <button class="btn btn-solid-teal" data-open-dialog>Get started</button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="alert alert--success" role="alert">
+    <span class="alert-icon" aria-hidden="true">✓</span>
+    <div><strong>Deployment finished.</strong> Version 2.14.0 is live — release notes were emailed to your team.</div>
+  </div>
+
+  <div class="page-head">
+    <div>
+      <h1>Good morning, Maya</h1>
+      <p>Here is what happened across your workspaces in the last 24 hours.</p>
+    </div>
+    <button class="btn btn-outline" data-open-dialog>Upgrade to Pro</button>
+  </div>
+
+  <section aria-label="Key metrics">
+    <div class="stats">
+      <dl class="stat card">
+        <dt>Monthly revenue</dt>
+        <dd class="stat-num">$48,290</dd>
+        <dd class="stat-help"><span class="up">▲ 12.4%</span> vs last month</dd>
+      </dl>
+      <dl class="stat card">
+        <dt>Active users</dt>
+        <dd class="stat-num">12,842</dd>
+        <dd class="stat-help"><span class="up">▲ 3.1%</span> vs last week</dd>
+      </dl>
+      <dl class="stat card">
+        <dt>Churn rate</dt>
+        <dd class="stat-num">1.8%</dd>
+        <dd class="stat-help"><span class="down">▼ 0.4 pts</span> vs last month</dd>
+      </dl>
+      <dl class="stat card">
+        <dt>Open tickets</dt>
+        <dd class="stat-num">23</dd>
+        <dd class="stat-help"><span class="up">▲ 5</span> since yesterday</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section class="tabs" aria-label="Workspace sections">
+    <div role="tablist" aria-label="Reports">
+      <button role="tab" class="tab is-active" aria-selected="true" data-tab="panel-overview" id="tab-overview">Overview</button>
+      <button role="tab" class="tab" aria-selected="false" data-tab="panel-usage" id="tab-usage">Usage</button>
+      <button role="tab" class="tab" aria-selected="false" data-tab="panel-team" id="tab-team">Team</button>
+    </div>
+
+    <div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview" class="grid-2">
+      <div class="card">
+        <div class="card-head">
+          <h3>Recent invoices</h3>
+          <span class="badge badge--teal">7 open</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Customer</th><th>Status</th><th class="num">Amount</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Acme Corp</td><td><span class="badge badge--green">Paid</span></td><td class="num">$1,200</td></tr>
+            <tr><td>Globex Studio</td><td><span class="badge badge--orange">Pending</span></td><td class="num">$340</td></tr>
+            <tr><td>Initech LLC</td><td><span class="badge badge--green">Paid</span></td><td class="num">$2,850</td></tr>
+            <tr><td>Umbrella Co</td><td><span class="badge badge--blue">New</span></td><td class="num">$475</td></tr>
+            <tr><td>Hooli Systems</td><td><span class="badge badge--gray">Draft</span></td><td class="num">$980</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Invite your team</h3></div>
+        <p class="muted" style="margin-bottom:1rem;">Tandem works best with company. Add a teammate to this workspace.</p>
+        <form id="inviteForm">
+          <div class="field">
+            <label for="inviteEmail">Work email</label>
+            <input id="inviteEmail" type="email" placeholder="you@company.com" required aria-describedby="inviteHelp">
+            <p class="help" id="inviteHelp">They will get an invite link valid for 7 days.</p>
+          </div>
+          <button class="btn btn-solid-teal" type="submit" style="width:100%;">Send invite</button>
+        </form>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="panel-usage" aria-labelledby="tab-usage" hidden>
+      <div class="card" style="max-width:40rem;">
+        <div class="card-head"><h3>Plan usage — October</h3><span class="badge badge--blue">Pro trial</span></div>
+        <div class="meter">
+          <div class="meter-row"><span>Feedback items</span><span class="muted">8,412 / 10,000</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:84%;"></div></div>
+        </div>
+        <div class="meter">
+          <div class="meter-row"><span>Team seats</span><span class="muted">14 / 25</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:56%;"></div></div>
+        </div>
+        <div class="meter">
+          <div class="meter-row"><span>API calls</span><span class="muted">231k / 500k</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:46%;"></div></div>
+        </div>
+        <div class="alert alert--info" role="status" style="margin:1.25rem 0 0;">
+          <span class="alert-icon" aria-hidden="true">i</span>
+          <div><strong>Trial ends in 6 days.</strong> Upgrade to keep unlimited feedback collection.</div>
+        </div>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="panel-team" aria-labelledby="tab-team" hidden>
+      <div class="card" style="max-width:40rem;">
+        <div class="card-head"><h3>Team members</h3><button class="btn btn-ghost" style="height:2rem;">+ Add</button></div>
+        <ul class="team-list">
+          <li><span class="avatar">M</span><div><div class="team-name">Maya Chen</div><div class="team-role">Owner · joined Mar 2024</div></div><span class="badge badge--teal">Admin</span></li>
+          <li><span class="avatar">J</span><div><div class="team-name">Jonas Weber</div><div class="team-role">Engineer · joined Jun 2024</div></div><span class="badge badge--green">Active</span></li>
+          <li><span class="avatar">P</span><div><div class="team-name">Priya Nair</div><div class="team-role">Designer · joined Jan 2025</div></div><span class="badge badge--green">Active</span></li>
+          <li><span class="avatar">S</span><div><div class="team-name">Sam Ortiz</div><div class="team-role">Support · invited 2 days ago</div></div><span class="badge badge--orange">Pending</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="backdrop" id="upgradeDialog" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <header>
+      <h2 id="dlgTitle">Upgrade to Pro</h2>
+      <button class="iconbtn" aria-label="Close dialog" data-close-dialog>✕</button>
+    </header>
+    <p class="muted">Unlock unlimited feedback items, 25 seats, and priority support for your whole team.</p>
+    <div class="plan">
+      <div><strong>Pro — monthly</strong><span>$29 / seat / month, cancel anytime</span></div>
+      <span class="badge badge--teal">Popular</span>
+    </div>
+    <div class="plan">
+      <div><strong>Pro — yearly</strong><span>$290 / seat / year, 2 months free</span></div>
+      <span class="badge badge--green">Save 17%</span>
+    </div>
+    <footer>
+      <button class="btn btn-ghost" data-close-dialog>Not now</button>
+      <button class="btn btn-solid-teal">Upgrade</button>
+    </footer>
+  </div>
+</div>
+
+<footer class="page-foot">
+  <span>© 2026 Tandem Labs, Inc. — a fictional product for style demonstration.</span>
+  <span>Built from the chakra-ui skill · design-skills</span>
+</footer>
+
+<script>
+  // Color mode toggle
+  const root = document.documentElement;
+  document.getElementById('modeToggle').addEventListener('click', () => {
+    root.dataset.mode = root.dataset.mode === 'dark' ? '' : 'dark';
+  });
+
+  // Tabs
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => { t.classList.remove('is-active'); t.setAttribute('aria-selected', 'false'); });
+      document.querySelectorAll('.tabpanel').forEach(p => p.hidden = true);
+      tab.classList.add('is-active');
+      tab.setAttribute('aria-selected', 'true');
+      document.getElementById(tab.dataset.tab).hidden = false;
+    });
+  });
+
+  // Dialog
+  const dialog = document.getElementById('upgradeDialog');
+  document.querySelectorAll('[data-open-dialog]').forEach(b => b.addEventListener('click', () => {
+    dialog.hidden = false;
+    dialog.querySelector('.dialog').focus?.();
+  }));
+  const closeDialog = () => { dialog.hidden = true; };
+  document.querySelectorAll('[data-close-dialog]').forEach(b => b.addEventListener('click', closeDialog));
+  dialog.addEventListener('click', e => { if (e.target === dialog) closeDialog(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !dialog.hidden) closeDialog(); });
+
+  // Invite form
+  document.getElementById('inviteForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const email = document.getElementById('inviteEmail').value;
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.textContent = 'Invite sent to ' + email;
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = 'Send invite'; btn.disabled = false; e.target.reset(); }, 2500);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vanilla-framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --x-light: #ffffff;
+    --light: #f7f7f7;
+    --mid-x-light: #e5e5e5;
+    --mid-dark: #666666;
+    --dark: #111111;
+    --brand: #e95420;
+    --brand-dark: #c7441a;
+    --link: #0066cc;
+    --aubergine: #772953;
+    --positive: #0e8420;
+    --information: #24598f;
+    --caution: #f99b11;
+    --negative: #c7162b;
+    --sp: 8px;
+    --radius: 2px;
+    --font: 'Ubuntu', Arial, 'libra sans', sans-serif;
+    --mono: 'Ubuntu Mono', Consolas, Monaco, Courier, monospace;
+    --ease-out: cubic-bezier(.215, .61, .355, 1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: var(--font); font-size: 1rem; line-height: 1.5;
+    color: var(--dark); background: var(--x-light);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-weight: 500; line-height: 1.25; margin: 0 0 .75rem; }
+  h1 { font-size: 2.5rem; font-weight: 300; }
+  h2 { font-size: 2rem; font-weight: 300; margin-bottom: 1rem; }
+  h3 { font-size: 1.25rem; }
+  p { margin: 0 0 1rem; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .muted { color: var(--mid-dark); }
+  .row { max-width: 75rem; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* ---- Navigation (aubergine) ---- */
+  .p-navigation { background: var(--aubergine); color: #fff; position: sticky; top: 0; z-index: 50; }
+  .p-navigation__row { max-width: 75rem; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; gap: 2rem; }
+  .p-navigation__banner a { display: flex; align-items: center; padding: .75rem 0; }
+  .p-navigation__links { display: flex; gap: 1.75rem; list-style: none; margin: 0 0 0 auto; padding: 0; align-items: center; }
+  .p-navigation__links a { color: #fff; font-size: .9375rem; padding: 1.1rem 0; display: block; border-bottom: 3px solid transparent; margin-bottom: -3px; }
+  .p-navigation__links a:hover { text-decoration: none; color: #fff; border-bottom-color: var(--brand); }
+  .nav-cta { background: var(--brand); color: #fff !important; padding: .5rem 1.25rem !important; border-radius: var(--radius); border-bottom: none !important; margin-bottom: 0 !important; transition: background-color .165s var(--ease-out); }
+  .nav-cta:hover { background: var(--brand-dark); }
+  .nav-toggle { display: none; background: none; border: 0; color: #fff; font-size: 1.5rem; cursor: pointer; }
+
+  /* ---- Strips ---- */
+  .p-strip { padding: 4rem 0; background: var(--x-light); }
+  .p-strip--deep { padding: 6rem 0; }
+  .p-strip--light { background: var(--light); }
+  .p-strip--dark { background: var(--dark); color: #fff; }
+  .p-strip--aubergine { background: var(--aubergine); color: #fff; }
+  .p-strip--dark h2, .p-strip--aubergine h2 { color: #fff; }
+  .p-strip--dark .muted, .p-strip--aubergine .muted { color: #cdcdcd; }
+
+  /* ---- Hero grid ---- */
+  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  .hero-kicker { font-size: .875rem; color: var(--mid-dark); text-transform: none; margin-bottom: .5rem; }
+  .hero-actions { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+  /* ---- Buttons ---- */
+  .p-button--brand, .p-button--base {
+    font-family: var(--font); font-size: 1rem; padding: .6rem 1.75rem;
+    border: 1px solid transparent; border-radius: var(--radius); cursor: pointer;
+    display: inline-block; transition: background-color .165s var(--ease-out);
+  }
+  .p-button--brand { background: var(--brand); color: #fff; }
+  .p-button--brand:hover { background: var(--brand-dark); text-decoration: none; color: #fff; }
+  .p-button--base { background: transparent; color: var(--dark); border-color: var(--mid-dark); }
+  .p-button--base:hover { background: var(--light); text-decoration: none; color: var(--dark); }
+  .p-strip--dark .p-button--base, .p-strip--aubergine .p-button--base { color: #fff; border-color: #fff; }
+  .p-strip--dark .p-button--base:hover, .p-strip--aubergine .p-button--base:hover { background: rgba(255,255,255,.1); }
+
+  /* ---- Code block ---- */
+  .p-code-snippet { background: var(--dark); color: #fff; font-family: var(--mono); font-size: .9375rem; padding: 1.25rem 1.5rem; border-radius: var(--radius); overflow-x: auto; margin: 0; line-height: 1.6; }
+  .p-code-snippet .prompt { color: var(--brand); user-select: none; }
+  .p-code-snippet .comment { color: #999; }
+
+  /* ---- Cards ---- */
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; }
+  .p-card { background: #fff; border-top: 3px solid var(--brand); padding: 1rem 1.5rem 1.5rem; }
+  .p-card__icon { width: 40px; height: 40px; margin-bottom: .75rem; }
+  .p-card h3 { font-size: 1.125rem; margin-bottom: .5rem; }
+  .p-card p { color: var(--mid-dark); font-size: .9375rem; }
+
+  /* ---- Tabs ---- */
+  .p-tabs { display: flex; border-bottom: 1px solid var(--mid-x-light); margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .p-tabs__item { background: none; border: 0; font-family: var(--font); font-size: 1rem; padding: .5rem 1.25rem; cursor: pointer; color: var(--mid-dark); border-bottom: 3px solid transparent; margin-bottom: -1px; transition: color .165s var(--ease-out); }
+  .p-tabs__item:hover { color: var(--dark); }
+  .p-tabs__item[aria-selected="true"] { color: var(--dark); border-bottom-color: var(--brand); font-weight: 500; }
+  .p-tabs__panel { display: none; }
+  .p-tabs__panel.is-active { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+  .p-tabs__panel h3 { font-size: 1.25rem; }
+
+  /* ---- Notifications ---- */
+  .p-notification--information, .p-notification--positive, .p-notification--caution {
+    border: 1px solid var(--mid-x-light); border-left: 4px solid;
+    padding: .75rem 1rem; margin-bottom: 1rem; background: #fff; max-width: 60rem;
+  }
+  .p-notification--information { border-left-color: var(--information); }
+  .p-notification--positive { border-left-color: var(--positive); }
+  .p-notification--caution { border-left-color: var(--caution); }
+  .p-notification--information p, .p-notification--positive p, .p-notification--caution p { margin: 0; }
+
+  /* ---- Accordion (FAQ) ---- */
+  .p-accordion { list-style: none; margin: 2rem 0 0; padding: 0; max-width: 60rem; }
+  .p-accordion__item { border-top: 1px solid var(--mid-x-light); }
+  .p-accordion__item:last-child { border-bottom: 1px solid var(--mid-x-light); }
+  .p-accordion__tab { width: 100%; background: none; border: 0; font-family: var(--font); font-size: 1.0625rem; font-weight: 500; color: var(--dark); text-align: left; padding: 1rem 2rem 1rem 0; cursor: pointer; position: relative; }
+  .p-accordion__tab::after { content: "+"; position: absolute; right: .25rem; top: 1rem; color: var(--brand); font-weight: 400; font-size: 1.25rem; transition: transform .333s var(--ease-out); }
+  .p-accordion__tab[aria-expanded="true"]::after { transform: rotate(45deg); }
+  .p-accordion__panel { max-height: 0; overflow: hidden; transition: max-height .333s var(--ease-out); }
+  .p-accordion__panel p { padding: 0 2rem 1.25rem 0; color: var(--mid-dark); }
+
+  /* ---- Footer ---- */
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem; padding-bottom: 2rem; }
+  .footer-grid h4 { color: #fff; font-size: .9375rem; margin-bottom: .75rem; }
+  .footer-grid ul { list-style: none; margin: 0; padding: 0; }
+  .footer-grid li { margin-bottom: .4rem; }
+  .footer-grid a { color: #cdcdcd; font-size: .875rem; }
+  .footer-legal { border-top: 1px solid #333; padding-top: 1.5rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: .8125rem; color: #999; }
+  .footer-legal p { margin: 0; }
+
+  hr { border: 0; border-top: 1px solid var(--mid-x-light); margin: 0; }
+
+  @media (max-width: 900px) {
+    .hero-grid, .p-tabs__panel.is-active { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    h1 { font-size: 2rem; }
+  }
+  @media (max-width: 700px) {
+    .p-navigation__links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--aubergine); flex-direction: column; align-items: stretch; gap: 0; padding: 0 1.5rem 1rem; }
+    .p-navigation__links.is-open { display: flex; }
+    .p-navigation__links a { padding: .75rem 0; }
+    .p-navigation__row { position: relative; justify-content: space-between; }
+    .nav-toggle { display: block; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .p-strip--deep { padding: 4rem 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="p-navigation" aria-label="Main">
+  <div class="p-navigation__row">
+    <div class="p-navigation__banner">
+      <a href="#" aria-label="Lattice home">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+          <circle cx="17" cy="17" r="13.5" fill="none" stroke="#e95420" stroke-width="3.2"/>
+          <circle cx="17" cy="17" r="4.2" fill="#e95420"/>
+          <circle cx="17" cy="3.5" r="2.6" fill="#e95420"/>
+          <circle cx="28.7" cy="23.75" r="2.6" fill="#e95420"/>
+          <circle cx="5.3" cy="23.75" r="2.6" fill="#e95420"/>
+        </svg>
+      </a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
+    <ul class="p-navigation__links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#setup">Setup</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#docs">Docs</a></li>
+      <li><a class="nav-cta" href="#get-started">Get started</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="p-strip p-strip--deep">
+  <div class="row hero-grid">
+    <div>
+      <p class="hero-kicker">Lattice &middot; Kubernetes for Ubuntu</p>
+      <h1>Kubernetes at the edge, the Ubuntu way</h1>
+      <p class="muted" style="font-size:1.125rem;">One command to a production-ready cluster. Strict confinement, automatic security updates, and twelve years of maintenance on every architecture you ship.</p>
+      <div class="hero-actions">
+        <a class="p-button--brand" href="#get-started">Get started for free</a>
+        <a class="p-button--base" href="#docs">Read the docs</a>
+      </div>
+    </div>
+    <div>
+      <pre class="p-code-snippet" aria-label="Install commands"><code><span class="prompt">$</span> sudo snap install lattice --classic
+<span class="prompt">$</span> lattice init --ha
+<span class="comment"># 3-node HA cluster ready in under 4 minutes</span>
+<span class="prompt">$</span> lattice status
+<span class="comment"># nodes: 3 ready &middot; version: 1.34 &middot; channel: stable</span></code></pre>
+    </div>
+  </div>
+</header>
+
+<section class="p-strip p-strip--light" id="features">
+  <div class="row">
+    <h2>Built for teams that ship hardware</h2>
+    <p class="muted" style="max-width:44rem;">Lattice packages Kubernetes the way Ubuntu packages everything else: tested, signed, and maintained for the long haul. No YAML archaeology required.</p>
+    <div class="card-grid">
+      <article class="p-card">
+        <svg class="p-card__icon" viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="10" width="28" height="20" rx="2" fill="none" stroke="#e95420" stroke-width="2.5"/><circle cx="12" cy="17" r="2" fill="#e95420"/><rect x="17" y="15.5" width="12" height="3" fill="#e95420"/></svg>
+        <h3>Secure by default</h3>
+        <p>Strict snap confinement and CIS-hardened defaults on every node. AppArmor profiles ship with the install, not as homework.</p>
+        <a href="#">Learn more &rsaquo;</a>
+      </article>
+      <article class="p-card">
+        <svg class="p-card__icon" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="#e95420" stroke-width="2.5"/><path d="M20 12v8l6 4" fill="none" stroke="#e95420" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <h3>Updates without downtime</h3>
+        <p>Transactional snap refreshes roll the cluster forward node by node, and roll back cleanly if a health check fails.</p>
+        <a href="#">Learn more &rsaquo;</a>
+      </article>
+      <article class="p-card">
+        <svg class="p-card__icon" viewBox="0 0 40 40" aria-hidden="true"><rect x="8" y="6" width="24" height="28" rx="2" fill="none" stroke="#e95420" stroke-width="2.5"/><rect x="14" y="12" width="12" height="3" fill="#e95420"/><rect x="14" y="19" width="12" height="3" fill="#e95420"/><rect x="14" y="26" width="8" height="3" fill="#e95420"/></svg>
+        <h3>One bill of materials</h3>
+        <p>Kernel, container runtime, CNI, and CSI versioned together and tested as a unit. What we ship is what we support.</p>
+        <a href="#">Learn more &rsaquo;</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="p-strip" id="setup">
+  <div class="row">
+    <h2>From bare metal to workloads in three steps</h2>
+    <p class="muted" style="max-width:44rem;">The same commands work on a Raspberry Pi, a factory gateway, or a rack of servers.</p>
+    <div style="margin-top:2rem;">
+      <div class="p-tabs" role="tablist" aria-label="Setup steps">
+        <button class="p-tabs__item" role="tab" id="tab-install" aria-selected="true" aria-controls="panel-install">Install</button>
+        <button class="p-tabs__item" role="tab" id="tab-configure" aria-selected="false" aria-controls="panel-configure" tabindex="-1">Configure</button>
+        <button class="p-tabs__item" role="tab" id="tab-scale" aria-selected="false" aria-controls="panel-scale" tabindex="-1">Scale</button>
+      </div>
+      <div class="p-tabs__panel is-active" id="panel-install" role="tabpanel" aria-labelledby="tab-install">
+        <div>
+          <h3>Install</h3>
+          <p class="muted">Lattice ships as a snap, so installation is identical on Ubuntu Server, Core, and Desktop. Dependencies resolve themselves.</p>
+        </div>
+        <pre class="p-code-snippet"><code><span class="prompt">$</span> sudo snap install lattice --classic</code></pre>
+      </div>
+      <div class="p-tabs__panel" id="panel-configure" role="tabpanel" aria-labelledby="tab-configure">
+        <div>
+          <h3>Configure</h3>
+          <p class="muted">Answer four questions or hand it a preseed file. Networking, storage, and ingress get sensible defaults you can change later.</p>
+        </div>
+        <pre class="p-code-snippet"><code><span class="prompt">$</span> lattice init --preseed factory.yaml
+<span class="comment"># storage: ceph &middot; ingress: traefik &middot; dns: 10.0.0.2</span></code></pre>
+      </div>
+      <div class="p-tabs__panel" id="panel-scale" role="tabpanel" aria-labelledby="tab-scale">
+        <div>
+          <h3>Scale</h3>
+          <p class="muted">Joining a node prints a token. Run it on the new machine and the cluster absorbs it — no control-plane surgery.</p>
+        </div>
+        <pre class="p-code-snippet"><code><span class="prompt">$</span> lattice join --token 9f2c-41ad --role worker</code></pre>
+      </div>
+    </div>
+    <div style="margin-top:3rem;">
+      <div class="p-notification--information"><p><strong>Note:</strong> Ubuntu 24.04.3 LTS is the recommended host. 22.04 LTS is supported through 2032.</p></div>
+      <div class="p-notification--positive"><p><strong>Success:</strong> The 1.34 release passed 4,100 conformance tests with zero failures.</p></div>
+      <div class="p-notification--caution"><p><strong>Heads up:</strong> The legacy <code style="font-family:var(--mono);">lattice-beta</code> channel will be removed on 1 March 2027.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="p-strip p-strip--light" id="faq">
+  <div class="row">
+    <h2>Frequently asked questions</h2>
+    <ul class="p-accordion">
+      <li class="p-accordion__item">
+        <button class="p-accordion__tab" aria-expanded="false">Is Lattice free?</button>
+        <div class="p-accordion__panel"><p>Yes. Free for personal and small-scale commercial use, with the same binaries we ship to paying customers. Enterprise support with 24/7 SLAs and 12-year maintenance is available under Ubuntu Pro.</p></div>
+      </li>
+      <li class="p-accordion__item">
+        <button class="p-accordion__tab" aria-expanded="false">Which architectures are supported?</button>
+        <div class="p-accordion__panel"><p>x86-64, ARM64, and RISC-V. The same snap runs on all three, so a cluster can mix a Raspberry Pi gateway with rack servers.</p></div>
+      </li>
+      <li class="p-accordion__item">
+        <button class="p-accordion__tab" aria-expanded="false">Can I migrate from my existing cluster?</button>
+        <div class="p-accordion__panel"><p>In most cases, yes. Lattice imports standard kubeconfig files and speaks the upstream Kubernetes API, so existing manifests apply unchanged. Our migration guide covers etcd and persistent volumes step by step.</p></div>
+      </li>
+      <li class="p-accordion__item">
+        <button class="p-accordion__tab" aria-expanded="false">Does it work offline?</button>
+        <div class="p-accordion__panel"><p>Fully air-gapped installs are supported. Download the offline bundle once, carry it on a USB drive, and the cluster never needs to phone home.</p></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="p-strip p-strip--aubergine p-strip--deep" id="get-started">
+  <div class="row" style="max-width:56rem;">
+    <h2>Ready to build on Ubuntu?</h2>
+    <p class="muted" style="font-size:1.125rem;">Download Lattice today. Free for personal and small-scale commercial use. Always will be.</p>
+    <div class="hero-actions">
+      <a class="p-button--brand" href="#">Download Lattice</a>
+      <a class="p-button--base" href="#">Talk to sales</a>
+    </div>
+  </div>
+</section>
+
+<footer class="p-strip--dark">
+  <div class="row" style="padding-top:3rem;">
+    <div class="footer-grid">
+      <div>
+        <h4>Lattice</h4>
+        <p style="color:#999;font-size:.875rem;max-width:20rem;">Kubernetes at the edge, packaged the Ubuntu way. A fictional product demonstrating the Vanilla framework style.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#">Features</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Releases</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#" id="docs">Documentation</a></li>
+          <li><a href="#">Tutorials</a></li>
+          <li><a href="#">Community forum</a></li>
+          <li><a href="#">Bug tracker</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Legal</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>&copy; 2026 Lattice Systems Ltd. Ubuntu and Canonical are registered trademarks of Canonical Ltd.</p>
+      <p>Built from the vanilla-framework skill &middot; design-skills</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Tabs
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.p-tabs__item'));
+  function selectTab(tab) {
+    tabs.forEach(function (t) {
+      var selected = t === tab;
+      t.setAttribute('aria-selected', selected ? 'true' : 'false');
+      t.tabIndex = selected ? 0 : -1;
+      var panel = document.getElementById(t.getAttribute('aria-controls'));
+      if (panel) panel.classList.toggle('is-active', selected);
+    });
+  }
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener('click', function () { selectTab(tab); });
+    tab.addEventListener('keydown', function (e) {
+      var next = null;
+      if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+      if (e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+      if (next) { e.preventDefault(); selectTab(next); next.focus(); }
+    });
+  });
+
+  // Accordion
+  document.querySelectorAll('.p-accordion__tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      var panel = btn.nextElementSibling;
+      panel.style.maxHeight = open ? '0' : panel.scrollHeight + 'px';
+    });
+  });
+
+  // Mobile nav
+  var toggle = document.querySelector('.nav-toggle');
+  var links = document.querySelector('.p-navigation__links');
+  toggle.addEventListener('click', function () {
+    var open = links.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+})();
+</script>
+</body>
+</html>
