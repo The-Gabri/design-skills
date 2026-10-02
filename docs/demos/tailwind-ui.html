@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tailwind-ui</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ tokens (Tailwind palette) ============ */
+:root{
+  --zinc-50:#fafafa; --zinc-100:#f4f4f5; --zinc-200:#e4e4e7; --zinc-300:#d4d4d8;
+  --zinc-400:#a1a1a7; --zinc-500:#71717a; --zinc-600:#52525b;
+  --zinc-700:#3f3f46; --zinc-800:#27272a; --zinc-900:#18181b; --zinc-950:#09090b;
+  --blue-50:#eff6ff; --blue-100:#dbeafe; --blue-500:#3b82f6; --blue-600:#2563eb; --blue-700:#1d4ed8;
+  --emerald-50:#ecfdf5; --emerald-500:#10b981; --emerald-600:#059669; --emerald-700:#047857;
+  --amber-50:#fffbeb; --amber-600:#d97706; --amber-700:#b45309;
+  --red-50:#fef2f2; --red-600:#dc2626; --red-700:#b91c1c;
+  --violet-600:#7c3aed;
+  --font:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;
+  --ring:0 0 0 1px rgba(9,9,11,.10);
+  --ring-inset:inset 0 0 0 1px rgba(9,9,11,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--zinc-950);background:#fff;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+img,svg{display:block}
+::selection{background:var(--blue-100)}
+
+/* ============ layout ============ */
+.wrap{max-width:80rem;margin:0 auto;padding-left:1rem;padding-right:1rem}
+@media(min-width:640px){.wrap{padding-left:1.5rem;padding-right:1.5rem}}
+@media(min-width:1024px){.wrap{padding-left:2rem;padding-right:2rem}}
+.section{padding:6rem 0}
+@media(min-width:640px){.section{padding:8rem 0}}
+.eyebrow{font-size:.875rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-600)}
+.h2{font-size:1.875rem;line-height:2.25rem;letter-spacing:-.025em;font-weight:600;margin-top:1rem}
+@media(min-width:640px){.h2{font-size:2.25rem;line-height:2.5rem}}
+.lede{margin-top:1rem;font-size:1.125rem;line-height:1.75rem;color:var(--zinc-600);max-width:42rem}
+
+/* ============ background patterns (Tailwind docs recipe) ============ */
+.bg-grid{
+  background-image:linear-gradient(to right,rgba(9,9,11,.055) 1px,transparent 1px),
+                   linear-gradient(to bottom,rgba(9,9,11,.055) 1px,transparent 1px);
+  background-size:28px 28px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 75% at 50% 0%,#000 35%,transparent 100%);
+          mask-image:radial-gradient(ellipse 90% 75% at 50% 0%,#000 35%,transparent 100%);
+}
+.bg-grid-dark{
+  background-image:linear-gradient(to right,rgba(255,255,255,.06) 1px,transparent 1px),
+                   linear-gradient(to bottom,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.glow{position:absolute;pointer-events:none;background:radial-gradient(closest-side,rgba(37,99,235,.13),transparent)}
+
+/* ============ buttons ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:0;border-radius:.5rem;
+  padding:.625rem 1.125rem;font-size:.875rem;font-weight:600;line-height:1.25rem;
+  transition:background-color .15s ease-out,color .15s ease-out,box-shadow .15s ease-out;white-space:nowrap}
+.btn:focus-visible{outline:2px solid var(--blue-600);outline-offset:2px}
+.btn-dark{background:var(--zinc-950);color:#fff;box-shadow:0 1px 2px rgba(9,9,11,.12)}
+.btn-dark:hover{background:var(--zinc-800)}
+.btn-accent{background:var(--blue-600);color:#fff;box-shadow:0 1px 2px rgba(37,99,235,.25)}
+.btn-accent:hover{background:var(--blue-500)}
+.btn-ring{background:#fff;color:var(--zinc-900);box-shadow:var(--ring-inset),0 1px 2px rgba(9,9,11,.06)}
+.btn-ring:hover{background:var(--zinc-50)}
+.btn-sm{padding:.4375rem .875rem}
+
+/* ============ badges (ring-inset recipe) ============ */
+.badge{display:inline-flex;align-items:center;gap:.375rem;border-radius:.375rem;padding:.25rem .5rem;
+  font-size:.75rem;font-weight:500;line-height:1rem;white-space:nowrap}
+.badge .dot{width:.375rem;height:.375rem;border-radius:9999px;background:currentColor}
+.badge-live{background:var(--emerald-50);color:var(--emerald-700);box-shadow:inset 0 0 0 1px rgba(5,150,105,.25)}
+.badge-building{background:var(--amber-50);color:var(--amber-700);box-shadow:inset 0 0 0 1px rgba(217,119,6,.25)}
+.badge-failed{background:var(--red-50);color:var(--red-700);box-shadow:inset 0 0 0 1px rgba(220,38,38,.25)}
+.badge-queued{background:var(--zinc-100);color:var(--zinc-600);box-shadow:inset 0 0 0 1px rgba(82,82,91,.18)}
+.badge-seeded{background:var(--blue-50);color:var(--blue-700);box-shadow:inset 0 0 0 1px rgba(37,99,235,.25)}
+
+/* ============ announcement + header ============ */
+.announce{background:var(--zinc-950);color:#fff;font-size:.875rem}
+.announce-inner{display:flex;align-items:center;justify-content:center;gap:.75rem;padding:.625rem 1rem;text-align:center}
+.announce a{color:#fff;font-weight:600;display:inline-flex;align-items:center;gap:.25rem}
+.announce a:hover{color:var(--blue-500)}
+.announce .new{background:var(--blue-600);border-radius:.375rem;padding:.125rem .5rem;font-size:.75rem;font-weight:600}
+.announce-close{background:none;border:0;color:var(--zinc-400);padding:.25rem;border-radius:.375rem;display:flex}
+.announce-close:hover{color:#fff}
+header.site{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:inset 0 -1px 0 rgba(9,9,11,.08)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:4rem}
+.brand{display:flex;align-items:center;gap:.625rem;font-weight:700;font-size:1.0625rem;letter-spacing:-.01em}
+.brand-mark{width:2rem;height:2rem;border-radius:.5rem;background:var(--blue-600);display:flex;align-items:center;justify-content:center;flex:none}
+.nav-links{display:none;align-items:center;gap:2rem}
+@media(min-width:768px){.nav-links{display:flex}}
+.nav-links a{font-size:.875rem;font-weight:500;color:var(--zinc-600)}
+.nav-links a:hover{color:var(--zinc-950)}
+.nav-actions{display:none;align-items:center;gap:1rem}
+@media(min-width:768px){.nav-actions{display:flex}}
+.nav-actions .signin{font-size:.875rem;font-weight:600;color:var(--zinc-900)}
+.nav-actions .signin:hover{color:var(--blue-600)}
+.hamburger{display:flex;background:none;border:0;padding:.5rem;border-radius:.5rem;color:var(--zinc-900)}
+@media(min-width:768px){.hamburger{display:none}}
+.mobile-menu{display:none;border-top:1px solid rgba(9,9,11,.08);padding:.75rem 1rem 1.25rem;background:#fff}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:block;padding:.75rem .5rem;font-size:.9375rem;font-weight:500;color:var(--zinc-700);border-radius:.5rem}
+.mobile-menu a:hover{background:var(--zinc-100)}
+.mobile-menu .btn{width:100%;margin-top:.75rem}
+
+/* ============ hero ============ */
+.hero{position:relative;overflow:hidden}
+.hero-inner{position:relative;padding:4.5rem 0 5rem}
+@media(min-width:1024px){.hero-inner{padding:6.5rem 0 7rem}}
+.hero-grid-bg{position:absolute;inset:0}
+.hero-glow{width:60rem;height:30rem;top:-12rem;left:50%;transform:translateX(-50%)}
+.hero-layout{position:relative;display:grid;gap:4rem;align-items:center}
+@media(min-width:1024px){.hero-layout{grid-template-columns:1.05fr .95fr}}
+.h1{font-size:2.75rem;line-height:1.04;letter-spacing:-.028em;font-weight:600}
+@media(min-width:640px){.h1{font-size:3.9rem}}
+.h1 .accent{color:var(--blue-600)}
+.hero-sub{margin-top:1.5rem;font-size:1.125rem;line-height:1.75rem;color:var(--zinc-600);max-width:34rem}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}
+.cmd{display:inline-flex;align-items:center;gap:.75rem;margin-top:1.75rem;background:var(--zinc-950);border-radius:.75rem;
+  padding:.625rem .625rem .625rem 1rem;font-family:var(--mono);font-size:.8125rem;color:var(--zinc-100);box-shadow:0 1px 2px rgba(9,9,11,.2)}
+.cmd .prompt{color:var(--zinc-500)}
+.cmd button{display:inline-flex;align-items:center;gap:.375rem;background:rgba(255,255,255,.08);border:0;color:#fff;
+  border-radius:.5rem;padding:.4375rem .75rem;font-family:var(--font);font-size:.75rem;font-weight:600}
+.cmd button:hover{background:rgba(255,255,255,.16)}
+.hero-stats{display:flex;gap:2.5rem;margin-top:2.75rem;flex-wrap:wrap}
+.stat-num{font-size:1.5rem;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat-label{font-size:.8125rem;color:var(--zinc-500);margin-top:.125rem}
+
+/* app mockup panel */
+.mock{position:relative}
+.mock-card{background:#fff;border-radius:1rem;box-shadow:var(--ring),0 20px 50px -20px rgba(9,9,11,.25);overflow:hidden}
+.mock-head{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.25rem;border-bottom:1px solid rgba(9,9,11,.07)}
+.mock-title{font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:.625rem}
+.mock-title code{font-family:var(--mono);font-weight:500;color:var(--zinc-600);font-size:.8125rem}
+.mock-kebab{background:none;border:0;color:var(--zinc-400);padding:.375rem;border-radius:.5rem;display:flex}
+.mock-kebab:hover{background:var(--zinc-100);color:var(--zinc-700)}
+.urlbar{margin:1rem 1.25rem 0;display:flex;align-items:center;gap:.5rem;background:var(--zinc-100);border-radius:.5rem;
+  padding:.5625rem .875rem;font-family:var(--mono);font-size:.8125rem;color:var(--zinc-600)}
+.urlbar .secure{color:var(--emerald-600);display:flex}
+.deploy-log{padding:1rem 1.25rem;font-family:var(--mono);font-size:.78rem;line-height:2;color:var(--zinc-600)}
+.deploy-log .ok{color:var(--emerald-600);font-weight:600}
+.deploy-log .dim{color:var(--zinc-400)}
+.mock-foot{display:flex;gap:.625rem;padding:0 1.25rem 1.25rem}
+.mock-float{position:absolute;right:-.75rem;bottom:-2rem;background:#fff;border-radius:.875rem;padding:1rem 1.125rem;
+  box-shadow:var(--ring),0 16px 40px -16px rgba(9,9,11,.28);display:flex;gap:.875rem;align-items:center;max-width:19rem}
+@media(min-width:640px){.mock-float{right:-1.5rem}}
+.mock-float .dbicon{width:2.5rem;height:2.5rem;border-radius:.625rem;background:var(--blue-50);color:var(--blue-600);
+  display:flex;align-items:center;justify-content:center;flex:none;box-shadow:inset 0 0 0 1px rgba(37,99,235,.2)}
+.mock-float strong{display:block;font-size:.875rem;font-weight:600}
+.mock-float span{font-size:.8125rem;color:var(--zinc-500)}
+.mock-float .badge{margin-top:.375rem}
+
+/* ============ logo cloud ============ */
+.logos{padding:3rem 0 0}
+.logos p{text-align:center;font-size:.8125rem;font-weight:600;letter-spacing:.08em;color:var(--zinc-400);text-transform:uppercase}
+.logo-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2.5rem 3.5rem;margin-top:2rem;color:var(--zinc-400)}
+.logo-row span{font-size:1.125rem;white-space:nowrap;display:inline-flex;align-items:center;gap:.5rem}
+.lw-700{font-weight:700;letter-spacing:-.02em}.lw-600{font-weight:600}.lw-500{font-weight:500}
+.ls-wide{letter-spacing:.14em}.ls-tight{letter-spacing:-.03em}.italic{font-style:italic}
+
+/* ============ steps ============ */
+.steps{display:grid;gap:2.5rem;margin-top:3.5rem}
+@media(min-width:900px){.steps{grid-template-columns:repeat(3,1fr);gap:2rem}}
+.step{position:relative;padding-top:1.75rem}
+.step::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--zinc-100);border-radius:2px}
+.step::after{content:"";position:absolute;top:0;left:0;width:3rem;height:2px;background:var(--blue-600);border-radius:2px}
+.step-num{font-family:var(--mono);font-size:.8125rem;font-weight:600;color:var(--blue-600)}
+.step h3{font-size:1.125rem;font-weight:600;letter-spacing:-.01em;margin-top:.625rem}
+.step p{margin-top:.5rem;font-size:.9375rem;line-height:1.65;color:var(--zinc-600)}
+
+/* ============ terminal tabs ============ */
+.term{max-width:56rem;margin:3rem auto 0;border-radius:1rem;overflow:hidden;background:var(--zinc-950);
+  box-shadow:0 24px 60px -24px rgba(9,9,11,.5)}
+.term-tabs{display:flex;gap:.25rem;padding:.625rem .75rem 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.tab-btn{background:none;border:0;color:var(--zinc-400);font-family:var(--mono);font-size:.8125rem;font-weight:500;
+  padding:.625rem 1rem;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab-btn:hover{color:#fff}
+.tab-btn.active{color:#fff;border-bottom-color:var(--blue-500)}
+.term-body{padding:1.5rem 1.75rem;font-family:var(--mono);font-size:.875rem;line-height:1.9;min-height:15rem}
+.term-body .p{color:var(--zinc-500)}
+.term-body .c{color:var(--zinc-100)}
+.term-body .ok{color:#34d399}
+.term-body .dim{color:var(--zinc-500)}
+.term-body .arr{color:var(--blue-500)}
+.term-panel{display:none}
+.term-panel.active{display:block;animation:fadein .18s ease-out}
+@keyframes fadein{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+/* ============ checklist (editorial) ============ */
+.split{display:grid;gap:3rem}
+@media(min-width:1024px){.split{grid-template-columns:.9fr 1.1fr;gap:5rem}}
+.split-sticky{position:static}
+@media(min-width:1024px){.split-sticky{position:sticky;top:6.5rem;align-self:start}}
+.check-list{border-top:1px solid rgba(9,9,11,.08)}
+.check-row{display:flex;gap:1.125rem;padding:1.375rem .25rem;border-bottom:1px solid rgba(9,9,11,.08)}
+.check-icon{width:1.75rem;height:1.75rem;border-radius:9999px;background:var(--emerald-50);color:var(--emerald-600);
+  display:flex;align-items:center;justify-content:center;flex:none;margin-top:.125rem;box-shadow:inset 0 0 0 1px rgba(5,150,105,.25)}
+.check-row h3{font-size:1rem;font-weight:600;letter-spacing:-.01em}
+.check-row p{margin-top:.25rem;font-size:.9375rem;color:var(--zinc-600);line-height:1.65}
+.text-link{display:inline-flex;align-items:center;gap:.375rem;margin-top:1.5rem;font-size:.9375rem;font-weight:600;color:var(--blue-600)}
+.text-link:hover{color:var(--blue-500)}
+
+/* ============ table section ============ */
+.table-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1.25rem;margin-bottom:2rem}
+/* dropdown */
+.dd{position:relative}
+.dd-btn{display:inline-flex;align-items:center;gap:.5rem;background:#fff;border:0;border-radius:.5rem;padding:.5625rem 1rem;
+  font-size:.875rem;font-weight:600;color:var(--zinc-900);box-shadow:var(--ring-inset),0 1px 2px rgba(9,9,11,.06)}
+.dd-btn:hover{background:var(--zinc-50)}
+.dd-btn:focus-visible{outline:2px solid var(--blue-600);outline-offset:2px}
+.dd-menu{position:absolute;right:0;top:calc(100% + .5rem);width:13rem;background:#fff;border-radius:.75rem;padding:.375rem;
+  box-shadow:var(--ring),0 12px 32px -8px rgba(9,9,11,.22);opacity:0;transform:scale(.96) translateY(-4px);transform-origin:top right;
+  pointer-events:none;transition:opacity .12s ease-out,transform .12s ease-out;z-index:30}
+.dd.open .dd-menu{opacity:1;transform:none;pointer-events:auto}
+.dd-item{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:0;text-align:left;
+  border-radius:.5rem;padding:.5625rem .75rem;font-size:.875rem;font-weight:500;color:var(--zinc-700)}
+.dd-item:hover{background:var(--zinc-100)}
+.dd-item .check{color:var(--blue-600);opacity:0;display:flex}
+.dd-item.selected .check{opacity:1}
+.dd-item.selected{color:var(--zinc-950);font-weight:600}
+/* refined table */
+.table-card{border-radius:.875rem;background:#fff;box-shadow:var(--ring),0 1px 2px rgba(9,9,11,.05);overflow:hidden}
+.table-scroll{overflow-x:auto}
+table.grid-table{width:100%;min-width:44rem;border-collapse:collapse;font-size:.875rem}
+.grid-table thead th{text-align:left;font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--zinc-500);padding:.75rem 1.5rem;border-bottom:1px solid rgba(9,9,11,.08);white-space:nowrap}
+.grid-table thead th.num,.grid-table td.num{text-align:right}
+.grid-table tbody td{padding:1rem 1.5rem;border-bottom:1px solid rgba(9,9,11,.05);vertical-align:middle;white-space:nowrap}
+.grid-table tbody tr:last-child td{border-bottom:0}
+.grid-table tbody tr{transition:background-color .12s ease-out}
+.grid-table tbody tr:hover{background:var(--zinc-50)}
+.cell-main{font-weight:600;color:var(--zinc-950)}
+.cell-main code{font-family:var(--mono);font-weight:500;font-size:.8125rem;color:var(--zinc-500);display:block;margin-top:.125rem}
+.cell-sub{color:var(--zinc-500);font-family:var(--mono);font-size:.8125rem}
+.cell-num{font-variant-numeric:tabular-nums;color:var(--zinc-500)}
+.avatar{display:inline-flex;align-items:center;gap:.625rem}
+.avatar .face{width:2rem;height:2rem;border-radius:9999px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:.6875rem;font-weight:700;color:#fff;flex:none}
+.table-count{margin-top:1rem;font-size:.8125rem;color:var(--zinc-500)}
+
+/* ============ testimonial ============ */
+.quote-card{max-width:56rem;margin:0 auto;text-align:center}
+.quote-mark{color:var(--blue-600);margin:0 auto 1.5rem}
+.quote-text{font-size:1.5rem;line-height:1.4;letter-spacing:-.02em;font-weight:500}
+@media(min-width:640px){.quote-text{font-size:1.875rem}}
+.quote-attr{display:flex;align-items:center;justify-content:center;gap:.875rem;margin-top:2rem}
+.quote-attr .face{width:3rem;height:3rem;border-radius:9999px;background:var(--violet-600);color:#fff;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center}
+.quote-attr strong{display:block;font-size:.9375rem;text-align:left}
+.quote-attr span{display:block;font-size:.875rem;color:var(--zinc-500);text-align:left}
+
+/* ============ pricing ============ */
+.tiers{display:grid;gap:1.5rem;margin-top:3.5rem;align-items:stretch}
+@media(min-width:900px){.tiers{grid-template-columns:repeat(3,1fr)}}
+.tier{position:relative;background:#fff;border-radius:1rem;padding:2rem;box-shadow:var(--ring-inset),0 1px 2px rgba(9,9,11,.05);
+  display:flex;flex-direction:column}
+.tier.popular{box-shadow:inset 0 0 0 2px var(--blue-600),0 12px 32px -12px rgba(37,99,235,.35)}
+.tier-name{font-size:.9375rem;font-weight:600}
+.tier-price{margin-top:1rem;display:flex;align-items:baseline;gap:.375rem}
+.tier-price .amount{font-size:2.5rem;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.tier-price .per{font-size:.875rem;color:var(--zinc-500)}
+.tier-desc{margin-top:.5rem;font-size:.9375rem;color:var(--zinc-600)}
+.tier ul{list-style:none;margin:1.75rem 0 2rem;display:grid;gap:.75rem;flex:1}
+.tier li{display:flex;gap:.625rem;font-size:.875rem;color:var(--zinc-700);align-items:flex-start;line-height:1.5}
+.tier li svg{flex:none;margin-top:.125rem;color:var(--blue-600)}
+.pop-badge{position:absolute;top:-.75rem;left:50%;transform:translateX(-50%);background:var(--blue-600);color:#fff;
+  font-size:.75rem;font-weight:600;padding:.25rem .875rem;border-radius:9999px;white-space:nowrap}
+
+/* ============ faq ============ */
+.faq{max-width:48rem;margin:3rem auto 0;border-top:1px solid rgba(9,9,11,.08)}
+.faq-item{border-bottom:1px solid rgba(9,9,11,.08)}
+.faq-q{width:100%;background:none;border:0;display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:1.375rem .25rem;font-size:1.0625rem;font-weight:600;letter-spacing:-.01em;text-align:left;color:var(--zinc-950)}
+.faq-q:hover{color:var(--blue-700)}
+.faq-q .chev{color:var(--zinc-400);transition:transform .18s ease-out;flex:none;display:flex}
+.faq-item.open .faq-q .chev{transform:rotate(180deg);color:var(--blue-600)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .22s ease-out}
+.faq-a p{padding:0 .25rem 1.5rem;color:var(--zinc-600);line-height:1.7;font-size:.9375rem}
+
+/* ============ dark CTA ============ */
+.cta-panel{position:relative;overflow:hidden;background:var(--zinc-950);border-radius:1.5rem;padding:4rem 2rem;text-align:center}
+@media(min-width:640px){.cta-panel{padding:5.5rem 4rem}}
+.cta-bg{position:absolute;inset:0}
+.cta-glow{width:50rem;height:26rem;top:-10rem;left:50%;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(37,99,235,.22),transparent)}
+.cta-inner{position:relative}
+.cta-panel h2{color:#fff;font-size:2rem;letter-spacing:-.025em;font-weight:600;line-height:1.15;max-width:36rem;margin:0 auto}
+@media(min-width:640px){.cta-panel h2{font-size:2.75rem}}
+.cta-panel p{color:var(--zinc-400);margin-top:1rem;font-size:1.0625rem}
+.cta-row{display:flex;flex-wrap:wrap;gap:.875rem;justify-content:center;margin-top:2.25rem;align-items:center}
+.cmd-dark{display:inline-flex;align-items:center;gap:.625rem;background:rgba(255,255,255,.06);border-radius:.75rem;
+  padding:.625rem .625rem .625rem 1rem;font-family:var(--mono);font-size:.8125rem;color:var(--zinc-200);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.cmd-dark button{display:inline-flex;align-items:center;gap:.375rem;background:rgba(255,255,255,.1);border:0;color:#fff;
+  border-radius:.5rem;padding:.4375rem .75rem;font-family:var(--font);font-size:.75rem;font-weight:600}
+.cmd-dark button:hover{background:rgba(255,255,255,.2)}
+
+/* ============ footer ============ */
+footer.site{border-top:1px solid rgba(9,9,11,.08);margin-top:6rem}
+.foot-grid{display:grid;gap:2.5rem;padding:4rem 0 3rem}
+@media(min-width:768px){.foot-grid{grid-template-columns:1.4fr repeat(4,1fr)}}
+.foot-brand p{margin-top:1rem;font-size:.875rem;color:var(--zinc-500);max-width:16rem;line-height:1.65}
+.foot-col h4{font-size:.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--zinc-400);margin-bottom:1rem}
+.foot-col a{display:block;font-size:.875rem;color:var(--zinc-600);padding:.375rem 0}
+.foot-col a:hover{color:var(--zinc-950)}
+.foot-bar{border-top:1px solid rgba(9,9,11,.08);padding:1.5rem 0;display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between}
+.foot-bar p{font-size:.8125rem;color:var(--zinc-500)}
+.status{display:inline-flex;align-items:center;gap:.5rem;font-size:.8125rem;color:var(--zinc-600);font-weight:500}
+.status .dot{width:.5rem;height:.5rem;border-radius:9999px;background:var(--emerald-500)}
+.skill-line{margin-top:1rem;font-size:.75rem;color:var(--zinc-400)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- announcement bar -->
+<div class="announce" id="announce">
+  <div class="announce-inner wrap">
+    <span class="new">New</span>
+    <span>Tarmac 2.0 is here — ephemeral Postgres for every preview.</span>
+    <a href="#pricing">Read the changelog
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+    <button class="announce-close" id="announceClose" aria-label="Dismiss announcement">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- header -->
+<header class="site">
+  <div class="wrap nav">
+    <a class="brand" href="#" aria-label="Tarmac home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13.5L9 4l6 9.5"/><path d="M6.2 9.5h5.6"/></svg>
+      </span>
+      Tarmac
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#how">Product</a>
+      <a href="#terminal">Docs</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">Changelog</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="signin" href="#">Sign in</a>
+      <a class="btn btn-dark btn-sm" href="#cta">Get started</a>
+    </div>
+    <button class="hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h16M3 11h16M3 16h16"/></svg>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#how">Product</a>
+    <a href="#terminal">Docs</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">Changelog</a>
+    <a href="#">Sign in</a>
+    <a class="btn btn-dark" href="#cta">Get started</a>
+  </div>
+</header>
+
+<main>
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-grid-bg bg-grid" aria-hidden="true"></div>
+    <div class="glow hero-glow" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <div class="hero-layout">
+        <div>
+          <p class="eyebrow">Preview environments for modern teams</p>
+          <h1 class="h1" style="margin-top:1.25rem">Every pull request deserves a <span class="accent">live environment</span>.</h1>
+          <p class="hero-sub">Tarmac clones your full stack — app, Postgres, Redis, workers — into an isolated preview for every PR. Reviewers open a link and test the real thing. Merge, and it tears itself down.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-accent" href="#cta">Start deploying free</a>
+            <a class="btn btn-ring" href="#how">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 3.5v9l7-4.5-7-4.5z"/></svg>
+              Watch the demo
+            </a>
+          </div>
+          <div class="cmd" role="group" aria-label="Quick install command">
+            <span><span class="prompt">$</span> npx tarmac init</span>
+            <button id="copyCmd" type="button">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5v-2a1.5 1.5 0 00-1.5-1.5H4A1.5 1.5 0 002.5 3.5v5A1.5 1.5 0 004 10h1.5"/></svg>
+              <span id="copyLabel">Copy</span>
+            </button>
+          </div>
+          <div class="hero-stats">
+            <div><div class="stat-num">38s</div><div class="stat-label">median spin-up</div></div>
+            <div><div class="stat-num">99.99%</div><div class="stat-label">preview uptime</div></div>
+            <div><div class="stat-num">140k</div><div class="stat-label">developers shipping</div></div>
+          </div>
+        </div>
+
+        <!-- app mockup -->
+        <div class="mock">
+          <div class="mock-card">
+            <div class="mock-head">
+              <div class="mock-title">
+                <span class="badge badge-live"><span class="dot"></span>Live</span>
+                <code>pr-482</code>
+              </div>
+              <button class="mock-kebab" aria-label="Preview options">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><circle cx="9" cy="4" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="9" cy="14" r="1.6"/></svg>
+              </button>
+            </div>
+            <div class="urlbar">
+              <span class="secure"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg></span>
+              pr-482.tarmac.run
+            </div>
+            <div class="deploy-log">
+              <div><span class="ok">✓</span> Build finished in 41s</div>
+              <div><span class="ok">✓</span> Postgres snapshot restored <span class="dim">(2.1 GB)</span></div>
+              <div><span class="ok">✓</span> 3 workers healthy</div>
+              <div><span class="dim">→</span> Deploy comment posted to #482</div>
+            </div>
+            <div class="mock-foot">
+              <a class="btn btn-accent btn-sm" href="#cta">Open preview</a>
+              <a class="btn btn-ring btn-sm" href="#dashboard">View logs</a>
+            </div>
+          </div>
+          <div class="mock-float">
+            <span class="dbicon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="10" cy="4.5" rx="6" ry="2.5"/><path d="M4 4.5v11c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-11"/><path d="M4 10c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5"/></svg>
+            </span>
+            <div>
+              <strong>Postgres cloned</strong>
+              <span>2.1 GB snapshot in 11 seconds</span><br>
+              <span class="badge badge-seeded">Seeded &amp; sanitized</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LOGO CLOUD ============ -->
+  <section class="logos" aria-label="Trusted by">
+    <div class="wrap">
+      <p>Powering pull requests at</p>
+      <div class="logo-row">
+        <span class="lw-700 ls-tight">Hexlab</span>
+        <span class="lw-500 ls-wide">NORDWIND</span>
+        <span class="lw-600 italic">kanso</span>
+        <span class="lw-700">Framely</span>
+        <span class="lw-500">Datum&amp;Co</span>
+        <span class="lw-600 ls-tight">polite<span style="color:var(--blue-600)">*</span></span>
+        <span class="lw-700 ls-wide">VANTAGE</span>
+        <span class="lw-500 italic">loopwork</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="section" id="how">
+    <div class="wrap">
+      <p class="eyebrow">How it works</p>
+      <h2 class="h2">From push to preview in three steps.</h2>
+      <p class="lede">No YAML to hand-write, no staging server to babysit. Tarmac watches your repo and does the boring parts.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h3>Connect your repo</h3>
+          <p>Install the GitHub app and point Tarmac at your repository. It reads your Dockerfile or compose file and figures out the topology on its own.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h3>Open a pull request</h3>
+          <p>Every PR gets an isolated copy of your stack with a seeded database. The preview URL posts itself as a comment before your linter finishes.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h3>Share the link</h3>
+          <p>Designers, PMs, and QA click through the real thing in their browser. You merge with confidence — Tarmac tears the environment down.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TERMINAL TABS ============ -->
+  <section class="section" id="terminal" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow" style="text-align:center">Quickstart</p>
+      <h2 class="h2" style="text-align:center">Running in one command.</h2>
+      <p class="lede" style="text-align:center;margin-left:auto;margin-right:auto">Pick your package manager. Tarmac detects your stack and writes its own config.</p>
+      <div class="term">
+        <div class="term-tabs" role="tablist" aria-label="Package managers">
+          <button class="tab-btn active" role="tab" aria-selected="true" data-tab="npm">npm</button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="yarn">yarn</button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="pnpm">pnpm</button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="bun">bun</button>
+        </div>
+        <div class="term-body">
+          <div class="term-panel active" id="panel-npm" role="tabpanel">
+            <div><span class="p">$</span> <span class="c">npm install -g tarmac</span></div>
+            <div><span class="p">$</span> <span class="c">tarmac init</span></div>
+            <div><span class="ok">✓</span> <span class="c">Detected Next.js + Postgres 16</span></div>
+            <div><span class="ok">✓</span> <span class="c">Wrote tarmac.yaml</span></div>
+            <div><span class="arr">→</span> <span class="dim">Push a branch — your first preview spins up automatically.</span></div>
+          </div>
+          <div class="term-panel" id="panel-yarn" role="tabpanel">
+            <div><span class="p">$</span> <span class="c">yarn global add tarmac</span></div>
+            <div><span class="p">$</span> <span class="c">tarmac init</span></div>
+            <div><span class="ok">✓</span> <span class="c">Detected Next.js + Postgres 16</span></div>
+            <div><span class="ok">✓</span> <span class="c">Wrote tarmac.yaml</span></div>
+            <div><span class="arr">→</span> <span class="dim">Push a branch — your first preview spins up automatically.</span></div>
+          </div>
+          <div class="term-panel" id="panel-pnpm" role="tabpanel">
+            <div><span class="p">$</span> <span class="c">pnpm add -g tarmac</span></div>
+            <div><span class="p">$</span> <span class="c">tarmac init</span></div>
+            <div><span class="ok">✓</span> <span class="c">Detected Next.js + Postgres 16</span></div>
+            <div><span class="ok">✓</span> <span class="c">Wrote tarmac.yaml</span></div>
+            <div><span class="arr">→</span> <span class="dim">Push a branch — your first preview spins up automatically.</span></div>
+          </div>
+          <div class="term-panel" id="panel-bun" role="tabpanel">
+            <div><span class="p">$</span> <span class="c">bun add -g tarmac</span></div>
+            <div><span class="p">$</span> <span class="c">tarmac init</span></div>
+            <div><span class="ok">✓</span> <span class="c">Detected Next.js + Postgres 16</span></div>
+            <div><span class="ok">✓</span> <span class="c">Wrote tarmac.yaml</span></div>
+            <div><span class="arr">→</span> <span class="dim">Push a branch — your first preview spins up automatically.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHY TARMAC (checklist) ============ -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap split">
+      <div class="split-sticky">
+        <p class="eyebrow">Why Tarmac</p>
+        <h2 class="h2">Everything you need to review with confidence.</h2>
+        <p class="lede">Staging servers rot. Screenshots lie. A live environment per PR is the only review surface that tells the truth.</p>
+        <a class="text-link" href="#pricing">Compare plans
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+      <div class="check-list">
+        <div class="check-row">
+          <span class="check-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg></span>
+          <div><h3>Full-stack clones, not screenshots</h3><p>App, database, background workers — the whole topology, rebuilt per PR. Not a static build of the frontend.</p></div>
+        </div>
+        <div class="check-row">
+          <span class="check-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg></span>
+          <div><h3>Ephemeral Postgres with seeded data</h3><p>Each preview restores a sanitized snapshot of production in seconds, so reviewers test against realistic data.</p></div>
+        </div>
+        <div class="check-row">
+          <span class="check-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg></span>
+          <div><h3>Share links with access control</h3><p>Password-protect a preview or restrict it to your team and SSO. External stakeholders never see more than you allow.</p></div>
+        </div>
+        <div class="check-row">
+          <span class="check-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg></span>
+          <div><h3>Comments sync back to the PR</h3><p>Reviewer notes left on the preview land as PR comments, anchored to the code they describe. Nothing gets lost in Slack.</p></div>
+        </div>
+        <div class="check-row">
+          <span class="check-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg></span>
+          <div><h3>Auto-teardown on merge</h3><p>Merged or closed, the environment and its data are destroyed within minutes. No zombie infrastructure, no surprise bill.</p></div>
+        </div>
+        <div class="check-row">
+          <span class="check-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg></span>
+          <div><h3>SOC 2 Type II, SSO/SAML, region pinning</h3><p>Audit logs and compliance controls for teams where "just spin up a copy of prod" needs a paper trail.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DASHBOARD TABLE ============ -->
+  <section class="section" id="dashboard" style="padding-top:0;background:var(--zinc-50)">
+    <div class="wrap">
+      <div class="table-head">
+        <div>
+          <p class="eyebrow">Live from the dashboard</p>
+          <h2 class="h2">Every preview, at a glance.</h2>
+          <p class="lede">The same dense, ringed tables your team will live in — statuses, durations, and owners without the noise.</p>
+        </div>
+        <div class="dd" id="filterDd">
+          <button class="dd-btn" id="filterBtn" aria-haspopup="listbox" aria-expanded="false">
+            <span id="filterLabel">All statuses</span>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+          </button>
+          <div class="dd-menu" role="listbox" aria-label="Filter by status">
+            <button class="dd-item selected" data-filter="all" role="option" aria-selected="true">All statuses<span class="check"><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 011.4-1.4L8 12.6l7.3-7.3a1 1 0 011.4 0z" clip-rule="evenodd"/></svg></span></button>
+            <button class="dd-item" data-filter="live" role="option" aria-selected="false">Live<span class="check"><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 011.4-1.4L8 12.6l7.3-7.3a1 1 0 011.4 0z" clip-rule="evenodd"/></svg></span></button>
+            <button class="dd-item" data-filter="building" role="option" aria-selected="false">Building<span class="check"><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 011.4-1.4L8 12.6l7.3-7.3a1 1 0 011.4 0z" clip-rule="evenodd"/></svg></span></button>
+            <button class="dd-item" data-filter="failed" role="option" aria-selected="false">Failed<span class="check"><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 011.4-1.4L8 12.6l7.3-7.3a1 1 0 011.4 0z" clip-rule="evenodd"/></svg></span></button>
+            <button class="dd-item" data-filter="queued" role="option" aria-selected="false">Queued<span class="check"><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 011.4-1.4L8 12.6l7.3-7.3a1 1 0 011.4 0z" clip-rule="evenodd"/></svg></span></button>
+          </div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-scroll">
+          <table class="grid-table">
+            <thead>
+              <tr>
+                <th scope="col">Preview</th>
+                <th scope="col">Author</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="num">Spin-up</th>
+                <th scope="col" class="num">Updated</th>
+              </tr>
+            </thead>
+            <tbody id="previewRows">
+              <tr data-status="live">
+                <td><span class="cell-main">add-checkout-flow<code>pr-482 · main ← add-checkout-flow</code></span></td>
+                <td><span class="avatar"><span class="face" style="background:var(--blue-600)">MC</span>Maya Chen</span></td>
+                <td><span class="badge badge-live"><span class="dot"></span>Live</span></td>
+                <td class="num cell-num">38s</td>
+                <td class="num cell-num">2m ago</td>
+              </tr>
+              <tr data-status="live">
+                <td><span class="cell-main">fix-rate-limiter<code>pr-481 · main ← fix-rate-limiter</code></span></td>
+                <td><span class="avatar"><span class="face" style="background:var(--emerald-600)">JR</span>Jonas Roth</span></td>
+                <td><span class="badge badge-live"><span class="dot"></span>Live</span></td>
+                <td class="num cell-num">41s</td>
+                <td class="num cell-num">26m ago</td>
+              </tr>
+              <tr data-status="building">
+                <td><span class="cell-main">new-onboarding<code>pr-479 · main ← new-onboarding</code></span></td>
+                <td><span class="avatar"><span class="face" style="background:var(--amber-600)">AP</span>Ava Park</span></td>
+                <td><span class="badge badge-building"><span class="dot"></span>Building</span></td>
+                <td class="num cell-num">—</td>
+                <td class="num cell-num">4m ago</td>
+              </tr>
+              <tr data-status="failed">
+                <td><span class="cell-main">bump-postgres-16<code>pr-477 · main ← bump-postgres-16</code></span></td>
+                <td><span class="avatar"><span class="face" style="background:var(--zinc-500)">DL</span>Devon Lane</span></td>
+                <td><span class="badge badge-failed"><span class="dot"></span>Failed</span></td>
+                <td class="num cell-num">52s</td>
+                <td class="num cell-num">1h ago</td>
+              </tr>
+              <tr data-status="queued">
+                <td><span class="cell-main">dark-mode-toggle<code>pr-476 · main ← dark-mode-toggle</code></span></td>
+                <td><span class="avatar"><span class="face" style="background:var(--blue-600)">MC</span>Maya Chen</span></td>
+                <td><span class="badge badge-queued"><span class="dot"></span>Queued</span></td>
+                <td class="num cell-num">—</td>
+                <td class="num cell-num">1h ago</td>
+              </tr>
+              <tr data-status="live">
+                <td><span class="cell-main">webhook-retries<code>pr-475 · main ← webhook-retries</code></span></td>
+                <td><span class="avatar"><span class="face" style="background:var(--red-600)">SK</span>Sam Keller</span></td>
+                <td><span class="badge badge-live"><span class="dot"></span>Live</span></td>
+                <td class="num cell-num">35s</td>
+                <td class="num cell-num">3h ago</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="table-count" id="tableCount">Showing 6 of 6 previews</p>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIAL ============ -->
+  <section class="section">
+    <div class="wrap">
+      <div class="quote-card">
+        <svg class="quote-mark" width="40" height="40" viewBox="0 0 40 40" fill="currentColor" aria-hidden="true"><path d="M8 26c0-8 4.5-14.5 12-18l2 4c-4.5 2.5-7 5.5-7.5 9H20v9H8v-4zm18 0c0-8 4.5-14.5 12-18l2 4c-4.5 2.5-7 5.5-7.5 9H38v9H26v-4z" transform="scale(.95)"/></svg>
+        <p class="quote-text">"We killed the "works on my machine" review thread. Designers open the preview link, click around, and leave comments that land right on the PR. Our review cycle went from days to hours."</p>
+        <div class="quote-attr">
+          <span class="face">MC</span>
+          <div><strong>Maya Chen</strong><span>Engineering Lead, Hexlab</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="section" id="pricing" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow" style="text-align:center">Pricing</p>
+      <h2 class="h2" style="text-align:center">Start free, scale when you ship.</h2>
+      <p class="lede" style="text-align:center;margin-left:auto;margin-right:auto">Every plan includes unlimited team members on previews and auto-teardown on merge.</p>
+      <div class="tiers">
+        <div class="tier">
+          <div class="tier-name">Hobby</div>
+          <div class="tier-price"><span class="amount">$0</span><span class="per">forever</span></div>
+          <p class="tier-desc">For side projects and open source.</p>
+          <ul>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>50 preview-hours / month</li>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>1 project, 3 collaborators</li>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>Community support</li>
+          </ul>
+          <a class="btn btn-ring" href="#cta" style="width:100%">Start for free</a>
+        </div>
+        <div class="tier popular">
+          <span class="pop-badge">Most popular</span>
+          <div class="tier-name">Team</div>
+          <div class="tier-price"><span class="amount">$20</span><span class="per">per seat / month</span></div>
+          <p class="tier-desc">For teams that ship every day.</p>
+          <ul>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>Unlimited previews &amp; projects</li>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>Seeded Postgres clones</li>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>SSO/SAML &amp; Slack integration</li>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>Priority support</li>
+          </ul>
+          <a class="btn btn-accent" href="#cta" style="width:100%">Start 14-day trial</a>
+        </div>
+        <div class="tier">
+          <div class="tier-name">Enterprise</div>
+          <div class="tier-price"><span class="amount">Custom</span></div>
+          <p class="tier-desc">For regulated organizations.</p>
+          <ul>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>Dedicated regions &amp; VPC</li>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>Audit logs &amp; custom retention</li>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>99.99% SLA, solutions engineer</li>
+          </ul>
+          <a class="btn btn-dark" href="#cta" style="width:100%">Talk to sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow" style="text-align:center">FAQ</p>
+      <h2 class="h2" style="text-align:center">Questions, answered.</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">How long does a preview take to spin up?
+            <span class="chev"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 7l4.5 4.5L13.5 7"/></svg></span>
+          </button>
+          <div class="faq-a"><p>The median across all customers is 38 seconds from push to live URL. The database snapshot restore usually dominates that time — a 2 GB Postgres clone restores in about 11 seconds thanks to copy-on-write storage.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Do you copy our production data?
+            <span class="chev"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 7l4.5 4.5L13.5 7"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Only from snapshots you explicitly create. Tarmac restores from sanitized snapshots — PII columns are masked by rules you define — and never touches your production database directly.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Which stacks are supported?
+            <span class="chev"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 7l4.5 4.5L13.5 7"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Anything that runs in Docker. Tarmac reads your Dockerfile or compose file, so Next.js, Rails, Django, Laravel, and friends all work. First-class integrations exist for Vercel-style frameworks and Postgres, MySQL, and Redis.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">What happens when I merge the PR?
+            <span class="chev"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 7l4.5 4.5L13.5 7"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Tarmac posts a summary comment with the final build stats, then destroys the environment and its data within minutes. Closed-without-merge PRs get the same teardown after 24 hours.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Can people outside the team access a preview?
+            <span class="chev"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 7l4.5 4.5L13.5 7"/></svg></span>
+          </button>
+          <div class="faq-a"><p>Yes. Generate a password-protected share link for clients or stakeholders, set an expiry, and revoke it anytime. By default previews are private to your organization.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DARK CTA ============ -->
+  <section class="section" id="cta" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-panel">
+        <div class="cta-bg bg-grid-dark" aria-hidden="true"></div>
+        <div class="glow cta-glow" aria-hidden="true"></div>
+        <div class="cta-inner">
+          <h2>Your next pull request could ship with a preview.</h2>
+          <p>Free for side projects. Set up in five minutes.</p>
+          <div class="cta-row">
+            <a class="btn btn-accent" href="#" style="padding:.875rem 1.75rem;font-size:1rem">Get started free</a>
+            <span class="cmd-dark"><span style="color:var(--zinc-500)">$</span> npx tarmac init
+              <button id="copyCmd2" type="button">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5v-2a1.5 1.5 0 00-1.5-1.5H4A1.5 1.5 0 002.5 3.5v5A1.5 1.5 0 004 10h1.5"/></svg>
+                <span id="copyLabel2">Copy</span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#" aria-label="Tarmac home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13.5L9 4l6 9.5"/><path d="M6.2 9.5h5.6"/></svg>
+          </span>
+          Tarmac
+        </a>
+        <p>Live preview environments for every pull request. Built for teams that review the real thing.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="#how">Previews</a><a href="#how">Databases</a><a href="#how">Share links</a><a href="#pricing">Pricing</a>
+      </div>
+      <div class="foot-col">
+        <h4>Resources</h4>
+        <a href="#terminal">Documentation</a><a href="#terminal">API reference</a><a href="#faq">Changelog</a><a href="#">Status</a>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="#">About</a><a href="#">Blog</a><a href="#">Careers</a><a href="#">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Security</a><a href="#">DPA</a>
+      </div>
+    </div>
+    <div class="foot-bar">
+      <p>© <span id="year">2026</span> Tarmac Labs, Inc.</p>
+      <span class="status"><span class="dot"></span>All systems operational</span>
+    </div>
+    <p class="skill-line" style="padding-bottom:1.5rem">Built from the tailwind-ui skill · design-skills</p>
+  </div>
+</footer>
+<script>
+(function(){
+  "use strict";
+
+  /* announcement dismiss */
+  var announce = document.getElementById('announce');
+  document.getElementById('announceClose').addEventListener('click', function(){
+    announce.style.display = 'none';
+  });
+
+  /* mobile menu */
+  var menuBtn = document.getElementById('menuBtn');
+  var mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', function(){
+    var open = mobileMenu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  mobileMenu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      mobileMenu.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  /* copy command buttons */
+  function wireCopy(btnId, labelId){
+    var btn = document.getElementById(btnId);
+    var label = document.getElementById(labelId);
+    if(!btn) return;
+    btn.addEventListener('click', function(){
+      var done = function(){
+        label.textContent = 'Copied';
+        setTimeout(function(){ label.textContent = 'Copy'; }, 1600);
+      };
+      var text = 'npx tarmac init';
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch(e){}
+        document.body.removeChild(ta); done();
+      }
+    });
+  }
+  wireCopy('copyCmd', 'copyLabel');
+  wireCopy('copyCmd2', 'copyLabel2');
+
+  /* terminal tabs */
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabBtns.forEach(function(b){
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      document.querySelectorAll('.term-panel').forEach(function(p){
+        p.classList.remove('active');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      document.getElementById('panel-' + btn.getAttribute('data-tab')).classList.add('active');
+    });
+  });
+
+  /* status filter dropdown */
+  var dd = document.getElementById('filterDd');
+  var ddBtn = document.getElementById('filterBtn');
+  var ddItems = dd.querySelectorAll('.dd-item');
+  var filterLabel = document.getElementById('filterLabel');
+  var rows = document.querySelectorAll('#previewRows tr');
+  var tableCount = document.getElementById('tableCount');
+
+  function closeDd(){
+    dd.classList.remove('open');
+    ddBtn.setAttribute('aria-expanded', 'false');
+  }
+  ddBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var open = dd.classList.toggle('open');
+    ddBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', function(e){
+    if(!dd.contains(e.target)) closeDd();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeDd();
+  });
+  ddItems.forEach(function(item){
+    item.addEventListener('click', function(){
+      ddItems.forEach(function(i){
+        i.classList.remove('selected');
+        i.setAttribute('aria-selected', 'false');
+      });
+      item.classList.add('selected');
+      item.setAttribute('aria-selected', 'true');
+      var f = item.getAttribute('data-filter');
+      filterLabel.textContent = item.firstChild.textContent.trim();
+      var shown = 0;
+      rows.forEach(function(r){
+        var match = (f === 'all') || (r.getAttribute('data-status') === f);
+        r.style.display = match ? '' : 'none';
+        if(match) shown++;
+      });
+      tableCount.textContent = 'Showing ' + shown + ' of ' + rows.length + ' previews';
+      closeDd();
+    });
+  });
+
+  /* faq accordion */
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    var q = item.querySelector('.faq-q');
+    var a = item.querySelector('.faq-a');
+    q.addEventListener('click', function(){
+      var open = item.classList.toggle('open');
+      q.setAttribute('aria-expanded', open ? 'true' : 'false');
+      a.style.maxHeight = open ? a.scrollHeight + 'px' : '0px';
+    });
+  });
+
+  /* footer year */
+  document.getElementById('year').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
