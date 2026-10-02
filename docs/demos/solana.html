@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>solana</title>
+<script>document.documentElement.classList.add('js')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#9945FF; --green:#14F195; --mid:#5C7CF5;
+    --bg:#06070B; --panel:#0D0C11; --hairline:rgba(255,255,255,.08);
+    --ink:#F4F4F5; --muted:#A1A1AA;
+    --grad:linear-gradient(135deg,#9945FF 0%,#14F195 100%);
+    --grad-text:linear-gradient(100deg,#9945FF 0%,#14F195 100%);
+    --font-display:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+  /* network status bar */
+  .netbar{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--panel);border-bottom:1px solid var(--hairline);padding:10px 16px;font-size:.8rem;color:var(--muted)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;flex:none}
+  .dot.ok{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;background:rgba(6,7,11,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--hairline)}
+  .nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;gap:32px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;letter-spacing:.18em;font-size:1rem}
+  .links{display:flex;gap:26px;margin-left:auto;font-size:.92rem;color:var(--muted)}
+  .links a:hover{color:var(--ink)}
+  .btn{display:inline-flex;align-items:center;gap:10px;border-radius:8px;padding:14px 28px;font-weight:700;font-size:.95rem;border:0;cursor:pointer;font-family:var(--font-body)}
+  .btn-gradient{background:var(--grad);color:#06070B;transition:filter .2s,transform .2s}
+  .btn-gradient:hover{filter:brightness(1.12);transform:translateY(-1px)}
+  .btn-ghost{border:1px solid rgba(255,255,255,.2);color:var(--ink);background:transparent;transition:border-color .2s,color .2s}
+  .btn-ghost:hover{border-color:var(--green);color:var(--green)}
+  .nav-cta{padding:10px 20px;font-size:.88rem}
+
+  /* hero */
+  .hero{position:relative;overflow:hidden;text-align:center;padding:140px 24px 110px}
+  .glow{position:absolute;width:55vw;height:55vw;max-width:800px;max-height:800px;border-radius:50%;filter:blur(130px);pointer-events:none}
+  .glow-purple{background:rgba(153,69,255,.28);top:-22vw;left:-14vw;animation:drift 16s ease-in-out infinite alternate}
+  .glow-green{background:rgba(20,241,149,.16);bottom:-24vw;right:-14vw;animation:drift 20s ease-in-out infinite alternate-reverse}
+  @keyframes drift{from{transform:translate(0,0)}to{transform:translate(4vw,3vw)}}
+  .eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
+  .hero h1{font-family:var(--font-display);font-weight:700;font-size:clamp(2.6rem,6vw,5rem);line-height:1.04;letter-spacing:-.03em;max-width:20ch;margin:0 auto 24px;position:relative}
+  .grad{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{color:var(--muted);font-size:1.12rem;line-height:1.6;max-width:56ch;margin:0 auto 36px;position:relative}
+  .cta-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;position:relative}
+
+  /* stats band */
+  .stats{border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
+  .stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;padding:60px 24px;max-width:1200px;margin:0 auto}
+  .stat{text-align:center}
+  .stat-num{display:block;font-family:var(--font-display);font-weight:700;font-size:clamp(2rem,4.4vw,3.4rem);font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.05}
+  .stat:first-child .stat-num{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat-label{font-size:.8rem;color:var(--muted);margin-top:8px;display:block;letter-spacing:.02em}
+
+  /* sections */
+  section{padding:110px 0}
+  section.tight{padding-top:0}
+  .sec-head{text-align:center;margin-bottom:56px}
+  .sec-head h2{font-family:var(--font-display);font-weight:700;font-size:clamp(1.9rem,4vw,3rem);letter-spacing:-.02em;line-height:1.08;margin-bottom:14px}
+  .sec-head p{color:var(--muted);max-width:60ch;margin:0 auto;line-height:1.6}
+
+  /* throughput + code */
+  .split{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:start}
+  .graph-card{background:var(--panel);border:1px solid var(--hairline);border-radius:12px;padding:28px}
+  .graph-card h3{font-family:var(--font-display);font-size:1.05rem;margin-bottom:4px}
+  .graph-card .sub{font-size:.82rem;color:var(--muted);margin-bottom:16px;font-family:var(--font-mono)}
+  #tpsChart{width:100%;height:180px;display:block}
+  .tps-now{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:.85rem;color:var(--green);margin-top:12px}
+  .codeblock{background:#08090D;border:1px solid var(--hairline);border-radius:12px;overflow:hidden}
+  .code-tabs{display:flex;border-bottom:1px solid var(--hairline)}
+  .code-tabs button{background:none;border:0;color:var(--muted);padding:12px 20px;font-family:var(--font-mono);font-weight:600;font-size:.85rem;cursor:pointer}
+  .code-tabs button.on{color:var(--green);box-shadow:inset 0 -2px 0 var(--green)}
+  .code-tabs .copy{margin-left:auto;color:var(--muted)}
+  .code-tabs .copy:hover{color:var(--ink)}
+  .codeblock pre{padding:22px 24px;font-family:var(--font-mono);font-size:.88rem;line-height:1.75;overflow-x:auto}
+  .codeblock .c{color:#5b5b66}
+  .codeblock .p{color:var(--green)}
+  .code-pane{display:none}
+  .code-pane.on{display:block}
+
+  /* validator table */
+  .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:28px}
+  .tabs button{background:none;border:1px solid var(--hairline);color:var(--muted);padding:10px 22px;border-radius:999px;font-weight:600;font-size:.88rem;cursor:pointer;transition:all .2s}
+  .tabs button.on{background:var(--grad);color:#06070B;border-color:transparent}
+  .table-card{background:var(--panel);border:1px solid var(--hairline);border-radius:12px;overflow:hidden}
+  .table-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.94rem;min-width:640px}
+  th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);padding:14px 20px;border-bottom:1px solid var(--hairline);font-weight:600}
+  td{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.05);font-variant-numeric:tabular-nums}
+  tbody tr:hover td{background:rgba(153,69,255,.05)}
+  tbody tr:last-child td{border-bottom:0}
+  .green{color:var(--green)}
+  .id{font-family:var(--font-mono);font-size:.85rem}
+  .tab-pane{display:none}
+  .tab-pane.on{display:block}
+  .uptime-note{padding:20px;font-size:.85rem;color:var(--muted);font-family:var(--font-mono)}
+
+  /* ecosystem cards */
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .card{background:var(--panel);border:1px solid var(--hairline);border-radius:12px;padding:26px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:rgba(153,69,255,.5);transform:translateY(-2px)}
+  .card .icon{width:34px;height:34px;display:block;margin-bottom:14px}
+  .card h3{font-family:var(--font-display);font-weight:600;font-size:1.12rem;margin:0 0 8px;letter-spacing:-.01em}
+  .card p{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:16px}
+  .card a{color:var(--green);font-weight:600;font-size:.9rem}
+  .card a:hover{text-decoration:underline}
+  .pill{font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--green)}
+
+  /* flagship gradient-border card */
+  .flag{border-radius:16px;padding:1px;background:var(--grad);margin-top:64px}
+  .flag>div{border-radius:15px;background:#08090D;padding:56px 40px;text-align:center;position:relative;overflow:hidden}
+  .fg{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none}
+  .fg1{width:360px;height:360px;background:rgba(153,69,255,.20);top:-150px;left:-110px}
+  .fg2{width:360px;height:360px;background:rgba(20,241,149,.13);bottom:-170px;right:-90px}
+  .flag>div>*:not(.fg){position:relative}
+  .flag h2{font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,3.6vw,2.8rem);letter-spacing:-.02em;line-height:1.08;margin-bottom:14px}
+  .flag p{color:var(--muted);max-width:52ch;margin:0 auto 30px;line-height:1.6}
+
+  /* scroll reveals */
+  .js .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+  .js .reveal.in{opacity:1;transform:none}
+
+  footer{border-top:1px solid var(--hairline);padding:44px 0;color:var(--muted);font-size:.85rem}
+  .foot-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+  @media(min-width:1001px){
+    .stat+.stat{border-left:1px solid var(--hairline);padding-left:24px}
+  }
+  @media(max-width:1000px){
+    .stats-grid{grid-template-columns:repeat(3,1fr);row-gap:44px}
+  }
+  @media(max-width:900px){
+    .split{grid-template-columns:1fr}
+    .cards{grid-template-columns:repeat(2,1fr)}
+    .links{display:none}
+  }
+  @media(max-width:640px){
+    .stats-grid{grid-template-columns:repeat(2,1fr)}
+    .hero{padding:100px 20px 80px}
+    .cards{grid-template-columns:1fr}
+    section{padding:72px 0}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="netbar"><span class="dot ok"></span> Mainnet Beta &nbsp;·&nbsp; 400 ms block time &nbsp;·&nbsp; 99.9% uptime this quarter</div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#" aria-label="Prism home">
+      <svg width="30" height="26" viewBox="0 0 30 26" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#9945FF"/><stop offset="1" stop-color="#14F195"/>
+        </linearGradient></defs>
+        <path d="M7 1h9l-3 6.5H4zM13.5 10h9l-3 6.5h-9zM20 19h9l-3 6.5h-9z" fill="url(#lg)"/>
+      </svg>
+      PRISM
+    </a>
+    <div class="links">
+      <a href="#network">Network</a>
+      <a href="#build">Developers</a>
+      <a href="#validators">Validators</a>
+      <a href="#ecosystem">Ecosystem</a>
+    </div>
+    <button class="btn btn-gradient nav-cta" id="walletBtn">Connect Wallet</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="glow glow-purple"></div>
+  <div class="glow glow-green"></div>
+  <p class="eyebrow">The performance layer for the internet</p>
+  <h1>Blockchains should be <span class="grad">measured in speed,</span> not in promises.</h1>
+  <p class="lede">Prism is a high-throughput layer-1 built for payments, trading, and consumer apps. Sub-second finality, fees measured in fractions of a cent — infrastructure that disappears so products can ship.</p>
+  <div class="cta-row">
+    <a class="btn btn-gradient" href="#build">Start Building</a>
+    <a class="btn btn-ghost" href="#validators">Run a Validator</a>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stats-grid">
+    <div class="stat reveal"><span class="stat-num" data-target="65000" data-format="int">0</span><span class="stat-label">Transactions per second</span></div>
+    <div class="stat reveal"><span class="stat-num" data-target="412" data-suffix="B" data-format="int">0</span><span class="stat-label">Total transactions</span></div>
+    <div class="stat reveal"><span class="stat-num" data-target="98" data-suffix="M" data-format="int">0</span><span class="stat-label">Monthly active addresses</span></div>
+    <div class="stat reveal"><span class="stat-num" data-target="0.00025" data-prefix="$" data-decimals="5">0</span><span class="stat-label">Avg. cost per transaction</span></div>
+    <div class="stat reveal"><span class="stat-num" data-target="4.2" data-prefix="$" data-suffix="T" data-decimals="1">0</span><span class="stat-label">Annual onchain trading volume</span></div>
+  </div>
+</div>
+
+<section id="network">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Network · Live</p>
+      <h2>Watch the network <span class="grad">work.</span></h2>
+      <p>Real throughput, not marketing decks. Every block lands in 400 milliseconds — here is what the last few minutes look like.</p>
+    </div>
+    <div class="split">
+      <div class="graph-card reveal">
+        <h3>Throughput — last 60 blocks</h3>
+        <p class="sub">transactions per second · updates live</p>
+        <svg id="tpsChart" viewBox="0 0 600 180" preserveAspectRatio="none" aria-label="Live TPS chart"></svg>
+        <p class="tps-now"><span class="dot ok"></span> <span id="tpsNow">—</span> TPS right now</p>
+      </div>
+      <div class="codeblock reveal" id="build">
+        <div class="code-tabs">
+          <button class="on" data-pane="npm">npm</button>
+          <button data-pane="yarn">yarn</button>
+          <button data-pane="cargo">cargo</button>
+          <button class="copy" id="copyBtn">Copy</button>
+        </div>
+        <div class="code-pane on" data-pane="npm"><pre><code><span class="c"># scaffold a Prism app</span>
+<span class="p">$</span> npm create prism-app@latest my-app
+<span class="p">$</span> cd my-app <span class="p">&amp;&amp;</span> npm run dev
+<span class="c"># wallet connected · devnet live at</span>
+<span class="c"># https://localhost:3000</span></code></pre></div>
+        <div class="code-pane" data-pane="yarn"><pre><code><span class="c"># scaffold a Prism app</span>
+<span class="p">$</span> yarn create prism-app my-app
+<span class="p">$</span> cd my-app <span class="p">&amp;&amp;</span> yarn dev
+<span class="c"># wallet connected · devnet live at</span>
+<span class="c"># https://localhost:3000</span></code></pre></div>
+        <div class="code-pane" data-pane="cargo"><pre><code><span class="c"># build a Prism program (Rust)</span>
+<span class="p">$</span> cargo install prism-cli
+<span class="p">$</span> prism program build <span class="p">--</span>manifest-path ./program
+<span class="p">$</span> prism program deploy ./program/target/deploy/program.so</code></pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="validators" class="tight">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Decentralized · Permissionless</p>
+      <h2>Secured by <span class="grad">2,100 validators.</span></h2>
+      <p>Anyone can run a validator and earn. Below is a snapshot of top performers by stake — stake with one or become one.</p>
+    </div>
+    <div class="tabs reveal">
+      <button class="on" data-tab="val">Validators</button>
+      <button data-tab="uptime">Uptime</button>
+    </div>
+    <div class="tab-pane on table-card reveal" data-tab="val">
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Validator</th><th>Commission</th><th>APY</th><th>Skipped slots</th><th>Active stake</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><span class="id">aurora-1</span></td><td>5%</td><td class="green">7.42%</td><td>0.02%</td><td>18.4M PRM</td><td><span class="dot ok"></span>Active</td></tr>
+          <tr><td><span class="id">meridian-labs</span></td><td>8%</td><td class="green">7.18%</td><td>0.05%</td><td>15.1M PRM</td><td><span class="dot ok"></span>Active</td></tr>
+          <tr><td><span class="id">northbeam</span></td><td>3%</td><td class="green">7.61%</td><td>0.01%</td><td>12.9M PRM</td><td><span class="dot ok"></span>Active</td></tr>
+          <tr><td><span class="id">quartz-stake</span></td><td>10%</td><td class="green">6.94%</td><td>0.11%</td><td>11.2M PRM</td><td><span class="dot ok"></span>Active</td></tr>
+          <tr><td><span class="id">solstice-ops</span></td><td>6%</td><td class="green">7.33%</td><td>0.03%</td><td>9.8M PRM</td><td><span class="dot ok"></span>Active</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    <div class="tab-pane table-card" data-tab="uptime">
+      <p class="uptime-note">$ prism validators uptime --epoch 812<br><br>epoch 812 · 432,000 slots · <span class="green">99.98% voted</span><br>epoch 811 · 432,000 slots · <span class="green">99.97% voted</span><br>epoch 810 · 432,000 slots · <span class="green">99.99% voted</span></p>
+    </div>
+  </div>
+</section>
+
+<section id="ecosystem" class="tight">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="eyebrow">Ecosystem</p>
+      <h2>Built for <span class="grad">every vertical.</span></h2>
+      <p>Thousands of teams ship on Prism. These are the rails they build on.</p>
+    </div>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs><linearGradient id="icong" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#9945FF"/><stop offset="1" stop-color="#14F195"/>
+      </linearGradient></defs>
+    </svg>
+    <div class="cards">
+      <article class="card reveal">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="url(#icong)" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 21h18M7 21v-7M12 21V7M17 21v-10"/></svg>
+        <span class="pill">DeFi</span><h3>Trade at the speed of light</h3><p>Onchain order books settling in 400 ms — market-making without the middlemen.</p><a href="#">Explore DeFi →</a>
+      </article>
+      <article class="card reveal">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="url(#icong)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>
+        <span class="pill">Payments</span><h3>Money that moves like data</h3><p>Stablecoin settlement for a fraction of a cent. Cross-border in a block.</p><a href="#">Explore Payments →</a>
+      </article>
+      <article class="card reveal">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="url(#icong)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9zM12 11 4 6.5M12 11l8-4.5M12 11v9"/></svg>
+        <span class="pill">Gaming</span><h3>Assets players actually own</h3><p>Millions of mints a day without gas wars. Items, skins, and worlds onchain.</p><a href="#">Explore Gaming →</a>
+      </article>
+      <article class="card reveal">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="url(#icong)" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="5" r="2.5"/><circle cx="19" cy="7" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.4 5.4l9.2.8M6 7.3l4.1 8M18 9.2l-4.1 6.6"/></svg>
+        <span class="pill">DePIN</span><h3>Infrastructure, decentralized</h3><p>Wireless, compute, and mapping networks coordinated and paid onchain.</p><a href="#">Explore DePIN →</a>
+      </article>
+    </div>
+    <div class="flag reveal">
+      <div>
+        <div class="fg fg1"></div>
+        <div class="fg fg2"></div>
+        <p class="eyebrow">Announcing</p>
+        <h2>Prism <span class="grad">Breakpoint</span> — the builder summit</h2>
+        <p>Two days, four thousand builders, one stage. Keynotes, hackathon finals, and the 2026 roadmap reveal. Lisbon, November 12–13.</p>
+        <a class="btn btn-gradient" href="#">Get Tickets</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <span>PRISM — a fictional network built to demo the style. Not affiliated with Solana.</span>
+    <span>Built from the solana skill · design-skills</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* subtle scroll reveals (staggered per sibling group) */
+  var rEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var rio = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var sibs = Array.prototype.filter.call(e.target.parentElement.children, function(c){return c.classList.contains('reveal');});
+          e.target.style.transitionDelay = Math.min(sibs.indexOf(e.target), 4) * 70 + 'ms';
+          e.target.classList.add('in');
+          rio.unobserve(e.target);
+        }
+      });
+    }, {threshold: .15, rootMargin: '0px 0px -40px 0px'});
+    rEls.forEach(function(el){ rio.observe(el); });
+  } else {
+    rEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* animated stat counters */
+  function animate(el){
+    var target = parseFloat(el.dataset.target);
+    var decimals = parseInt(el.dataset.decimals || '0', 10);
+    var prefix = el.dataset.prefix || '', suffix = el.dataset.suffix || '';
+    var formatInt = el.dataset.format === 'int';
+    if (reduced){ el.textContent = prefix + target.toLocaleString('en-US',{minimumFractionDigits:decimals,maximumFractionDigits:decimals}) + suffix; return; }
+    var dur = 1400, t0 = null;
+    function frame(t){
+      if(!t0) t0 = t;
+      var p = Math.min((t - t0) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3);
+      var v = target * e;
+      el.textContent = prefix + (formatInt ? Math.round(v).toLocaleString('en-US') : v.toFixed(decimals)) + suffix;
+      if(p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ animate(e.target); io.unobserve(e.target); }
+    });
+  }, {threshold: .4});
+  document.querySelectorAll('.stat-num').forEach(function(el){ io.observe(el); });
+
+  /* live TPS chart */
+  var svg = document.getElementById('tpsChart'), tpsNow = document.getElementById('tpsNow');
+  var N = 60, data = [], i;
+  for(i = 0; i < N; i++) data.push(42000 + Math.random() * 22000);
+  function draw(){
+    var max = 72000, pts = data.map(function(v, idx){
+      var x = (idx / (N - 1)) * 600, y = 180 - (v / max) * 165;
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    var grid = [45, 90, 135].map(function(y){
+      return '<line x1="0" y1="' + y + '" x2="600" y2="' + y + '" stroke="rgba(255,255,255,.06)" stroke-width="1"/>';
+    }).join('');
+    svg.innerHTML =
+      '<defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="0">' +
+      '<stop offset="0" stop-color="#9945FF"/><stop offset="1" stop-color="#14F195"/></linearGradient>' +
+      '<linearGradient id="fg" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" stop-color="#14F195" stop-opacity=".22"/><stop offset="1" stop-color="#14F195" stop-opacity="0"/></linearGradient></defs>' +
+      grid +
+      '<polygon points="0,180 ' + pts + ' 600,180" fill="url(#fg)"/>' +
+      '<polyline points="' + pts + '" fill="none" stroke="url(#ag)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>';
+    tpsNow.textContent = Math.round(data[N-1]).toLocaleString('en-US');
+  }
+  draw();
+  if(!reduced) setInterval(function(){
+    data.push(42000 + Math.random() * 22000); data.shift(); draw();
+  }, 1200);
+
+  /* code tabs */
+  var tabBtns = document.querySelectorAll('.code-tabs button[data-pane]');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabBtns.forEach(function(b){ b.classList.remove('on'); });
+      document.querySelectorAll('.code-pane').forEach(function(p){ p.classList.remove('on'); });
+      btn.classList.add('on');
+      document.querySelector('.code-pane[data-pane="' + btn.dataset.pane + '"]').classList.add('on');
+    });
+  });
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var pane = document.querySelector('.code-pane.on');
+    var txt = pane.textContent;
+    if(navigator.clipboard) navigator.clipboard.writeText(txt);
+    this.textContent = 'Copied';
+    var self = this; setTimeout(function(){ self.textContent = 'Copy'; }, 1500);
+  });
+
+  /* validator tabs */
+  var vTabs = document.querySelectorAll('.tabs button');
+  vTabs.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      vTabs.forEach(function(b){ b.classList.remove('on'); });
+      document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('on'); });
+      btn.classList.add('on');
+      document.querySelector('.tab-pane[data-tab="' + btn.dataset.tab + '"]').classList.add('on');
+    });
+  });
+
+  /* wallet button */
+  var w = document.getElementById('walletBtn');
+  w.addEventListener('click', function(){
+    if(w.dataset.state === 'on'){ w.dataset.state=''; w.textContent='Connect Wallet'; }
+    else { w.dataset.state='on'; w.textContent='7xK…9dQv Connected'; }
+  });
+})();
+</script>
+</body>
+</html>
