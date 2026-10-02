@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ant-design</title>
+<style>
+:root{
+  --primary:#1677ff; --primary-hover:#4096ff; --primary-active:#0958d9;
+  --success:#52c41a; --warning:#faad14; --error:#ff4d4f;
+  --text:rgba(0,0,0,.88); --text-secondary:rgba(0,0,0,.65); --text-tertiary:rgba(0,0,0,.45);
+  --text-disabled:rgba(0,0,0,.25);
+  --bg-layout:#f0f2f5; --bg-container:#ffffff; --bg-head:#fafafa;
+  --border:#d9d9d9; --split:#f0f0f0; --sider:#001529;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+  font-size:14px;line-height:1.5715;color:var(--text-secondary);background:var(--bg-layout);
+}
+/* ---------- top header ---------- */
+.topbar{height:64px;background:#fff;border-bottom:1px solid var(--split);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:10}
+.logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600;color:var(--text)}
+.logo-mark{width:32px;height:32px;border-radius:6px;background:var(--primary);display:grid;place-items:center;flex:none}
+.topbar .spacer{flex:1}
+.search{width:240px;height:32px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:14px;color:var(--text)}
+.search:focus{border-color:var(--primary-hover);outline:0;box-shadow:0 0 0 2px rgba(5,145,255,.1)}
+.user{display:flex;align-items:center;gap:10px;color:var(--text)}
+.avatar{width:32px;height:32px;border-radius:50%;background:#87d068;color:#fff;display:grid;place-items:center;font-weight:600;font-size:13px}
+/* ---------- shell ---------- */
+.shell{display:flex;min-height:calc(100vh - 64px)}
+.sider{width:256px;flex:none;background:var(--sider);padding:16px 8px;display:flex;flex-direction:column;gap:4px}
+.sider .menu-group{color:rgba(255,255,255,.35);font-size:12px;padding:12px 16px 4px}
+.menu-item{display:flex;align-items:center;gap:12px;padding:0 16px;height:40px;border-radius:6px;color:rgba(255,255,255,.65);cursor:pointer;font-size:14px}
+.menu-item svg{flex:none;opacity:.85}
+.menu-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.menu-item.active{background:var(--primary);color:#fff}
+.main{flex:1;min-width:0;padding:24px;max-width:1280px}
+/* ---------- page header ---------- */
+.breadcrumb{font-size:14px;color:var(--text-tertiary);margin-bottom:8px}
+.breadcrumb b{color:var(--text-secondary);font-weight:400}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.page-head h1{font-size:20px;font-weight:600;color:var(--text)}
+.page-head p{font-size:14px;color:var(--text-tertiary)}
+/* ---------- buttons ---------- */
+.btn{height:32px;padding:0 15px;font-size:14px;border-radius:6px;cursor:pointer;border:1px solid transparent;transition:background .2s}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-hover);border-color:var(--primary-hover)}
+.btn-primary:active{background:var(--primary-active);border-color:var(--primary-active)}
+.btn-default{background:#fff;border-color:var(--border);color:var(--text)}
+.btn-default:hover{border-color:var(--primary-hover);color:var(--primary)}
+.btn + .btn{margin-left:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+/* ---------- alert ---------- */
+.alert{padding:9px 16px;border-radius:8px;font-size:14px;border:1px solid;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;color:var(--text)}
+.alert-info{background:#e6f4ff;border-color:#91caff}
+.alert .icon{flex:none;font-weight:700;color:var(--primary)}
+/* ---------- cards ---------- */
+.card{background:var(--bg-container);border-radius:8px;margin-bottom:16px;overflow:hidden}
+.card-pad{padding:24px}
+/* ---------- statistics ---------- */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.stat{background:var(--bg-container);border-radius:8px;padding:20px 24px}
+.stat .label{font-size:14px;color:var(--text-tertiary);margin-bottom:4px}
+.stat .value{font-size:30px;color:var(--text);font-weight:600}
+.stat .sub{font-size:14px;color:var(--text-tertiary)}
+.stat .sub .up{color:var(--success)} .stat .sub .down{color:var(--error)}
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:32px;border-bottom:1px solid var(--split);padding:0 24px}
+.tabs button{background:none;border:none;font-size:14px;color:var(--text-secondary);padding:12px 0;cursor:pointer;position:relative}
+.tabs button.on{color:var(--primary)}
+.tabs button.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--primary)}
+.table-tools{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;gap:12px;flex-wrap:wrap}
+.selected-bar{font-size:14px;color:var(--text-tertiary)}
+.selected-bar b{color:var(--primary);font-weight:400}
+/* ---------- table ---------- */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;min-width:760px}
+thead th{background:var(--bg-head);color:var(--text);font-weight:600;padding:12px 16px;text-align:left;border-bottom:1px solid var(--split);white-space:nowrap}
+thead th.sortable{cursor:pointer;user-select:none}
+thead th.sortable:hover{background:#f0f0f0}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--split);color:var(--text-secondary);white-space:nowrap}
+tbody td:first-child{color:var(--text)}
+tbody tr:hover td{background:#fafafa}
+.sorter{display:inline-flex;flex-direction:column;margin-left:6px;vertical-align:middle;gap:0;line-height:1}
+.sorter svg{width:8px;height:8px;fill:#bfbfbf}
+.sorter.up svg:first-child{fill:var(--primary)} .sorter.down svg:last-child{fill:var(--primary)}
+.tag{font-size:12px;padding:2px 8px;border-radius:4px;border:1px solid;white-space:nowrap;line-height:20px;display:inline-block}
+.tag-green{background:#f6ffed;border-color:#b7eb8f;color:#389e0d}
+.tag-gold{background:#fffbe6;border-color:#ffe58f;color:#d48806}
+.tag-red{background:#fff2f0;border-color:#ffccc7;color:#cf1322}
+.tag-blue{background:#e6f4ff;border-color:#91caff;color:#0958d9}
+.link{color:var(--primary);cursor:pointer}
+.link:hover{text-decoration:underline}
+.row-check{width:16px;height:16px;accent-color:var(--primary);cursor:pointer}
+/* ---------- pagination ---------- */
+.pagination{display:flex;align-items:center;gap:8px;padding:16px 24px;font-size:14px;flex-wrap:wrap}
+.pagination .total{color:var(--text-tertiary);margin-right:8px}
+.pagination button.pg{min-width:32px;height:32px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:14px;color:var(--text-secondary);padding:0 8px}
+.pagination button.pg:hover{border-color:var(--primary-hover);color:var(--primary)}
+.pagination button.pg.on{border-color:var(--primary);color:var(--primary);font-weight:600}
+.pagination button.pg:disabled{color:var(--text-disabled);border-color:var(--border);cursor:not-allowed;background:#f5f5f5}
+/* ---------- empty ---------- */
+.empty{text-align:center;padding:48px 24px;color:var(--text-tertiary)}
+.empty .art{width:96px;height:96px;margin:0 auto 16px;border:2px dashed var(--border);border-radius:8px;display:grid;place-items:center;color:#bfbfbf;font-size:32px}
+.empty p{margin-bottom:16px;font-size:14px}
+/* ---------- steps / form / result ---------- */
+.steps{display:flex;align-items:center;gap:8px;margin-bottom:32px;flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:8px;cursor:pointer}
+.step .dot{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:14px;border:1px solid var(--border);color:var(--text-disabled);background:#fff;flex:none}
+.step .label{font-size:14px;color:var(--text-tertiary);white-space:nowrap}
+.step.done .dot{background:var(--primary);border-color:var(--primary);color:#fff}
+.step.done .label{color:var(--text-secondary)}
+.step.current .dot{border-color:var(--primary);color:var(--primary)}
+.step.current .label{color:var(--text);font-weight:600}
+.step + .step::before{content:"";width:48px;height:1px;background:var(--split);margin-right:8px}
+.form-item{margin-bottom:24px;max-width:560px}
+.form-item label{display:block;font-size:14px;color:var(--text);margin-bottom:8px}
+.form-item label .req{color:var(--error);margin-right:4px}
+.input,select.input,textarea.input{width:100%;padding:4px 11px;font-size:14px;border:1px solid var(--border);border-radius:6px;color:var(--text);background:#fff}
+.input{height:32px} textarea.input{height:auto;min-height:88px;resize:vertical;line-height:1.5715}
+.input:focus{border-color:var(--primary-hover);outline:0;box-shadow:0 0 0 2px rgba(5,145,255,.1)}
+.form-item.has-error .input{border-color:var(--error)}
+.form-item.has-error .input:focus{box-shadow:0 0 0 2px rgba(255,77,79,.1)}
+.form-explain{display:none;font-size:14px;color:var(--error);margin-top:4px}
+.form-item.has-error .form-explain{display:block}
+.radio-group{display:flex;gap:16px}
+.radio{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:var(--text-secondary)}
+.radio input{width:16px;height:16px;accent-color:var(--primary);cursor:pointer}
+.wizard-actions{margin-top:32px;display:flex;gap:8px}
+.review{background:var(--bg-head);border:1px solid var(--split);border-radius:6px;padding:16px 24px;max-width:560px}
+.review dl{display:grid;grid-template-columns:140px 1fr;row-gap:12px;font-size:14px}
+.review dt{color:var(--text-tertiary)} .review dd{color:var(--text);margin:0}
+.result{text-align:center;padding:40px 24px}
+.result-icon{width:72px;height:72px;border-radius:50%;background:var(--success);color:#fff;font-size:36px;display:inline-grid;place-items:center;margin-bottom:24px}
+.result h2{font-size:24px;font-weight:600;color:var(--text);margin-bottom:8px}
+.result p{color:var(--text-tertiary);margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto}
+footer{padding:32px 24px 40px;text-align:center;color:var(--text-disabled);font-size:12px}
+footer .line{height:1px;background:var(--split);margin-bottom:24px;max-width:1280px;margin-left:auto;margin-right:auto}
+/* ---------- responsive ---------- */
+@media (max-width:960px){
+  .sider{display:none}
+  .stats{grid-template-columns:1fr}
+  .main{padding:16px}
+  .search{display:none}
+  .step + .step::before{width:16px}
+  .step .label{display:none}
+  .step.current .label{display:inline}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <span class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 13.5 9 2l7 11.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="13.5" r="1.6" fill="#fff"/></svg>
+    </span>
+    Meridian Freight
+  </div>
+  <div class="spacer"></div>
+  <input class="search" id="globalSearch" placeholder="Search orders, vehicles, drivers">
+  <div class="user">
+    <span class="avatar">OK</span>
+    <span style="font-size:14px">Owen Keller</span>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="sider" aria-label="Main navigation">
+    <div class="menu-group">OPERATIONS</div>
+    <div class="menu-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Dashboard</div>
+    <div class="menu-item active"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h10M3 8h10M3 12h6"/></svg>Work Orders</div>
+    <div class="menu-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 11V6l6-3 6 3v5M2 11h12M5 11v3M11 11v3"/></svg>Vehicles</div>
+    <div class="menu-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5" r="2.6"/><path d="M2.5 14c.8-3 3-4.4 5.5-4.4s4.7 1.4 5.5 4.4"/></svg>Drivers</div>
+    <div class="menu-group">REPORTS</div>
+    <div class="menu-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 13V7M8 13V3M14 13v-4"/></svg>Maintenance KPIs</div>
+    <div class="menu-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>Service History</div>
+    <div class="menu-group">SYSTEM</div>
+    <div class="menu-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.6 3.6l1.4 1.4M11 11l1.4 1.4M12.4 3.6 11 5M5 11l-1.4 1.4"/></svg>Settings</div>
+  </nav>
+
+  <main class="main">
+    <div class="breadcrumb">Home <b>/</b> Fleet <b>/</b> <b>Work Orders</b></div>
+    <div class="page-head">
+      <div>
+        <h1>Maintenance Work Orders</h1>
+        <p>Track repairs and inspections across the fleet.</p>
+      </div>
+      <button class="btn btn-primary" id="scrollToWizard">+ Create work order</button>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="icon">i</span>
+      <span>3 vehicles are due for their annual inspection this week. Schedule them before Friday to avoid downtime penalties.</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="label">Open orders</div><div class="value" id="statOpen">–</div><div class="sub"><span class="down">▲ 2</span> vs last week</div></div>
+      <div class="stat"><div class="label">Vehicles in service</div><div class="value">41 / 46</div><div class="sub"><span class="up">▲ 3</span> returned this week</div></div>
+      <div class="stat"><div class="label">Avg. resolution time</div><div class="value">2.4 days</div><div class="sub"><span class="up">▼ 0.6</span> vs last month</div></div>
+    </div>
+
+    <div class="card">
+      <div class="tabs" id="statusTabs">
+        <button class="on" data-filter="all">All</button>
+        <button data-filter="open">Open</button>
+        <button data-filter="progress">In progress</button>
+        <button data-filter="done">Completed</button>
+      </div>
+      <div class="table-tools">
+        <div class="selected-bar" id="selectedBar">No rows selected</div>
+        <input class="search" id="tableSearch" placeholder="Filter by vehicle or driver" style="width:220px">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" class="row-check" id="checkAll"></th>
+              <th>Order</th>
+              <th class="sortable" data-key="vehicle">Vehicle <span class="sorter" id="sortVehicle"><svg viewBox="0 0 8 8"><path d="M4 1 7 5H1z"/></svg><svg viewBox="0 0 8 8"><path d="M4 7 1 3h6z"/></svg></span></th>
+              <th>Driver</th>
+              <th>Issue</th>
+              <th class="sortable" data-key="priority">Priority <span class="sorter" id="sortPriority"><svg viewBox="0 0 8 8"><path d="M4 1 7 5H1z"/></svg><svg viewBox="0 0 8 8"><path d="M4 7 1 3h6z"/></svg></span></th>
+              <th>Status</th>
+              <th class="sortable" data-key="created">Created <span class="sorter down" id="sortCreated"><svg viewBox="0 0 8 8"><path d="M4 1 7 5H1z"/></svg><svg viewBox="0 0 8 8"><path d="M4 7 1 3h6z"/></svg></span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="emptyState" style="display:none">
+          <div class="art">▢</div>
+          <p>No work orders match this filter.</p>
+          <button class="btn btn-primary" id="emptyCreate">Create now</button>
+        </div>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <div class="card" id="wizardCard">
+      <div class="card-pad">
+        <h2 style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:24px">Create a work order</h2>
+
+        <div id="wizardForm">
+          <div class="steps" id="steps">
+            <div class="step current" data-step="0"><span class="dot">1</span><span class="label">Select vehicle</span></div>
+            <div class="step" data-step="1"><span class="dot">2</span><span class="label">Describe issue</span></div>
+            <div class="step" data-step="2"><span class="dot">3</span><span class="label">Review &amp; submit</span></div>
+          </div>
+
+          <div id="step0">
+            <div class="form-item">
+              <label><span class="req">*</span>Vehicle</label>
+              <select class="input" id="fVehicle">
+                <option value="">Select a vehicle</option>
+                <option>Truck 104 — Volvo FH16</option>
+                <option>Truck 112 — Scania R500</option>
+                <option>Van 207 — Mercedes Sprinter</option>
+                <option>Van 215 — Ford Transit</option>
+              </select>
+              <div class="form-explain">Please select a vehicle.</div>
+            </div>
+            <div class="form-item">
+              <label>Priority</label>
+              <div class="radio-group">
+                <label class="radio"><input type="radio" name="priority" value="Low" checked> Low</label>
+                <label class="radio"><input type="radio" name="priority" value="Normal"> Normal</label>
+                <label class="radio"><input type="radio" name="priority" value="High"> High</label>
+              </div>
+            </div>
+          </div>
+
+          <div id="step1" style="display:none">
+            <div class="form-item" id="titleItem">
+              <label><span class="req">*</span>Title</label>
+              <input class="input" id="fTitle" placeholder="e.g. Brake inspection — Truck 104">
+              <div class="form-explain">Please enter a title for the work order.</div>
+            </div>
+            <div class="form-item">
+              <label>Details</label>
+              <textarea class="input" id="fDetails" placeholder="Describe symptoms, mileage, and anything the mechanic should know."></textarea>
+            </div>
+          </div>
+
+          <div id="step2" style="display:none">
+            <div class="review"><dl id="reviewList"></dl></div>
+          </div>
+
+          <div class="wizard-actions">
+            <button class="btn btn-default" id="btnPrev" disabled>Previous</button>
+            <button class="btn btn-primary" id="btnNext">Next</button>
+          </div>
+        </div>
+
+        <div class="result" id="wizardResult" style="display:none">
+          <div class="result-icon"><svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M7 19l8 8 14-18" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h2>Work order created successfully</h2>
+          <p id="resultText">Your request has been assigned to Bay 3. The driver and the workshop have been notified.</p>
+          <div>
+            <button class="btn btn-primary" id="btnViewOrder">View order</button>
+            <button class="btn btn-default" id="btnAnother">Create another</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="line"></div>
+      Built from the ant-design skill · design-skills
+    </footer>
+  </main>
+</div>
+
+<script>
+/* ---------------- data ---------------- */
+const ORDERS = [
+  {id:"WO-2026-1042", vehicle:"Truck 104", driver:"Owen Keller",  issue:"Brake pad replacement",        priority:"High",   status:"open",     created:"2026-10-02"},
+  {id:"WO-2026-1041", vehicle:"Van 207",   driver:"Marta Ibarra", issue:"Windshield wiper motor",        priority:"Low",    status:"open",     created:"2026-10-01"},
+  {id:"WO-2026-1040", vehicle:"Truck 112", driver:"Jon Uribe",    issue:"Turbo pressure sensor fault",   priority:"High",   status:"progress", created:"2026-09-30"},
+  {id:"WO-2026-1039", vehicle:"Van 215",   driver:"Lucia Sanz",   issue:"Annual inspection",             priority:"Normal", status:"progress", created:"2026-09-29"},
+  {id:"WO-2026-1038", vehicle:"Truck 098", driver:"Pablo Etxe",   issue:"Air suspension leak",           priority:"High",   status:"progress", created:"2026-09-28"},
+  {id:"WO-2026-1037", vehicle:"Truck 104", driver:"Owen Keller",  issue:"Oil + filters service",         priority:"Normal", status:"done",     created:"2026-09-27"},
+  {id:"WO-2026-1036", vehicle:"Van 201",   driver:"Ane Larra",    issue:"Rear door latch",               priority:"Low",    status:"done",     created:"2026-09-26"},
+  {id:"WO-2026-1035", vehicle:"Truck 120", driver:"Iker Mendi",   issue:"AdBlue injector cleaning",      priority:"Normal", status:"done",     created:"2026-09-25"},
+  {id:"WO-2026-1034", vehicle:"Van 207",   driver:"Marta Ibarra", issue:"Tire rotation",                priority:"Low",    status:"done",     created:"2026-09-24"},
+  {id:"WO-2026-1033", vehicle:"Truck 131", driver:"Nora Agirre",  issue:"Clutch pedal adjustment",       priority:"Normal", status:"open",     created:"2026-09-23"},
+  {id:"WO-2026-1032", vehicle:"Van 218",   driver:"Unai Borda",   issue:"Battery replacement",           priority:"Normal", status:"progress", created:"2026-09-22"},
+  {id:"WO-2026-1031", vehicle:"Truck 112", driver:"Jon Uribe",    issue:"Fifth wheel greasing",          priority:"Low",    status:"done",     created:"2026-09-21"},
+  {id:"WO-2026-1030", vehicle:"Truck 107", driver:"Sara Otxoa",   issue:"Headlight alignment",           priority:"Low",    status:"open",     created:"2026-09-20"},
+  {id:"WO-2026-1029", vehicle:"Van 209",   driver:"Gaizka Ruiz",  issue:"Coolant top-up + leak check",   priority:"Normal", status:"done",     created:"2026-09-19"},
+  {id:"WO-2026-1028", vehicle:"Truck 115", driver:"Elena Vigo",   issue:"Tachograph calibration",        priority:"Normal", status:"progress", created:"2026-09-18"},
+  {id:"WO-2026-1027", vehicle:"Van 203",   driver:"Markel Ayo",   issue:"Side mirror replacement",       priority:"Low",    status:"done",     created:"2026-09-17"}
+];
+const STATUS_TAG = {open:'<span class="tag tag-gold">Open</span>', progress:'<span class="tag tag-blue">In progress</span>', done:'<span class="tag tag-green">Completed</span>'};
+const PRIORITY_TAG = {High:'<span class="tag tag-red">High</span>', Normal:'<span class="tag tag-blue">Normal</span>', Low:'<span class="tag tag-green">Low</span>'};
+const PRIORITY_RANK = {Low:0, Normal:1, High:2};
+
+let filter = "all", query = "", sortKey = "created", sortDir = -1, page = 1;
+const PER_PAGE = 5;
+let selected = new Set();
+
+/* ---------------- table ---------------- */
+function visibleRows(){
+  let rows = ORDERS.filter(o => filter === "all" || o.status === filter);
+  if (query){
+    const q = query.toLowerCase();
+    rows = rows.filter(o => (o.vehicle+" "+o.driver+" "+o.id).toLowerCase().includes(q));
+  }
+  rows = rows.slice().sort((a,b) => {
+    let va = a[sortKey], vb = b[sortKey];
+    if (sortKey === "priority"){ va = PRIORITY_RANK[va]; vb = PRIORITY_RANK[vb]; }
+    return (va < vb ? -1 : va > vb ? 1 : 0) * sortDir;
+  });
+  return rows;
+}
+function renderTable(){
+  const rows = visibleRows();
+  const pages = Math.max(1, Math.ceil(rows.length / PER_PAGE));
+  if (page > pages) page = pages;
+  const slice = rows.slice((page-1)*PER_PAGE, page*PER_PAGE);
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = slice.map(o => `
+    <tr>
+      <td><input type="checkbox" class="row-check" data-id="${o.id}" ${selected.has(o.id) ? "checked" : ""}></td>
+      <td><span class="link">${o.id}</span></td>
+      <td>${o.vehicle}</td>
+      <td>${o.driver}</td>
+      <td>${o.issue}</td>
+      <td>${PRIORITY_TAG[o.priority]}</td>
+      <td>${STATUS_TAG[o.status]}</td>
+      <td>${o.created}</td>
+    </tr>`).join("");
+  document.getElementById("emptyState").style.display = rows.length ? "none" : "block";
+  tbody.style.display = rows.length ? "" : "none";
+  document.getElementById("checkAll").checked = slice.length > 0 && slice.every(o => selected.has(o.id));
+  renderPagination(rows.length, pages);
+  updateSelectedBar();
+  updateStats();
+}
+function renderPagination(total, pages){
+  const el = document.getElementById("pagination");
+  let html = `<span class="total">Total ${total} items</span>`;
+  html += `<button class="pg" id="pgPrev" ${page===1?"disabled":""}>‹</button>`;
+  for (let i=1;i<=pages;i++) html += `<button class="pg ${i===page?"on":""}" data-pg="${i}">${i}</button>`;
+  html += `<button class="pg" id="pgNext" ${page===pages?"disabled":""}>›</button>`;
+  el.innerHTML = html;
+  document.getElementById("pgPrev").onclick = () => { if (page>1){ page--; renderTable(); } };
+  document.getElementById("pgNext").onclick = () => { if (page<pages){ page++; renderTable(); } };
+  el.querySelectorAll("[data-pg]").forEach(b => b.onclick = () => { page = +b.dataset.pg; renderTable(); });
+}
+function updateSelectedBar(){
+  const n = selected.size;
+  document.getElementById("selectedBar").innerHTML =
+    n ? `<b>${n}</b> row${n>1?"s":""} selected <span class="link" id="clearSel" style="margin-left:8px">Clear</span>` : "No rows selected";
+  const c = document.getElementById("clearSel");
+  if (c) c.onclick = () => { selected.clear(); renderTable(); };
+}
+function updateStats(){
+  const open = ORDERS.filter(o => o.status !== "done").length;
+  document.getElementById("statOpen").textContent = open;
+}
+document.getElementById("tbody").addEventListener("change", e => {
+  const id = e.target.dataset.id;
+  if (!id) return;
+  e.target.checked ? selected.add(id) : selected.delete(id);
+  renderTable();
+});
+document.getElementById("checkAll").addEventListener("change", e => {
+  const rows = visibleRows().slice((page-1)*PER_PAGE, page*PER_PAGE);
+  rows.forEach(o => e.target.checked ? selected.add(o.id) : selected.delete(o.id));
+  renderTable();
+});
+document.getElementById("statusTabs").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#statusTabs button").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); filter = b.dataset.filter; page = 1; renderTable();
+});
+document.getElementById("tableSearch").addEventListener("input", e => { query = e.target.value.trim(); page = 1; renderTable(); });
+document.querySelectorAll("th.sortable").forEach(th => {
+  th.addEventListener("click", () => {
+    const k = th.dataset.key;
+    document.querySelectorAll(".sorter").forEach(s => s.classList.remove("up","down"));
+    if (sortKey === k) sortDir *= -1; else { sortKey = k; sortDir = 1; }
+    const map = {vehicle:"sortVehicle", priority:"sortPriority", created:"sortCreated"};
+    document.getElementById(map[k]).classList.add(sortDir === 1 ? "up" : "down");
+    renderTable();
+  });
+});
+document.getElementById("emptyCreate").onclick = () => document.getElementById("wizardCard").scrollIntoView({behavior:"smooth"});
+document.getElementById("scrollToWizard").onclick = () => document.getElementById("wizardCard").scrollIntoView({behavior:"smooth"});
+
+/* ---------------- wizard ---------------- */
+let step = 0;
+const stepsEl = [...document.querySelectorAll("#steps .step")];
+function goStep(n){
+  step = n;
+  stepsEl.forEach((s,i) => {
+    s.classList.toggle("done", i < n);
+    s.classList.toggle("current", i === n);
+    s.querySelector(".dot").innerHTML = i < n
+      ? '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5 6 11l5.5-7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : (i+1);
+  });
+  ["step0","step1","step2"].forEach((id,i) => document.getElementById(id).style.display = i===n ? "" : "none");
+  document.getElementById("btnPrev").disabled = n === 0;
+  document.getElementById("btnNext").textContent = n === 2 ? "Submit" : "Next";
+  if (n === 2) buildReview();
+}
+function buildReview(){
+  const v = document.getElementById("fVehicle").value;
+  const t = document.getElementById("fTitle").value.trim();
+  const d = document.getElementById("fDetails").value.trim();
+  const p = document.querySelector('input[name="priority"]:checked').value;
+  document.getElementById("reviewList").innerHTML = `
+    <dt>Vehicle</dt><dd>${v || "—"}</dd>
+    <dt>Priority</dt><dd>${PRIORITY_TAG[p]}</dd>
+    <dt>Title</dt><dd>${t || "—"}</dd>
+    <dt>Details</dt><dd>${d || "—"}</dd>`;
+}
+stepsEl.forEach(s => s.addEventListener("click", () => { if (+s.dataset.step < step) goStep(+s.dataset.step); }));
+document.getElementById("btnPrev").onclick = () => { if (step > 0) goStep(step-1); };
+document.getElementById("btnNext").onclick = () => {
+  if (step === 0){
+    const sel = document.getElementById("fVehicle");
+    const item = sel.closest(".form-item");
+    if (!sel.value){ item.classList.add("has-error"); return; }
+    item.classList.remove("has-error");
+    goStep(1);
+  } else if (step === 1){
+    const input = document.getElementById("fTitle");
+    const item = document.getElementById("titleItem");
+    if (!input.value.trim()){ item.classList.add("has-error"); input.focus(); return; }
+    item.classList.remove("has-error");
+    goStep(2);
+  } else {
+    const num = "WO-2026-" + (1043 + Math.floor(Math.random()*400));
+    document.getElementById("resultText").textContent =
+      `${num} has been created and assigned to Bay 3. The driver and the workshop have been notified.`;
+    document.getElementById("wizardForm").style.display = "none";
+    document.getElementById("wizardResult").style.display = "block";
+  }
+};
+document.getElementById("btnAnother").onclick = () => {
+  document.getElementById("wizardResult").style.display = "none";
+  document.getElementById("wizardForm").style.display = "block";
+  document.getElementById("fVehicle").value = "";
+  document.getElementById("fTitle").value = "";
+  document.getElementById("fDetails").value = "";
+  goStep(0);
+};
+document.getElementById("btnViewOrder").onclick = () => {
+  document.getElementById("wizardResult").style.display = "none";
+  document.getElementById("wizardForm").style.display = "block";
+  goStep(0);
+};
+
+renderTable();
+</script>
+</body>
+</html>

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vaporwave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Monoton&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#FF71CE; --violet:#B967FF; --cyan:#01CDFE;
+    --night:#0D0221; --ground:#1A0033; --silhouette:#08010F;
+    --yellow:#FFD700; --orange:#FF6B00;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--night); color:rgba(255,255,255,.88);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    line-height:1.6; overflow-x:hidden;
+  }
+  /* ---------- VHS framing ---------- */
+  .scanlines{position:fixed;inset:0;pointer-events:none;z-index:999;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.20) 0 1px,transparent 1px 3px);}
+  .tracking{position:fixed;left:0;right:0;height:90px;z-index:998;pointer-events:none;opacity:.10;
+    background:linear-gradient(180deg,transparent,rgba(255,255,255,.55),transparent);
+    animation:tracking 9s linear infinite;}
+  @keyframes tracking{from{top:-90px}to{top:100vh}}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;
+    justify-content:space-between;padding:1rem 2rem;
+    background:rgba(13,2,33,.55);backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(1,205,254,.35);}
+  .brand{font-family:"Monoton","Orbitron",system-ui,sans-serif;font-size:1.3rem;color:var(--pink);
+    text-shadow:0 0 12px rgba(255,113,206,.9),0 0 34px rgba(255,113,206,.5);text-decoration:none;}
+  nav ul{display:flex;gap:2rem;list-style:none}
+  nav a{color:rgba(255,255,255,.8);text-decoration:none;font-family:Orbitron,system-ui,sans-serif;
+    font-size:.75rem;letter-spacing:.25em;text-transform:uppercase}
+  nav a:hover{color:var(--cyan);text-shadow:0 0 10px rgba(1,205,254,.9)}
+  .crate{border:1px solid var(--cyan);border-radius:999px;padding:.45rem 1rem;color:var(--cyan);
+    font-family:Orbitron,system-ui,sans-serif;font-size:.72rem;letter-spacing:.2em;
+    box-shadow:0 0 10px rgba(1,205,254,.4)}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:100vh;overflow:hidden;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;
+    background:linear-gradient(180deg,#12022b 0%,#3a0a5e 30%,#a11d8f 52%,var(--pink) 68%,var(--night) 100%);}
+  .stars{position:absolute;inset:0 0 55% 0}
+  .stars i{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;opacity:.8}
+  .sun{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
+    width:min(44vw,360px);aspect-ratio:1;border-radius:50%;overflow:hidden;
+    background:linear-gradient(180deg,var(--yellow) 0%,var(--orange) 32%,#FF2D95 64%,var(--violet) 100%);
+    box-shadow:0 0 70px rgba(255,113,206,.6),0 0 160px rgba(255,113,206,.28);}
+  .sun::after{content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(180deg,transparent 0 12px,var(--night) 12px 15px);
+    -webkit-mask-image:linear-gradient(180deg,transparent 42%,#000 85%);
+    mask-image:linear-gradient(180deg,transparent 42%,#000 85%);}
+  .horizon{position:absolute;left:0;right:0;top:68%;height:2px;background:var(--cyan);
+    box-shadow:0 0 18px var(--cyan),0 0 46px var(--cyan);z-index:3}
+  .mountains{position:absolute;left:0;right:0;top:52%;height:16%;z-index:2;fill:var(--silhouette)}
+  .grid-floor{position:absolute;left:-25%;right:-25%;top:68%;bottom:0;z-index:2;
+    background:
+      repeating-linear-gradient(180deg,transparent 0 42px,rgba(1,205,254,.55) 42px 44px),
+      repeating-linear-gradient(90deg,transparent 0 62px,rgba(1,205,254,.55) 62px 64px);
+    transform:perspective(420px) rotateX(58deg);transform-origin:top center;
+    -webkit-mask-image:linear-gradient(180deg,#000 20%,transparent 95%);
+    mask-image:linear-gradient(180deg,#000 20%,transparent 95%);
+    animation:grid-drift 6s linear infinite;}
+  @keyframes grid-drift{to{background-position:0 44px,0 0}}
+  .palm{position:absolute;bottom:6%;z-index:4;fill:none;stroke:var(--silhouette);stroke-linecap:round}
+  .palm.left{left:4%;width:min(30vw,230px)}
+  .palm.right{right:4%;width:min(26vw,200px);transform:scaleX(-1)}
+  .hero-copy{position:relative;z-index:5;padding:0 1.5rem;margin-top:6vh}
+  .kicker{font-family:Orbitron,monospace;font-size:.8rem;letter-spacing:.45em;color:var(--cyan);
+    text-shadow:0 0 10px rgba(1,205,254,.8);margin-bottom:1.2rem}
+  .chrome-text{
+    background:linear-gradient(180deg,#fff 0%,#cfe9ff 26%,#5a6b8c 48%,#eef7ff 52%,#8fb7d8 74%,#fff 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    font-family:Orbitron,system-ui,sans-serif;font-weight:900;font-style:italic;transform:skewX(-6deg);
+    font-size:clamp(2.4rem,8vw,5.5rem);line-height:1.05;letter-spacing:.06em;}
+  .glitch{position:relative;font-family:Orbitron,system-ui,sans-serif;font-weight:700;
+    font-size:clamp(1.1rem,3vw,1.8rem);letter-spacing:.3em;color:#fff;margin-top:1rem;
+    text-shadow:0 0 14px rgba(255,113,206,.6)}
+  .glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;overflow:hidden}
+  .glitch::before{color:var(--pink);transform:translate(-3px,-2px);animation:gl-a 2.6s infinite steps(2)}
+  .glitch::after{color:var(--cyan);transform:translate(3px,2px);animation:gl-b 3.4s infinite steps(2)}
+  @keyframes gl-a{0%,90%{clip-path:inset(18% 0 62% 0)}92%{clip-path:inset(4% 0 82% 0)}95%{clip-path:inset(48% 0 38% 0)}98%,100%{clip-path:inset(18% 0 62% 0)}}
+  @keyframes gl-b{0%,88%{clip-path:inset(64% 0 16% 0)}90%{clip-path:inset(80% 0 4% 0)}94%{clip-path:inset(30% 0 58% 0)}97%,100%{clip-path:inset(64% 0 16% 0)}}
+  .hero-sub{max-width:46ch;margin:1.4rem auto 2rem;color:rgba(255,255,255,.82)}
+  .btn-row{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap}
+  .btn-neon{font-family:Orbitron,system-ui,sans-serif;letter-spacing:.18em;font-weight:700;font-size:.8rem;
+    background:linear-gradient(90deg,var(--pink),var(--violet));color:var(--night);
+    border:0;border-radius:999px;padding:.95rem 2.2rem;cursor:pointer;text-decoration:none;
+    box-shadow:0 0 18px rgba(255,113,206,.7),0 0 48px rgba(255,113,206,.3);transition:transform .15s}
+  .btn-neon:hover{transform:translateY(-2px)}
+  .btn-ghost{font-family:Orbitron,system-ui,sans-serif;letter-spacing:.18em;font-weight:500;font-size:.8rem;
+    background:transparent;color:var(--cyan);border:1px solid var(--cyan);border-radius:999px;
+    padding:.95rem 2.2rem;cursor:pointer;text-decoration:none;
+    box-shadow:0 0 12px rgba(1,205,254,.5),inset 0 0 12px rgba(1,205,254,.12)}
+  .btn-ghost:hover{background:rgba(1,205,254,.12)}
+  .hud-corner{position:absolute;z-index:6;font-family:Orbitron,monospace;font-size:.72rem;letter-spacing:.2em;
+    color:rgba(255,255,255,.85)}
+  .hud-tl{top:5.5rem;left:1.5rem}
+  .hud-tr{top:5.5rem;right:1.5rem;color:#ff5b5b;animation:blink 1.2s steps(2) infinite}
+  .hud-bl{bottom:1.2rem;left:1.5rem}
+  .hud-br{bottom:1.2rem;right:1.5rem}
+  @keyframes blink{50%{opacity:0}}
+  .scroll-cue{position:absolute;bottom:4.5rem;left:50%;transform:translateX(-50%);z-index:5;
+    color:var(--cyan);font-family:Orbitron,monospace;font-size:.7rem;letter-spacing:.35em;animation:bob 2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translate(-50%,8px)}}
+
+  /* ---------- tape ticker ---------- */
+  .tape{overflow:hidden;white-space:nowrap;border-top:1px solid rgba(255,113,206,.5);
+    border-bottom:1px solid rgba(255,113,206,.5);background:rgba(13,2,33,.9);
+    color:var(--pink);font-family:Orbitron,monospace;font-size:.75rem;letter-spacing:.32em;padding:.7rem 0}
+  .tape p{display:inline-block;margin:0;animation:tape 22s linear infinite}
+  @keyframes tape{to{transform:translateX(-100%)}}
+
+  /* ---------- sections ---------- */
+  section.block{padding:clamp(4rem,10vh,7rem) clamp(1.25rem,6vw,5rem);max-width:1200px;margin:0 auto}
+  .dia{letter-spacing:.35em;font-family:Orbitron,monospace;color:var(--cyan);
+    font-size:.8rem;text-transform:uppercase;text-align:center;margin-bottom:.8rem}
+  .dia::before,.dia::after{content:"◆";margin:0 .75em;font-size:.7em;color:var(--pink)}
+  h2.section-title{font-family:Orbitron,system-ui,sans-serif;font-weight:900;font-style:italic;
+    transform:skewX(-6deg);font-size:clamp(1.6rem,4vw,2.6rem);text-align:center;margin-bottom:.6rem;
+    background:linear-gradient(180deg,#fff 0%,#cfe9ff 26%,#5a6b8c 48%,#eef7ff 52%,#8fb7d8 74%,#fff 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .section-sub{text-align:center;color:rgba(255,255,255,.65);max-width:52ch;margin:0 auto 2.6rem}
+
+  /* ---------- tabs + cards ---------- */
+  .tabs{display:flex;gap:1rem;justify-content:center;margin-bottom:2.4rem;flex-wrap:wrap}
+  .tab{font-family:Orbitron,system-ui,sans-serif;font-size:.72rem;letter-spacing:.25em;
+    background:transparent;color:rgba(255,255,255,.6);border:1px solid rgba(1,205,254,.4);
+    border-radius:999px;padding:.6rem 1.6rem;cursor:pointer}
+  .tab.active{color:var(--night);background:var(--cyan);border-color:var(--cyan);font-weight:700;
+    box-shadow:0 0 16px rgba(1,205,254,.7)}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
+  .tab-panel{display:none}
+  .tab-panel.active{display:grid}
+  .cassette{background:var(--ground);border:1px solid rgba(1,205,254,.55);border-radius:6px;
+    padding:1.3rem;box-shadow:0 0 14px rgba(1,205,254,.22);transition:transform .18s,box-shadow .18s}
+  .cassette:hover{transform:translateY(-4px);box-shadow:0 0 24px rgba(255,113,206,.45)}
+  .cassette-window{display:flex;justify-content:space-around;background:#0D0221;
+    border:1px solid #2a1a4d;border-radius:4px;padding:.8rem;margin-bottom:1rem;position:relative}
+  .cassette-window .label-strip{position:absolute;top:4px;left:8px;font-family:Orbitron,monospace;
+    font-size:.6rem;letter-spacing:.25em;color:var(--cyan)}
+  .reel{width:34px;height:34px;border-radius:50%;border:3px solid #e8e8e8;
+    background:conic-gradient(#e8e8e8 0 25%,transparent 0 50%,#e8e8e8 0 75%,transparent 0)}
+  .cassette:hover .reel{animation:spin 1.6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .cassette h3{font-family:Orbitron,system-ui,sans-serif;font-size:1.02rem;letter-spacing:.05em;margin-bottom:.2rem}
+  .artist{color:var(--pink);font-size:.82rem;letter-spacing:.12em;margin-bottom:.7rem}
+  .tracks{font-size:.83rem;color:rgba(255,255,255,.62);padding-left:1.2rem;margin-bottom:1rem}
+  .tracks li{margin-bottom:.15rem}
+  .price-row{display:flex;justify-content:space-between;align-items:center}
+  .price{font-family:Orbitron,monospace;color:var(--yellow);font-weight:700}
+  .add{font-family:Orbitron,system-ui,sans-serif;font-size:.68rem;letter-spacing:.18em;
+    background:transparent;color:var(--cyan);border:1px solid var(--cyan);border-radius:999px;
+    padding:.5rem 1rem;cursor:pointer;box-shadow:0 0 8px rgba(1,205,254,.4)}
+  .add:hover{background:rgba(1,205,254,.14)}
+
+  /* ---------- arcade ---------- */
+  .arcade{border-top:1px solid rgba(255,113,206,.35);border-bottom:1px solid rgba(255,113,206,.35);
+    background:radial-gradient(ellipse 80% 90% at 50% 0%,rgba(185,103,255,.16),transparent 70%)}
+  .arcade-inner{max-width:1200px;margin:0 auto;padding:clamp(4rem,10vh,7rem) clamp(1.25rem,6vw,5rem);
+    display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:center}
+  .marquee{font-family:"Monoton","Orbitron",system-ui,sans-serif;font-size:clamp(1.8rem,4.5vw,2.8rem);
+    color:var(--yellow);text-shadow:0 0 14px rgba(255,215,0,.85),0 0 44px rgba(255,107,0,.5);
+    text-align:center;border:3px solid var(--pink);border-radius:14px;padding:1.4rem 1rem;margin-bottom:1.6rem;
+    box-shadow:0 0 24px rgba(255,113,206,.5),inset 0 0 24px rgba(255,113,206,.15)}
+  .hud{position:relative;border:1px solid rgba(1,205,254,.55);background:rgba(26,0,51,.82);
+    padding:1.6rem;box-shadow:0 0 12px rgba(1,205,254,.18),inset 0 0 24px rgba(1,205,254,.06)}
+  .hud::before,.hud::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--pink)}
+  .hud::before{top:-2px;left:-2px;border-right:0;border-bottom:0}
+  .hud::after{bottom:-2px;right:-2px;border-left:0;border-top:0}
+  .hud h3{font-family:Orbitron,system-ui,sans-serif;letter-spacing:.2em;font-size:1rem;color:var(--cyan);margin-bottom:.8rem}
+  .eq-row{display:flex;align-items:center;gap:1.2rem;margin:1.4rem 0}
+  .eq{display:flex;gap:5px;align-items:flex-end;height:38px}
+  .eq span{width:7px;background:linear-gradient(180deg,var(--pink),var(--cyan));
+    box-shadow:0 0 8px rgba(255,113,206,.6);animation:eq .7s ease-in-out infinite alternate}
+  @keyframes eq{from{height:18%}to{height:100%}}
+  .now-playing{font-size:.85rem;color:rgba(255,255,255,.7)}
+  .now-playing strong{color:#fff}
+  .score-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:1rem}
+  .score-table th{font-family:Orbitron,monospace;font-size:.65rem;letter-spacing:.25em;color:var(--cyan);
+    text-align:left;padding:.5rem;border-bottom:1px solid rgba(1,205,254,.4)}
+  .score-table td{padding:.5rem;border-bottom:1px solid rgba(1,205,254,.15);color:rgba(255,255,255,.8)}
+  .score-table tr:first-child td{color:var(--yellow)}
+
+  /* ---------- about / tape club ---------- */
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;margin-bottom:4rem}
+  .col{border-left:2px solid var(--pink);padding-left:1.2rem}
+  .col h3{font-family:Orbitron,system-ui,sans-serif;font-size:.85rem;letter-spacing:.2em;color:var(--pink);margin-bottom:.6rem}
+  .col p{font-size:.92rem;color:rgba(255,255,255,.68)}
+  .club{position:relative;border:1px solid rgba(1,205,254,.55);background:rgba(26,0,51,.82);
+    padding:2.2rem;max-width:640px;margin:0 auto;text-align:center;
+    box-shadow:0 0 12px rgba(1,205,254,.18),inset 0 0 24px rgba(1,205,254,.06)}
+  .club::before,.club::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--pink)}
+  .club::before{top:-2px;left:-2px;border-right:0;border-bottom:0}
+  .club::after{bottom:-2px;right:-2px;border-left:0;border-top:0}
+  .club form{display:flex;gap:.8rem;margin-top:1.4rem;flex-wrap:wrap;justify-content:center}
+  .club input{flex:1;min-width:220px;background:#0D0221;border:1px solid rgba(1,205,254,.55);
+    border-radius:999px;padding:.85rem 1.4rem;color:#fff;font-size:.9rem;outline:none}
+  .club input:focus{border-color:var(--pink);box-shadow:0 0 12px rgba(255,113,206,.5)}
+  .club-msg{margin-top:1rem;font-family:Orbitron,monospace;font-size:.78rem;letter-spacing:.2em;color:var(--cyan);min-height:1.4em}
+
+  footer{border-top:1px solid rgba(1,205,254,.3);padding:2.4rem clamp(1.25rem,6vw,5rem);
+    display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;
+    font-size:.8rem;color:rgba(255,255,255,.55);max-width:1200px;margin:0 auto}
+  footer .skill-line{font-family:Orbitron,monospace;font-size:.7rem;letter-spacing:.2em;color:rgba(255,255,255,.4)}
+
+  @media (max-width:820px){
+    .cards,.cols{grid-template-columns:1fr}
+    .arcade-inner{grid-template-columns:1fr}
+    nav ul{display:none}
+    .hud-corner{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="tracking" aria-hidden="true"></div>
+
+<nav>
+  <a class="brand" href="#">MIDNIGHT MALL</a>
+  <ul>
+    <li><a href="#catalog">Catalog</a></li>
+    <li><a href="#arcade">Arcade</a></li>
+    <li><a href="#label">Label</a></li>
+    <li><a href="#club">Tape Club</a></li>
+  </ul>
+  <span class="crate">CRATE (<span id="crate-count">0</span>)</span>
+</nav>
+
+<header class="hero">
+  <div class="stars" id="stars" aria-hidden="true"></div>
+  <div class="sun" aria-hidden="true"></div>
+  <svg class="mountains" viewBox="0 0 1200 160" preserveAspectRatio="none" aria-hidden="true">
+    <polygon points="0,160 140,40 260,160"/>
+    <polygon points="200,160 380,20 540,160"/>
+    <polygon points="660,160 840,30 1020,160"/>
+    <polygon points="960,160 1110,60 1200,160"/>
+  </svg>
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <!-- palm silhouettes -->
+  <svg class="palm left" viewBox="0 0 220 260" aria-hidden="true">
+    <path d="M104 260 C100 200 104 150 122 96" stroke-width="15"/>
+    <path d="M122 96 C150 78 178 74 202 90" stroke-width="9"/>
+    <path d="M122 96 C148 90 168 98 182 118" stroke-width="9"/>
+    <path d="M122 96 C98 76 72 72 48 86" stroke-width="9"/>
+    <path d="M122 96 C96 90 74 98 60 118" stroke-width="9"/>
+    <path d="M122 96 C122 64 132 46 150 36" stroke-width="9"/>
+    <path d="M122 96 C116 66 102 50 84 44" stroke-width="9"/>
+    <circle cx="112" cy="106" r="8" fill="#08010F" stroke="none"/>
+    <circle cx="132" cy="108" r="8" fill="#08010F" stroke="none"/>
+  </svg>
+  <svg class="palm right" viewBox="0 0 220 260" aria-hidden="true">
+    <path d="M104 260 C100 200 104 150 122 96" stroke-width="15"/>
+    <path d="M122 96 C150 78 178 74 202 90" stroke-width="9"/>
+    <path d="M122 96 C148 90 168 98 182 118" stroke-width="9"/>
+    <path d="M122 96 C98 76 72 72 48 86" stroke-width="9"/>
+    <path d="M122 96 C96 90 74 98 60 118" stroke-width="9"/>
+    <path d="M122 96 C122 64 132 46 150 36" stroke-width="9"/>
+    <path d="M122 96 C116 66 102 50 84 44" stroke-width="9"/>
+    <circle cx="112" cy="106" r="8" fill="#08010F" stroke="none"/>
+    <circle cx="132" cy="108" r="8" fill="#08010F" stroke="none"/>
+  </svg>
+
+  <div class="hud-corner hud-tl">▶ PLAY</div>
+  <div class="hud-corner hud-tr">● REC</div>
+  <div class="hud-corner hud-bl">SP <span id="timecode">0:12:44</span></div>
+  <div class="hud-corner hud-br">ミッドナイト</div>
+
+  <div class="hero-copy">
+    <p class="kicker">ＭＩＤＮＩＧＨＴ ＭＡＬＬ ＲＥＣＯＲＤＳ · EST. 1987</p>
+    <h1 class="chrome-text">MIDNIGHT<br>MALL</h1>
+    <p class="glitch" data-text="THE FUTURE YOU REMEMBER">THE FUTURE YOU REMEMBER</p>
+    <p class="hero-sub">Reissuing the 1987 that never happened. Chrome-plated synth,
+      palm-shade funk, and tapes that still remember your name.</p>
+    <div class="btn-row">
+      <a class="btn-neon" href="#catalog">BROWSE THE CATALOG</a>
+      <a class="btn-ghost" href="#arcade">INSERT COIN</a>
+    </div>
+  </div>
+  <div class="scroll-cue">SCROLL ▼</div>
+</header>
+
+<div class="tape" aria-hidden="true">
+  <p>SIDE A ◆ 45 RPM ◆ CHROME POSITION ◆ DOLBY ON ◆ SIDE A ◆ 45 RPM ◆ CHROME POSITION ◆ DOLBY ON ◆&nbsp;</p>
+  <p>SIDE A ◆ 45 RPM ◆ CHROME POSITION ◆ DOLBY ON ◆ SIDE A ◆ 45 RPM ◆ CHROME POSITION ◆ DOLBY ON ◆&nbsp;</p>
+</div>
+
+<section class="block" id="catalog">
+  <p class="dia">Fresh Rewinds</p>
+  <h2 class="section-title">THE CATALOG</h2>
+  <p class="section-sub">Every release remastered from the original chrome tape.
+    No skips on Side B — that is the law of the food court.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="vinyl" role="tab">VINYL</button>
+    <button class="tab" data-tab="cassettes" role="tab">CASSETTES</button>
+    <button class="tab" data-tab="cdrom" role="tab">CD-ROM</button>
+  </div>
+
+  <div class="cards tab-panel active" id="panel-vinyl" role="tabpanel">
+    <article class="cassette">
+      <div class="cassette-window"><span class="label-strip">MM-001</span><span class="reel"></span><span class="reel"></span></div>
+      <h3>Chrome Boulevard</h3>
+      <p class="artist">NEON PALMS · 1987 REMASTER</p>
+      <ol class="tracks"><li>Night Drive (Extended Mix)</li><li>Glass Elevator</li><li>Chrome Boulevard</li></ol>
+      <div class="price-row"><span class="price">$28</span><button class="add" data-add>ADD TO CRATE</button></div>
+    </article>
+    <article class="cassette">
+      <div class="cassette-window"><span class="label-strip">MM-014</span><span class="reel"></span><span class="reel"></span></div>
+      <h3>Aisle Seven Romance</h3>
+      <p class="artist">PALM SHADE PUNKS · 1988</p>
+      <ol class="tracks"><li>Food Court Slowdance</li><li>Aisle Seven Romance</li><li>Closing Time (Orange Julius)</li></ol>
+      <div class="price-row"><span class="price">$26</span><button class="add" data-add>ADD TO CRATE</button></div>
+    </article>
+    <article class="cassette">
+      <div class="cassette-window"><span class="label-strip">MM-023</span><span class="reel"></span><span class="reel"></span></div>
+      <h3>Laser Disc Jockey</h3>
+      <p class="artist">VECTOR VIXENS · 1986</p>
+      <ol class="tracks"><li>Tracking Error</li><li>Laser Disc Jockey</li><li>Rewind Me Gently</li></ol>
+      <div class="price-row"><span class="price">$24</span><button class="add" data-add>ADD TO CRATE</button></div>
+    </article>
+  </div>
+
+  <div class="cards tab-panel" id="panel-cassettes" role="tabpanel">
+    <article class="cassette">
+      <div class="cassette-window"><span class="label-strip">MC-007</span><span class="reel"></span><span class="reel"></span></div>
+      <h3>Midnight Food Court</h3>
+      <p class="artist">DJ ESCALATOR · CHROME TAPE</p>
+      <ol class="tracks"><li>Escalator Dreams</li><li>Pretzel Logic</li><li>Midnight Food Court</li></ol>
+      <div class="price-row"><span class="price">$9</span><button class="add" data-add>ADD TO CRATE</button></div>
+    </article>
+    <article class="cassette">
+      <div class="cassette-window"><span class="label-strip">MC-011</span><span class="reel"></span><span class="reel"></span></div>
+      <h3>Sears at Dusk</h3>
+      <p class="artist">NEON PALMS · TYPE II</p>
+      <ol class="tracks"><li>Sears at Dusk</li><li>Catalogue Hearts</li><li>Return Policy</li></ol>
+      <div class="price-row"><span class="price">$9</span><button class="add" data-add>ADD TO CRATE</button></div>
+    </article>
+    <article class="cassette">
+      <div class="cassette-window"><span class="label-strip">MC-019</span><span class="reel"></span><span class="reel"></span></div>
+      <h3>Empty Parking Lot Jams</h3>
+      <p class="artist">DJ ESCALATOR · DOLBY B</p>
+      <ol class="tracks"><li>Lot C, Row 9</li><li>Headlights Off</li><li>Last Bus Home</li></ol>
+      <div class="price-row"><span class="price">$7</span><button class="add" data-add>ADD TO CRATE</button></div>
+    </article>
+  </div>
+
+  <div class="cards tab-panel" id="panel-cdrom" role="tabpanel">
+    <article class="cassette">
+      <div class="cassette-window"><span class="label-strip">CD-002</span><span class="reel"></span><span class="reel"></span></div>
+      <h3>Outrun '87 Tournament OST</h3>
+      <p class="artist">VARIOUS · 650 MB OF GLORY</p>
+      <ol class="tracks"><li>Stage 1: Coconut Beach</li><li>Stage 4: Neon Rain</li><li>Final Lap (Credits)</li></ol>
+      <div class="price-row"><span class="price">$18</span><button class="add" data-add>ADD TO CRATE</button></div>
+    </article>
+    <article class="cassette">
+      <div class="cassette-window"><span class="label-strip">CD-005</span><span class="reel"></span><span class="reel"></span></div>
+      <h3>Mallsoft: The Collection</h3>
+      <p class="artist">VARIOUS · 1992–1996</p>
+      <ol class="tracks"><li>Atrium (Eau de Cologne)</li><li>Fountain Music</li><li>Closing Announcement</li></ol>
+      <div class="price-row"><span class="price">$16</span><button class="add" data-add>ADD TO CRATE</button></div>
+    </article>
+    <article class="cassette">
+      <div class="cassette-window"><span class="label-strip">CD-009</span><span class="reel"></span><span class="reel"></span></div>
+      <h3>VHS Dreamscreens Vol. 2</h3>
+      <p class="artist">GLASS TIGER TRANSIT · INTERACTIVE</p>
+      <ol class="tracks"><li>Pause Menu (Rain)</li><li>Disc Loading…</li><li>Secret Track 99</li></ol>
+      <div class="price-row"><span class="price">$15</span><button class="add" data-add>ADD TO CRATE</button></div>
+    </article>
+  </div>
+</section>
+
+<section class="arcade" id="arcade">
+  <div class="arcade-inner">
+    <div>
+      <p class="dia">Every Friday · 21:00</p>
+      <div class="marquee">ARCADE NIGHT</div>
+      <p style="color:rgba(255,255,255,.72);max-width:44ch">Outrun '87 championship on
+        the original cabinet. Winner takes the chrome trophy and one (1) giant pretzel.
+        Losers take the bus home — the last bus home, specifically, like the song.</p>
+      <div class="btn-row" style="justify-content:flex-start;margin-top:1.6rem">
+        <a class="btn-ghost" href="#club">RESERVE A CABINET</a>
+      </div>
+    </div>
+    <div class="hud">
+      <h3>NOW PLAYING</h3>
+      <div class="eq-row">
+        <div class="eq" aria-hidden="true">
+          <span style="animation-delay:0s"></span><span style="animation-delay:.12s"></span>
+          <span style="animation-delay:.28s"></span><span style="animation-delay:.06s"></span>
+          <span style="animation-delay:.4s"></span><span style="animation-delay:.2s"></span>
+          <span style="animation-delay:.5s"></span><span style="animation-delay:.1s"></span>
+          <span style="animation-delay:.34s"></span><span style="animation-delay:.22s"></span>
+          <span style="animation-delay:.46s"></span><span style="animation-delay:.08s"></span>
+        </div>
+        <p class="now-playing"><strong>"Nightcall '88"</strong><br>Neon Palms — <em>Chrome Boulevard</em><br>
+          <span style="color:var(--cyan)">FM 87.9 · THE MALL FREQUENCY</span></p>
+      </div>
+      <table class="score-table">
+        <thead><tr><th>RANK</th><th>DRIVER</th><th>TIME</th></tr></thead>
+        <tbody>
+          <tr><td>01</td><td>CHR∎M3</td><td>2:41:07</td></tr>
+          <tr><td>02</td><td>PALM_DADDY</td><td>2:43:55</td></tr>
+          <tr><td>03</td><td>VHS_QUEEN</td><td>2:47:12</td></tr>
+          <tr><td>04</td><td>GRID_RUNNER</td><td>2:51:30</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="label">
+  <p class="dia">Since 1987</p>
+  <h2 class="section-title">THE LABEL</h2>
+  <p class="section-sub">Midnight Mall Records started in the back of a
+    shuttered record store, between the neon sign repair shop and the future.
+    We never left.</p>
+  <div class="cols">
+    <div class="col">
+      <h3>REWOUND BY HAND</h3>
+      <p>Every cassette is spooled, degaussed, and rewound by an actual human
+        who still owns a pencil for that exact purpose. Tape hiss is not a bug.
+        It is the room tone of 1987.</p>
+    </div>
+    <div class="col">
+      <h3>CHROME POSITION ONLY</h3>
+      <p>Type II or nothing. We press vinyl at 45 RPM, ship cassettes in
+        chrome, and burn CD-ROMs that include one (1) unskippable secret track.
+        Collectors understand.</p>
+    </div>
+    <div class="col">
+      <h3>THE MALL NEVER CLOSED</h3>
+      <p>It just changed frequency. Our releases are the soundtrack of the
+        food court at midnight — part elegy, part invitation. Come back to the
+        atrium. The fountain is still running.</p>
+    </div>
+  </div>
+
+  <div class="club" id="club">
+    <p class="dia">The Tape Club</p>
+    <h3 style="font-family:Orbitron,system-ui,sans-serif;letter-spacing:.15em">ONE TRANSMISSION PER FULL MOON</h3>
+    <p style="color:rgba(255,255,255,.65);font-size:.92rem;margin-top:.6rem">
+      New rewinds, arcade brackets, and the occasional lost jingle.
+      No spam — the tapes are too heavy.</p>
+    <form id="club-form">
+      <input type="email" id="club-email" placeholder="your@email.com" required aria-label="Email address">
+      <button class="btn-neon" type="submit">TUNE IN</button>
+    </form>
+    <p class="club-msg" id="club-msg" role="status"></p>
+  </div>
+</section>
+
+<footer>
+  <span>© 1987–2026 Midnight Mall Records · All frequencies reserved</span>
+  <span class="skill-line">Built from the vaporwave skill · design-skills</span>
+</footer>
+
+<script>
+  // starfield
+  (function(){
+    var sky = document.getElementById('stars');
+    for (var i = 0; i < 90; i++){
+      var s = document.createElement('i');
+      s.style.left = (Math.random()*100) + '%';
+      s.style.top = (Math.random()*100) + '%';
+      s.style.opacity = (0.25 + Math.random()*0.75).toFixed(2);
+      var sz = Math.random() < 0.85 ? 2 : 3;
+      s.style.width = s.style.height = sz + 'px';
+      sky.appendChild(s);
+    }
+  })();
+
+  // VHS timecode
+  (function(){
+    var el = document.getElementById('timecode');
+    var t = 12*60 + 44;
+    setInterval(function(){
+      t++;
+      var h = Math.floor(t/3600), m = Math.floor((t%3600)/60), s = t%60;
+      el.textContent = h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    }, 1000);
+  })();
+
+  // tabs
+  (function(){
+    var tabs = document.querySelectorAll('.tab');
+    tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        tabs.forEach(function(t){ t.classList.remove('active'); });
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+  })();
+
+  // crate counter
+  (function(){
+    var count = 0;
+    var el = document.getElementById('crate-count');
+    document.querySelectorAll('[data-add]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        count++;
+        el.textContent = count;
+        var label = btn.textContent;
+        btn.textContent = 'IN THE CRATE ✓';
+        setTimeout(function(){ btn.textContent = label; }, 1200);
+      });
+    });
+  })();
+
+  // tape club signup
+  (function(){
+    var form = document.getElementById('club-form');
+    var msg = document.getElementById('club-msg');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = document.getElementById('club-email').value.trim();
+      if (!email) return;
+      msg.textContent = 'SIGNAL RECEIVED — SEE YOU AT FULL MOON ◆';
+      form.reset();
+    });
+  })();
+</script>
+</body>
+</html>
